@@ -4,14 +4,17 @@ import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import { App } from './App'
 import { AuthProvider } from './context/AuthContext'
+import { ErrorBoundary } from './components/layout/ErrorBoundary'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    {/* basename déduit du base path de build (GitHub Pages = sous-chemin, sinon racine) */}
-    <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '') || undefined}>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      {/* basename déduit du base path de build (GitHub Pages = sous-chemin, sinon racine) */}
+      <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '') || undefined}>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   </StrictMode>,
 )

@@ -43,11 +43,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   const loadProfile = useCallback(async (userId: string) => {
-    const { data: profileRow } = await supabase
+    let { data: profileRow } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', userId)
       .maybeSingle()
+
+    // Filet de sécurité : si le profil n'existe pas (compte créé avant le schéma,
+    // trigger en panne, etc.), on le recrée à la volée au lieu de planter.
+    if (!profileRow) {
+      const { data: userData } = await supabase.auth.getUser()
+      const displayName =
+        (userData.user?.user_metadata as { display_name?: string } | undefined)?.display_name ??
+        (userData.user?.email?.split('@')[0] ?? 'Nouveau membre')
+      const { data: created } = await supabase
+        .from('profiles')
+        .upsert({ id: userId, display_name: displayName }, { onConflict: 'id' })
+        .select()
+        .single()
+      profileRow = created
+    }
 
     const nextProfile = (profileRow ?? null) as Profile | null
     setProfile(nextProfile)
