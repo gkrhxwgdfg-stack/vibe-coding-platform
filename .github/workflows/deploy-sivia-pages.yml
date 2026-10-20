@@ -65,15 +65,21 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Vérifier que GitHub Pages est activé
+      - name: Vérifier que GitHub Pages est disponible
         id: check
         run: |
-          # Sur un dépôt privé sans compte payant, l'API Pages retourne 404.
-          # On échoue proprement avec un message clair au lieu d'un HttpError.
-          echo "Tentative de déploiement GitHub Pages…"
-          echo "Si le dépôt est privé et sans GitHub Pro/Team, cette étape échouera (normal)."
-          echo "Passez le dépôt en public ou utilisez le workflow Vercel à la place."
+          echo "::notice::Tentative de déploiement GitHub Pages…"
+          echo "::notice::Sur un dépôt privé sans GitHub Pro/Team, l'API Pages retourne 404."
+          echo "::notice::Deux solutions : (1) passer le dépôt en public, (2) utiliser le workflow Vercel (deploy-sivia-vercel.yml)."
 
       - name: Déployer sur GitHub Pages
         id: deployment
+        continue-on-error: true
         uses: actions/deploy-pages@v4
+
+      - name: Avertir si le déploiement Pages a échoué
+        if: steps.deployment.outcome == 'failure'
+        run: |
+          echo "::warning::GitHub Pages indisponible (dépôt privé sans compte payant)."
+          echo "::warning::L'application reste déployée via Vercel — voir le workflow deploy-sivia-vercel.yml."
+          echo "::warning::Pour activer Pages gratuitement : passez le dépôt en public (Settings > General > Change visibility)."
