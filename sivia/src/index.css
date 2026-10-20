@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Savia — design system
+   Palette, typographies et bases d'accessibilité.
+   Identité : chaleureuse, artisanale, lisible par tous.
+   ============================================================ */
+
+@theme {
+  --color-terra: #c4643a;
+  --color-terra-dark: #a34e2b;
+  --color-moutarde: #d9a441;
+  --color-bleu: #5b7a9e;
+  --color-bleu-dark: #46617f;
+  --color-lin: #efe8dc;
+  --color-creme: #fbf6ec;
+  --color-encre: #4a3728;
+  --color-encre-soft: #7a6a58;
+  --color-sauge: #8a9b6e;
+  --color-carmine: #b33b3b;
+
+  --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-sans: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-hand: "Caveat", "Segoe Script", cursive;
+
+  --shadow-soft: 0 10px 24px -14px rgba(74, 55, 40, 0.35);
+  --shadow-card: 0 6px 18px -10px rgba(74, 55, 40, 0.28);
+}
+
+/* Grande typographie de base : priorité accessibilité (grands-parents) */
+html {
+  font-size: 17px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-encre);
+  line-height: 1.6;
+  background:
+    radial-gradient(ellipse at 15% 0%, rgba(217, 164, 65, 0.12), transparent 55%),
+    radial-gradient(ellipse at 95% 20%, rgba(196, 100, 58, 0.08), transparent 50%),
+    var(--color-lin);
+  min-height: 100dvh;
+}
+
+/* Grain papier : le numérique doit avoir une odeur de papier */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+}
+
+::selection {
+  background: rgba(196, 100, 58, 0.28);
+}
+
+/* Focus toujours visible — parcours au clavier et lecteurs d'écran */
+:focus-visible {
+  outline: 3px solid var(--color-terra);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Cibles tactiles confortables (min 44px) gérées au niveau des composants */
+button,
+a,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-serif);
+  line-height: 1.25;
+}
+
+/* Utilitaires maison */
+@utility text-hand {
+  font-family: var(--font-hand);
+}
+
+@utility card-surface {
+  background-color: var(--color-creme);
+  border: 1.5px solid rgba(74, 55, 40, 0.12);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-card);
+}
+
+@utility kicker {
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-terra);
+  font-weight: 800;
+}
+
+@utility touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Scrollbar discrète */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(74, 55, 40, 0.25);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
