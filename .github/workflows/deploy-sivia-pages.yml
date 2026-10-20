@@ -1,5 +1,6 @@
 # Déploiement automatique de Sivia sur GitHub Pages
 # Se déclenche à chaque push sur la branche de la PR (et main après merge).
+# Dernière mise à jour : forcer le re-déclenchement du workflow.
 name: Déployer Sivia sur GitHub Pages
 
 on:
