@@ -1,4 +1,4 @@
-name: Déployer Sivia
+name: Déployer Sivia sur GitHub Pages
 
 on:
   push:
