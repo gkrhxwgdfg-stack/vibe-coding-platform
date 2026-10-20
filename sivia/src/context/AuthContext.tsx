@@ -96,14 +96,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let mounted = true
 
+    // Sécurité absolue : quoi qu'il arrive, l'UI ne bloque jamais plus de 8s
+    const safetyTimeout = setTimeout(() => {
+      if (mounted) setLoading(false)
+    }, 8000)
+
     supabase.auth.getSession().then(({ data }) => {
       if (!mounted) return
       setSession(data.session)
       if (data.session?.user) {
-        loadProfile(data.session.user.id).finally(() => mounted && setLoading(false))
+        loadProfile(data.session.user.id)
+          .catch(() => { /* le self-healing gère le profil manquant */ })
+          .finally(() => {
+            if (mounted) {
+              clearTimeout(safetyTimeout)
+              setLoading(false)
+            }
+          })
       } else {
         setProfile(null)
         setFamily(null)
+        clearTimeout(safetyTimeout)
         setLoading(false)
       }
     })
@@ -112,7 +125,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(newSession)
       if (newSession?.user) {
         setLoading(true)
-        loadProfile(newSession.user.id).finally(() => setLoading(false))
+        loadProfile(newSession.user.id)
+          .catch(() => { /* idem */ })
+          .finally(() => {
+            if (mounted) setLoading(false)
+          })
       } else {
         setProfile(null)
         setFamily(null)
@@ -122,6 +139,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => {
       mounted = false
+      clearTimeout(safetyTimeout)
       listener.subscription.unsubscribe()
     }
   }, [loadProfile])

@@ -18,7 +18,7 @@ export function RequireAuth() {
   if (!user) {
     return <Navigate to="/connexion" state={{ from: location.pathname }} replace />
   }
-  if (needsOnboarding && !location.pathname.startsWith('/invitation')) {
+  if (needsOnboarding && location.pathname !== '/bienvenue' && !location.pathname.startsWith('/invitation')) {
     return <Navigate to="/bienvenue" replace />
   }
   return <Outlet />
