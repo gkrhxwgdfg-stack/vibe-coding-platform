@@ -18,8 +18,17 @@ et le bucket `recipe-photos` ne sont **pas encore créés** sur le projet.
 
 Deux options :
 
-**Via le dashboard (sans CLI)** — onglet **SQL Editor**, collez le contenu de
-[`migrations/0001_initial_schema.sql`](./migrations/0001_initial_schema.sql) et exécutez.
+**Via le dashboard (sans CLI)** — onglet **SQL Editor** :
+
+1. **New query** → collez le **contenu** de
+   [`migrations/0001_initial_schema.sql`](./migrations/0001_initial_schema.sql) (le code SQL, pas le chemin du fichier) → **Run**
+2. **New query** → collez le **contenu** de
+   [`migrations/0002_storage_bucket.sql`](./migrations/0002_storage_bucket.sql) → **Run**
+   (crée le bucket `recipe-photos` et ses policies, au cas où le premier
+   script aurait partiellement échoué)
+
+> ⚠️ Erreur fréquente : coller le chemin `sivia/supabase/migrations/...` au lieu
+> du contenu SQL → `ERROR: 42601: syntax error`. Le SQL Editor attend du **code SQL**.
 
 **Via la CLI Supabase** (recommandé, nécessite un access token personnel) :
 
