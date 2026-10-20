@@ -42,6 +42,7 @@ jobs:
       - name: Build de production
         run: npm run build
         env:
+          SIVIA_BASE_PATH: /vibe-coding-platform/sivia/
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
 

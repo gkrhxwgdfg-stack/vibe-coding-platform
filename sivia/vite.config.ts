@@ -4,8 +4,10 @@ import tailwindcss from '@tailwindcss/vite'
 import path from 'node:path'
 
 export default defineConfig({
-  // L'app est servie sous /vibe-coding-platform/sivia/ (GitHub Pages, dépôt non-root)
-  base: '/vibe-coding-platform/sivia/',
+  // Base path configurable :
+  // - '/' par défaut (Netlify, Vercel, racine)
+  // - '/vibe-coding-platform/sivia/' pour GitHub Pages (sous-chemin du dépôt)
+  base: process.env.SIVIA_BASE_PATH ?? '/',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
