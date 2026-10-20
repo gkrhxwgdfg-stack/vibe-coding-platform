@@ -9,6 +9,7 @@ import {
 } from 'react'
 import type { Session, User } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
+import { appUrl } from '@/lib/paths'
 import type { Family, Profile } from '@/lib/types'
 
 interface AuthContextValue {
@@ -51,17 +52,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Filet de sécurité : si le profil n'existe pas (compte créé avant le schéma,
     // trigger en panne, etc.), on le recrée à la volée au lieu de planter.
+    // On tente d'abord un INSERT (policy profiles_insert_self), et si la ligne
+    // existe déjà (profil créé par le trigger entre-temps), on fait un UPDATE.
     if (!profileRow) {
       const { data: userData } = await supabase.auth.getUser()
       const displayName =
         (userData.user?.user_metadata as { display_name?: string } | undefined)?.display_name ??
         (userData.user?.email?.split('@')[0] ?? 'Nouveau membre')
-      const { data: created } = await supabase
+      const { data: inserted, error: insertError } = await supabase
         .from('profiles')
-        .upsert({ id: userId, display_name: displayName }, { onConflict: 'id' })
+        .insert({ id: userId, display_name: displayName })
         .select()
         .single()
-      profileRow = created
+      if (insertError) {
+        // Le profil a été créé entre-temps (trigger) : on le met à jour à la place
+        const { data: updated } = await supabase
+          .from('profiles')
+          .update({ display_name: displayName })
+          .eq('id', userId)
+          .select()
+          .single()
+        profileRow = updated
+      } else {
+        profileRow = inserted
+      }
     }
 
     const nextProfile = (profileRow ?? null) as Profile | null
@@ -133,7 +147,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const resetPassword = useCallback(async (email: string) => {
-    const redirectTo = `${window.location.origin}/reinitialiser-mot-de-passe`
+    const redirectTo = appUrl('/reinitialiser-mot-de-passe')
     const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo })
     return { error: errorMessage(error) }
   }, [])

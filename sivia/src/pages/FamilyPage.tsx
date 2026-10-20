@@ -4,6 +4,7 @@ import { Check, Copy, Mail, Trash2 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { useCreateInvitation, useFamilyMembers, useInvitations } from '@/hooks/useFamily'
 import { supabase } from '@/lib/supabase'
+import { invitationLink } from '@/lib/paths'
 import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
 import { Card, CardHeader } from '@/components/ui/Card'
@@ -37,7 +38,7 @@ export function FamilyPage() {
       return
     }
     setEmail('')
-    setLastLink(`${window.location.origin}/invitation?token=${invitation.token}`)
+    setLastLink(invitationLink(invitation.token))
     refetch()
   }
 
@@ -47,7 +48,7 @@ export function FamilyPage() {
   }
 
   async function copyLink(invitation: Invitation) {
-    const link = `${window.location.origin}/invitation?token=${invitation.token}`
+    const link = invitationLink(invitation.token)
     await navigator.clipboard.writeText(link)
     setCopiedId(invitation.id)
     setTimeout(() => setCopiedId(null), 2000)

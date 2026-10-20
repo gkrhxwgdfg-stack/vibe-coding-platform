@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { TextInput } from '@/components/ui/FormFields'
 import { supabase } from '@/lib/supabase'
+import { invitationLink } from '@/lib/paths'
 import { useAuth } from '@/context/AuthContext'
 
 /**
@@ -67,7 +68,7 @@ export function OnboardingPage() {
     setSubmitting(false)
 
     if (invitation) {
-      setInviteLink(`${window.location.origin}/invitation?token=${invitation.token}`)
+      setInviteLink(invitationLink(invitation.token))
       setMode('lien')
     } else {
       navigate('/', { replace: true })
