@@ -19,6 +19,7 @@ const FavoritesPage = lazy(() => import('@/pages/FavoritesPage').then((m) => ({ 
 const FamilyPage = lazy(() => import('@/pages/FamilyPage').then((m) => ({ default: m.FamilyPage })))
 const ProfilePage = lazy(() => import('@/pages/ProfilePage').then((m) => ({ default: m.ProfilePage })))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage })))
+const DiagnosticPage = lazy(() => import('@/pages/DiagnosticPage').then((m) => ({ default: m.DiagnosticPage })))
 
 function PageLoader() {
   return <Spinner label="On charge la page…" />
@@ -34,6 +35,7 @@ export function App() {
         <Route path="/mot-de-passe-oublie" element={<ForgotPasswordPage />} />
         <Route path="/reinitialiser-mot-de-passe" element={<ResetPasswordPage />} />
         <Route path="/invitation" element={<InvitationPage />} />
+        <Route path="/diagnostic" element={<DiagnosticPage />} />
 
         {/* Zone authentifiée, avec coque maison */}
         <Route element={<RequireAuth />}>

@@ -16,19 +16,25 @@
 (`families`, `profiles`, `invitations`, `recipes`, `favorites`), les policies RLS
 et le bucket `recipe-photos` ne sont **pas encore créés** sur le projet.
 
-Deux options :
-
-**Via le dashboard (sans CLI)** — onglet **SQL Editor** :
+**Via le dashboard (sans CLI)** — onglet **SQL Editor**, exécutez **dans l'ordre** :
 
 1. **New query** → collez le **contenu** de
-   [`migrations/0001_initial_schema.sql`](./migrations/0001_initial_schema.sql) (le code SQL, pas le chemin du fichier) → **Run**
+   [`migrations/0001_initial_schema.sql`](./migrations/0001_initial_schema.sql) → **Run**
 2. **New query** → collez le **contenu** de
    [`migrations/0002_storage_bucket.sql`](./migrations/0002_storage_bucket.sql) → **Run**
-   (crée le bucket `recipe-photos` et ses policies, au cas où le premier
-   script aurait partiellement échoué)
+3. **New query** → collez le **contenu** de
+   [`migrations/0004_rls_fix_all.sql`](./migrations/0004_rls_fix_all.sql) → **Run**
+   (corrige les policies RLS, recrée le bucket, rend le trigger idempotent)
+4. **New query** → collez le **contenu** de
+   [`migrations/0005_rls_permissive_insert.sql`](./migrations/0005_rls_permissive_insert.sql) → **Run**
+   (**OBLIGATOIRE** — ajoute `to authenticated` sur toutes les policies RLS,
+   sans quoi les INSERT échouent avec `new row violates row-level security policy`)
 
 > ⚠️ Erreur fréquente : coller le chemin `sivia/supabase/migrations/...` au lieu
 > du contenu SQL → `ERROR: 42601: syntax error`. Le SQL Editor attend du **code SQL**.
+
+> ✅ **Vérification** : ouvrez [l'application](https://gkrhxwgdfg-stack.github.io/vibe-coding-platform/diagnostic)
+> et allez sur `/diagnostic` — tous les voyants doivent être verts.
 
 **Via la CLI Supabase** (recommandé, nécessite un access token personnel) :
 
