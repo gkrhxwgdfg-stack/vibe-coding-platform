@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - vibe/sivia-mvp-28288f
   workflow_dispatch:
 
 permissions:
