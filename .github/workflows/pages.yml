@@ -32,7 +32,7 @@ jobs:
         working-directory: sivia
         run: npm run build
         env:
-          SIVIA_BASE_PATH: /vibe-coding-platform/sivia/
+          SIVIA_BASE_PATH: /vibe-coding-platform/
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
       - name: Setup Pages
