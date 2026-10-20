@@ -55,8 +55,11 @@ npx supabase db push
 > d'emails** (rate limit). En cas de `over_email_send_rate_limit`, attendez
 > quelques minutes ou désactivez temporairement la confirmation.
 
-Dans **Authentication > URL Configuration**, ajoutez votre URL de site, par
-exemple `http://localhost:5173` en local.
+Dans **Authentication > URL Configuration**, mettez :
+
+- **Site URL** : `https://gkrhxwgdfg-stack.github.io/vibe-coding-platform/`
+- **Redirect URLs** : `https://gkrhxwgdfg-stack.github.io/vibe-coding-platform/**`
+  (en local, gardez aussi `http://localhost:5173/**`)
 
 ## 4. Vérifier la sécurité
 

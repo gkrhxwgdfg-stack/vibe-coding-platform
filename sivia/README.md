@@ -143,24 +143,19 @@ Configuration (une seule fois, 3 minutes) :
 
 > Le fichier `sivia/vercel.json` gère le routage SPA (toutes les routes → `index.html`).
 
-### GitHub Pages (nécessite un dépôt public)
+### GitHub Pages (déploiement actif — dépôt public)
 
-Le workflow [`.github/workflows/deploy-sivia-pages.yml`](../.github/workflows/deploy-sivia-pages.yml)
-est prêt et fonctionnel (build ✅), mais **GitHub Pages sur un dépôt privé
-nécessite un compte GitHub Pro/Team** — l'API retourne `404 Not Found`.
-Pour l'utiliser gratuitement :
+Le workflow [`.github/workflows/pages.yml`](../.github/workflows/pages.yml)
+build et déploie automatiquement à chaque push sur `main`.
 
-1. Passez le dépôt en **public** : **Settings → General → Change visibility**
-2. **Settings → Secrets and variables → Actions → Variables** :
-   `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`
-3. **Settings → Pages → Source** : **GitHub Actions**
-
-**URL cible** : https://gkrhxwgdfg-stack.github.io/vibe-coding-platform/sivia/
+**URL cible** : https://gkrhxwgdfg-stack.github.io/vibe-coding-platform/
 
 ### Dernière étape (toutes les options)
 
-Dans Supabase (**Authentication → URL Configuration**), ajoutez l'URL finale
-au **Site URL** et aux **Redirect URLs** (`https://…/**`).
+Dans Supabase (**Authentication → URL Configuration**), mettez :
+
+- **Site URL** : `https://gkrhxwgdfg-stack.github.io/vibe-coding-platform/`
+- **Redirect URLs** : `https://gkrhxwgdfg-stack.github.io/vibe-coding-platform/**`
 
 ## 🗂 Structure du projet
 
