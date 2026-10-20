@@ -1,0 +1,67 @@
+# Déploiement automatique de Sivia sur GitHub Pages
+# Se déclenche à chaque push sur la branche de la PR (et main après merge).
+name: Déployer Sivia sur GitHub Pages
+
+on:
+  push:
+    branches: [main, vibe/sivia-mvp-28288f]
+    paths:
+      - 'sivia/**'
+      - '.github/workflows/deploy-sivia-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-sivia
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sivia
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: sivia/package-lock.json
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Build de production
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+
+      - name: Préparer le dossier Pages (avec page 404 SPA)
+        run: |
+          cp dist/404.html dist/404.html 2>/dev/null || true
+          touch dist/.nojekyll
+
+      - name: Upload de l'artefact Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: sivia/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Déployer sur GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

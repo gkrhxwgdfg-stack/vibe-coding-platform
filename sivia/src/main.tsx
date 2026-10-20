@@ -7,7 +7,8 @@ import { AuthProvider } from './context/AuthContext'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
+    {/* basename = sous-chemin GitHub Pages : /vibe-coding-platform/sivia/ */}
+    <BrowserRouter basename="/vibe-coding-platform/sivia">
       <AuthProvider>
         <App />
       </AuthProvider>
