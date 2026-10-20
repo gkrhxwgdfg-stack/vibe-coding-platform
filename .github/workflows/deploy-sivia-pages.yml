@@ -46,10 +46,13 @@ jobs:
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
 
-      - name: Préparer le dossier Pages (avec page 404 SPA)
+      - name: Préparer le dossier Pages (SPA + config Vercel)
         run: |
-          cp dist/404.html dist/404.html 2>/dev/null || true
+          # GitHub Pages : routage SPA via 404.html
+          cp dist/index.html dist/404.html
           touch dist/.nojekyll
+          # Vercel : routage SPA via vercel.json (si déploiement Vercel manuel)
+          cp sivia/vercel.json dist/vercel.json
 
       - name: Upload de l'artefact Pages
         uses: actions/upload-pages-artifact@v3
