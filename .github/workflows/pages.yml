@@ -28,6 +28,17 @@ jobs:
       - name: Install
         working-directory: sivia
         run: npm ci
+      - name: Vérifier la configuration Supabase
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_ANON_KEY" ]; then
+            echo "::error::Variables VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY manquantes."
+            echo "Ajoutez-les dans Settings > Secrets and variables > Actions > Variables (dépôt)."
+            exit 1
+          fi
+          echo "Configuration Supabase présente."
       - name: Build
         working-directory: sivia
         run: npm run build
@@ -35,6 +46,8 @@ jobs:
           SIVIA_BASE_PATH: /vibe-coding-platform/
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+      - name: Fallback SPA pour GitHub Pages
+        run: cp sivia/dist/index.html sivia/dist/404.html
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
