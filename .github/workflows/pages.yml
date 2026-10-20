@@ -43,6 +43,9 @@ jobs:
         with:
           path: sivia/dist
 
+      - name: Attendre la propagation de l'artefact
+        run: sleep 15
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
