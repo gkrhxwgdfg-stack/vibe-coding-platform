@@ -108,8 +108,29 @@ npm run build      # build de production dans dist/
 npm run preview    # prévisualiser le build
 ```
 
-Déploiement sur **Vercel** : importez le dépôt, ajoutez les deux variables
-`VITE_SUPABASE_URL` et `VITE_SUPABASE_ANON_KEY`, déployez.
+### Déploiement sur Vercel (recommandé)
+
+1. Connectez-vous sur [vercel.com](https://vercel.com) **avec le même compte
+   GitHub** que celui qui possède le dépôt (sinon Vercel bloque le déploiement).
+2. **Add New Project** → importez `gkrhxwgdfg-stack/vibe-coding-platform`.
+3. **Root Directory** : `sivia` (l'app vit dans le sous-dossier `sivia/`).
+4. **Framework Preset** : Vite (détecté automatiquement).
+5. **Variables d'environnement** :
+   | Variable | Valeur |
+   | --- | --- |
+   | `VITE_SUPABASE_URL` | `https://dnpjbvjonwrovyqjrmnw.supabase.co` |
+   | `VITE_SUPABASE_ANON_KEY` | votre clé anon (Settings > API) |
+6. **Deploy** → l'URL est du type `https://<projet>.vercel.app`.
+
+> Le fichier `vercel.json` gère le routage SPA (toutes les routes → `index.html`).
+
+7. Dans Supabase (**Authentication > URL Configuration**), ajoutez l'URL Vercel
+   au **Site URL** et aux **Redirect URLs** (`https://<projet>.vercel.app/**`).
+
+### Alternative : Netlify
+
+Le fichier `public/_redirects` est fourni pour le routage SPA. Même principe :
+root directory `sivia`, mêmes variables d'environnement.
 
 ## 🗂 Structure du projet
 
