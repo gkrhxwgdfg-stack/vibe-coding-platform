@@ -62,17 +62,20 @@ npm install
 
 ### 3. Configurer Supabase
 
+**Projet déjà créé** : `vibe-coding-platform` (ref `dnpjbvjonwrovyqjrmnw`).
+
 Suivez le guide détaillé : [`supabase/README.md`](./supabase/README.md)
 
 En résumé :
 
-1. Créez un projet Supabase, récupérez **Project URL** et **anon public key**
-   (**Settings > API**).
-2. Appliquez le schéma SQL : copiez-collez
+1. Récupérez **Project URL** (`https://dnpjbvjonwrovyqjrmnw.supabase.co`) et
+   **anon public key** dans **Settings > API**.
+2. **Appliquez le schéma SQL** (obligatoire, à faire une seule fois) : copiez-collez
    [`supabase/migrations/0001_initial_schema.sql`](./supabase/migrations/0001_initial_schema.sql)
    dans le **SQL Editor** du dashboard, ou via la CLI :
    `npx supabase db push`.
-3. Activez le provider **Email** dans **Authentication > Providers**.
+3. Activez le provider **Email** dans **Authentication > Providers**
+   (pensez à la confirmation d'email, voir note dans `supabase/README.md`).
 4. Ajoutez `http://localhost:5173` dans **Authentication > URL Configuration**.
 
 ### 4. Variables d'environnement
@@ -84,8 +87,8 @@ cp .env.example .env
 Renseignez :
 
 ```env
-VITE_SUPABASE_URL=https://xxxxxxxxxxxxxxxx.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOi...
+VITE_SUPABASE_URL=https://dnpjbvjonwrovyqjrmnw.supabase.co
+VITE_SUPABASE_ANON_KEY=<votre anon key — Settings > API>
 ```
 
 > La clé `anon` est publique par conception : la sécurité est assurée par la RLS.

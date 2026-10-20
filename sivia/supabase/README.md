@@ -1,6 +1,9 @@
 # Configuration Supabase pour Savia
 
-## 1. Créer le projet
+> **Projet configuré** : `vibe-coding-platform` — ref `dnpjbvjonwrovyqjrmnw`
+> URL : `https://dnpjbvjonwrovyqjrmnw.supabase.co`
+
+## 1. Créer le projet (si ce n'est pas déjà fait)
 
 1. Rendez-vous sur [supabase.com](https://supabase.com), créez un projet (région proche de vous).
 2. Récupérez dans **Settings > API** :
@@ -9,24 +12,39 @@
 
 ## 2. Appliquer le schéma
 
+**⚠️ À faire impérativement avant le premier lancement** : les 5 tables
+(`families`, `profiles`, `invitations`, `recipes`, `favorites`), les policies RLS
+et le bucket `recipe-photos` ne sont **pas encore créés** sur le projet.
+
 Deux options :
 
 **Via le dashboard (sans CLI)** — onglet **SQL Editor**, collez le contenu de
 [`migrations/0001_initial_schema.sql`](./migrations/0001_initial_schema.sql) et exécutez.
 
-**Via la CLI Supabase** (recommandé en local) :
+**Via la CLI Supabase** (recommandé, nécessite un access token personnel) :
 
 ```bash
-npx supabase link --project-ref <votre-project-ref>
+npx supabase login
+npx supabase link --project-ref dnpjbvjonwrovyqjrmnw
 npx supabase db push
 ```
 
 ## 3. Activer l'authentification par email
 
 **Authentication > Providers > Email** : activez « Enable Email provider ».
-Désactivez « Confirm email » si vous voulez tester sans boîte mail (déconseillé
-en production), ou configurez un fournisseur SMTP pour les vrais emails
-(dont le « mot de passe oublié »).
+
+> **Note sur la confirmation d'email** : par défaut, Supabase exige une
+> confirmation par mail avant la première connexion. Deux options :
+> - **Garder la confirmation** (recommandé) : configurez un fournisseur SMTP
+>   (ou utilisez le SMTP intégré, limité) pour les vrais emails, dont le
+>   « mot de passe oublié ».
+> - **Désactiver la confirmation** (test uniquement) : décochez
+>   « Confirm email » dans les settings Auth. Les comptes seront alors
+>   immédiatement connectés à l'inscription.
+>
+> ⚠️ Le plan gratuit de Supabase applique une **limite de débit d'envoi
+> d'emails** (rate limit). En cas de `over_email_send_rate_limit`, attendez
+> quelques minutes ou désactivez temporairement la confirmation.
 
 Dans **Authentication > URL Configuration**, ajoutez votre URL de site, par
 exemple `http://localhost:5173` en local.
