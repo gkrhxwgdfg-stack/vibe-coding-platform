@@ -108,30 +108,41 @@ npm run build      # build de production dans dist/
 npm run preview    # prévisualiser le build
 ```
 
-### Déploiement sur GitHub Pages (recommandé — automatique, sans Vercel)
+### 🌐 Déploiement en ligne (Vercel — testé et fonctionnel)
 
-L'application se déploie **toute seule** à chaque push grâce au workflow
-[`.github/workflows/deploy-sivia-pages.yml`](../.github/workflows/deploy-sivia-pages.yml).
+**URL publique de l'application** :
+👉 **https://temporary-racing-poplar-1n47vwt.vercel.app**
 
-**URL publique** : https://gkrhxwgdfg-stack.github.io/vibe-coding-platform/sivia/
+> ⚠️ C'est un déploiement temporaire Vercel (expire dans 60 min, puis le lien
+> est supprimé). Pour un lien **permanent** et automatique à chaque push :
+> 1. Créez un compte sur [vercel.com](https://vercel.com) avec votre GitHub
+> 2. **Add New Project** → importez `gkrhxwgdfg-stack/vibe-coding-platform`
+> 3. **Root Directory** : `sivia` · **Framework** : Vite
+> 4. Variables d'environnement : `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`
+> 5. **Deploy** → URL permanente du type `https://sivia-xxx.vercel.app`
+>
+> Le fichier `sivia/vercel.json` gère le routage SPA (toutes les routes → `index.html`).
 
-Configuration (à faire **une seule fois**, 2 minutes) :
+### Déploiement sur GitHub Pages (automatique, sans Vercel)
 
-1. Sur GitHub, ouvrez le dépôt → **Settings → Secrets and variables → Actions**
-   → onglet **Variables** → **New repository variable** :
+Alternative si vous préférez rester sur GitHub : le workflow
+[`.github/workflows/deploy-sivia-pages.yml`](../.github/workflows/deploy-sivia-pages.yml)
+build et déploie automatiquement à chaque push.
+
+**URL cible** : https://gkrhxwgdfg-stack.github.io/vibe-coding-platform/sivia/
+
+Configuration (une seule fois, 2 minutes) :
+
+1. **Settings → Secrets and variables → Actions → Variables** :
    | Variable | Valeur |
    | --- | --- |
    | `VITE_SUPABASE_URL` | `https://dnpjbvjonwrovyqjrmnw.supabase.co` |
    | `VITE_SUPABASE_ANON_KEY` | votre clé anon (dashboard Supabase → Settings → API) |
-2. **Settings → Pages** → **Build and deployment** → **Source** : choisissez
-   **GitHub Actions**.
-3. Poussez un commit (ou relancez le workflow depuis l'onglet **Actions**) :
-   le build se lance et l'app est publiée en ~1 minute.
+2. **Settings → Pages → Build and deployment → Source** : **GitHub Actions**
 
-> ⚠️ Le dépôt est **privé** : GitHub Pages est alors réservé aux comptes
-> GitHub Pro/Team. Si le déploiement Pages est refusé (erreur 404/403), deux
-> options : (a) passer le dépôt en **public** (Settings → General →
-> « Change visibility »), ou (b) utiliser le déploiement **Vercel** ci-dessous.
+> ⚠️ Le dépôt est **privé** : GitHub Pages nécessite alors un compte
+> GitHub Pro/Team. Passez le dépôt en **public** (Settings → General →
+> « Change visibility ») pour activer Pages gratuitement.
 
 ### Alternative : Vercel
 

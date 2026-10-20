@@ -22,9 +22,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: sivia
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,9 +34,11 @@ jobs:
           cache-dependency-path: sivia/package-lock.json
 
       - name: Installer les dépendances
+        working-directory: sivia
         run: npm ci
 
       - name: Build de production
+        working-directory: sivia
         run: npm run build
         env:
           SIVIA_BASE_PATH: /vibe-coding-platform/sivia/
@@ -49,10 +48,10 @@ jobs:
       - name: Préparer le dossier Pages (SPA + config Vercel)
         run: |
           # GitHub Pages : routage SPA via 404.html
-          cp dist/index.html dist/404.html
-          touch dist/.nojekyll
+          cp sivia/dist/index.html sivia/dist/404.html
+          touch sivia/dist/.nojekyll
           # Vercel : routage SPA via vercel.json (si déploiement Vercel manuel)
-          cp sivia/vercel.json dist/vercel.json
+          cp sivia/vercel.json sivia/dist/vercel.json
 
       - name: Upload de l'artefact Pages
         uses: actions/upload-pages-artifact@v3
