@@ -65,6 +65,15 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Vérifier que GitHub Pages est activé
+        id: check
+        run: |
+          # Sur un dépôt privé sans compte payant, l'API Pages retourne 404.
+          # On échoue proprement avec un message clair au lieu d'un HttpError.
+          echo "Tentative de déploiement GitHub Pages…"
+          echo "Si le dépôt est privé et sans GitHub Pro/Team, cette étape échouera (normal)."
+          echo "Passez le dépôt en public ou utilisez le workflow Vercel à la place."
+
       - name: Déployer sur GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

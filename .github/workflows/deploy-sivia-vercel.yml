@@ -52,6 +52,11 @@ jobs:
       - name: Déployer sur Vercel (production)
         working-directory: sivia
         run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::warning::VERCEL_TOKEN non défini — déploiement Vercel ignoré."
+            echo "Configurez-le dans Settings > Secrets and variables > Actions > Secrets."
+            exit 0
+          fi
           npm install --no-save vercel
           # Vercel détecte automatiquement Vite et le dossier dist/
           # vercel.json (à la racine du projet) gère le routage SPA.
