@@ -71,7 +71,7 @@ export function ProfilePage() {
         {profile.family_role && (
           <p className="text-hand text-bleu text-2xl">{profile.family_role}</p>
         )}
-        <p className="text-sm text-encre-soft mt-1">À table depuis {formatDate(memberSince)}</p>
+        <p className="text-sm text-encre-soft mt-1">En cuisine depuis {formatDate(memberSince)}</p>
       </section>
 
       {/* Mes recettes / favoris */}
@@ -116,7 +116,7 @@ export function ProfilePage() {
               value={familyRole}
               onChange={(e) => setFamilyRole(e.target.value)}
               placeholder="maman, papi, cousine Léa…"
-              hint="C’est ainsi que la famille te reconnaîtra à table."
+              hint="C’est ainsi que la famille te reconnaîtra en cuisine."
             />
             <div>
               <span className="block font-bold text-encre mb-1.5">Ton tampon d’authenticité</span>

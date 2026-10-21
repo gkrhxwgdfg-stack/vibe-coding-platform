@@ -4,6 +4,7 @@ import type { RecipeWithMeta } from '@/lib/types'
 import { categoryMeta } from '@/lib/constants'
 import { formatDate, formatDuration } from '@/lib/format'
 import { photoPublicUrl } from '@/services/recipes'
+import { Torchon } from '@/components/ui/Torchon'
 
 interface RecipeCardProps {
   recipe: RecipeWithMeta
@@ -29,14 +30,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
             className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
           />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-moutarde/25 to-terra/25 flex items-center justify-center">
-            <span
-              className="w-16 h-16 rounded-full bg-creme/90 text-terra font-serif font-bold text-3xl flex items-center justify-center"
-              aria-hidden="true"
-            >
-              {meta.label.charAt(0)}
-            </span>
-          </div>
+          <Torchon label={meta.label} />
         )}
         <span className="absolute top-3 left-3 bg-creme/95 rounded-full px-3 py-1 text-sm font-bold text-terra">
           {meta.label}

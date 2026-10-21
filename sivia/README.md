@@ -1,6 +1,6 @@
 # Savia — Recettes de famille
 
-> **Savia. Le savoir qui se transmet à table.**
+> **Savia. Le savoir qui se transmet en cuisine.**
 
 Savia est le carnet de recettes de votre famille — celui qui ne se perd jamais.
 Rassemblez les recettes de ceux que vous aimez : les annotations à la main de
@@ -198,4 +198,4 @@ Projet familial privé — tous droits réservés.
 
 ---
 
-*À très vite, autour de la table. — Savia*
+*À très vite, en cuisine. — Savia*

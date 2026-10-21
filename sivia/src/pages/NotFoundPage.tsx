@@ -9,7 +9,7 @@ export function NotFoundPage() {
         <p className="font-serif text-6xl text-terra mb-4" aria-hidden="true">Savia</p>
         <p className="text-lg mb-6">Cette recette n’est pas dans le carnet.</p>
         <Link to="/">
-          <Button size="lg">Retour à table</Button>
+          <Button size="lg">Retour en cuisine</Button>
         </Link>
       </div>
     </AuthShell>

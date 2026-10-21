@@ -24,6 +24,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { Spinner } from '@/components/ui/Spinner'
 import { Stamp } from '@/components/ui/Stamp'
 import { CommentThread } from '@/components/recipes/CommentThread'
+import { Torchon } from '@/components/ui/Torchon'
 import { cn } from '@/lib/utils'
 
 export function RecipeDetailPage() {
@@ -91,14 +92,7 @@ export function RecipeDetailPage() {
           {photo ? (
             <img src={photo} alt={recipe.title} className="absolute inset-0 w-full h-full object-cover" />
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-moutarde/25 to-terra/25 flex items-center justify-center">
-              <span
-                className="w-24 h-24 rounded-full bg-creme/90 text-terra font-serif font-bold text-5xl flex items-center justify-center"
-                aria-hidden="true"
-              >
-                {meta.label.charAt(0)}
-              </span>
-            </div>
+            <Torchon label={meta.label} className="[&>span]:w-24 [&>span]:h-24 [&>span]:text-5xl" />
           )}
           <span className="absolute top-4 left-4 bg-creme/95 rounded-full px-4 py-1.5 font-bold text-terra">
             {meta.label}

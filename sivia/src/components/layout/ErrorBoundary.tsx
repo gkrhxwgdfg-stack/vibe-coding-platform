@@ -45,7 +45,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 </p>
               )}
               <Button size="lg" onClick={() => window.location.assign('/')}>
-                Retour à table
+                Retour en cuisine
               </Button>
             </Card>
           </div>

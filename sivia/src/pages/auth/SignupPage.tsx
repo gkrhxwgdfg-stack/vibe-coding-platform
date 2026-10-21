@@ -42,7 +42,7 @@ export function SignupPage() {
   }
 
   return (
-    <AuthShell title="S'inscrire" handNote="Bienvenue à table. On commence par qui ?">
+    <AuthShell title="S'inscrire" handNote="Bienvenue en cuisine. On commence par qui ?">
       <form onSubmit={handleSubmit} noValidate>
         <TextInput
           label="Ton prénom"

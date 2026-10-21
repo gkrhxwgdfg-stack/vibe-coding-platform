@@ -130,13 +130,13 @@ export function FamilyPage() {
           </p>
         )}
         <p className="text-hand text-bleu text-2xl mt-1">
-          {members.length} membre{members.length > 1 ? 's' : ''} à table
+          {members.length} membre{members.length > 1 ? 's' : ''} en cuisine
         </p>
       </div>
 
       {/* Membres (badges/blasons) */}
       <section aria-labelledby="members-title">
-        <CardHeader kicker="Les membres" title="À table" />
+        <CardHeader kicker="Les membres" title="En cuisine" />
         <ul className="grid gap-3 sm:grid-cols-2">
           {members.map((member) => (
             <li key={member.id}>
@@ -153,7 +153,7 @@ export function FamilyPage() {
                     <p className="text-hand text-bleu text-xl">{member.family_role}</p>
                   )}
                   {member.bio && <p className="text-sm text-encre-soft truncate">{member.bio}</p>}
-                  <p className="text-xs text-encre-soft">À table depuis {formatDate(member.created_at)}</p>
+                  <p className="text-xs text-encre-soft">En cuisine depuis {formatDate(member.created_at)}</p>
                 </div>
               </Card>
             </li>

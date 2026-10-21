@@ -35,7 +35,7 @@ export function LoginPage() {
   }
 
   return (
-    <AuthShell title="Se connecter" handNote="Content de te revoir à table.">
+    <AuthShell title="Se connecter" handNote="Content de te revoir en cuisine.">
       <form onSubmit={handleSubmit} noValidate>
         <TextInput
           label="Ton email"
@@ -62,7 +62,7 @@ export function LoginPage() {
           </p>
         )}
         <Button type="submit" size="lg" className="w-full" disabled={submitting}>
-          {submitting ? 'On ouvre la porte…' : 'Entrer à table'}
+          {submitting ? 'On ouvre la porte…' : 'Entrer en cuisine'}
         </Button>
       </form>
       <div className="mt-6 text-center space-y-2">

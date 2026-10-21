@@ -67,7 +67,7 @@ export function InvitationPage() {
   }
 
   return (
-    <AuthShell title="Tu es invité à table !" handNote="Quelqu’un de ta famille te tend une assiette.">
+    <AuthShell title="Tu es invité en cuisine !" handNote="Quelqu’un de ta famille te tend une assiette.">
       <Card className="text-center">
         <p className="text-lg mb-1">
           Rejoins la famille <strong className="font-serif">{invitation.family?.name}</strong>
