@@ -39,7 +39,7 @@ export function ResetPasswordPage() {
   return (
     <AuthShell title="Nouveau mot de passe" handNote="Un secret bien gardé, entre nous.">
       {done ? (
-        <p className="text-center text-lg">C’est noté ! On retourne à table…</p>
+        <p className="text-center text-lg">C’est noté ! On retourne en cuisine…</p>
       ) : (
         <form onSubmit={handleSubmit} noValidate>
           <TextInput

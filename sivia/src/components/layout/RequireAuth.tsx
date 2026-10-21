@@ -13,7 +13,7 @@ export function RequireAuth() {
   // Tant que la session ET le profil ne sont pas chargés, on patiente :
   // évite le flash « page beige » quand le profil arrive après la session.
   if (loading || (user && !profile)) {
-    return <Spinner label="On installe la table…" />
+    return <Spinner label="On installe la cuisine…" />
   }
   if (!user) {
     return <Navigate to="/connexion" state={{ from: location.pathname }} replace />

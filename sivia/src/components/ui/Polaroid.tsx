@@ -25,7 +25,18 @@ export function Polaroid({ src, caption, tilt = -2, className, overlay }: Polaro
         {src ? (
           <img src={src} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-moutarde/30 to-terra/30" />
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundColor: '#fbf6ec',
+              backgroundImage: [
+                'repeating-linear-gradient(0deg, transparent, transparent 22px, rgba(91, 122, 158, 0.3) 22px, rgba(91, 122, 158, 0.3) 25px)',
+                'repeating-linear-gradient(90deg, transparent, transparent 22px, rgba(91, 122, 158, 0.3) 22px, rgba(91, 122, 158, 0.3) 25px)',
+              ].join(', '),
+            }}
+            role="img"
+            aria-label="Pas de photo"
+          />
         )}
         {overlay}
       </div>

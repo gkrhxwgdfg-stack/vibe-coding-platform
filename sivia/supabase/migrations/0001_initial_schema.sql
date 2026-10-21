@@ -18,7 +18,7 @@ create table if not exists public.profiles (
   display_name text not null,
   avatar_url text,
   bio text,
-  stamp_emoji text not null default '🍳',
+  stamp_emoji text not null default '',
   family_id uuid references public.families (id) on delete set null,
   created_at timestamptz not null default now()
 );

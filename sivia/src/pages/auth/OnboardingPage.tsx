@@ -20,6 +20,7 @@ export function OnboardingPage() {
 
   const [mode, setMode] = useState<'choix' | 'creer' | 'rejoindre' | 'lien'>('choix')
   const [familyName, setFamilyName] = useState('')
+  const [familyRole, setFamilyRole] = useState('')
   const [inviteCode, setInviteCode] = useState(searchParams.get('token') ?? '')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -53,8 +54,14 @@ export function OnboardingPage() {
       return
     }
 
-    // 2. Rattacher le profil à cette famille
+    // 2. Rattacher le profil à cette famille (avec le lien familial si renseigné)
     const { error: attachError } = await setFamilyId(family.id)
+    if (!attachError && familyRole.trim()) {
+      await supabase
+        .from('profiles')
+        .update({ family_role: familyRole.trim() })
+        .eq('id', profile.id)
+    }
     if (attachError) {
       setError(attachError)
       setSubmitting(false)
@@ -120,7 +127,7 @@ export function OnboardingPage() {
 
   if (mode === 'creer') {
     return (
-      <AuthShell title="Créer ta famille" handNote="Ta table, ton carnet, tes recettes.">
+      <AuthShell title="Créer ta famille" handNote="Ta cuisine, ton carnet, tes recettes.">
         <form onSubmit={handleCreate} noValidate>
           <TextInput
             label="Le nom de ta famille"
@@ -131,9 +138,17 @@ export function OnboardingPage() {
             placeholder="La famille Dupont"
             hint="Tu pourras inviter ceux que tu aimes ensuite."
           />
+          <TextInput
+            label="Ton lien dans la famille"
+            htmlFor="familyRole"
+            value={familyRole}
+            onChange={(e) => setFamilyRole(e.target.value)}
+            placeholder="maman, papi, cousin…"
+            hint="Comment les tiens t'appellent en cuisine ? Les autres pourront le préciser dans leur profil."
+          />
           {error && <p className="text-carmine font-bold mb-4" role="alert">{error}</p>}
           <Button type="submit" size="lg" className="w-full" disabled={submitting || !familyName.trim()}>
-            {submitting ? 'On dresse la table…' : 'Créer ma famille'}
+            {submitting ? 'On installe la cuisine…' : 'Créer ma famille'}
           </Button>
           <button
             type="button"
@@ -182,7 +197,7 @@ export function OnboardingPage() {
           <Users size={40} className="mx-auto text-terra mb-3" aria-hidden="true" />
           <p className="mb-4">
             Voici le <strong>lien d’invitation</strong> de ta famille. Envoie-le à ceux que tu
-            veux réunir à table — grands-parents, cousins, enfants.
+            veux réunir en cuisine — grands-parents, cousins, enfants.
           </p>
           <div className="flex gap-2 mb-4">
             <input
@@ -208,7 +223,7 @@ export function OnboardingPage() {
   }
 
   return (
-    <AuthShell title="Bienvenue à table." handNote="On commence par qui ?">
+    <AuthShell title="Bienvenue en cuisine." handNote="On commence par qui ?">
       <div className="grid gap-4">
         <button
           type="button"
@@ -216,7 +231,7 @@ export function OnboardingPage() {
           className="card-surface p-5 text-left hover:shadow-soft transition-shadow w-full"
         >
           <span className="font-serif font-semibold text-xl block">Créer ma famille</span>
-          <span className="text-encre-soft">Je fonde la table et j’invite les miens.</span>
+          <span className="text-encre-soft">J’aménage la cuisine et j’invite les miens.</span>
         </button>
         <button
           type="button"

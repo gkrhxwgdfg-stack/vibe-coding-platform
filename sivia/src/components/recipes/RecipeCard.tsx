@@ -4,7 +4,7 @@ import type { RecipeWithMeta } from '@/lib/types'
 import { categoryMeta } from '@/lib/constants'
 import { formatDate, formatDuration } from '@/lib/format'
 import { photoPublicUrl } from '@/services/recipes'
-import { cn } from '@/lib/utils'
+import { Torchon } from '@/components/ui/Torchon'
 
 interface RecipeCardProps {
   recipe: RecipeWithMeta
@@ -30,12 +30,10 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
             className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
           />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-moutarde/25 to-terra/25 flex items-center justify-center">
-            <span className="text-5xl" aria-hidden="true">{meta.emoji}</span>
-          </div>
+          <Torchon label={meta.label} />
         )}
         <span className="absolute top-3 left-3 bg-creme/95 rounded-full px-3 py-1 text-sm font-bold text-terra">
-          {meta.emoji} {meta.label}
+          {meta.label}
         </span>
         {recipe.is_sealed && (
           <span className="absolute top-3 right-3 bg-creme/95 rounded-full px-3 py-1 text-sm font-bold text-encre flex items-center gap-1">
@@ -48,7 +46,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
           {recipe.title}
         </h3>
         <p className="text-hand text-bleu text-lg mt-0.5">
-          de la main de {recipe.author?.display_name ?? '…'}
+          créée par {recipe.author?.display_name ?? '…'}
         </p>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-encre-soft">
           <span className="inline-flex items-center gap-1">
@@ -59,16 +57,14 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
               <Clock size={15} aria-hidden="true" /> {formatDuration(totalTime)}
             </span>
           )}
-          <span className="inline-flex items-center gap-1">
-            <Heart
-              size={15}
-              aria-hidden="true"
-              className={cn(recipe.is_favorite && 'fill-carmine text-carmine')}
-            />
-            {recipe.is_favorite ? 'Favori' : ''}
-          </span>
+          {recipe.is_favorite && (
+            <span className="inline-flex items-center gap-1 text-carmine">
+              <Heart size={15} aria-hidden="true" className="fill-carmine" />
+              Favori
+            </span>
+          )}
         </div>
-        <p className="text-xs text-encre-soft mt-2">Ajoutée le {formatDate(recipe.created_at)}</p>
+        <p className="text-xs text-encre-soft mt-2">Créée le {formatDate(recipe.created_at)}</p>
       </div>
     </Link>
   )

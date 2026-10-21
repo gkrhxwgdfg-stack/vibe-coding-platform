@@ -34,6 +34,7 @@ export interface Database {
           avatar_url: string | null
           bio: string | null
           stamp_emoji: string
+          family_role: string | null
           family_id: string | null
           created_at: string
         }
@@ -43,6 +44,7 @@ export interface Database {
           avatar_url?: string | null
           bio?: string | null
           stamp_emoji?: string
+          family_role?: string | null
           family_id?: string | null
           created_at?: string
         }
@@ -52,6 +54,7 @@ export interface Database {
           avatar_url?: string | null
           bio?: string | null
           stamp_emoji?: string
+          family_role?: string | null
           family_id?: string | null
           created_at?: string
         }
@@ -171,6 +174,48 @@ export interface Database {
           },
           {
             foreignKeyName: 'recipes_author_id_fkey'
+            columns: ['author_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      recipe_comments: {
+        Row: {
+          id: string
+          recipe_id: string
+          author_id: string
+          body: string | null
+          photo_url: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          recipe_id: string
+          author_id: string
+          body?: string | null
+          photo_url?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          recipe_id?: string
+          author_id?: string
+          body?: string | null
+          photo_url?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'recipe_comments_recipe_id_fkey'
+            columns: ['recipe_id']
+            isOneToOne: false
+            referencedRelation: 'recipes'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'recipe_comments_author_id_fkey'
             columns: ['author_id']
             isOneToOne: false
             referencedRelation: 'profiles'

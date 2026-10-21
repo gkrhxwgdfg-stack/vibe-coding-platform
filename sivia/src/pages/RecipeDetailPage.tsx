@@ -23,6 +23,8 @@ import { Card } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Spinner } from '@/components/ui/Spinner'
 import { Stamp } from '@/components/ui/Stamp'
+import { CommentThread } from '@/components/recipes/CommentThread'
+import { Torchon } from '@/components/ui/Torchon'
 import { cn } from '@/lib/utils'
 
 export function RecipeDetailPage() {
@@ -90,12 +92,10 @@ export function RecipeDetailPage() {
           {photo ? (
             <img src={photo} alt={recipe.title} className="absolute inset-0 w-full h-full object-cover" />
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-moutarde/25 to-terra/25 flex items-center justify-center">
-              <span className="text-7xl" aria-hidden="true">{meta.emoji}</span>
-            </div>
+            <Torchon label={meta.label} className="[&>span]:w-24 [&>span]:h-24 [&>span]:text-5xl" />
           )}
           <span className="absolute top-4 left-4 bg-creme/95 rounded-full px-4 py-1.5 font-bold text-terra">
-            {meta.emoji} {meta.label}
+            {meta.label}
           </span>
           {recipe.is_sealed && (
             <span className="absolute top-4 right-4 bg-creme/95 rounded-full px-4 py-1.5 font-bold text-encre inline-flex items-center gap-1.5">
@@ -109,20 +109,16 @@ export function RecipeDetailPage() {
               <h1 className="text-3xl sm:text-4xl font-bold">{recipe.title}</h1>
               {/* Origine : par qui, depuis quand */}
               <p className="text-hand text-bleu text-2xl mt-1">
-                de la main de {recipe.author?.display_name ?? '…'}
-                {recipe.author && (
-                  <span className="text-encre-soft text-lg">
-                    {' '}(recette certifiée de la part de {recipe.author.display_name})
-                  </span>
+                créée par {recipe.author?.display_name ?? '…'}
+                {recipe.author?.family_role && (
+                  <span className="text-encre-soft text-lg"> ({recipe.author.family_role})</span>
                 )}
               </p>
               <p className="text-sm text-encre-soft mt-1">
                 dans le carnet depuis {formatDate(recipe.created_at)} · {formatRelative(recipe.created_at)}
               </p>
             </div>
-            {recipe.author && (
-              <Stamp name={recipe.author.display_name} emoji={recipe.author.stamp_emoji} />
-            )}
+            {recipe.author && <Stamp name={recipe.author.display_name} />}
           </div>
 
           {/* Meta : portions, temps */}
@@ -279,20 +275,30 @@ export function RecipeDetailPage() {
         </Card>
       )}
 
-      {/* Transmission */}
+      {/* Transmission : qui a transmis, depuis quand */}
       <Card className="flex items-center gap-4">
         {recipe.author && <Avatar name={recipe.author.display_name} src={recipe.author.avatar_url} size="lg" />}
         <div>
-          <p className="kicker">Transmise par</p>
-          <p className="font-serif text-xl font-semibold">{recipe.author?.display_name}</p>
+          <p className="kicker">Créée par</p>
+          <p className="font-serif text-xl font-semibold">
+            {recipe.author?.display_name}
+            {recipe.author?.family_role && (
+              <span className="text-encre-soft font-sans text-base font-normal">
+                {' '}· {recipe.author.family_role}
+              </span>
+            )}
+          </p>
           <p className="text-encre-soft">
-            dans la famille depuis {formatDate(recipe.author?.created_at)} · recette ajoutée {formatRelative(recipe.created_at)}
+            dans la famille depuis {formatDate(recipe.author?.created_at)} · recette créée {formatRelative(recipe.created_at)}
           </p>
         </div>
       </Card>
 
+      {/* Fil de vie : commentaires et photos de la famille */}
+      <CommentThread recipeId={recipe.id} familyId={recipe.family_id} />
+
       {/* v2 : mode cuisson (minuteur), déclinaisons, export PDF — volontairement non implémenté */}
-      <p className="text-center text-sm text-encre-soft">
+      <p className="text-center text-sm text-encre-soft mt-2">
         <Link to="/recettes/nouvelle" className="text-terra font-bold hover:underline">
           Écrire une autre recette de la famille
         </Link>

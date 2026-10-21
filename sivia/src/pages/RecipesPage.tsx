@@ -77,7 +77,7 @@ export function RecipesPage() {
 
       {/* Filtres par catégorie (intercalaires) */}
       <div role="group" aria-label="Filtrer par catégorie" className="flex flex-wrap gap-2">
-        {[{ value: 'toutes' as const, label: 'Toutes', emoji: '📖' }, ...CATEGORIES].map((c) => (
+        {[{ value: 'toutes' as const, label: 'Toutes' }, ...CATEGORIES].map((c) => (
           <button
             key={c.value}
             type="button"
@@ -90,7 +90,7 @@ export function RecipesPage() {
                 : 'bg-creme text-encre border-encre/20 hover:border-terra hover:text-terra',
             )}
           >
-            {c.emoji} {c.label}
+            {c.label}
           </button>
         ))}
       </div>
