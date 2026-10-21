@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import { STORAGE_BUCKET } from '@/lib/constants'
 import type { Database } from '@/lib/database.types'
-import { linkKindForRelation, type FamilyEvent, type FamilyGeneration, type FamilyMember, type FamilyRelation } from '@/lib/types'
+import type { FamilyEvent, FamilyGeneration, FamilyMember } from '@/lib/types'
 
 /**
  * Logique métier de la section Famille : arbre généalogique (membres
@@ -49,18 +49,36 @@ export interface FamilyMemberFormValues {
   generation_id: string | null
   /** Référent du lien : le parent (branche descendante) ou le conjoint (branche horizontale) */
   parent_id: string | null
-  /** Libellé du lien vers le référent (« fille », « conjoint »…) */
-  relation_label: FamilyRelation | string | null
+  /** Lien LIBRE avec le référent : l'utilisateur écrit ce qu'il veut
+   *  (« fils de », « marié à », « recueilli par »…) */
+  relation_label: string | null
   linked_profile_id: string | null
   photoFile: File | null
   /** Retirer la photo existante (édition) */
   removePhoto?: boolean
 }
 
-/** Nature du lien déduite du libellé choisi (« conjoint » -> branche horizontale) */
+/** Nature du lien déduite du libellé libre : tout libellé contenant « conjoint",
+ *  « marié », « époux », « épouse », « union » dessine une branche horizontale. */
 function linkKindFor(values: FamilyMemberFormValues): 'parent' | 'partner' | null {
   if (!values.parent_id || !values.relation_label) return null
-  return linkKindForRelation(values.relation_label as FamilyRelation)
+  const label = values.relation_label
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+  if (
+    label.includes('conjoint') ||
+    label.includes('marie') ||
+    label.includes('mariee') ||
+    label.includes('epous') ||
+    label.includes('union') ||
+    label.includes('compagne') ||
+    label.includes('compagner') ||
+    label.includes('partenaire')
+  ) {
+    return 'partner'
+  }
+  return 'parent'
 }
 
 export async function createFamilyMember(

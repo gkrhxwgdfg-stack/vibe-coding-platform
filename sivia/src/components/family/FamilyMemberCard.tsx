@@ -1,11 +1,11 @@
 import { Pencil, Trash2, UserCheck } from 'lucide-react'
 import { familyPhotoUrl } from '@/services/familyTree'
-import { FAMILY_RELATIONS, type FamilyMember } from '@/lib/types'
+import { type FamilyMember } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
 interface FamilyMemberCardProps {
   member: FamilyMember
-  /** Référent (parent) pour afficher le lien familial typé */
+  /** Référent pour afficher le lien familial (tel qu'écrit par l'utilisateur) */
   parent?: FamilyMember | null
   /** ids des profils connectés de la famille (badge « membre connecté ») */
   connectedProfileIds: Set<string>
@@ -31,8 +31,8 @@ export function FamilyMemberCard({
 }: FamilyMemberCardProps) {
   const photo = familyPhotoUrl(member.photo_url)
   const isConnected = !!member.linked_profile_id && connectedProfileIds.has(member.linked_profile_id)
-  const relationLabel =
-    member.relation_label && FAMILY_RELATIONS.find((r) => r.value === member.relation_label)?.label
+  // Lien tel qu'écrit par l'utilisateur, affiché sous la forme « <lien> <prénom du référent> »
+  const relationLabel = member.relation_label?.trim()
 
   return (
     <div className="shrink-0 w-44 snap-start">
@@ -76,7 +76,7 @@ export function FamilyMemberCard({
           )}
           {parent && relationLabel && (
             <p className="text-xs text-brun-soft font-bold mt-0.5">
-              {relationLabel.toLowerCase()} {parent.first_name}
+              {relationLabel} {parent.first_name}
             </p>
           )}
         </figcaption>

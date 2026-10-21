@@ -119,51 +119,6 @@ export interface FamilyGeneration {
 /** Nature du lien vers le référent (parent_id) : branche de l'arbre */
 export type FamilyLinkKind = 'parent' | 'partner'
 
-/** Libellés de liens familiaux proposés (vers le référent parent_id).
- *  Le genre du lien (fils/fille, conjoint/conjointe) est porté par `link_kind`
- *  et le libellé s'adapte à l'affichage. */
-export type FamilyRelation =
-  | 'fils'
-  | 'fille'
-  | 'petit-fils'
-  | 'petite-fille'
-  | 'frere'
-  | 'soeur'
-  | 'cousin'
-  | 'cousine'
-  | 'neveu'
-  | 'niece'
-  | 'oncle'
-  | 'tante'
-  | 'beau-pere'
-  | 'belle-mere'
-  | 'conjoint'
-  | 'autre'
-
-export const FAMILY_RELATIONS: { value: FamilyRelation; label: string }[] = [
-  { value: 'fils', label: 'Fils de' },
-  { value: 'fille', label: 'Fille de' },
-  { value: 'petit-fils', label: 'Petit-fils de' },
-  { value: 'petite-fille', label: 'Petite-fille de' },
-  { value: 'frere', label: 'Frère de' },
-  { value: 'soeur', label: 'Sœur de' },
-  { value: 'cousin', label: 'Cousin de' },
-  { value: 'cousine', label: 'Cousine de' },
-  { value: 'neveu', label: 'Neveu de' },
-  { value: 'niece', label: 'Nièce de' },
-  { value: 'oncle', label: 'Oncle de' },
-  { value: 'tante', label: 'Tante de' },
-  { value: 'beau-pere', label: 'Beau-père de' },
-  { value: 'belle-mere', label: 'Belle-mère de' },
-  { value: 'conjoint', label: 'Conjoint·e de' },
-  { value: 'autre', label: 'Lié(e) à' },
-]
-
-/** Déduit la nature du lien (branche) depuis le libellé choisi */
-export function linkKindForRelation(relation: FamilyRelation): FamilyLinkKind {
-  return relation === 'conjoint' ? 'partner' : 'parent'
-}
-
 /** Membre « de l'arbre » : une personne de la famille, sans compte (ex : « Mamie Jeanne ») */
 export interface FamilyMember {
   id: string
