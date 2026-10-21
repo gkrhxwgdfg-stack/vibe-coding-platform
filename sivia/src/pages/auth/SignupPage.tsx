@@ -42,7 +42,7 @@ export function SignupPage() {
   }
 
   return (
-    <AuthShell title="S'inscrire" handNote="Bienvenue en cuisine. On commence par qui ?">
+    <AuthShell title="S’inscrire" handNote="Bienvenue en cuisine. On commence par qui ?">
       <form onSubmit={handleSubmit} noValidate>
         <TextInput
           label="Ton prénom"
@@ -52,10 +52,10 @@ export function SignupPage() {
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
           placeholder="Jeanne"
-          hint="C'est comme ça que la famille te verra."
+          hint="C’est comme ça que la famille te verra."
         />
         <TextInput
-          label="Ton email"
+          label="Ton adresse mail"
           htmlFor="email"
           type="email"
           autoComplete="email"
@@ -88,7 +88,7 @@ export function SignupPage() {
           </p>
         )}
         <Button type="submit" size="lg" className="w-full" disabled={submitting}>
-          {submitting ? 'On écrit ton nom…' : "S'inscrire"}
+          {submitting ? 'On écrit ton nom…' : "S’inscrire"}
         </Button>
       </form>
       <p className="mt-6 text-center text-encre-soft">

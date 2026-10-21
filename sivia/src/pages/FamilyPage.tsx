@@ -167,7 +167,7 @@ export function FamilyPage() {
           <CardHeader kicker="Inviter" title="Ouvrir la porte à quelqu’un" />
           <form onSubmit={handleInvite} noValidate className="space-y-4">
             <TextInput
-              label="L’email de ton invité"
+              label="L’adresse mail de ton invité"
               htmlFor="invite-email"
               type="email"
               required

@@ -17,7 +17,7 @@ export function formatRelative(iso: string | null | undefined): string {
   if (Number.isNaN(date.getTime())) return ''
   const diffMs = Date.now() - date.getTime()
   const days = Math.floor(diffMs / 86_400_000)
-  if (days < 1) return "aujourd'hui"
+  if (days < 1) return "aujourd’hui"
   if (days < 2) return 'hier'
   if (days < 31) return `il y a ${days} jours`
   if (days < 365) {

@@ -204,7 +204,7 @@ export function RecipeDetailPage() {
           {isAuthor && !confirmDelete && (
             <p className="text-sm text-encre-soft mt-2">
               {recipe.is_sealed
-                ? 'Recette scellée : seul toi peux modifier l’original.'
+                ? 'Recette scellée : tu es le seul à pouvoir modifier l’original.'
                 : 'Sceller une recette la rend non modifiable — sauf par toi, son créateur.'}
             </p>
           )}

@@ -43,7 +43,7 @@ export function ForgotPasswordPage() {
       ) : (
         <form onSubmit={handleSubmit} noValidate>
           <TextInput
-            label="Ton email"
+            label="Ton adresse mail"
             htmlFor="email"
             type="email"
             autoComplete="email"

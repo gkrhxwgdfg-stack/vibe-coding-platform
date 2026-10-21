@@ -50,7 +50,7 @@ export async function addComment(
   let photoPath: string | null = null
   if (photoFile) {
     photoPath = await uploadCommentPhoto(familyId, authorId, photoFile)
-    if (!photoPath) return { error: "La photo n'a pas pu \u00eatre envoy\u00e9e. R\u00e9essaie ?" }
+    if (!photoPath) return { error: "La photo n’a pas pu \u00eatre envoy\u00e9e. R\u00e9essaie ?" }
   }
   const { error } = await supabase.from('recipe_comments').insert({
     recipe_id: recipeId,

@@ -72,7 +72,19 @@ export function HomePage() {
               <Link key={comment.id} to={`/recettes/${comment.recipe_id}`} className="hover:-translate-y-1 transition-transform">
                 <Polaroid
                   src={photoPublicUrl(comment.photo_url)}
-                  caption={`${comment.recipeTitle ?? 'Une recette'} \u2014 ${comment.author?.display_name ?? ''}`}
+                  caption={
+                    <span className="block">
+                      {comment.body ? (
+                        <span className="block text-encre text-base leading-snug mb-0.5">
+                          \u00ab {comment.body.length > 70 ? `${comment.body.slice(0, 70).trimEnd()}\u2026` : comment.body} \u00bb
+                        </span>
+                      ) : null}
+                      <span className="block">
+                        {comment.author?.display_name ?? ''}
+                        {comment.recipeTitle ? ` \u00b7 ${comment.recipeTitle}` : ''}
+                      </span>
+                    </span>
+                  }
                   tilt={i % 2 === 0 ? 2.5 : -2.5}
                 />
               </Link>
@@ -110,7 +122,7 @@ export function HomePage() {
                     <span className="block font-bold truncate">
                       {notif.authorName}{' '}
                       <span className="font-normal text-encre-soft">
-                        {notif.hasPhoto ? 'a ajout\u00e9 une photo sur' : 'a comment\u00e9'}{' '}
+                        {notif.hasPhoto ? 'a ajout\u00e9 une photo \u00e0' : 'a comment\u00e9'}{' '}
                         \u00ab {notif.recipeTitle} \u00bb
                       </span>
                     </span>

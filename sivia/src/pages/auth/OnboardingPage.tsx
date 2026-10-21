@@ -144,7 +144,7 @@ export function OnboardingPage() {
             value={familyRole}
             onChange={(e) => setFamilyRole(e.target.value)}
             placeholder="maman, papi, cousin…"
-            hint="Comment les tiens t'appellent en cuisine ? Les autres pourront le préciser dans leur profil."
+            hint="Comment les tiens t’appellent en cuisine ? Les autres pourront le préciser dans leur profil."
           />
           {error && <p className="text-carmine font-bold mb-4" role="alert">{error}</p>}
           <Button type="submit" size="lg" className="w-full" disabled={submitting || !familyName.trim()}>

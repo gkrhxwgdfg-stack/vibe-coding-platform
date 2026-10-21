@@ -55,7 +55,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
           La recette vit ici
         </h2>
         <span className="text-sm text-encre-soft font-bold">
-          {comments.length} message{comments.length > 1 ? 's' : ''}
+          {comments.length === 0 ? 'Aucun message' : `${comments.length} message${comments.length > 1 ? 's' : ''}`}
         </span>
       </div>
 

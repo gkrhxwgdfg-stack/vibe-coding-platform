@@ -58,7 +58,7 @@ export function InvitationPage() {
               Se connecter
             </Button>
             <Button size="lg" variant="outline" onClick={() => navigate('/inscription')}>
-              S'inscrire
+              S’inscrire
             </Button>
           </div>
         </Card>

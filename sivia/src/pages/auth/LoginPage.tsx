@@ -38,7 +38,7 @@ export function LoginPage() {
     <AuthShell title="Se connecter" handNote="Content de te revoir en cuisine.">
       <form onSubmit={handleSubmit} noValidate>
         <TextInput
-          label="Ton email"
+          label="Ton adresse mail"
           htmlFor="email"
           type="email"
           autoComplete="email"
@@ -74,7 +74,7 @@ export function LoginPage() {
         <p className="text-encre-soft">
           Pas encore de compte ?{' '}
           <Link to="/inscription" className="text-terra font-bold hover:underline">
-            S'inscrire
+            S’inscrire
           </Link>
         </p>
       </div>
