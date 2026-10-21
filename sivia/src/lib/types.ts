@@ -104,19 +104,63 @@ export interface RecipeFormValues {
   photoFile: File | null
 }
 
+/** Génération nommée de l'arbre (« Les aînés », « Les cousins »…).
+ *  Les membres sans génération forment la « génération 0 » (non classés). */
+export interface FamilyGeneration {
+  id: string
+  family_id: string
+  name: string
+  /** Ordre d'affichage des onglets (1 = premier onglet nommé) */
+  position: number
+  created_by: string
+  created_at: string
+}
+
+/** Libellés de liens familiaux proposés (vers le référent parent_id) */
+export type FamilyRelation =
+  | 'enfant'
+  | 'petit-enfant'
+  | 'frere'
+  | 'soeur'
+  | 'cousin'
+  | 'cousine'
+  | 'neveu'
+  | 'niece'
+  | 'oncle'
+  | 'tante'
+  | 'beau-parent'
+  | 'autre'
+
+export const FAMILY_RELATIONS: { value: FamilyRelation; label: string }[] = [
+  { value: 'enfant', label: 'Enfant de' },
+  { value: 'petit-enfant', label: 'Petit-enfant de' },
+  { value: 'frere', label: 'Frère de' },
+  { value: 'soeur', label: 'Sœur de' },
+  { value: 'cousin', label: 'Cousin de' },
+  { value: 'cousine', label: 'Cousine de' },
+  { value: 'neveu', label: 'Neveu de' },
+  { value: 'niece', label: 'Nièce de' },
+  { value: 'oncle', label: 'Oncle de' },
+  { value: 'tante', label: 'Tante de' },
+  { value: 'beau-parent', label: 'Beau-parent de' },
+  { value: 'autre', label: 'Lié(e) à' },
+]
+
 /** Membre « de l'arbre » : une personne de la famille, sans compte (ex : « Mamie Jeanne ») */
 export interface FamilyMember {
   id: string
   family_id: string
   first_name: string
   last_name: string | null
-  /** Lien familial : « maman », « papi », « cousine Léa »… */
+  /** Lien familial libre : « maman », « papi »… (affiché sous la photo) */
   family_role: string | null
   /** Chemin de la photo dans le bucket storage */
   photo_url: string | null
-  /** Rang/génération : 1 = les aînés, 2 = leurs enfants… */
-  generation: number
+  /** Génération nommée (null = génération 0, non classés) */
+  generation_id: string | null
   parent_id: string | null
+  /** Libellé du lien vers le référent : « cousine », « enfant »… */
+  relation_label: string | null
   /** Membre de l'arbre lié à un compte Supabase (badge « membre connecté ») */
   linked_profile_id: string | null
   created_by: string

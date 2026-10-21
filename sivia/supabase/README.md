@@ -12,9 +12,9 @@
 
 ## 2. Appliquer le schéma
 
-**À faire impérativement avant le premier lancement** : les 9 tables
+**À faire impérativement avant le premier lancement** : les 10 tables
 (`families`, `profiles`, `invitations`, `recipes`, `favorites`, `recipe_comments`,
-`family_members`, `family_events`, `event_recipes`),
+`family_members`, `family_generations`, `family_events`, `event_recipes`),
 les policies RLS et le bucket `recipe-photos` ne sont **pas encore créés** sur le projet.
 
 **Via le dashboard (sans CLI)** — onglet **SQL Editor**, exécutez **dans l'ordre** :
@@ -42,6 +42,11 @@ les policies RLS et le bucket `recipe-photos` ne sont **pas encore créés** sur
    [`migrations/0008_family_tree_and_events.sql`](./migrations/0008_family_tree_and_events.sql) → **Run**
    (arbre généalogique : tables `family_members`, `family_events` et `event_recipes`,
    avec RLS identique au reste du schéma)
+8. **New query** → collez le **contenu** de
+   [`migrations/0009_family_tree_v2_generations_and_relations.sql`](./migrations/0009_family_tree_v2_generations_and_relations.sql) → **Run**
+   (arbre v2 : table `family_generations` pour les générations nommées en onglets,
+   `family_members.generation_id` remplace l'ancien entier `generation`,
+   et `family_members.relation_label` pour les liens familiaux typés)
 
 > Erreur fréquente : coller le chemin `sivia/supabase/migrations/...` au lieu
 > du contenu SQL → `ERROR: 42601: syntax error`. Le SQL Editor attend du **code SQL**.

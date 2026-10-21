@@ -1,9 +1,9 @@
-import { useMemo, useState, type FormEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useMemo, useState, type FormEvent } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { Check, Copy, Mail, Pencil, Plus, Trash2, UserCheck } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { useCreateInvitation, useFamilyMembers, useInvitations } from '@/hooks/useFamily'
-import { useFamilyTree } from '@/hooks/useFamilyTree'
+import { useFamilyGenerations, useFamilyTree } from '@/hooks/useFamilyTree'
 import { supabase } from '@/lib/supabase'
 import { invitationLink } from '@/lib/paths'
 import { Avatar } from '@/components/ui/Avatar'
@@ -13,18 +13,33 @@ import { TextInput } from '@/components/ui/FormFields'
 import { Spinner } from '@/components/ui/Spinner'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { FamilyTree } from '@/components/family/FamilyTree'
-import { AddFamilyMemberModal } from '@/components/family/AddFamilyMemberModal'
+import { FamilyMemberModal } from '@/components/family/FamilyMemberModal'
 import { FamilyEvents } from '@/components/family/FamilyEvents'
 import { formatDate } from '@/lib/format'
 import type { FamilyMember, Invitation } from '@/lib/types'
 
 export function FamilyPage() {
   const { profile, family, refreshProfile } = useAuth()
+  const location = useLocation()
   const { members, loading: membersLoading } = useFamilyMembers()
   const { invitations, loading: invitationsLoading, refetch } = useInvitations()
   const createInvitation = useCreateInvitation()
-  const { members: treeMembers, loading: treeLoading, remove: removeTreeMember } = useFamilyTree()
+  const {
+    members: treeMembers,
+    loading: treeLoading,
+    add: addTreeMember,
+    edit: editTreeMember,
+    remove: removeTreeMember,
+  } = useFamilyTree()
+  const {
+    generations,
+    loading: generationsLoading,
+    add: addGeneration,
+    remove: removeGeneration,
+  } = useFamilyGenerations()
   const [memberModalOpen, setMemberModalOpen] = useState(false)
+  /** Membre en cours d'édition dans le modal (null = création) */
+  const [editingMember, setEditingMember] = useState<FamilyMember | null>(null)
 
   // Profils connectés, pour le badge « membre connecté » de l'arbre
   const connectedProfileIds = useMemo(() => new Set(members.map((m) => m.id)), [members])
@@ -95,13 +110,37 @@ export function FamilyPage() {
     setTimeout(() => setCopiedId(null), 2000)
   }
 
-  if (membersLoading || invitationsLoading || treeLoading) return <Spinner label="On rassemble la famille…" />
-
   function handleRemoveTreeMember(member: FamilyMember) {
     if (window.confirm(`Retirer ${member.first_name} de l'arbre ?`)) {
       void removeTreeMember(member.id)
     }
   }
+
+  function handleEditTreeMember(member: FamilyMember) {
+    setEditingMember(member)
+    setMemberModalOpen(true)
+  }
+
+  function handleOpenCreateModal() {
+    setEditingMember(null)
+    setMemberModalOpen(true)
+  }
+
+  // Le « + » contextuel de la coque renvoie ici avec openAddMember :
+  // on ouvre directement le modal d'ajout de membre.
+  const openAddMemberRequested =
+    (location.state as { openAddMember?: boolean } | null)?.openAddMember === true
+  useEffect(() => {
+    if (openAddMemberRequested) {
+      setEditingMember(null)
+      setMemberModalOpen(true)
+      // Nettoie le state pour ne pas rouvrir le modal à chaque navigation
+      window.history.replaceState({}, '')
+    }
+  }, [openAddMemberRequested])
+
+  if (membersLoading || invitationsLoading || treeLoading || generationsLoading)
+    return <Spinner label="On rassemble la famille…" />
 
   return (
     <div className="space-y-8">
@@ -183,7 +222,7 @@ export function FamilyPage() {
           kicker="L'arbre généalogique"
           title="La famille, fil par fil"
           action={
-            <Button onClick={() => setMemberModalOpen(true)} aria-label="Ajouter un membre à l'arbre">
+            <Button onClick={handleOpenCreateModal} aria-label="Ajouter un membre à l'arbre">
               <Plus size={18} aria-hidden="true" /> Ajouter un membre
             </Button>
           }
@@ -191,11 +230,13 @@ export function FamilyPage() {
         <p className="text-sm text-encre-soft mb-4">
           Un membre <span className="inline-flex items-center gap-1 font-bold text-bleu"><UserCheck size={14} aria-hidden="true" /> connecté</span> a
           un compte Savia. Un membre ajouté « de l'arbre » n'en a pas — mamie Jeanne, par exemple —
-          mais elle peut être citée comme origine d'une recette.
+          mais elle peut être citée comme origine d'une recette. Les générations nommées
+          (« Les aînés », « Les cousins »…) organisent l'arbre en onglets ; les membres sans
+          génération forment la « génération 0 ».
         </p>
         {treeMembers.length === 0 ? (
           <EmptyState handText="L'arbre n'a pas encore de branches. Accroche ta première personne.">
-            <Button size="lg" onClick={() => setMemberModalOpen(true)}>
+            <Button size="lg" onClick={handleOpenCreateModal}>
               <Plus size={20} aria-hidden="true" /> Planter l'arbre
             </Button>
           </EmptyState>
@@ -203,8 +244,12 @@ export function FamilyPage() {
           <div className="card-surface p-5 bg-sauge/5">
             <FamilyTree
               members={treeMembers}
+              generations={generations}
               connectedProfileIds={connectedProfileIds}
-              onRemove={handleRemoveTreeMember}
+              onEditMember={handleEditTreeMember}
+              onRemoveMember={handleRemoveTreeMember}
+              onAddGeneration={addGeneration}
+              onRemoveGeneration={(g) => void removeGeneration(g.id)}
             />
           </div>
         )}
@@ -305,7 +350,18 @@ export function FamilyPage() {
         </Link>
       </p>
 
-      <AddFamilyMemberModal open={memberModalOpen} onClose={() => setMemberModalOpen(false)} />
+      <FamilyMemberModal
+        open={memberModalOpen}
+        onClose={() => {
+          setMemberModalOpen(false)
+          setEditingMember(null)
+        }}
+        member={editingMember}
+        generations={generations}
+        treeMembers={treeMembers}
+        onCreate={addTreeMember}
+        onUpdate={editTreeMember}
+      />
     </div>
   )
 }

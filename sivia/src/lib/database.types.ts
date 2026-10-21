@@ -233,6 +233,48 @@ export interface Database {
           },
         ]
       }
+      family_generations: {
+        Row: {
+          id: string
+          family_id: string
+          name: string
+          position: number
+          created_by: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          family_id: string
+          name: string
+          position?: number
+          created_by: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          family_id?: string
+          name?: string
+          position?: number
+          created_by?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'family_generations_family_id_fkey'
+            columns: ['family_id']
+            isOneToOne: false
+            referencedRelation: 'families'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'family_generations_created_by_fkey'
+            columns: ['created_by']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       family_members: {
         Row: {
           id: string
@@ -241,8 +283,9 @@ export interface Database {
           last_name: string | null
           family_role: string | null
           photo_url: string | null
-          generation: number
+          generation_id: string | null
           parent_id: string | null
+          relation_label: string | null
           linked_profile_id: string | null
           created_by: string
           created_at: string
@@ -254,8 +297,9 @@ export interface Database {
           last_name?: string | null
           family_role?: string | null
           photo_url?: string | null
-          generation?: number
+          generation_id?: string | null
           parent_id?: string | null
+          relation_label?: string | null
           linked_profile_id?: string | null
           created_by: string
           created_at?: string
@@ -267,8 +311,9 @@ export interface Database {
           last_name?: string | null
           family_role?: string | null
           photo_url?: string | null
-          generation?: number
+          generation_id?: string | null
           parent_id?: string | null
+          relation_label?: string | null
           linked_profile_id?: string | null
           created_by?: string
           created_at?: string
@@ -279,6 +324,13 @@ export interface Database {
             columns: ['family_id']
             isOneToOne: false
             referencedRelation: 'families'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'family_members_generation_id_fkey'
+            columns: ['generation_id']
+            isOneToOne: false
+            referencedRelation: 'family_generations'
             referencedColumns: ['id']
           },
           {

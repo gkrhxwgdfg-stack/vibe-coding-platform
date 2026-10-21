@@ -1,11 +1,13 @@
 import { supabase } from '@/lib/supabase'
 import { STORAGE_BUCKET } from '@/lib/constants'
-import type { FamilyEvent, FamilyMember } from '@/lib/types'
+import type { Database } from '@/lib/database.types'
+import type { FamilyEvent, FamilyGeneration, FamilyMember } from '@/lib/types'
 
 /**
  * Logique métier de la section Famille : arbre généalogique (membres
- * « de l'arbre », sans compte) et événements (repas de famille).
- * Garde les vues légères : aucun appel Supabase directement dans les pages.
+ * « de l'arbre », sans compte), générations nommées et événements
+ * (repas de famille). Garde les vues légères : aucun appel Supabase
+ * directement dans les pages.
  */
 
 /** Upload la photo d'un membre de l'arbre ou d'un événement, dossier = family_id */
@@ -34,24 +36,30 @@ export async function fetchFamilyMembers(familyId: string): Promise<FamilyMember
     .from('family_members')
     .select('*')
     .eq('family_id', familyId)
-    .order('generation', { ascending: true })
     .order('first_name', { ascending: true })
   if (error || !data) return []
   return data as FamilyMember[]
 }
 
+export interface FamilyMemberFormValues {
+  first_name: string
+  last_name: string
+  family_role: string
+  /** Génération nommée choisie (null = génération 0, non classés) */
+  generation_id: string | null
+  parent_id: string | null
+  /** Libellé du lien vers le référent (« cousine », « enfant »…) */
+  relation_label: string | null
+  linked_profile_id: string | null
+  photoFile: File | null
+  /** Retirer la photo existante (édition) */
+  removePhoto?: boolean
+}
+
 export async function createFamilyMember(
   familyId: string,
   createdBy: string,
-  values: {
-    first_name: string
-    last_name: string
-    family_role: string
-    generation: number
-    parent_id: string | null
-    linked_profile_id: string | null
-    photoFile: File | null
-  },
+  values: FamilyMemberFormValues,
 ): Promise<{ error: string | null; member: FamilyMember | null }> {
   const firstName = values.first_name.trim()
   if (!firstName) return { error: 'Il faut au moins un prénom.', member: null }
@@ -67,8 +75,9 @@ export async function createFamilyMember(
       first_name: firstName,
       last_name: values.last_name.trim() || null,
       family_role: values.family_role.trim() || null,
-      generation: values.generation,
+      generation_id: values.generation_id,
       parent_id: values.parent_id,
+      relation_label: values.relation_label,
       linked_profile_id: values.linked_profile_id,
       photo_url: photoPath,
       created_by: createdBy,
@@ -79,8 +88,83 @@ export async function createFamilyMember(
   return { error: null, member: data as FamilyMember }
 }
 
+/** Modifie un membre de l'arbre (n'importe quel membre de la famille, cf. RLS) */
+export async function updateFamilyMember(
+  memberId: string,
+  familyId: string,
+  values: FamilyMemberFormValues,
+): Promise<{ error: string | null; member: FamilyMember | null }> {
+  const firstName = values.first_name.trim()
+  if (!firstName) return { error: 'Il faut au moins un prénom.', member: null }
+
+  let photoPath: string | null | undefined = undefined
+  if (values.photoFile) {
+    photoPath = await uploadFamilyPhoto(familyId, 'tree', values.photoFile)
+    if (!photoPath) return { error: "La photo n'a pas pu être envoyée. Réessaie ?", member: null }
+  } else if (values.removePhoto) {
+    photoPath = null
+  }
+
+  const payload: Database['public']['Tables']['family_members']['Update'] = {
+    first_name: firstName,
+    last_name: values.last_name.trim() || null,
+    family_role: values.family_role.trim() || null,
+    generation_id: values.generation_id,
+    parent_id: values.parent_id,
+    relation_label: values.relation_label,
+    linked_profile_id: values.linked_profile_id,
+  }
+  if (photoPath !== undefined) payload.photo_url = photoPath
+
+  const { data, error } = await supabase
+    .from('family_members')
+    .update(payload)
+    .eq('id', memberId)
+    .select()
+    .single()
+  if (error || !data) return { error: error?.message ?? 'Modification impossible.', member: null }
+  return { error: null, member: data as FamilyMember }
+}
+
 export async function deleteFamilyMember(memberId: string): Promise<{ error: string | null }> {
   const { error } = await supabase.from('family_members').delete().eq('id', memberId)
+  return { error: error?.message ?? null }
+}
+
+// ---------- Générations nommées ----------
+
+export async function fetchFamilyGenerations(familyId: string): Promise<FamilyGeneration[]> {
+  const { data, error } = await supabase
+    .from('family_generations')
+    .select('*')
+    .eq('family_id', familyId)
+    .order('position', { ascending: true })
+  if (error || !data) return []
+  return data as FamilyGeneration[]
+}
+
+/** Crée une génération nommée. `position` = nombre de générations existantes + 1. */
+export async function createFamilyGeneration(
+  familyId: string,
+  createdBy: string,
+  name: string,
+): Promise<{ error: string | null; generation: FamilyGeneration | null }> {
+  const trimmed = name.trim()
+  if (!trimmed) return { error: 'Il faut un nom pour cette génération.', generation: null }
+  const existing = await fetchFamilyGenerations(familyId)
+  const position = existing.length + 1
+  const { data, error } = await supabase
+    .from('family_generations')
+    .insert({ family_id: familyId, name: trimmed, position, created_by: createdBy })
+    .select()
+    .single()
+  if (error || !data) return { error: error?.message ?? 'Création impossible.', generation: null }
+  return { error: null, generation: data as FamilyGeneration }
+}
+
+export async function deleteFamilyGeneration(generationId: string): Promise<{ error: string | null }> {
+  // Les membres de cette génération redeviennent « non classés » (génération 0)
+  const { error } = await supabase.from('family_generations').delete().eq('id', generationId)
   return { error: error?.message ?? null }
 }
 

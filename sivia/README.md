@@ -18,7 +18,10 @@ de génération en génération.
 - **Commentaires et photos** : chaque recette porte son **fil de vie** — la famille commente, partage ses photos, et on voit quand la recette est utilisée
 - **Accueil vivant** : **planche familiale** (tableau de photos partagées) et **notifications** des derniers contenus de la famille
 - **Sceller une recette** (créateur uniquement) : l'original devient non modifiable
-- **Espace famille** : membres avec leur **lien familial** (maman, papi…), **renommage de la famille**, invitations (créer / copier / annuler)
+- **Mode cuisson** : diaporama plein écran, une étape à la fois (swipe, flèches clavier), ingrédients de l'étape surlignés, écran maintenu allumé (Wake Lock) et **minuteur façon horloge artisanale** (contour pointillé terracotta, deux aiguilles, décompte au centre, alerte visuelle carmine à la fin — sans son)
+- **Export « carnet familial »** : bouton « Télécharger la recette » — mise en forme originale (titre Fraunces, photo polaroïd, anecdote manuscrite en Caveat, tampon d'authenticité, origine et date de transmission), imprimable / enregistrable en PDF depuis le navigateur
+- **Espace famille** : membres avec leur **lien familial** (maman, papi…), **renommage de la famille**, invitations (créer / copier / annuler), **arbre généalogique** (membres « de l'arbre » sans compte, **générations nommées en onglets** — la « génération 0 » regroupe les non classés — **liens familiaux typés** (enfant, cousin, neveu…), **édition** des membres, reliés par une **corde dessinée** avec relief, badge « connecté ») et **chronologie des repas de famille** (événements, menu servi, photos — le « souvenir du menu »)
+- **Bouton « + » contextuel** : action selon la page (photo planche / nouvelle recette / membre de l'arbre ; absent sur favoris et profil)
 - **Profil** : prénom, bio, lien dans la famille, statistiques, déconnexion
 ### Sécurité
 
@@ -168,6 +171,7 @@ sivia/
 │   ├── migrations/0006_comments_and_family_role.sql  # commentaires, lien familial
 │   ├── migrations/0007_planche_family_photos.sql    # planche : commentaires sans recette
 │   ├── migrations/0008_family_tree_and_events.sql   # arbre généalogique + événements
+│   ├── migrations/0009_family_tree_v2_generations_and_relations.sql  # générations nommées, édition, liens typés
 │   ├── seed/seed.sql                        # recettes de démonstration
 │   └── README.md                            # guide de configuration Supabase
 ├── src/
@@ -176,7 +180,7 @@ sivia/
 │   │   ├── layout/      # AppLayout, AuthShell, RequireAuth, AddButton
 │   │   ├── recipes/     # RecipeCard, RecipeForm, CommentThread, CookingTimer
 │   │   ├── planche/     # AddPhotoModal (moments de la planche familiale)
-│   │   └── family/      # FamilyTree, AddFamilyMemberModal, FamilyEvents
+│   │   └── family/      # FamilyTree, FamilyMemberCard, FamilyMemberModal, FamilyEvents
 │   ├── context/         # AuthContext (session, profil, famille)
 │   ├── hooks/           # useRecipes, useFamily, useComments, useFamilyTree…
 │   ├── services/        # logique métier Supabase (recipes.ts, comments.ts, familyTree.ts, recipePrint.ts)

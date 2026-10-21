@@ -1,54 +1,94 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { ImagePlus, Send, Trash2, X } from 'lucide-react'
-import { useFamilyTree } from '@/hooks/useFamilyTree'
+import { familyPhotoUrl } from '@/services/familyTree'
+import { FAMILY_RELATIONS, type FamilyGeneration, type FamilyMember } from '@/lib/types'
 import { useFamilyMembers } from '@/hooks/useFamily'
 import { Button } from '@/components/ui/Button'
 import { TextInput } from '@/components/ui/FormFields'
 import { cn } from '@/lib/utils'
 
-interface AddFamilyMemberModalProps {
+interface FamilyMemberModalProps {
   open: boolean
   onClose: () => void
+  /** Membre en cours d'édition (null = création) */
+  member?: FamilyMember | null
+  generations: FamilyGeneration[]
+  /** Tous les membres de l'arbre (pour choisir le référent) */
+  treeMembers: FamilyMember[]
+  /** Création */
+  onCreate: (values: {
+    first_name: string
+    last_name: string
+    family_role: string
+    generation_id: string | null
+    parent_id: string | null
+    relation_label: string | null
+    linked_profile_id: string | null
+    photoFile: File | null
+  }) => Promise<{ error: string | null }>
+  /** Édition */
+  onUpdate: (
+    memberId: string,
+    values: {
+      first_name: string
+      last_name: string
+      family_role: string
+      generation_id: string | null
+      parent_id: string | null
+      relation_label: string | null
+      linked_profile_id: string | null
+      photoFile: File | null
+      removePhoto?: boolean
+    },
+  ) => Promise<{ error: string | null }>
 }
 
 /**
- * Modal « Ajouter un membre à l'arbre » : une personne de la famille sans
- * compte (ex : « Mamie Jeanne »), avec sa photo en pleine action dans la
- * cuisine, son lien familial et sa génération. Peut être liée à un compte
- * existant pour porter le badge « membre connecté ».
+ * Modal d'ajout / édition d'un membre de l'arbre : une personne de la
+ * famille sans compte (ex : « Mamie Jeanne »), avec sa photo en pleine
+ * action dans la cuisine, son lien familial, sa génération nommée et son
+ * lien typé vers un référent (« cousine de »…).
  */
-export function AddFamilyMemberModal({ open, onClose }: AddFamilyMemberModalProps) {
-  const { add, members: treeMembers } = useFamilyTree()
+export function FamilyMemberModal({
+  open,
+  onClose,
+  member,
+  generations,
+  treeMembers,
+  onCreate,
+  onUpdate,
+}: FamilyMemberModalProps) {
   const { members: profiles } = useFamilyMembers()
+  const isEditing = !!member
 
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [familyRole, setFamilyRole] = useState('')
-  const [generation, setGeneration] = useState('1')
+  const [generationId, setGenerationId] = useState('')
   const [parentId, setParentId] = useState('')
+  const [relationLabel, setRelationLabel] = useState('')
   const [linkedProfileId, setLinkedProfileId] = useState('')
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+  const [removePhoto, setRemovePhoto] = useState(false)
   const [sending, setSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Parents possibles : les membres des générations aînées
-  const selectedGeneration = Number.parseInt(generation, 10) || 1
-  const possibleParents = treeMembers.filter((m) => m.generation < selectedGeneration)
-
+  // Pré-remplit le formulaire à l'ouverture (création vide, édition avec les valeurs)
   useEffect(() => {
-    if (open) {
-      setFirstName('')
-      setLastName('')
-      setFamilyRole('')
-      setGeneration('1')
-      setParentId('')
-      setLinkedProfileId('')
-      setPhotoFile(null)
-      setPhotoPreview(null)
-      setError(null)
-    }
-  }, [open])
+    if (!open) return
+    setFirstName(member?.first_name ?? '')
+    setLastName(member?.last_name ?? '')
+    setFamilyRole(member?.family_role ?? '')
+    setGenerationId(member?.generation_id ?? '')
+    setParentId(member?.parent_id ?? '')
+    setRelationLabel(member?.relation_label ?? '')
+    setLinkedProfileId(member?.linked_profile_id ?? '')
+    setPhotoFile(null)
+    setPhotoPreview(null)
+    setRemovePhoto(false)
+    setError(null)
+  }, [open, member])
 
   useEffect(() => {
     if (!open) return
@@ -61,9 +101,16 @@ export function AddFamilyMemberModal({ open, onClose }: AddFamilyMemberModalProp
 
   if (!open) return null
 
+  const existingPhoto = member ? familyPhotoUrl(member.photo_url) : null
+  const showPreview = photoPreview ?? (removePhoto ? null : existingPhoto)
+
+  // Référents possibles : tous les autres membres de l'arbre
+  const possibleParents = treeMembers.filter((m) => m.id !== member?.id)
+
   function handlePhoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null
     setPhotoFile(file)
+    setRemovePhoto(false)
     if (file) {
       const reader = new FileReader()
       reader.onload = () => setPhotoPreview(reader.result as string)
@@ -77,18 +124,23 @@ export function AddFamilyMemberModal({ open, onClose }: AddFamilyMemberModalProp
     e.preventDefault()
     setSending(true)
     setError(null)
-    const { error: addError } = await add({
+    const values = {
       first_name: firstName,
       last_name: lastName,
       family_role: familyRole,
-      generation: Number.parseInt(generation, 10) || 1,
+      generation_id: generationId || null,
       parent_id: parentId || null,
+      relation_label: relationLabel || null,
       linked_profile_id: linkedProfileId || null,
       photoFile,
-    })
+      removePhoto,
+    }
+    const result = isEditing
+      ? await onUpdate(member.id, values)
+      : await onCreate(values)
     setSending(false)
-    if (addError) {
-      setError(addError)
+    if (result.error) {
+      setError(result.error)
       return
     }
     onClose()
@@ -105,12 +157,12 @@ export function AddFamilyMemberModal({ open, onClose }: AddFamilyMemberModalProp
       <div
         role="dialog"
         aria-modal="true"
-        aria-labelledby="add-member-title"
+        aria-labelledby="member-modal-title"
         className="card-surface w-full max-w-lg p-6 max-h-[90dvh] overflow-y-auto"
       >
         <div className="flex items-center justify-between mb-4">
-          <h2 id="add-member-title" className="text-2xl font-semibold">
-            Ajouter un membre à l'arbre
+          <h2 id="member-modal-title" className="text-2xl font-semibold">
+            {isEditing ? `Modifier ${member.first_name}` : "Ajouter un membre à l'arbre"}
           </h2>
           <button
             type="button"
@@ -122,10 +174,12 @@ export function AddFamilyMemberModal({ open, onClose }: AddFamilyMemberModalProp
           </button>
         </div>
 
-        <p className="text-sm text-encre-soft mb-4">
-          Pour quelqu'un qui n'a pas de compte — mamie Jeanne, par exemple. Elle figurera dans
-          l'arbre et pourra être citée comme origine d'une recette.
-        </p>
+        {!isEditing && (
+          <p className="text-sm text-encre-soft mb-4">
+            Pour quelqu'un qui n'a pas de compte — mamie Jeanne, par exemple. Elle figurera dans
+            l'arbre et pourra être citée comme origine d'une recette.
+          </p>
+        )}
 
         <form onSubmit={handleSubmit} noValidate className="space-y-4">
           <TextInput
@@ -146,33 +200,40 @@ export function AddFamilyMemberModal({ open, onClose }: AddFamilyMemberModalProp
           <TextInput
             label="Lien familial"
             htmlFor="member-role"
-            hint="« maman », « papi », « cousine Léa »…"
+            hint="« maman », « papi », « cousine Léa »… — affiché sous la photo"
             value={familyRole}
             onChange={(e) => setFamilyRole(e.target.value)}
             placeholder="Mamie"
           />
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="member-generation" className="block font-bold text-encre mb-1.5">
-                Génération
-              </label>
-              <select
-                id="member-generation"
-                value={generation}
-                onChange={(e) => setGeneration(e.target.value)}
-                className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-4 py-2.5 focus:border-terra focus:outline-none"
-              >
-                {[1, 2, 3, 4].map((g) => (
-                  <option key={g} value={g}>
-                    {g === 1 ? '1 — les aînés' : `${g}`}
-                  </option>
-                ))}
-              </select>
-            </div>
+          {/* Génération nommée */}
+          <div>
+            <label htmlFor="member-generation" className="block font-bold text-encre mb-1.5">
+              Génération
+            </label>
+            <select
+              id="member-generation"
+              value={generationId}
+              onChange={(e) => setGenerationId(e.target.value)}
+              className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-4 py-2.5 focus:border-terra focus:outline-none"
+            >
+              <option value="">Génération 0 — non classés</option>
+              {generations.map((g) => (
+                <option key={g.id} value={g.id}>
+                  {g.name}
+                </option>
+              ))}
+            </select>
+            <p className="text-sm text-encre-soft mt-1.5">
+              Les générations nommées s'affichent comme onglets dans l'arbre.
+            </p>
+          </div>
+
+          {/* Référent + lien typé */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label htmlFor="member-parent" className="block font-bold text-encre mb-1.5">
-                Parent dans l'arbre (facultatif)
+                Référent dans l'arbre (facultatif)
               </label>
               <select
                 id="member-parent"
@@ -189,8 +250,31 @@ export function AddFamilyMemberModal({ open, onClose }: AddFamilyMemberModalProp
                 ))}
               </select>
             </div>
+            <div>
+              <label htmlFor="member-relation" className="block font-bold text-encre mb-1.5">
+                Lien avec ce référent
+              </label>
+              <select
+                id="member-relation"
+                value={relationLabel}
+                onChange={(e) => setRelationLabel(e.target.value)}
+                disabled={!parentId}
+                className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-4 py-2.5 focus:border-terra focus:outline-none disabled:opacity-50"
+              >
+                <option value="">— Choisir un lien —</option>
+                {FAMILY_RELATIONS.map((r) => (
+                  <option key={r.value} value={r.value}>
+                    {r.label}
+                  </option>
+                ))}
+              </select>
+              <p className="text-sm text-encre-soft mt-1.5">
+                « Cousine de » mamie Jeanne, « enfant de » papi… — pour bien différencier les liens.
+              </p>
+            </div>
           </div>
 
+          {/* Lien vers un compte Savia */}
           <div>
             <label htmlFor="member-profile" className="block font-bold text-encre mb-1.5">
               Lier à un compte Savia (facultatif)
@@ -214,6 +298,7 @@ export function AddFamilyMemberModal({ open, onClose }: AddFamilyMemberModalProp
             </p>
           </div>
 
+          {/* Photo */}
           <div>
             <span className="block font-bold text-encre mb-1.5">Photo en pleine action dans la cuisine</span>
             <label
@@ -226,13 +311,13 @@ export function AddFamilyMemberModal({ open, onClose }: AddFamilyMemberModalProp
               )}
             >
               <ImagePlus size={20} aria-hidden="true" />
-              {photoFile ? 'Changer la photo' : 'Choisir une photo'}
+              {photoFile || showPreview ? 'Changer la photo' : 'Choisir une photo'}
             </label>
             <input id="member-photo" type="file" accept="image/*" className="sr-only" onChange={handlePhoto} />
-            {photoPreview && (
+            {showPreview && (
               <span className="relative inline-block mt-3">
                 <img
-                  src={photoPreview}
+                  src={showPreview}
                   alt="Aperçu de la photo"
                   className="w-full max-h-56 object-cover rounded-xl border-2 border-encre/10"
                 />
@@ -241,6 +326,7 @@ export function AddFamilyMemberModal({ open, onClose }: AddFamilyMemberModalProp
                   onClick={() => {
                     setPhotoFile(null)
                     setPhotoPreview(null)
+                    setRemovePhoto(true)
                   }}
                   aria-label="Retirer la photo"
                   className="absolute top-2 right-2 min-h-11 min-w-11 rounded-full bg-carmine text-creme flex items-center justify-center"
@@ -263,7 +349,7 @@ export function AddFamilyMemberModal({ open, onClose }: AddFamilyMemberModalProp
             </Button>
             <Button type="submit" disabled={sending || !firstName.trim()}>
               <Send size={18} aria-hidden="true" />
-              {sending ? 'On plante le fil…' : "Ajouter à l'arbre"}
+              {sending ? 'On enregistre…' : isEditing ? 'Enregistrer' : "Ajouter à l'arbre"}
             </Button>
           </div>
         </form>
