@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Plus } from 'lucide-react'
-import { buildFamilyTreeLayout, type TreeNode } from '@/lib/familyTreeLayout'
+import { buildFamilyTreeLayout, TREE_GEOMETRY, type TreeNode } from '@/lib/familyTreeLayout'
 import { FamilyMemberCard } from '@/components/family/FamilyMemberCard'
 import { FamilyMemberModal } from '@/components/family/FamilyMemberModal'
 import type { FamilyGeneration, FamilyMember } from '@/lib/types'
@@ -43,15 +43,16 @@ interface FamilyTreeProps {
 /**
  * Arbre généalogique piloté par un « + » unique par personne.
  *
- * - L'arbre MONTE de génération en génération : les aînés (la base) sont
- *   en bas, les jeunes en haut. On le lit comme on remonte le temps.
- * - Chaque personne porte UN « + » à sa sortie : cliquer accroche une
- *   nouvelle personne reliée à elle (enfant = branche montante, conjoint =
+ * - L'arbre DESCEND de génération en génération : les aînés (la base) sont
+ *   en haut, les jeunes en dessous. Lecture naturelle de la page.
+ * - Chaque personne porte UN « + » sous sa carte : cliquer accroche une
+ *   nouvelle personne reliée à elle (enfant = branche vers le bas, conjoint =
  *   branche horizontale — déduit du lien écrit librement).
- * - Un « + » en bas de l'arbre permet d'ajouter une base en dessous
- *   (« descendre ») si la première personne ajoutée n'est pas le début.
- * - L'arbre est centré horizontalement ; les branches se décalent au fur
- *   et à mesure, sans trous.
+ * - Un « + » carmine en haut de l'arbre permet d'ajouter une nouvelle base
+ *   (un aîné) au-dessus, si la première personne ajoutée n'était pas le
+ *   début de l'arbre.
+ * - Coordonnées en pixels fournies par `buildFamilyTreeLayout` : aucune
+ *   conversion ici. L'arbre est centré, les branches ne se chevauchent pas.
  */
 export function FamilyTree({
   members,
@@ -62,25 +63,14 @@ export function FamilyTree({
   onUpdateMember,
 }: FamilyTreeProps) {
   const layout = useMemo(() => buildFamilyTreeLayout(members), [members])
-  const { nodes, segments, rows, offsetX } = layout
+  const { nodes, segments, width, height } = layout
 
   const [modalOpen, setModalOpen] = useState(false)
   const [editingMember, setEditingMember] = useState<FamilyMember | null>(null)
   const [prefillParentId, setPrefillParentId] = useState<string | null>(null)
   const [prefillParent2Id, setPrefillParent2Id] = useState<string | null>(null)
 
-  // Géométrie
-  const CARD_W = 176
-  const CARD_H = 240
-  const PITCH_X = CARD_W + 36
-  const PITCH_Y = 280
-  const columns = Math.max(...nodes.map((n) => n.x), 0) + 1
-  const width = Math.max(columns * PITCH_X + CARD_W, 340)
-  const height = Math.max(rows * PITCH_Y + CARD_H + 80, 420) // +80 pour le « + » du bas
-
-  // y logique : 0 = aînés (base). Affichage inversé : les aînés en bas.
-  const centerX = (x: number) => (x + offsetX) * PITCH_X + CARD_W / 2 + PITCH_X / 2
-  const topY = (y: number) => (rows - 1 - y) * PITCH_Y
+  const { CARD_W, PLUS_H, TOP_PAD } = TREE_GEOMETRY
 
   function tiltFor(member: FamilyMember, index: number): number {
     const seed = member.first_name.length + index
@@ -101,13 +91,13 @@ export function FamilyTree({
     setModalOpen(true)
   }
 
-  // Position du « + » du bas (descendre) : sous la base, centrée
-  const basePlusX = width / 2
-  const basePlusY = (rows - 1) * PITCH_Y + CARD_H + 16
+  // Position du « + » carmine du haut (ajouter un aîné au-dessus de l'arbre)
+  const topPlusX = width / 2 - 22
+  const topPlusY = TOP_PAD / 2 - 22
 
   return (
     <div
-      className="overflow-auto -mx-2 px-2 pb-2 max-h-[70dvh]"
+      className="overflow-auto -mx-2 px-2 pb-2 max-h-[75dvh]"
       role="group"
       aria-label="Arbre généalogique de la famille"
     >
@@ -126,17 +116,12 @@ export function FamilyTree({
             </filter>
           </defs>
           {segments.map((seg, i) => {
-            // Inversion verticale des coordonnées de la corde aussi
-            const x1 = (seg.x1 + offsetX) * PITCH_X + PITCH_X / 2
-            const x2 = (seg.x2 + offsetX) * PITCH_X + PITCH_X / 2
-            const y1 = (rows - 1 - seg.y1) * PITCH_Y + CARD_H / 2
-            const y2 = (rows - 1 - seg.y2) * PITCH_Y + CARD_H / 2
             if (seg.kind === 'couple') {
-              const midX = (x1 + x2) / 2
-              const midY = (y1 + y2) / 2
+              const midX = (seg.x1 + seg.x2) / 2
+              const midY = (seg.y1 + seg.y2) / 2
               return (
                 <g key={i} filter="url(#corde-relief)">
-                  <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#c4643a" strokeWidth={3} strokeLinecap="round" />
+                  <line x1={seg.x1} y1={seg.y1} x2={seg.x2} y2={seg.y2} stroke="#c4643a" strokeWidth={3} strokeLinecap="round" />
                   <circle cx={midX} cy={midY} r={5} fill="#b33b3b" stroke="#fbf6ec" strokeWidth={2} />
                 </g>
               )
@@ -144,10 +129,10 @@ export function FamilyTree({
             return (
               <line
                 key={i}
-                x1={x1}
-                y1={y1}
-                x2={x2}
-                y2={y2}
+                x1={seg.x1}
+                y1={seg.y1}
+                x2={seg.x2}
+                y2={seg.y2}
                 stroke="#c4643a"
                 strokeWidth={seg.kind === 'horizontal' ? 3 : 2.5}
                 strokeLinecap="round"
@@ -158,7 +143,25 @@ export function FamilyTree({
           })}
         </svg>
 
-        {/* ---------- Nœuds + « + » unique ---------- */}
+        {/* ---------- « + » carmine du haut : ajouter un aîné au-dessus ---------- */}
+        {nodes.length > 0 && (
+          <div className="absolute" style={{ left: topPlusX, top: topPlusY }}>
+            <button
+              type="button"
+              onClick={() => openAdd(null)}
+              aria-label="Ajouter une personne au-dessus — nouvelle base de l'arbre"
+              title="Ajouter une base au-dessus (l'arbre descend)"
+              className={cn(
+                'min-h-11 min-w-11 rounded-full bg-creme border-2 border-carmine text-carmine',
+                'inline-flex items-center justify-center hover:bg-carmine hover:text-creme transition-colors shadow-card',
+              )}
+            >
+              <Plus size={20} strokeWidth={2.5} aria-hidden="true" />
+            </button>
+          </div>
+        )}
+
+        {/* ---------- Nœuds + « + » unique sous chaque carte ---------- */}
         {nodes.map((node: TreeNode, index: number) => {
           const member = node.member
           const parent = member.parent_id
@@ -171,11 +174,7 @@ export function FamilyTree({
             <div
               key={member.id}
               className="absolute"
-              style={{
-                left: centerX(node.x) - CARD_W / 2,
-                top: topY(node.y),
-                width: CARD_W,
-              }}
+              style={{ left: node.x, top: node.y, width: CARD_W }}
             >
               <FamilyMemberCard
                 member={member}
@@ -187,8 +186,8 @@ export function FamilyTree({
                 onRemove={onRemoveMember ? () => onRemoveMember(member) : undefined}
               />
 
-              {/* « + » unique à la sortie du nœud : accroche une personne reliée */}
-              <div className="flex items-center justify-center mt-1">
+              {/* « + » unique sous la carte : accroche une personne reliée */}
+              <div className="flex items-center justify-center mt-1" style={{ height: PLUS_H }}>
                 <button
                   type="button"
                   onClick={() => openAdd(member.id)}
@@ -206,22 +205,6 @@ export function FamilyTree({
           )
         })}
 
-        {/* ---------- « + » du bas : ajouter une base en dessous (descendre) ---------- */}
-        <div className="absolute" style={{ left: basePlusX - 22, top: basePlusY }}>
-          <button
-            type="button"
-            onClick={() => openAdd(null)}
-            aria-label="Ajouter une personne en dessous — nouvelle base de l'arbre"
-            title="Ajouter une base en dessous (l'arbre descend)"
-            className={cn(
-              'min-h-11 min-w-11 rounded-full bg-creme border-2 border-carmine text-carmine',
-              'inline-flex items-center justify-center hover:bg-carmine hover:text-creme transition-colors shadow-card',
-            )}
-          >
-            <Plus size={20} strokeWidth={2.5} aria-hidden="true" />
-          </button>
-        </div>
-
         {/* Arbre vide : « + » central pour créer la base */}
         {nodes.length === 0 && (
           <div className="absolute inset-0 flex items-center justify-center">
@@ -238,8 +221,8 @@ export function FamilyTree({
 
       {/* Légende */}
       <p className="text-xs text-brun-soft text-center mt-2">
-        « + » sous une personne : ajouter quelqu'un relié à elle (l'arbre monte) · « + » carmine
-        en bas : ajouter une base en dessous (l'arbre descend)
+        « + » sous une personne : ajouter quelqu'un relié à elle (l'arbre descend) · « + » carmine
+        en haut : ajouter un aîné au-dessus
       </p>
 
       {/* Modal interne : création via « + » (pré-rempli) ou édition */}

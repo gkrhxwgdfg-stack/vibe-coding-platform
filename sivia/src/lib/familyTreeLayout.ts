@@ -3,28 +3,71 @@ import type { FamilyLinkKind, FamilyMember } from './types'
 /**
  * Moteur de disposition de l'arbre généalogique — logique pure, sans vue.
  *
- * ORIENTATION : l'arbre MONTE de génération en génération. Les aînés
- * (la « base ») sont en BAS (y = 0), les générations suivantes au-dessus
- * (y croissant vers le haut). Visuellement, y est ensuite inversé par le
- * composant (les aînés apparaissent en bas de l'écran).
+ * ORIENTATION : l'arbre DESCEND de génération en génération. Les aînés
+ * (la « base ») sont en HAUT (rangée 0), les générations suivantes en
+ * dessous. C'est l'orientation naturelle de lecture d'une page web, sans
+ * inversion de coordonnées.
  *
  * RÈGLES :
- * - lien « parent » (fils/fille de…) : branche montante — l'enfant se
- *   place au-dessus de son référent (ou de ses deux référents).
+ * - lien « parent » (fils/fille de…) : branche descendante — l'enfant se
+ *   place sous son référent (ou sous ses deux référents).
  * - lien « partner » (conjoint·e de…) : branche horizontale — le conjoint
  *   se place à côté de son partenaire, même rangée.
- * - « relié aux deux » (parent_id + parent2_id) : l'enfant est centré au-dessus
- *   du couple, relié aux deux par la corde.
+ * - « relié aux deux » (parent_id + parent2_id) : l'enfant est centré sous
+ *   le couple, relié aux deux par la corde.
  *
- * COMPACITÉ : les colonnes se remplissent au fur et à mesure (pas de trous),
- * l'arbre est centré horizontalement.
+ * GÉOMÉTRIE : le moteur produit des coordonnées en PIXELS directement
+ * (bord gauche/haut de chaque carte, segments de corde compris) : la vue
+ * n'a aucune conversion à faire. Disposition « tidy tree » : chaque
+ * sous-arbre occupe un bloc contigu, les enfants sont centrés sous leur
+ * référent, les blocs ne se chevauchent jamais, et l'arbre entier est
+ * centré horizontalement (une personne seule est centrée au milieu).
  */
+
+export const TREE_GEOMETRY = {
+  /** Largeur d'une carte (polaroïd) */
+  CARD_W: 176,
+  /** Hauteur du bloc carte (polaroïd + boutons d'action) — ancre basse de la corde */
+  CARD_H: 312,
+  /** Hauteur de la rangée « + » sous la carte */
+  PLUS_H: 48,
+  /** Écart horizontal entre deux colonnes de cartes */
+  PITCH_X: 212,
+  /** Écart vertical entre deux rangées */
+  PITCH_Y: 420,
+  /** Espace horizontal entre deux blocs */
+  GAP_X: 36,
+  /** Hauteur de la corde d'union dans la carte (centre de la photo) */
+  COUPLE_Y: 96,
+  /** La barre de fratrie flotte 24 px au-dessus de la rangée suivante */
+  BAR_GAP: 24,
+  /** Espace en haut du canevas (bouton « + » carmine « ajouter un aîné ») */
+  TOP_PAD: 64,
+  /** Marge latérale du canevas */
+  SIDE_PAD: 24,
+  /** Marge basse du canevas */
+  BOTTOM_PAD: 16,
+} as const
+
+const {
+  CARD_W,
+  CARD_H,
+  PLUS_H,
+  PITCH_X,
+  PITCH_Y,
+  GAP_X,
+  COUPLE_Y,
+  BAR_GAP,
+  TOP_PAD,
+  SIDE_PAD,
+  BOTTOM_PAD,
+} = TREE_GEOMETRY
 
 export interface TreeNode {
   member: FamilyMember
-  /** Colonne (0 = à gauche), en demi-unités : le centre d'une carte = x + 0.5 */
+  /** Bord gauche de la carte, en px (coordonnées finales, centrées) */
   x: number
-  /** Rangée logique : 0 = aînés (base, en bas), croissant vers le haut */
+  /** Bord haut de la carte, en px */
   y: number
   /** Identifiant du couple si le membre en fait partie */
   coupleId: string | null
@@ -41,10 +84,10 @@ export interface TreeSegment {
 export interface FamilyTreeLayout {
   nodes: TreeNode[]
   segments: TreeSegment[]
-  columns: number
-  rows: number
-  /** Décalage appliqué pour centrer l'arbre (à ajouter à chaque x) */
-  offsetX: number
+  /** Largeur du canevas, en px */
+  width: number
+  /** Hauteur du canevas, en px */
+  height: number
 }
 
 /** Nature effective d'un lien : partner si link_kind = partner, sinon parent */
@@ -60,7 +103,9 @@ interface Couple {
 
 /** Construit la disposition de l'arbre à partir des membres et de leurs liens */
 export function buildFamilyTreeLayout(members: FamilyMember[]): FamilyTreeLayout {
-  if (members.length === 0) return { nodes: [], segments: [], columns: 0, rows: 0, offsetX: 0 }
+  if (members.length === 0) {
+    return { nodes: [], segments: [], width: 340, height: 420 }
+  }
 
   const byId = new Map(members.map((m) => [m.id, m]))
 
@@ -78,27 +123,89 @@ export function buildFamilyTreeLayout(members: FamilyMember[]): FamilyTreeLayout
     memberToCouple.set(member.id, coupleId)
   }
 
-  // ---------- Enfants : regroupés par référent (lien de type parent) ----------
-  // Un enfant peut avoir deux référents (parent_id + parent2_id) : on le
-  // rattache au premier, et on mémorise le second pour la corde.
-  const childrenOf = new Map<string, FamilyMember[]>()
+  /** Groupe d'un membre : les deux personnes de son couple, ou lui seul */
+  function groupIdsOf(member: FamilyMember): string[] {
+    const coupleId = memberToCouple.get(member.id)
+    if (!coupleId) return [member.id]
+    const couple = couples.get(coupleId)!
+    return [couple.a.id, couple.b.id]
+  }
+
+  /** Ensemble des ids d'un groupe de référents (couple = ses 2 membres) */
+  function groupIdSet(ids: string[]): Set<string> {
+    return new Set(ids.flatMap((id) => groupIdsOf(byId.get(id)!)))
+  }
+
+  // ---------- Enfants par référent individuel (lien de type parent) ----------
+  // Un enfant est rattaché au GROUPE de son référent (couple si le référent
+  // est en couple), pour qu'un enfant « relié aux deux » n'apparaisse qu'une
+  // fois et soit centré sous le couple. Garde anti-cycle : on ne rattache pas
+  // un membre à un descendant de lui-même.
+  const childrenOfGroupMap = new Map<string, FamilyMember[]>()
+
+  function groupKeyOf(member: FamilyMember): string {
+    const coupleId = memberToCouple.get(member.id)
+    return coupleId ?? `solo-${member.id}`
+  }
+
+  /**
+   * Vrai si `ancestor` est un ancêtre de `member` (ou son conjoint, membre
+   * du même groupe) : en remontant les liens parent de `member`, on finit
+   * par atteindre `ancestor`. Garde anti-cycle : ignorer un lien qui ferait
+   * d'un membre son propre ancêtre.
+   */
+  function isAncestorOf(ancestor: FamilyMember, member: FamilyMember, depth = 0): boolean {
+    if (depth > 20) return false
+    if (!member.parent_id) return false
+    const parent = byId.get(member.parent_id)
+    if (!parent) return false
+    if (parent.id === ancestor.id) return true
+    // Le conjoint d'un ancêtre est un ancêtre aussi (même groupe)
+    const coupleId = memberToCouple.get(parent.id)
+    if (coupleId) {
+      const couple = couples.get(coupleId)!
+      const other = couple.a.id === parent.id ? couple.b.id : couple.a.id
+      if (other === ancestor.id) return true
+    }
+    return isAncestorOf(ancestor, parent, depth + 1)
+  }
+
   for (const member of members) {
     if (effectiveLinkKind(member) !== 'parent') continue
     if (!member.parent_id || !byId.has(member.parent_id)) continue
-    const list = childrenOf.get(member.parent_id) ?? []
+    const ref = byId.get(member.parent_id)!
+    // Anti-cycle : ignorer un lien qui ferait de l'enfant son propre ancêtre
+    // (l'enfant serait un ancêtre du référent revendiqué => boucle)
+    if (isAncestorOf(member, ref)) continue
+    const key = groupKeyOf(ref)
+    const list = childrenOfGroupMap.get(key) ?? []
     list.push(member)
-    childrenOf.set(member.parent_id, list)
-  }
-  for (const list of childrenOf.values()) {
-    list.sort((a, b) => a.first_name.localeCompare(b.first_name, 'fr'))
+    childrenOfGroupMap.set(key, list)
   }
 
-  // ---------- Disposition ----------
+  /** Enfants d'un groupe (couple ou personne seule), dédupliqués, triés par prénom */
+  function childrenOfGroup(groupIds: string[]): FamilyMember[] {
+    const seen = new Set<string>()
+    const out: FamilyMember[] = []
+    for (const pid of groupIds) {
+      for (const child of childrenOfGroupMap.get(groupKeyOf(byId.get(pid)!)) ?? []) {
+        if (seen.has(child.id)) continue
+        seen.add(child.id)
+        out.push(child)
+      }
+    }
+    out.sort((a, b) => a.first_name.localeCompare(b.first_name, 'fr'))
+    return out
+  }
+
+  // ---------- Placement ----------
   const nodes: TreeNode[] = []
   const segments: TreeSegment[] = []
   const nodeById = new Map<string, TreeNode>()
-  const visited = new Set<string>()
-  let nextColumn = 0
+  /** Membres dont le nœud est posé (permanent) */
+  const reserved = new Set<string>()
+  /** Membres en cours de placement (pile de récursion — garde anti-cycle) */
+  const placing = new Set<string>()
 
   function addNode(member: FamilyMember, x: number, y: number): TreeNode {
     const node: TreeNode = {
@@ -109,164 +216,194 @@ export function buildFamilyTreeLayout(members: FamilyMember[]): FamilyTreeLayout
     }
     nodes.push(node)
     nodeById.set(member.id, node)
-    visited.add(member.id)
-    if (x + 1 > nextColumn) nextColumn = x + 1
+    reserved.add(member.id)
+    placing.delete(member.id)
     return node
   }
 
-  /** Vrai si le membre a un lien parent vers un membre existant */
-  function hasParentLink(m: FamilyMember): boolean {
-    return (
-      m.parent_id != null && byId.has(m.parent_id) && effectiveLinkKind(m) === 'parent'
+  interface PlacedSubtree {
+    node: TreeNode
+    /** Largeur du bloc occupé par le sous-arbre, en px */
+    width: number
+    /** Tranche d'indices des nœuds du sous-arbre (décalage groupé) */
+    nodesFrom: number
+    nodesTo: number
+    /** Tranche d'indices des segments du sous-arbre */
+    segsFrom: number
+    segsTo: number
+  }
+
+  /**
+   * Place un groupe (une personne, ou un couple) à la rangée `row`, bloc
+   * commençant à `startX`. Retourne la largeur du bloc en px.
+   * Algorithme « tidy tree » post-order :
+   *   1. chaque sous-arbre enfant est placé récursivement (largeur connue),
+   *   2. les blocs enfants sont posés côte à côte,
+   *   3. le bloc = max(référent, enfants) ; le référent est centré sur le
+   *      bloc, et tout le sous-arbre (enfants compris) est décalé d'un coup.
+   */
+  function placeGroup(ids: string[], row: number, startX: number): number {
+    for (const id of ids) placing.add(id)
+    const y = TOP_PAD + row * PITCH_Y
+    const groupSet = groupIdSet(ids)
+    const kids = childrenOfGroup(ids).filter(
+      (c) => !reserved.has(c.id) && !placing.has(c.id) && !groupSet.has(c.id),
     )
-  }
+    const ownW = ids.length * PITCH_X - GAP_X
+    if (row > 20) return ownW // garde anti-profondeur infinie
 
-  // Racines = aînés (sans lien parent) : la BASE, rangée 0 (en bas)
-  const roots = members.filter((m) => !hasParentLink(m))
-  roots.sort((a, b) => a.first_name.localeCompare(b.first_name, 'fr'))
-
-  // Place les aînés : couples côte à côte, célibataires seuls
-  const placedRootCouples = new Set<string>()
-  for (const root of roots) {
-    const coupleId = memberToCouple.get(root.id)
-    if (coupleId && !placedRootCouples.has(coupleId)) {
-      const couple = couples.get(coupleId)!
-      const nodeA = addNode(couple.a, nextColumn, 0)
-      const nodeB = addNode(couple.b, nextColumn, 0)
-      nextColumn += 1
-      segments.push({ kind: 'couple', x1: nodeA.x + 0.5, y1: 0, x2: nodeB.x - 0.5, y2: 0 })
-      placedRootCouples.add(coupleId)
-    } else if (!visited.has(root.id)) {
-      addNode(root, nextColumn, 0)
+    // 1. Sous-arbres enfants, côte à côte
+    const subtrees: PlacedSubtree[] = []
+    let cursor = startX
+    let kidsW = 0
+    for (const child of kids) {
+      const nodesFrom = nodes.length
+      const segsFrom = segments.length
+      const width = placeGroup(groupIdsOf(child), row + 1, cursor)
+      subtrees.push({
+        node: nodeById.get(child.id)!,
+        width,
+        nodesFrom,
+        nodesTo: nodes.length,
+        segsFrom,
+        segsTo: segments.length,
+      })
+      cursor += width + GAP_X
+      kidsW += width + GAP_X
     }
-  }
+    if (kids.length > 0) kidsW -= GAP_X
 
-  // Monte génération par génération : les enfants au-dessus (y+1) de leurs aînés
-  let currentRow = roots.filter((r) => visited.has(r.id))
-  let depth = 0
-  while (currentRow.length > 0 && depth < 20) {
-    const childY = depth + 1
-    const barY = childY - 0.5 // la barre flotte entre les deux rangées
-    const nextRow: FamilyMember[] = []
+    // 2. Bloc final = le plus large des deux (référent vs bloc enfants)
+    const width = Math.max(ownW, kidsW)
+    // Centre du BLOC final, en coordonnées absolues
+    const center = startX + width / 2
 
-    // Groupes de la rangée : un couple = un groupe (ses enfants sont communs)
-    const groups: { parentIds: string[]; anchorX: number }[] = []
-    const seenGroups = new Set<string>()
-    for (const m of currentRow) {
-      const coupleId = memberToCouple.get(m.id)
-      const key = coupleId ?? m.id
-      if (seenGroups.has(key)) continue
-      seenGroups.add(key)
-      if (coupleId) {
-        const couple = couples.get(coupleId)!
-        const xa = nodeById.get(couple.a.id)?.x ?? 0
-        const xb = nodeById.get(couple.b.id)?.x ?? 0
-        groups.push({ parentIds: [couple.a.id, couple.b.id], anchorX: (xa + xb) / 2 + 0.5 })
-      } else {
-        groups.push({ parentIds: [m.id], anchorX: (nodeById.get(m.id)?.x ?? 0) + 0.5 })
-      }
-    }
-
-    for (const group of groups) {
-      // Enfants des référents du groupe (un enfant « relié aux deux » apparaît une fois)
-      const seenChild = new Set<string>()
-      const children: FamilyMember[] = []
-      for (const pid of group.parentIds) {
-        for (const child of childrenOf.get(pid) ?? []) {
-          if (seenChild.has(child.id) || visited.has(child.id)) continue
-          seenChild.add(child.id)
-          children.push(child)
+    // 3. Décale les sous-arbres enfants déjà posés pour centrer le
+    //    BLOC ENFANTS sous le référent (quand il est plus étroit).
+    //    Quand les enfants débordent, ils définissent le bloc et le
+    //    référent est posé au centre du bloc (sous les enfants).
+    if (kidsW > 0 && kidsW < ownW) {
+      const kidShift = (ownW - kidsW) / 2
+      for (const st of subtrees) {
+        for (let i = st.nodesFrom; i < st.nodesTo; i++) nodes[i].x += kidShift
+        for (let i = st.segsFrom; i < st.segsTo; i++) {
+          segments[i].x1 += kidShift
+          segments[i].x2 += kidShift
         }
       }
-      if (children.length === 0) continue
-      children.sort((a, b) => a.first_name.localeCompare(b.first_name, 'fr'))
+    }
 
-      // Place la fratrie à partir de la prochaine colonne libre (compact, sans trou)
-      const startX = nextColumn
-      const childNodes: TreeNode[] = []
-      children.forEach((child, i) => {
-        childNodes.push(addNode(child, startX + i, childY))
-        nextRow.push(child)
-      })
-
-      // Barre horizontale au-dessus de la fratrie + montée depuis le(s) parent(s)
-      const firstX = childNodes[0].x + 0.5
-      const lastX = childNodes[childNodes.length - 1].x + 0.5
-      segments.push({ kind: 'horizontal', x1: firstX, y1: barY, x2: lastX, y2: barY })
-      // Corde depuis le référent (ou le milieu du couple)
+    // 4. Référent(s) posé(s) au centre du BLOC final
+    const personNodes: TreeNode[] = []
+    if (ids.length === 2) {
+      const couple = couples.get(memberToCouple.get(ids[0])!)!
+      const nodeA = addNode(byId.get(couple.a.id)!, center - ownW / 2, y)
+      const nodeB = addNode(byId.get(couple.b.id)!, center - ownW / 2 + PITCH_X, y)
+      personNodes.push(nodeA, nodeB)
       segments.push({
-        kind: 'vertical',
-        x1: group.anchorX,
-        y1: depth + 0.5,
-        x2: group.anchorX,
-        y2: barY,
+        kind: 'couple',
+        x1: nodeA.x + CARD_W,
+        y1: y + COUPLE_Y,
+        x2: nodeB.x,
+        y2: y + COUPLE_Y,
       })
-      // Corde supplémentaire vers le second référent (« relié aux deux »)
-      for (const childNode of childNodes) {
-        const secondRef = childNode.member.parent2_id
-        if (secondRef && group.parentIds.includes(secondRef)) {
-          const refNode = nodeById.get(secondRef)
+    } else {
+      personNodes.push(addNode(byId.get(ids[0])!, center - CARD_W / 2, y))
+    }
+
+    // 5. Corde : barre au-dessus de la fratrie. Émise dès que les centres des
+    //    référents et des enfants ne sont pas tous confondus (plusieurs
+    //    enfants, un seul enfant sous un couple, parent décalé…). Si tout est
+    //    aligné, les verticales se touchent directement.
+    if (subtrees.length > 0) {
+      const barY = y + PITCH_Y - BAR_GAP
+      const barXs = [
+        ...personNodes.map((pn) => pn.x + CARD_W / 2),
+        ...subtrees.map((st) => st.node.x + CARD_W / 2),
+      ]
+      const barX1 = Math.min(...barXs)
+      const barX2 = Math.max(...barXs)
+      if (barX2 - barX1 > 0.5) {
+        segments.push({ kind: 'horizontal', x1: barX1, y1: barY, x2: barX2, y2: barY })
+      }
+      for (const pn of personNodes) {
+        segments.push({
+          kind: 'vertical',
+          x1: pn.x + CARD_W / 2,
+          y1: y + CARD_H,
+          x2: pn.x + CARD_W / 2,
+          y2: barY,
+        })
+      }
+      // Corde supplémentaire vers un second référent hors du groupe (« relié aux deux »)
+      for (const st of subtrees) {
+        const p2 = st.node.member.parent2_id
+        if (p2 && !ids.includes(p2)) {
+          const refNode = nodeById.get(p2)
           if (refNode) {
             segments.push({
               kind: 'vertical',
-              x1: refNode.x + 0.5,
-              y1: depth + 0.5,
-              x2: refNode.x + 0.5,
+              x1: refNode.x + CARD_W / 2,
+              y1: refNode.y + CARD_H,
+              x2: refNode.x + CARD_W / 2,
               y2: barY,
             })
           }
         }
       }
-      // Chaque enfant monte à la barre
-      for (const childNode of childNodes) {
+      // Descente de la barre vers chaque enfant
+      for (const st of subtrees) {
         segments.push({
           kind: 'vertical',
-          x1: childNode.x + 0.5,
+          x1: st.node.x + CARD_W / 2,
           y1: barY,
-          x2: childNode.x + 0.5,
-          y2: childY,
-        })
-      }
-
-      // Conjoint d'un enfant : placé à côté, même rangée
-      for (const childNode of childNodes) {
-        const coupleId = memberToCouple.get(childNode.member.id)
-        if (!coupleId) continue
-        const couple = couples.get(coupleId)!
-        const partner = couple.a.id === childNode.member.id ? couple.b : couple.a
-        if (visited.has(partner.id)) continue
-        const partnerNode = addNode(partner, childNode.x + 1, childY)
-        nextRow.push(partner)
-        segments.push({
-          kind: 'couple',
-          x1: childNode.x + 0.5,
-          y1: childY,
-          x2: partnerNode.x - 0.5,
-          y2: childY,
+          x2: st.node.x + CARD_W / 2,
+          y2: st.node.y,
         })
       }
     }
 
-    currentRow = nextRow
-    depth += 1
+    return width
   }
 
-  // ---------- Membres non atteints (liens cassés, cycles) : rangée du haut ----------
-  const orphans = members.filter((m) => !visited.has(m.id))
+  // ---------- Racines : aînés (sans lien parent), rangée 0 ----------
+  function hasParentLink(m: FamilyMember): boolean {
+    return m.parent_id != null && byId.has(m.parent_id) && effectiveLinkKind(m) === 'parent'
+  }
+
+  const roots = members.filter((m) => !hasParentLink(m))
+  roots.sort((a, b) => a.first_name.localeCompare(b.first_name, 'fr'))
+
+  let cursor = 0
+  for (const root of roots) {
+    if (reserved.has(root.id)) continue
+    cursor += placeGroup(groupIdsOf(root), 0, cursor) + GAP_X
+  }
+
+  // ---------- Membres non atteints (liens cassés, cycles) : rangée du bas ----------
+  const orphans = members.filter((m) => !reserved.has(m.id))
   if (orphans.length > 0) {
-    const orphanY = depth
-    orphans
-      .sort((a, b) => a.first_name.localeCompare(b.first_name, 'fr'))
-      .forEach((m, i) => addNode(m, i, orphanY))
+    const baseY =
+      nodes.length > 0 ? Math.max(...nodes.map((n) => n.y)) + PITCH_Y : TOP_PAD
+    let ox = 0
+    for (const m of orphans.sort((a, b) => a.first_name.localeCompare(b.first_name, 'fr'))) {
+      addNode(m, ox, baseY)
+      ox += PITCH_X
+    }
   }
 
   // ---------- Centrage horizontal ----------
-  const columns = nextColumn
-  const rows = nodes.reduce((max, n) => Math.max(max, n.y), 0) + 1
-  const minX = nodes.reduce((min, n) => Math.min(min, n.x), 0)
-  const maxX = nodes.reduce((max, n) => Math.max(max, n.x), 0)
-  // Centre l'arbre : décalage pour que le milieu tombe sur la colonne centrale
-  const offsetX = -(minX + maxX) / 2
+  const minLeft = Math.min(...nodes.map((n) => n.x))
+  const maxRight = Math.max(...nodes.map((n) => n.x + CARD_W))
+  const shift = SIDE_PAD - minLeft
+  for (const n of nodes) n.x += shift
+  for (const s of segments) {
+    s.x1 += shift
+    s.x2 += shift
+  }
+  const width = maxRight - minLeft + 2 * SIDE_PAD
+  const maxBottom = Math.max(...nodes.map((n) => n.y + CARD_H + PLUS_H))
+  const height = Math.max(maxBottom + BOTTOM_PAD, TOP_PAD + CARD_H + PLUS_H + BOTTOM_PAD)
 
-  return { nodes, segments, columns, rows, offsetX }
+  return { nodes, segments, width, height }
 }

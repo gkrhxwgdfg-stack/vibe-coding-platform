@@ -276,7 +276,7 @@ export function FamilyMemberModal({
             />
             {parentId && (
               <p className="text-sm text-encre-soft">
-                Le lien indique la branche : au-dessus du référent (l'arbre monte) ou à côté (union).
+                Le lien indique la branche : en dessous du référent (l'arbre descend) ou à côté (union).
               </p>
             )}
           </div>
