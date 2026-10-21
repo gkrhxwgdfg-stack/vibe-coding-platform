@@ -4,7 +4,7 @@
 --
 -- Permet à la famille de faire vivre les recettes : commenter,
 -- ajouter des photos de leurs réalisations, et de préciser le
--- lien familial de chaque membre (maman, papi, cousine…).
+-- lien familial de chaque membre (maman, papi, cousine...).
 -- ============================================================
 
 -- ---------- recipe_comments : le fil de vie d'une recette ----------
@@ -13,11 +13,11 @@ create table if not exists public.recipe_comments (
   id uuid primary key default gen_random_uuid(),
   recipe_id uuid not null references public.recipes (id) on delete cascade,
   author_id uuid not null references public.profiles (id) on delete cascade,
-  /** Texte du commentaire (peut \u00eatre vide si une photo est jointe) */
+  -- Texte du commentaire (peut être null si une photo est jointe)
   body text check (body is null or char_length(body) between 1 and 2000),
-  /** Chemin dans le bucket storage (dossier = family_id), null si texte seul */
+  -- Chemin dans le bucket storage (dossier = family_id), null si texte seul
   photo_url text,
-  /** Un commentaire, c'est un mot, une photo, ou les deux */
+  -- Un commentaire, c’est un mot, une photo, ou les deux
   constraint recipe_comments_has_content
     check (body is not null or photo_url is not null),
   created_at timestamptz not null default now()
@@ -68,7 +68,7 @@ create policy "recipe_comments_delete_author"
   using (auth.uid() = author_id);
 
 -- ---------- profiles.family_role : le lien familial ----------
--- Ex : « maman », « papi », « cousine Léa », « belle-sœur ».
+-- Ex : "maman", "papi", "cousine Lea", "belle-soeur".
 -- Champ libre, renseigné par le membre lui-même.
 
 alter table public.profiles
