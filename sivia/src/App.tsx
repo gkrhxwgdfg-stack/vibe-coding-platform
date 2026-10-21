@@ -15,6 +15,7 @@ const HomePage = lazy(() => import('@/pages/HomePage').then((m) => ({ default: m
 const RecipesPage = lazy(() => import('@/pages/RecipesPage').then((m) => ({ default: m.RecipesPage })))
 const RecipeDetailPage = lazy(() => import('@/pages/RecipeDetailPage').then((m) => ({ default: m.RecipeDetailPage })))
 const RecipeFormPage = lazy(() => import('@/pages/RecipeFormPage').then((m) => ({ default: m.RecipeFormPage })))
+const CookingPage = lazy(() => import('@/pages/CookingPage').then((m) => ({ default: m.CookingPage })))
 const FavoritesPage = lazy(() => import('@/pages/FavoritesPage').then((m) => ({ default: m.FavoritesPage })))
 const FamilyPage = lazy(() => import('@/pages/FamilyPage').then((m) => ({ default: m.FamilyPage })))
 const ProfilePage = lazy(() => import('@/pages/ProfilePage').then((m) => ({ default: m.ProfilePage })))
@@ -40,6 +41,8 @@ export function App() {
         {/* Zone authentifiée, avec coque maison */}
         <Route element={<RequireAuth />}>
           <Route path="/bienvenue" element={<OnboardingPage />} />
+          {/* Mode cuisson : plein écran, hors de la coque de navigation */}
+          <Route path="/recettes/:id/cuisson" element={<CookingPage />} />
           <Route element={<AppLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/recettes" element={<RecipesPage />} />

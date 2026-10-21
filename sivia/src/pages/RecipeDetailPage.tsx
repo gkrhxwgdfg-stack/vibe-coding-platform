@@ -7,6 +7,7 @@ import {
   Lock,
   Minus,
   Pencil,
+  Play,
   Plus,
   Trash2,
   Users,
@@ -167,6 +168,14 @@ export function RecipeDetailPage() {
 
           {/* Actions */}
           <div className="flex flex-wrap gap-3 mt-5">
+            {/* Mode cuisson : diaporama plein écran, une étape à la fois */}
+            {recipe.steps.length > 0 && (
+              <Link to={'/recettes/' + recipe.id + '/cuisson'}>
+                <Button variant="primary">
+                  <Play size={18} aria-hidden="true" /> Lancer la recette
+                </Button>
+              </Link>
+            )}
             <Button
               variant={recipe.is_favorite ? 'primary' : 'outline'}
               onClick={handleFavorite}
@@ -297,7 +306,6 @@ export function RecipeDetailPage() {
       {/* Fil de vie : commentaires et photos de la famille */}
       <CommentThread recipeId={recipe.id} familyId={recipe.family_id} />
 
-      {/* v2 : mode cuisson (minuteur), déclinaisons, export PDF — volontairement non implémenté */}
       <p className="text-center text-sm text-encre-soft mt-2">
         <Link to="/recettes/nouvelle" className="text-terra font-bold hover:underline">
           Écrire une autre recette de la famille
