@@ -285,6 +285,7 @@ export interface Database {
           photo_url: string | null
           generation_id: string | null
           parent_id: string | null
+          parent2_id: string | null
           link_kind: 'parent' | 'partner' | null
           relation_label: string | null
           linked_profile_id: string | null
@@ -300,6 +301,7 @@ export interface Database {
           photo_url?: string | null
           generation_id?: string | null
           parent_id?: string | null
+          parent2_id?: string | null
           link_kind?: 'parent' | 'partner' | null
           relation_label?: string | null
           linked_profile_id?: string | null
@@ -315,6 +317,7 @@ export interface Database {
           photo_url?: string | null
           generation_id?: string | null
           parent_id?: string | null
+          parent2_id?: string | null
           link_kind?: 'parent' | 'partner' | null
           relation_label?: string | null
           linked_profile_id?: string | null
@@ -339,6 +342,13 @@ export interface Database {
           {
             foreignKeyName: 'family_members_parent_id_fkey'
             columns: ['parent_id']
+            isOneToOne: false
+            referencedRelation: 'family_members'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'family_members_parent2_id_fkey'
+            columns: ['parent2_id']
             isOneToOne: false
             referencedRelation: 'family_members'
             referencedColumns: ['id']

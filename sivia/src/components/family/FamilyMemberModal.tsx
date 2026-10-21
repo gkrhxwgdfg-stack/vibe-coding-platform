@@ -13,17 +13,19 @@ interface FamilyMemberModalProps {
   /** Membre en cours d'édition (null = création) */
   member?: FamilyMember | null
   generations: FamilyGeneration[]
-  /** Tous les membres de l'arbre (pour choisir le référent en édition) */
+  /** Tous les membres de l'arbre (pour choisir le(s) référent(s)) */
   treeMembers: FamilyMember[]
-  /** Pré-remplissage à la création via un « + » : référent et nature du lien */
+  /** Pré-remplissage à la création via un « + » : premier référent */
   prefillParentId?: string | null
-  prefillLinkKind?: 'parent' | 'partner' | null
+  /** Pré-remplissage : second référent (« relié aux deux ») */
+  prefillParent2Id?: string | null
   onCreate: (values: {
     first_name: string
     last_name: string
     family_role: string
     generation_id: string | null
     parent_id: string | null
+    parent2_id: string | null
     relation_label: string | null
     linked_profile_id: string | null
     photoFile: File | null
@@ -36,6 +38,7 @@ interface FamilyMemberModalProps {
       family_role: string
       generation_id: string | null
       parent_id: string | null
+      parent2_id: string | null
       relation_label: string | null
       linked_profile_id: string | null
       photoFile: File | null
@@ -45,12 +48,11 @@ interface FamilyMemberModalProps {
 }
 
 /**
- * Modal d'ajout / édition d'un membre de l'arbre.
+ * Modal d'ajout / édition d'un membre de l'arbre — version simplifiée.
  *
- * Le lien avec le référent est un **champ libre** (« fils de », « marié à »,
- * « recueilli par »…) : l'utilisateur écrit ce qu'il veut, aucune liste
- * déroulante. À la création via un « + », le référent et la nature du lien
- * (enfant / conjoint) sont pré-remplis selon l'emplacement du « + » cliqué.
+ * Un seul bloc « Relié à … » : une personne, ou deux (« et aussi »).
+ * Le lien s'écrit librement. À la création via un « + », le référent est
+ * pré-rempli selon l'emplacement du « + » cliqué.
  */
 export function FamilyMemberModal({
   open,
@@ -59,7 +61,7 @@ export function FamilyMemberModal({
   generations,
   treeMembers,
   prefillParentId = null,
-  prefillLinkKind = null,
+  prefillParent2Id = null,
   onCreate,
   onUpdate,
 }: FamilyMemberModalProps) {
@@ -71,7 +73,7 @@ export function FamilyMemberModal({
   const [familyRole, setFamilyRole] = useState('')
   const [generationId, setGenerationId] = useState('')
   const [parentId, setParentId] = useState('')
-  /** Lien libre avec le référent — l'utilisateur écrit ce qu'il veut */
+  const [parent2Id, setParent2Id] = useState('')
   const [relationLabel, setRelationLabel] = useState('')
   const [linkedProfileId, setLinkedProfileId] = useState('')
   const [photoFile, setPhotoFile] = useState<File | null>(null)
@@ -80,8 +82,6 @@ export function FamilyMemberModal({
   const [sending, setSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Pré-remplit le formulaire à l'ouverture (édition = valeurs du membre,
-  // création via « + » = référent pré-rempli)
   useEffect(() => {
     if (!open) return
     setFirstName(member?.first_name ?? '')
@@ -89,17 +89,14 @@ export function FamilyMemberModal({
     setFamilyRole(member?.family_role ?? '')
     setGenerationId(member?.generation_id ?? '')
     setParentId(member?.parent_id ?? prefillParentId ?? '')
-    // Champ libre : en édition on garde le libellé tel quel ; à la création
-    // via « + », on propose un libellé par défaut selon la branche
-    setRelationLabel(
-      member?.relation_label ?? (prefillLinkKind === 'partner' ? 'conjoint·e de' : prefillLinkKind === 'parent' ? 'fils / fille de' : ''),
-    )
+    setParent2Id(member?.parent2_id ?? prefillParent2Id ?? '')
+    setRelationLabel(member?.relation_label ?? '')
     setLinkedProfileId(member?.linked_profile_id ?? '')
     setPhotoFile(null)
     setPhotoPreview(null)
     setRemovePhoto(false)
     setError(null)
-  }, [open, member, prefillParentId, prefillLinkKind])
+  }, [open, member, prefillParentId, prefillParent2Id])
 
   useEffect(() => {
     if (!open) return
@@ -115,9 +112,9 @@ export function FamilyMemberModal({
   const existingPhoto = member ? familyPhotoUrl(member.photo_url) : null
   const showPreview = photoPreview ?? (removePhoto ? null : existingPhoto)
 
-  // En édition, référents possibles = tous les autres membres ; à la création
-  // via « + », le référent est fixé (pré-rempli) mais on peut le changer.
+  // Référents possibles : tous les autres membres
   const possibleParents = treeMembers.filter((m) => m.id !== member?.id)
+  const possibleParents2 = possibleParents.filter((m) => m.id !== parentId)
   const prefillParent = prefillParentId
     ? treeMembers.find((m) => m.id === prefillParentId)
     : null
@@ -145,14 +142,13 @@ export function FamilyMemberModal({
       family_role: familyRole,
       generation_id: generationId || null,
       parent_id: parentId || null,
+      parent2_id: parent2Id || null,
       relation_label: relationLabel.trim() || null,
       linked_profile_id: linkedProfileId || null,
       photoFile,
       removePhoto,
     }
-    const result = isEditing
-      ? await onUpdate(member.id, values)
-      : await onCreate(values)
+    const result = isEditing ? await onUpdate(member.id, values) : await onCreate(values)
     setSending(false)
     if (result.error) {
       setError(result.error)
@@ -189,11 +185,10 @@ export function FamilyMemberModal({
           </button>
         </div>
 
-        {/* Accroche pré-remplie via le « + » : on montre où la personne ira dans l'arbre */}
+        {/* Accroche pré-remplie via le « + » */}
         {!isEditing && prefillParent && (
           <p className="text-sm bg-sauge/15 border border-sauge/40 rounded-xl px-4 py-3 mb-4">
-            Accrochée à <strong>{prefillParent.first_name}</strong>
-            {prefillLinkKind === 'partner' ? ' — branche horizontale (conjoint·e)' : ' — branche descendante (enfant)'}
+            Accrochée à <strong>{prefillParent.first_name}</strong> dans l'arbre.
           </p>
         )}
         {!isEditing && !prefillParent && (
@@ -222,18 +217,18 @@ export function FamilyMemberModal({
           <TextInput
             label="Surnom dans la famille (facultatif)"
             htmlFor="member-role"
-            hint="« mamie », « papi », « tata »… — affiché sous la photo"
+            hint="« mamie », « papi »… — affiché sous la photo"
             value={familyRole}
             onChange={(e) => setFamilyRole(e.target.value)}
             placeholder="Mamie"
           />
 
-          {/* Accrochage dans l'arbre : référent + lien LIBRE */}
+          {/* ---------- Relié à … (une ou deux personnes) ---------- */}
           <div className="rounded-2xl border-2 border-dashed border-terra/40 bg-creme p-4 space-y-4">
-            <p className="font-bold text-encre">Où accrocher cette personne dans l'arbre ?</p>
+            <p className="font-bold text-encre">Relié à …</p>
             <div>
               <label htmlFor="member-parent" className="block font-bold text-encre mb-1.5">
-                Relié(e) à (facultatif)
+                Une personne (facultatif)
               </label>
               <select
                 id="member-parent"
@@ -241,7 +236,7 @@ export function FamilyMemberModal({
                 onChange={(e) => setParentId(e.target.value)}
                 className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-4 py-2.5 focus:border-terra focus:outline-none"
               >
-                <option value="">— Personne (racine de l'arbre) —</option>
+                <option value="">— Personne (base de l'arbre) —</option>
                 {possibleParents.map((m) => (
                   <option key={m.id} value={m.id}>
                     {m.first_name}
@@ -250,10 +245,30 @@ export function FamilyMemberModal({
                 ))}
               </select>
             </div>
+            <div>
+              <label htmlFor="member-parent2" className="block font-bold text-encre mb-1.5">
+                Et aussi (facultatif)
+              </label>
+              <select
+                id="member-parent2"
+                value={parent2Id}
+                onChange={(e) => setParent2Id(e.target.value)}
+                disabled={!parentId}
+                className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-4 py-2.5 focus:border-terra focus:outline-none disabled:opacity-50"
+              >
+                <option value="">— Une seule personne —</option>
+                {possibleParents2.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.first_name}
+                    {m.last_name ? ` ${m.last_name}` : ''}
+                  </option>
+                ))}
+              </select>
+            </div>
             <TextInput
-              label="Lien avec cette personne"
+              label="Lien (écrit librement)"
               htmlFor="member-relation"
-              hint="Champ libre : « fils de », « fille de », « marié à », « recueilli par »… — écris ce que tu veux"
+              hint="« fils de », « fille de », « marié à », « recueilli par »… — écris ce que tu veux"
               value={relationLabel}
               onChange={(e) => setRelationLabel(e.target.value)}
               placeholder="fils de"
@@ -261,8 +276,7 @@ export function FamilyMemberModal({
             />
             {parentId && (
               <p className="text-sm text-encre-soft">
-                Le lien indique la branche : en dessous du référent (descendance) ou à côté (union).
-                L'arbre se construit à partir de ces liens.
+                Le lien indique la branche : au-dessus du référent (l'arbre monte) ou à côté (union).
               </p>
             )}
           </div>

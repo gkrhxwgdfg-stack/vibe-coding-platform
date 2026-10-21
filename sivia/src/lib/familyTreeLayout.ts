@@ -3,25 +3,28 @@ import type { FamilyLinkKind, FamilyMember } from './types'
 /**
  * Moteur de disposition de l'arbre généalogique — logique pure, sans vue.
  *
- * L'arbre se construit à partir des liens entre personnes :
- * - lien « parent » (fils/fille de…) : branche descendante — l'enfant se
- *   place sous son parent, dans la fratrie
+ * ORIENTATION : l'arbre MONTE de génération en génération. Les aînés
+ * (la « base ») sont en BAS (y = 0), les générations suivantes au-dessus
+ * (y croissant vers le haut). Visuellement, y est ensuite inversé par le
+ * composant (les aînés apparaissent en bas de l'écran).
+ *
+ * RÈGLES :
+ * - lien « parent » (fils/fille de…) : branche montante — l'enfant se
+ *   place au-dessus de son référent (ou de ses deux référents).
  * - lien « partner » (conjoint·e de…) : branche horizontale — le conjoint
- *   se place à côté de son partenaire, relié par un trait horizontal
+ *   se place à côté de son partenaire, même rangée.
+ * - « relié aux deux » (parent_id + parent2_id) : l'enfant est centré au-dessus
+ *   du couple, relié aux deux par la corde.
  *
- * Deux personnes reliées par un lien de couple forment un « couple » ;
- * les enfants d'un parent (ou d'un couple) sont regroupés en fratrie,
- * suspendus à une barre horizontale sous leur parent.
- *
- * Le résultat est une liste de nœuds positionnés en coordonnées relatives
- * (x = colonne, y = rangée), plus les segments de corde à dessiner.
+ * COMPACITÉ : les colonnes se remplissent au fur et à mesure (pas de trous),
+ * l'arbre est centré horizontalement.
  */
 
 export interface TreeNode {
   member: FamilyMember
-  /** Colonne (0 = à gauche) */
+  /** Colonne (0 = à gauche), en demi-unités : le centre d'une carte = x + 0.5 */
   x: number
-  /** Rangée (0 = les aînés, en haut) */
+  /** Rangée logique : 0 = aînés (base, en bas), croissant vers le haut */
   y: number
   /** Identifiant du couple si le membre en fait partie */
   coupleId: string | null
@@ -29,7 +32,6 @@ export interface TreeNode {
 
 export interface TreeSegment {
   kind: 'vertical' | 'horizontal' | 'couple'
-  /** Coordonnées en demi-unités : le centre d'une carte (colonne x) = x + 0.5 */
   x1: number
   y1: number
   x2: number
@@ -39,9 +41,10 @@ export interface TreeSegment {
 export interface FamilyTreeLayout {
   nodes: TreeNode[]
   segments: TreeSegment[]
-  /** Nombre de colonnes et de rangées (pour le cadrage) */
   columns: number
   rows: number
+  /** Décalage appliqué pour centrer l'arbre (à ajouter à chaque x) */
+  offsetX: number
 }
 
 /** Nature effective d'un lien : partner si link_kind = partner, sinon parent */
@@ -57,11 +60,11 @@ interface Couple {
 
 /** Construit la disposition de l'arbre à partir des membres et de leurs liens */
 export function buildFamilyTreeLayout(members: FamilyMember[]): FamilyTreeLayout {
-  if (members.length === 0) return { nodes: [], segments: [], columns: 0, rows: 0 }
+  if (members.length === 0) return { nodes: [], segments: [], columns: 0, rows: 0, offsetX: 0 }
 
   const byId = new Map(members.map((m) => [m.id, m]))
 
-  // ---------- Couples : deux personnes reliées par un lien « partner » ----------
+  // ---------- Couples ----------
   const couples = new Map<string, Couple>()
   const memberToCouple = new Map<string, string>()
   for (const member of members) {
@@ -76,6 +79,8 @@ export function buildFamilyTreeLayout(members: FamilyMember[]): FamilyTreeLayout
   }
 
   // ---------- Enfants : regroupés par référent (lien de type parent) ----------
+  // Un enfant peut avoir deux référents (parent_id + parent2_id) : on le
+  // rattache au premier, et on mémorise le second pour la corde.
   const childrenOf = new Map<string, FamilyMember[]>()
   for (const member of members) {
     if (effectiveLinkKind(member) !== 'parent') continue
@@ -109,19 +114,18 @@ export function buildFamilyTreeLayout(members: FamilyMember[]): FamilyTreeLayout
     return node
   }
 
-  // Racines : membres sans lien parent vers un membre existant
-  const roots = members
-    .filter(
-      (m) =>
-        !(
-          m.parent_id != null &&
-          byId.has(m.parent_id) &&
-          effectiveLinkKind(m) === 'parent'
-        ),
+  /** Vrai si le membre a un lien parent vers un membre existant */
+  function hasParentLink(m: FamilyMember): boolean {
+    return (
+      m.parent_id != null && byId.has(m.parent_id) && effectiveLinkKind(m) === 'parent'
     )
-    .sort((a, b) => a.first_name.localeCompare(b.first_name, 'fr'))
+  }
 
-  // Place les racines rangée 0 (couples côte à côte, célibataires seuls)
+  // Racines = aînés (sans lien parent) : la BASE, rangée 0 (en bas)
+  const roots = members.filter((m) => !hasParentLink(m))
+  roots.sort((a, b) => a.first_name.localeCompare(b.first_name, 'fr'))
+
+  // Place les aînés : couples côte à côte, célibataires seuls
   const placedRootCouples = new Set<string>()
   for (const root of roots) {
     const coupleId = memberToCouple.get(root.id)
@@ -137,15 +141,15 @@ export function buildFamilyTreeLayout(members: FamilyMember[]): FamilyTreeLayout
     }
   }
 
-  // Descendance : rangée par rangée (BFS), profondeur max 20 (garde-fou cycles)
+  // Monte génération par génération : les enfants au-dessus (y+1) de leurs aînés
   let currentRow = roots.filter((r) => visited.has(r.id))
   let depth = 0
   while (currentRow.length > 0 && depth < 20) {
     const childY = depth + 1
-    const barY = childY - 0.5
+    const barY = childY - 0.5 // la barre flotte entre les deux rangées
     const nextRow: FamilyMember[] = []
 
-    // Groupe les membres de la rangée par parent (ou par couple)
+    // Groupes de la rangée : un couple = un groupe (ses enfants sont communs)
     const groups: { parentIds: string[]; anchorX: number }[] = []
     const seenGroups = new Set<string>()
     for (const m of currentRow) {
@@ -164,7 +168,7 @@ export function buildFamilyTreeLayout(members: FamilyMember[]): FamilyTreeLayout
     }
 
     for (const group of groups) {
-      // Enfants des deux membres du couple (dédoublonnés, triés par prénom)
+      // Enfants des référents du groupe (un enfant « relié aux deux » apparaît une fois)
       const seenChild = new Set<string>()
       const children: FamilyMember[] = []
       for (const pid of group.parentIds) {
@@ -177,7 +181,7 @@ export function buildFamilyTreeLayout(members: FamilyMember[]): FamilyTreeLayout
       if (children.length === 0) continue
       children.sort((a, b) => a.first_name.localeCompare(b.first_name, 'fr'))
 
-      // Place la fratrie à partir de la prochaine colonne libre
+      // Place la fratrie à partir de la prochaine colonne libre (compact, sans trou)
       const startX = nextColumn
       const childNodes: TreeNode[] = []
       children.forEach((child, i) => {
@@ -185,10 +189,11 @@ export function buildFamilyTreeLayout(members: FamilyMember[]): FamilyTreeLayout
         nextRow.push(child)
       })
 
-      // Barre horizontale au-dessus de la fratrie + descente depuis le parent
+      // Barre horizontale au-dessus de la fratrie + montée depuis le(s) parent(s)
       const firstX = childNodes[0].x + 0.5
       const lastX = childNodes[childNodes.length - 1].x + 0.5
       segments.push({ kind: 'horizontal', x1: firstX, y1: barY, x2: lastX, y2: barY })
+      // Corde depuis le référent (ou le milieu du couple)
       segments.push({
         kind: 'vertical',
         x1: group.anchorX,
@@ -196,6 +201,23 @@ export function buildFamilyTreeLayout(members: FamilyMember[]): FamilyTreeLayout
         x2: group.anchorX,
         y2: barY,
       })
+      // Corde supplémentaire vers le second référent (« relié aux deux »)
+      for (const childNode of childNodes) {
+        const secondRef = childNode.member.parent2_id
+        if (secondRef && group.parentIds.includes(secondRef)) {
+          const refNode = nodeById.get(secondRef)
+          if (refNode) {
+            segments.push({
+              kind: 'vertical',
+              x1: refNode.x + 0.5,
+              y1: depth + 0.5,
+              x2: refNode.x + 0.5,
+              y2: barY,
+            })
+          }
+        }
+      }
+      // Chaque enfant monte à la barre
       for (const childNode of childNodes) {
         segments.push({
           kind: 'vertical',
@@ -206,7 +228,7 @@ export function buildFamilyTreeLayout(members: FamilyMember[]): FamilyTreeLayout
         })
       }
 
-      // Place le conjoint d'un enfant à côté de lui (lien horizontal)
+      // Conjoint d'un enfant : placé à côté, même rangée
       for (const childNode of childNodes) {
         const coupleId = memberToCouple.get(childNode.member.id)
         if (!coupleId) continue
@@ -229,7 +251,7 @@ export function buildFamilyTreeLayout(members: FamilyMember[]): FamilyTreeLayout
     depth += 1
   }
 
-  // ---------- Membres non atteints (liens cassés, cycles) : rangée de secours ----------
+  // ---------- Membres non atteints (liens cassés, cycles) : rangée du haut ----------
   const orphans = members.filter((m) => !visited.has(m.id))
   if (orphans.length > 0) {
     const orphanY = depth
@@ -238,8 +260,13 @@ export function buildFamilyTreeLayout(members: FamilyMember[]): FamilyTreeLayout
       .forEach((m, i) => addNode(m, i, orphanY))
   }
 
+  // ---------- Centrage horizontal ----------
   const columns = nextColumn
   const rows = nodes.reduce((max, n) => Math.max(max, n.y), 0) + 1
+  const minX = nodes.reduce((min, n) => Math.min(min, n.x), 0)
+  const maxX = nodes.reduce((max, n) => Math.max(max, n.x), 0)
+  // Centre l'arbre : décalage pour que le milieu tombe sur la colonne centrale
+  const offsetX = -(minX + maxX) / 2
 
-  return { nodes, segments, columns, rows }
+  return { nodes, segments, columns, rows, offsetX }
 }

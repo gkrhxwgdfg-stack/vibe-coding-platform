@@ -11,20 +11,18 @@ interface FamilyTreeProps {
   generations: FamilyGeneration[]
   /** ids des profils connectés de la famille (badge « membre connecté ») */
   connectedProfileIds: Set<string>
-  onEditMember?: (member: FamilyMember) => void
   onRemoveMember?: (member: FamilyMember) => void
-  /** Création d'un membre (déléguée au modal interne) */
   onCreateMember: (values: {
     first_name: string
     last_name: string
     family_role: string
     generation_id: string | null
     parent_id: string | null
+    parent2_id: string | null
     relation_label: string | null
     linked_profile_id: string | null
     photoFile: File | null
   }) => Promise<{ error: string | null }>
-  /** Édition d'un membre (déléguée au modal interne) */
   onUpdateMember: (
     memberId: string,
     values: {
@@ -33,6 +31,7 @@ interface FamilyTreeProps {
       family_role: string
       generation_id: string | null
       parent_id: string | null
+      parent2_id: string | null
       relation_label: string | null
       linked_profile_id: string | null
       photoFile: File | null
@@ -41,96 +40,70 @@ interface FamilyTreeProps {
   ) => Promise<{ error: string | null }>
 }
 
-/** Position d'un « + » d'ajout de branche, en coordonnées relatives de l'arbre */
-type AddSlot =
-  | { kind: 'root' } // nouvelle racine (tout en haut)
-  | { kind: 'child'; parent: FamilyMember } // enfant du membre (branche descendante)
-  | { kind: 'partner'; partner: FamilyMember } // conjoint du membre (branche horizontale)
-
 /**
- * Vrai arbre généalogique, piloté par des « + » :
+ * Arbre généalogique piloté par un « + » unique par personne.
  *
- * - Une base est créée (premier membre = racine, tout en haut).
- * - Chaque nœud porte un « + » contextuel à sa sortie : selon l'endroit où
- *   on clique, le nouveau membre s'accroche comme **enfant** (branche
- *   descendante) ou comme **conjoint** (branche horizontale).
- * - Pas de menu déroulant de liens : un champ libre « lien avec cette
- *   personne » (l'utilisateur écrit ce qu'il veut : « fils de », « marié à »,
- *   « recueilli par »…).
- * - La corde est dessinée en SVG avec relief (ombre portée) ; les couples
- *   sont reliés par un trait avec un point carmine.
- * - Défilement horizontal + vertical sur mobile.
+ * - L'arbre MONTE de génération en génération : les aînés (la base) sont
+ *   en bas, les jeunes en haut. On le lit comme on remonte le temps.
+ * - Chaque personne porte UN « + » à sa sortie : cliquer accroche une
+ *   nouvelle personne reliée à elle (enfant = branche montante, conjoint =
+ *   branche horizontale — déduit du lien écrit librement).
+ * - Un « + » en bas de l'arbre permet d'ajouter une base en dessous
+ *   (« descendre ») si la première personne ajoutée n'est pas le début.
+ * - L'arbre est centré horizontalement ; les branches se décalent au fur
+ *   et à mesure, sans trous.
  */
 export function FamilyTree({
   members,
   generations,
   connectedProfileIds,
-  onEditMember,
   onRemoveMember,
   onCreateMember,
   onUpdateMember,
 }: FamilyTreeProps) {
   const layout = useMemo(() => buildFamilyTreeLayout(members), [members])
-  const { nodes, segments, columns, rows } = layout
+  const { nodes, segments, rows, offsetX } = layout
 
-  // Modal interne : création via un « + » (pré-rempli) ou édition (crayon)
   const [modalOpen, setModalOpen] = useState(false)
   const [editingMember, setEditingMember] = useState<FamilyMember | null>(null)
-  const [prefill, setPrefill] = useState<{
-    parent_id: string | null
-    link_kind: 'parent' | 'partner' | null
-  } | null>(null)
+  const [prefillParentId, setPrefillParentId] = useState<string | null>(null)
+  const [prefillParent2Id, setPrefillParent2Id] = useState<string | null>(null)
 
   // Géométrie
   const CARD_W = 176
   const CARD_H = 240
   const PITCH_X = CARD_W + 36
   const PITCH_Y = 280
+  const columns = Math.max(...nodes.map((n) => n.x), 0) + 1
   const width = Math.max(columns * PITCH_X + CARD_W, 340)
-  const height = Math.max(rows * PITCH_Y + CARD_H, 340)
-  const centerX = (x: number) => x * PITCH_X + CARD_W / 2
-  const topY = (y: number) => y * PITCH_Y
+  const height = Math.max(rows * PITCH_Y + CARD_H + 80, 420) // +80 pour le « + » du bas
+
+  // y logique : 0 = aînés (base). Affichage inversé : les aînés en bas.
+  const centerX = (x: number) => (x + offsetX) * PITCH_X + CARD_W / 2 + PITCH_X / 2
+  const topY = (y: number) => (rows - 1 - y) * PITCH_Y
 
   function tiltFor(member: FamilyMember, index: number): number {
     const seed = member.first_name.length + index
     return (seed % 2 === 0 ? 1 : -1) * (1 + (seed % 3) * 0.75)
   }
 
-  function openAdd(slot: AddSlot) {
+  function openAdd(parentId: string | null, parent2Id: string | null = null) {
     setEditingMember(null)
-    if (slot.kind === 'root') {
-      setPrefill({ parent_id: null, link_kind: null })
-    } else if (slot.kind === 'child') {
-      setPrefill({ parent_id: slot.parent.id, link_kind: 'parent' })
-    } else {
-      setPrefill({ parent_id: slot.partner.id, link_kind: 'partner' })
-    }
+    setPrefillParentId(parentId)
+    setPrefillParent2Id(parent2Id)
     setModalOpen(true)
   }
 
   function openEdit(member: FamilyMember) {
-    setPrefill(null)
-    if (onEditMember) {
-      onEditMember(member)
-    } else {
-      setEditingMember(member)
-      setModalOpen(true)
-    }
+    setPrefillParentId(null)
+    setPrefillParent2Id(null)
+    setEditingMember(member)
+    setModalOpen(true)
   }
 
-  // Le layout sait quels membres ont déjà un conjoint (pour ne proposer
-  // le « + conjoint » que quand la place est libre)
-  const hasPartner = useMemo(() => {
-    const set = new Set<string>()
-    for (const node of nodes) {
-      if (node.coupleId) {
-        // les deux membres du couple sont déjà reliés
-        const coupleMembers = nodes.filter((n) => n.coupleId === node.coupleId)
-        for (const cm of coupleMembers) set.add(cm.member.id)
-      }
-    }
-    return set
-  }, [nodes])
+  // Position du « + » du bas (descendre) : sous la base, centrée
+  const basePlusX = width / 2
+  const basePlusY = (rows - 1) * PITCH_Y + CARD_H + 16
 
   return (
     <div
@@ -153,10 +126,11 @@ export function FamilyTree({
             </filter>
           </defs>
           {segments.map((seg, i) => {
-            const x1 = seg.x1 * PITCH_X + CARD_W / 2
-            const x2 = seg.x2 * PITCH_X + CARD_W / 2
-            const y1 = seg.y1 * PITCH_Y + CARD_H / 2
-            const y2 = seg.y2 * PITCH_Y + CARD_H / 2
+            // Inversion verticale des coordonnées de la corde aussi
+            const x1 = (seg.x1 + offsetX) * PITCH_X + PITCH_X / 2
+            const x2 = (seg.x2 + offsetX) * PITCH_X + PITCH_X / 2
+            const y1 = (rows - 1 - seg.y1) * PITCH_Y + CARD_H / 2
+            const y2 = (rows - 1 - seg.y2) * PITCH_Y + CARD_H / 2
             if (seg.kind === 'couple') {
               const midX = (x1 + x2) / 2
               const midY = (y1 + y2) / 2
@@ -184,71 +158,76 @@ export function FamilyTree({
           })}
         </svg>
 
-        {/* ---------- Nœuds + « + » contextuels ---------- */}
+        {/* ---------- Nœuds + « + » unique ---------- */}
         {nodes.map((node: TreeNode, index: number) => {
           const member = node.member
           const parent = member.parent_id
             ? members.find((m) => m.id === member.parent_id)
             : null
-          const cx = centerX(node.x)
-          const ty = topY(node.y)
-          const canAddPartner = !hasPartner.has(member.id)
+          const parent2 = member.parent2_id
+            ? members.find((m) => m.id === member.parent2_id)
+            : null
           return (
             <div
               key={member.id}
               className="absolute"
-              style={{ left: cx - CARD_W / 2, top: ty, width: CARD_W }}
+              style={{
+                left: centerX(node.x) - CARD_W / 2,
+                top: topY(node.y),
+                width: CARD_W,
+              }}
             >
               <FamilyMemberCard
                 member={member}
                 parent={parent}
+                parent2={parent2}
                 connectedProfileIds={connectedProfileIds}
                 tilt={tiltFor(member, index)}
                 onEdit={() => openEdit(member)}
                 onRemove={onRemoveMember ? () => onRemoveMember(member) : undefined}
               />
 
-              {/* « + » à la sortie du nœud : enfant (en dessous) et conjoint (à droite) */}
-              <div className="flex items-center justify-center gap-2 mt-1">
+              {/* « + » unique à la sortie du nœud : accroche une personne reliée */}
+              <div className="flex items-center justify-center mt-1">
                 <button
                   type="button"
-                  onClick={() => openAdd({ kind: 'child', parent: member })}
-                  aria-label={`Ajouter un enfant de ${member.first_name}`}
-                  title={`Ajouter un enfant de ${member.first_name}`}
+                  onClick={() => openAdd(member.id)}
+                  aria-label={`Ajouter une personne reliée à ${member.first_name}`}
+                  title={`Ajouter une personne reliée à ${member.first_name}`}
                   className={cn(
                     'min-h-11 min-w-11 rounded-full bg-creme border-2 border-terra text-terra',
                     'inline-flex items-center justify-center hover:bg-terra hover:text-creme transition-colors shadow-card',
                   )}
                 >
                   <Plus size={20} strokeWidth={2.5} aria-hidden="true" />
-                  <span className="sr-only">enfant</span>
                 </button>
-                {canAddPartner && (
-                  <button
-                    type="button"
-                    onClick={() => openAdd({ kind: 'partner', partner: member })}
-                    aria-label={`Ajouter le conjoint de ${member.first_name}`}
-                    title={`Ajouter le conjoint de ${member.first_name}`}
-                    className={cn(
-                      'min-h-11 min-w-11 rounded-full bg-creme border-2 border-carmine text-carmine',
-                      'inline-flex items-center justify-center hover:bg-carmine hover:text-creme transition-colors shadow-card',
-                    )}
-                  >
-                    <Plus size={20} strokeWidth={2.5} aria-hidden="true" />
-                    <span className="sr-only">conjoint</span>
-                  </button>
-                )}
               </div>
             </div>
           )
         })}
 
-        {/* « + » racine : créer la base quand l'arbre est vide, ou une nouvelle branche libre */}
+        {/* ---------- « + » du bas : ajouter une base en dessous (descendre) ---------- */}
+        <div className="absolute" style={{ left: basePlusX - 22, top: basePlusY }}>
+          <button
+            type="button"
+            onClick={() => openAdd(null)}
+            aria-label="Ajouter une personne en dessous — nouvelle base de l'arbre"
+            title="Ajouter une base en dessous (l'arbre descend)"
+            className={cn(
+              'min-h-11 min-w-11 rounded-full bg-creme border-2 border-carmine text-carmine',
+              'inline-flex items-center justify-center hover:bg-carmine hover:text-creme transition-colors shadow-card',
+            )}
+          >
+            <Plus size={20} strokeWidth={2.5} aria-hidden="true" />
+          </button>
+        </div>
+
+        {/* Arbre vide : « + » central pour créer la base */}
         {nodes.length === 0 && (
           <div className="absolute inset-0 flex items-center justify-center">
             <button
               type="button"
-              onClick={() => openAdd({ kind: 'root' })}
+              onClick={() => openAdd(null)}
               className="min-h-13 px-6 py-3 rounded-full bg-terra text-creme font-bold inline-flex items-center gap-2 shadow-soft hover:bg-terra-dark"
             >
               <Plus size={22} aria-hidden="true" /> Créer la base de l'arbre
@@ -259,8 +238,8 @@ export function FamilyTree({
 
       {/* Légende */}
       <p className="text-xs text-brun-soft text-center mt-2">
-        « + » terracotta : ajouter un enfant (branche vers le bas) · « + » carmine : ajouter un
-        conjoint (branche horizontale)
+        « + » sous une personne : ajouter quelqu'un relié à elle (l'arbre monte) · « + » carmine
+        en bas : ajouter une base en dessous (l'arbre descend)
       </p>
 
       {/* Modal interne : création via « + » (pré-rempli) ou édition */}
@@ -269,13 +248,14 @@ export function FamilyTree({
         onClose={() => {
           setModalOpen(false)
           setEditingMember(null)
-          setPrefill(null)
+          setPrefillParentId(null)
+          setPrefillParent2Id(null)
         }}
         member={editingMember}
         generations={generations}
         treeMembers={members}
-        prefillParentId={prefill?.parent_id ?? null}
-        prefillLinkKind={prefill?.link_kind ?? null}
+        prefillParentId={prefillParentId}
+        prefillParent2Id={prefillParent2Id}
         onCreate={onCreateMember}
         onUpdate={onUpdateMember}
       />

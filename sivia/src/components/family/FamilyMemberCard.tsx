@@ -5,8 +5,10 @@ import { cn } from '@/lib/utils'
 
 interface FamilyMemberCardProps {
   member: FamilyMember
-  /** Référent pour afficher le lien familial (tel qu'écrit par l'utilisateur) */
+  /** Premier référent pour afficher le lien (tel qu'écrit par l'utilisateur) */
   parent?: FamilyMember | null
+  /** Second référent (« relié aux deux ») */
+  parent2?: FamilyMember | null
   /** ids des profils connectés de la famille (badge « membre connecté ») */
   connectedProfileIds: Set<string>
   /** Rotation du polaroïd, calculée par l'appelant */
@@ -24,6 +26,7 @@ interface FamilyMemberCardProps {
 export function FamilyMemberCard({
   member,
   parent,
+  parent2,
   connectedProfileIds,
   tilt,
   onEdit,
@@ -77,6 +80,7 @@ export function FamilyMemberCard({
           {parent && relationLabel && (
             <p className="text-xs text-brun-soft font-bold mt-0.5">
               {relationLabel} {parent.first_name}
+              {parent2 ? ` et ${parent2.first_name}` : ''}
             </p>
           )}
         </figcaption>

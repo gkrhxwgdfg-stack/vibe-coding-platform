@@ -47,8 +47,10 @@ export interface FamilyMemberFormValues {
   family_role: string
   /** Génération nommée choisie (null = génération 0, non classés) — conservé pour historique */
   generation_id: string | null
-  /** Référent du lien : le parent (branche descendante) ou le conjoint (branche horizontale) */
+  /** Premier référent (« relié à … ») : parent (branche montante) ou conjoint (branche horizontale) */
   parent_id: string | null
+  /** Second référent facultatif (« et aussi » : relié aux deux) */
+  parent2_id: string | null
   /** Lien LIBRE avec le référent : l'utilisateur écrit ce qu'il veut
    *  (« fils de », « marié à », « recueilli par »…) */
   relation_label: string | null
@@ -102,6 +104,7 @@ export async function createFamilyMember(
       family_role: values.family_role.trim() || null,
       generation_id: values.generation_id,
       parent_id: values.parent_id,
+      parent2_id: values.parent2_id,
       link_kind: linkKindFor(values),
       relation_label: values.relation_label,
       linked_profile_id: values.linked_profile_id,
@@ -137,6 +140,7 @@ export async function updateFamilyMember(
     family_role: values.family_role.trim() || null,
     generation_id: values.generation_id,
     parent_id: values.parent_id,
+    parent2_id: values.parent2_id,
     link_kind: linkKindFor(values),
     relation_label: values.relation_label,
     linked_profile_id: values.linked_profile_id,

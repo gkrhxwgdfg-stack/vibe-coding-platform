@@ -131,11 +131,13 @@ export interface FamilyMember {
   photo_url: string | null
   /** Génération nommée (null = génération 0, non classés) — conservé pour historique */
   generation_id: string | null
-  /** Référent du lien : le parent (branche descendante) ou le conjoint (branche horizontale) */
+  /** Premier référent du lien : le parent (branche descendante) ou le conjoint (branche horizontale) */
   parent_id: string | null
-  /** Nature du lien vers le référent : parent (descendance) ou conjoint (couple) */
+  /** Second référent facultatif (« relié aux deux » : ex. enfant de maman ET papa) */
+  parent2_id: string | null
+  /** Nature du lien vers le premier référent : parent (descendance) ou conjoint (couple) */
   link_kind: FamilyLinkKind | null
-  /** Libellé du lien vers le référent : « fille », « conjoint »… */
+  /** Libellé du lien vers le référent, écrit librement : « fils de », « marié à »… */
   relation_label: string | null
   /** Membre de l'arbre lié à un compte Supabase (badge « membre connecté ») */
   linked_profile_id: string | null
