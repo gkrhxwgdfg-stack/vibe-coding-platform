@@ -12,9 +12,9 @@
 
 ## 2. Appliquer le schéma
 
-**⚠️ À faire impérativement avant le premier lancement** : les 5 tables
-(`families`, `profiles`, `invitations`, `recipes`, `favorites`), les policies RLS
-et le bucket `recipe-photos` ne sont **pas encore créés** sur le projet.
+**À faire impérativement avant le premier lancement** : les 6 tables
+(`families`, `profiles`, `invitations`, `recipes`, `favorites`, `recipe_comments`),
+les policies RLS et le bucket `recipe-photos` ne sont **pas encore créés** sur le projet.
 
 **Via le dashboard (sans CLI)** — onglet **SQL Editor**, exécutez **dans l'ordre** :
 
@@ -29,11 +29,15 @@ et le bucket `recipe-photos` ne sont **pas encore créés** sur le projet.
    [`migrations/0005_rls_permissive_insert.sql`](./migrations/0005_rls_permissive_insert.sql) → **Run**
    (**OBLIGATOIRE** — ajoute `to authenticated` sur toutes les policies RLS,
    sans quoi les INSERT échouent avec `new row violates row-level security policy`)
+5. **New query** → collez le **contenu** de
+   [`migrations/0006_comments_and_family_role.sql`](./migrations/0006_comments_and_family_role.sql) → **Run**
+   (ajoute la table `recipe_comments` pour le fil de vie des recettes — commentaires
+   et photos — et la colonne `profiles.family_role` pour le lien dans la famille)
 
-> ⚠️ Erreur fréquente : coller le chemin `sivia/supabase/migrations/...` au lieu
+> Erreur fréquente : coller le chemin `sivia/supabase/migrations/...` au lieu
 > du contenu SQL → `ERROR: 42601: syntax error`. Le SQL Editor attend du **code SQL**.
 
-> ✅ **Vérification** : ouvrez [l'application](https://gkrhxwgdfg-stack.github.io/vibe-coding-platform/diagnostic)
+> **Vérification** : ouvrez [l'application](https://gkrhxwgdfg-stack.github.io/vibe-coding-platform/diagnostic)
 > et allez sur `/diagnostic` — tous les voyants doivent être verts.
 
 **Via la CLI Supabase** (recommandé, nécessite un access token personnel) :
@@ -57,7 +61,7 @@ npx supabase db push
 >   « Confirm email » dans les settings Auth. Les comptes seront alors
 >   immédiatement connectés à l'inscription.
 >
-> ⚠️ Le plan gratuit de Supabase applique une **limite de débit d'envoi
+> Le plan gratuit de Supabase applique une **limite de débit d'envoi
 > d'emails** (rate limit). En cas de `over_email_send_rate_limit`, attendez
 > quelques minutes ou désactivez temporairement la confirmation.
 

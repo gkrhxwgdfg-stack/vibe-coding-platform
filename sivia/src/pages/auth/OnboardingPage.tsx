@@ -20,6 +20,7 @@ export function OnboardingPage() {
 
   const [mode, setMode] = useState<'choix' | 'creer' | 'rejoindre' | 'lien'>('choix')
   const [familyName, setFamilyName] = useState('')
+  const [familyRole, setFamilyRole] = useState('')
   const [inviteCode, setInviteCode] = useState(searchParams.get('token') ?? '')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -53,8 +54,14 @@ export function OnboardingPage() {
       return
     }
 
-    // 2. Rattacher le profil à cette famille
+    // 2. Rattacher le profil à cette famille (avec le lien familial si renseigné)
     const { error: attachError } = await setFamilyId(family.id)
+    if (!attachError && familyRole.trim()) {
+      await supabase
+        .from('profiles')
+        .update({ family_role: familyRole.trim() })
+        .eq('id', profile.id)
+    }
     if (attachError) {
       setError(attachError)
       setSubmitting(false)
@@ -130,6 +137,14 @@ export function OnboardingPage() {
             onChange={(e) => setFamilyName(e.target.value)}
             placeholder="La famille Dupont"
             hint="Tu pourras inviter ceux que tu aimes ensuite."
+          />
+          <TextInput
+            label="Ton lien dans la famille"
+            htmlFor="familyRole"
+            value={familyRole}
+            onChange={(e) => setFamilyRole(e.target.value)}
+            placeholder="maman, papi, cousin…"
+            hint="Comment les tiens t'appellent à table ? Les autres pourront le préciser dans leur profil."
           />
           {error && <p className="text-carmine font-bold mb-4" role="alert">{error}</p>}
           <Button type="submit" size="lg" className="w-full" disabled={submitting || !familyName.trim()}>

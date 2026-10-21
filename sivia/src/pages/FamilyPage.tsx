@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { Check, Copy, Mail, Trash2 } from 'lucide-react'
+import { Check, Copy, Mail, Pencil, Trash2 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { useCreateInvitation, useFamilyMembers, useInvitations } from '@/hooks/useFamily'
 import { supabase } from '@/lib/supabase'
@@ -14,7 +14,7 @@ import { formatDate } from '@/lib/format'
 import type { Invitation } from '@/lib/types'
 
 export function FamilyPage() {
-  const { profile, family } = useAuth()
+  const { profile, family, refreshProfile } = useAuth()
   const { members, loading: membersLoading } = useFamilyMembers()
   const { invitations, loading: invitationsLoading, refetch } = useInvitations()
   const createInvitation = useCreateInvitation()
@@ -24,6 +24,37 @@ export function FamilyPage() {
   const [submitting, setSubmitting] = useState(false)
   const [lastLink, setLastLink] = useState<string | null>(null)
   const [copiedId, setCopiedId] = useState<string | null>(null)
+
+  // Renommage de la famille
+  const [editingName, setEditingName] = useState(false)
+  const [familyName, setFamilyName] = useState(family?.name ?? '')
+  const [renaming, setRenaming] = useState(false)
+  const [renameError, setRenameError] = useState<string | null>(null)
+
+  async function handleRename(e: FormEvent) {
+    e.preventDefault()
+    if (!family) return
+    const name = familyName.trim()
+    if (!name || name === family.name) {
+      setEditingName(false)
+      return
+    }
+    setRenaming(true)
+    setRenameError(null)
+    // En cas d'erreur, on recharge le profil : on retombe sur l'accueil après connexion
+    const { error: updateError } = await supabase
+      .from('families')
+      .update({ name })
+      .eq('id', family.id)
+    if (updateError) {
+      setRenameError('Impossible de renommer la famille pour le moment. Réessaie ?')
+      setRenaming(false)
+      return
+    }
+    await refreshProfile()
+    setRenaming(false)
+    setEditingName(false)
+  }
 
   const pending = invitations.filter((i) => i.status === 'pending')
 
@@ -60,7 +91,44 @@ export function FamilyPage() {
     <div className="space-y-8">
       <div>
         <p className="kicker">Le cercle</p>
-        <h1 className="text-3xl font-bold mt-1">{family?.name ?? 'Ta famille'}</h1>
+        {editingName ? (
+          <form onSubmit={handleRename} noValidate className="mt-1 flex flex-wrap items-center gap-2">
+            <input
+              type="text"
+              value={familyName}
+              onChange={(e) => setFamilyName(e.target.value)}
+              aria-label="Nouveau nom de la famille"
+              className="min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-4 py-2 text-2xl font-bold focus:border-terra focus:outline-none"
+            />
+            <Button type="submit" size="md" disabled={renaming || !familyName.trim()}>
+              {renaming ? 'On écrit…' : 'Renommer'}
+            </Button>
+            <Button type="button" variant="ghost" size="md" onClick={() => setEditingName(false)}>
+              Annuler
+            </Button>
+          </form>
+        ) : (
+          <h1 className="text-3xl font-bold mt-1 inline-flex items-center gap-2">
+            {family?.name ?? 'Ta famille'}
+            <button
+              type="button"
+              onClick={() => {
+                setFamilyName(family?.name ?? '')
+                setRenameError(null)
+                setEditingName(true)
+              }}
+              aria-label="Renommer la famille"
+              className="min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra inline-flex items-center justify-center"
+            >
+              <Pencil size={20} aria-hidden="true" />
+            </button>
+          </h1>
+        )}
+        {renameError && (
+          <p className="text-carmine font-bold mt-1" role="alert">
+            {renameError}
+          </p>
+        )}
         <p className="text-hand text-bleu text-2xl mt-1">
           {members.length} membre{members.length > 1 ? 's' : ''} à table
         </p>
@@ -81,7 +149,9 @@ export function FamilyPage() {
                       <span className="text-sm text-terra font-sans font-bold"> · toi</span>
                     )}
                   </p>
-                  <p className="text-2xl" aria-hidden="true">{member.stamp_emoji}</p>
+                  {member.family_role && (
+                    <p className="text-hand text-bleu text-xl">{member.family_role}</p>
+                  )}
                   {member.bio && <p className="text-sm text-encre-soft truncate">{member.bio}</p>}
                   <p className="text-xs text-encre-soft">À table depuis {formatDate(member.created_at)}</p>
                 </div>

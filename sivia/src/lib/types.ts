@@ -15,10 +15,24 @@ export interface Profile {
   display_name: string
   avatar_url: string | null
   bio: string | null
-  /** Emoji du tampon d'authenticité, personnalisable */
+  /** Tampon d'authenticité (historique, conservé en base, non personnalisable) */
   stamp_emoji: string
+  /** Lien dans la famille : « maman », « papi », « cousine Léa »… */
+  family_role: string | null
   family_id: string | null
   created_at: string
+}
+
+export interface RecipeComment {
+  id: string
+  recipe_id: string
+  author_id: string
+  /** Texte du commentaire (null si photo seule) */
+  body: string | null
+  /** Chemin dans le bucket storage (dossier = family_id) */
+  photo_url: string | null
+  created_at: string
+  author?: Profile
 }
 
 export interface Family {

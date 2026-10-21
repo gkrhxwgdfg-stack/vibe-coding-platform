@@ -1,19 +1,18 @@
 import { cn } from '@/lib/utils'
 
 interface StampProps {
-  /** Prénom du créateur, ex: « Recette certifiée de la part de Jeanne » */
+  /** Pr\u00e9nom du cr\u00e9ateur, ex: \u00ab Recette certifi\u00e9e de la part de Jeanne \u00bb */
   name: string
-  emoji?: string
   className?: string
-  /** Rotation en degrés */
+  /** Rotation en degr\u00e9s */
   rotate?: number
 }
 
 /**
- * Tampon d'authenticité : apposé sur les recettes « de la main de » l'auteur.
- * La trace officielle de la maison.
+ * Tampon d'authenticit\u00e9 : appos\u00e9 sur les recettes \u00ab de la main de \u00bb l'auteur.
+ * Cercle tamponn\u00e9 avec le pr\u00e9nom du cr\u00e9ateur \u2014 la trace officielle de la maison.
  */
-export function Stamp({ name, emoji = '🍳', className, rotate = -8 }: StampProps) {
+export function Stamp({ name, className, rotate = -8 }: StampProps) {
   return (
     <span
       className={cn(
@@ -24,11 +23,10 @@ export function Stamp({ name, emoji = '🍳', className, rotate = -8 }: StampPro
       )}
       style={{ transform: `rotate(${rotate}deg)` }}
       role="img"
-      aria-label={`Tampon d'authenticité : recette de la part de ${name}`}
+      aria-label={`Tampon d'authenticit\u00e9 : recette de la part de ${name}`}
     >
-      <span className="text-[10px] tracking-wider">De</span>
-      <span className="text-lg normal-case">{emoji}</span>
-      <span className="text-[10px] tracking-wider normal-case font-sans font-bold">{name}</span>
+      <span className="text-[10px] tracking-wider normal-case font-sans font-bold">De la part de</span>
+      <span className="text-lg normal-case">{name}</span>
     </span>
   )
 }

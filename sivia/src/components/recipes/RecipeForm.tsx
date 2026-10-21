@@ -117,7 +117,7 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
         >
           {CATEGORIES.map((c) => (
             <option key={c.value} value={c.value}>
-              {c.emoji} {c.label}
+              {c.label}
             </option>
           ))}
         </Select>

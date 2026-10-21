@@ -7,12 +7,11 @@ import { supabase } from '@/lib/supabase'
 import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
 import { Card, CardHeader } from '@/components/ui/Card'
+import { Stamp } from '@/components/ui/Stamp'
 import { TextInput, TextArea } from '@/components/ui/FormFields'
 import { formatDate } from '@/lib/format'
 
 const NO_FILTERS = { query: '', category: 'toutes' as const, authorId: 'tous' as const }
-
-const STAMP_CHOICES = ['🍳', '🥄', '🍲', '🍰', '🍷', '🫕', '❤️', '⭐']
 
 export function ProfilePage() {
   const { profile, signOut, refreshProfile } = useAuth()
@@ -21,7 +20,7 @@ export function ProfilePage() {
 
   const [displayName, setDisplayName] = useState(profile?.display_name ?? '')
   const [bio, setBio] = useState(profile?.bio ?? '')
-  const [stampEmoji, setStampEmoji] = useState(profile?.stamp_emoji ?? '🍳')
+  const [familyRole, setFamilyRole] = useState(profile?.family_role ?? '')
   const memberSince = profile?.created_at
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -43,7 +42,7 @@ export function ProfilePage() {
       .update({
         display_name: displayName.trim(),
         bio: bio.trim() || null,
-        stamp_emoji: stampEmoji,
+        family_role: familyRole.trim() || null,
       })
       .eq('id', profileId)
     setSaving(false)
@@ -66,7 +65,12 @@ export function ProfilePage() {
       <section aria-labelledby="profile-title" className="text-center">
         <Avatar name={profile.display_name} src={profile.avatar_url} size="lg" className="mx-auto w-24 h-24 text-4xl" />
         <h1 id="profile-title" className="text-3xl font-bold mt-3">{profile.display_name}</h1>
-        <p className="text-hand text-bleu text-2xl">Mon tampon : {profile.stamp_emoji}</p>
+        <div className="flex justify-center my-3">
+          <Stamp name={profile.display_name} />
+        </div>
+        {profile.family_role && (
+          <p className="text-hand text-bleu text-2xl">{profile.family_role}</p>
+        )}
         <p className="text-sm text-encre-soft mt-1">À table depuis {formatDate(memberSince)}</p>
       </section>
 
@@ -106,34 +110,25 @@ export function ProfilePage() {
               onChange={(e) => setBio(e.target.value)}
               placeholder="« Celle qui garde les secrets de la sauce. »"
             />
+            <TextInput
+              label="Ton lien dans la famille"
+              htmlFor="familyRole"
+              value={familyRole}
+              onChange={(e) => setFamilyRole(e.target.value)}
+              placeholder="maman, papi, cousine Léa…"
+              hint="C’est ainsi que la famille te reconnaîtra à table."
+            />
             <div>
               <span className="block font-bold text-encre mb-1.5">Ton tampon d’authenticité</span>
-              <div role="radiogroup" aria-label="Choisir son tampon" className="flex flex-wrap gap-2">
-                {STAMP_CHOICES.map((emoji) => (
-                  <button
-                    key={emoji}
-                    type="button"
-                    role="radio"
-                    aria-checked={stampEmoji === emoji}
-                    onClick={() => setStampEmoji(emoji)}
-                    className={`w-12 h-12 rounded-full text-2xl border-2 transition-colors ${
-                      stampEmoji === emoji
-                        ? 'border-terra bg-terra/10 scale-110'
-                        : 'border-encre/20 bg-creme hover:border-terra'
-                    }`}
-                  >
-                    {emoji}
-                  </button>
-                ))}
-              </div>
+              <Stamp name={displayName.trim() || profile.display_name} className="scale-90" />
               <p className="text-sm text-encre-soft mt-2">
-                Il sera apposé sur tes recettes : « recette certifiée de la part de {displayName || profile.display_name} ».
+                Il est apposé sur tes recettes : « de la part de {displayName.trim() || profile.display_name} ».
               </p>
             </div>
             {error && <p className="text-carmine font-bold" role="alert">{error}</p>}
-            {saved && <p className="text-sauge font-bold">C’est noté ! ✅</p>}
+            {saved && <p className="text-sauge font-bold">C’est noté !</p>}
             <Button type="submit" size="lg" className="w-full" disabled={saving || !displayName.trim()}>
-              {saving ? 'On grave ton tampon…' : 'Enregistrer mon profil'}
+              {saving ? 'On enregistre…' : 'Enregistrer mon profil'}
             </Button>
           </form>
         </Card>
@@ -147,9 +142,9 @@ export function ProfilePage() {
             <li className="flex items-center justify-between gap-4 py-2">
               <span>
                 <strong>Notifications</strong>
-                <span className="block text-sm text-encre-soft">Nouvelles recettes de la famille (bientôt)</span>
+                <span className="block text-sm text-encre-soft">Les derniers commentaires et photos de la famille, sur l’accueil</span>
               </span>
-              <span className="text-sm text-encre-soft italic">v2</span>
+              <Link to="/" className="text-sm text-terra font-bold hover:underline">Voir</Link>
             </li>
             <li className="flex items-center justify-between gap-4 py-2">
               <span>

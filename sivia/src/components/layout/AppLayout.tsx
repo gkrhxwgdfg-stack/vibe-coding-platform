@@ -31,7 +31,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
               <p className="font-serif font-semibold text-encre truncate">{family.name}</p>
             )}
             {profile && (
-              <p className="text-sm text-encre-soft truncate">Bonjour, {profile.display_name} 👋</p>
+              <p className="text-sm text-encre-soft truncate">Bonjour, {profile.display_name}</p>
             )}
           </div>
         </div>

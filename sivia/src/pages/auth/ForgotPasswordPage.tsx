@@ -30,7 +30,7 @@ export function ForgotPasswordPage() {
       {sent ? (
         <div className="text-center">
           <p className="text-lg mb-2">
-            C’est envoyé ! 📬
+            C’est envoyé !
           </p>
           <p className="text-encre-soft mb-6">
             Regarde ta boîte mail à l’adresse <strong>{email}</strong> et suis le lien pour choisir

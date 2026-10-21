@@ -7,25 +7,26 @@ Rassemblez les recettes de ceux que vous aimez : les annotations à la main de
 grand-mère, la photo du plat du dimanche, le secret de la sauce qui se transmet
 de génération en génération.
 
-## ✨ Fonctionnalités (MVP)
+## Fonctionnalités (MVP)
 
 - **Inscription / connexion** (email + mot de passe, mot de passe oublié)
 - **Groupe familial privé** avec **lien d'invitation sécurisé** (token, expiration 30 jours)
 - **Publier une recette** : titre, catégorie, portions, temps, ingrédients, étapes, photo, anecdote, origine du plat
 - **Recherche et filtres** : mot-clé (titre, ingrédients, étapes, anecdotes), catégorie, auteur
-- **Favoris** ❤️
-- **Fiche recette** : photo, ingrédients mis à l'échelle selon les portions (− / +), étapes numérotées, **anecdote mise en valeur**, **tampon d'authenticité** du créateur, origine et date de transmission
-- **Sceller une recette** 🔒 (créateur uniquement) : l'original devient non modifiable
-- **Espace famille** : membres, invitations (créer / copier / annuler)
-- **Profil** : prénom, bio, tampon personnalisable, statistiques, déconnexion
-
-### 🔒 Sécurité
+- **Favoris** (cœur sur une recette)
+- **Fiche recette** : photo, ingrédients mis à l'échelle selon les portions (− / +), étapes numérotées, **anecdote mise en valeur**, **tampon d'authenticité** (cercle tamponné au nom du créateur), origine et date de transmission
+- **Commentaires et photos** : chaque recette porte son **fil de vie** — la famille commente, partage ses photos, et on voit quand la recette est utilisée
+- **Accueil vivant** : **planche familiale** (tableau de photos partagées) et **notifications** des derniers contenus de la famille
+- **Sceller une recette** (créateur uniquement) : l'original devient non modifiable
+- **Espace famille** : membres avec leur **lien familial** (maman, papi…), **renommage de la famille**, invitations (créer / copier / annuler)
+- **Profil** : prénom, bio, lien dans la famille, statistiques, déconnexion
+### Sécurité
 
 Toute la sécurité repose sur la **Row Level Security (RLS)** de Supabase :
 chaque groupe familial ne peut lire et écrire **que ses propres données**.
 L'application vérifie également la famille côté client avant chaque requête.
 
-### 🎨 Design
+### Design
 
 Identité chaleureuse et artisanale, pensée pour être utilisée par des
 grands-parents :
@@ -35,17 +36,18 @@ grands-parents :
 - **Accessibilité** : typographie de base 17px, cibles tactiles ≥ 44px, focus
   visible, contraste élevé, parcours en 3 clics maximum
 
-## 🛠 Stack technique
+## Stack technique
 
 | Couche | Technologie |
 | --- | --- |
 | Front | React 19 + TypeScript + Vite |
 | UI | Tailwind CSS 4 |
 | Backend | Supabase (auth, base de données PostgreSQL, stockage photos) |
+| Commentaires | Table `recipe_comments` + photos dans le bucket `recipe-photos` |
 | Routage | React Router 7 |
 | Déploiement | Vercel (recommandé) ou tout hébergeur statique |
 
-## 🚀 Installation
+## Installation
 
 ### 1. Prérequis
 
@@ -101,19 +103,19 @@ npm run dev
 
 Ouvrez [http://localhost:5173](http://localhost:5173).
 
-## 📦 Build et déploiement
+## Build et déploiement
 
 ```bash
 npm run build      # build de production dans dist/
 npm run preview    # prévisualiser le build
 ```
 
-### 🌐 Déploiement en ligne (Vercel — testé et fonctionnel)
+### Déploiement en ligne (Vercel — testé et fonctionnel)
 
 **URL publique de l'application** :
-👉 **https://temporary-rapid-pumice-22jbvag.vercel.app**
+**https://temporary-rapid-pumice-22jbvag.vercel.app**
 
-> ⚠️ C'est un déploiement temporaire Vercel (expire dans 60 min). Pour un lien
+> C'est un déploiement temporaire Vercel (expire dans 60 min). Pour un lien
 > **permanent et automatique** à chaque push, deux options :
 
 #### Option A — Vercel CLI en CI (recommandé, 100 % automatique)
@@ -157,22 +159,23 @@ Dans Supabase (**Authentication → URL Configuration**), mettez :
 - **Site URL** : `https://gkrhxwgdfg-stack.github.io/vibe-coding-platform/`
 - **Redirect URLs** : `https://gkrhxwgdfg-stack.github.io/vibe-coding-platform/**`
 
-## 🗂 Structure du projet
+## Structure du projet
 
 ```
 sivia/
 ├── supabase/
 │   ├── migrations/0001_initial_schema.sql   # tables, RLS, storage, triggers
+│   ├── migrations/0006_comments_and_family_role.sql  # commentaires, lien familial
 │   ├── seed/seed.sql                        # recettes de démonstration
 │   └── README.md                            # guide de configuration Supabase
 ├── src/
 │   ├── components/
 │   │   ├── ui/          # design system (Button, Card, Avatar, Stamp, Polaroid…)
 │   │   ├── layout/      # AppLayout, AuthShell, RequireAuth
-│   │   └── recipes/     # RecipeCard, RecipeForm
+│   │   └── recipes/     # RecipeCard, RecipeForm, CommentThread
 │   ├── context/         # AuthContext (session, profil, famille)
-│   ├── hooks/           # useRecipes, useFamily, useInvitationByToken…
-│   ├── services/        # logique métier Supabase (recipes.ts)
+│   ├── hooks/           # useRecipes, useFamily, useComments…
+│   ├── services/        # logique métier Supabase (recipes.ts, comments.ts)
 │   ├── lib/             # supabase client, types, utils, format, scale
 │   ├── pages/           # une page par écran
 │   └── App.tsx          # routes
@@ -182,14 +185,14 @@ sivia/
 **Règle d'or du code** : aucune logique métier dans les vues. Les pages
 orchestrent ; les hooks et `services/` portent la logique Supabase.
 
-## 🧭 Feuille de route
+## Feuille de route
 
-- **v1 (livrée)** : MVP complet ci-dessus
+- **v1 (livrée)** : MVP complet ci-dessus, **commentaires et photos** compris
 - **v2 (volontairement non implémentée)** : mode cuisson avec minuteur,
-  commentaires, export PDF / impression, timeline familiale, arbre généalogique,
+  export PDF / impression, timeline familiale, arbre généalogique,
   mode hors-ligne
 
-## 📜 Licence
+## Licence
 
 Projet familial privé — tous droits réservés.
 
