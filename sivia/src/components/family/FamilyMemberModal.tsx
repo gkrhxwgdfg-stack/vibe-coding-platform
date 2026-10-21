@@ -19,6 +19,8 @@ interface FamilyMemberModalProps {
   prefillParentId?: string | null
   /** Pré-remplissage : second référent (« relié aux deux ») */
   prefillParent2Id?: string | null
+  /** Pré-remplissage : type de lien (scotch latéral = partenaire) */
+  prefillLinkKind?: 'parent' | 'partner' | null
   onCreate: (values: {
     first_name: string
     last_name: string
@@ -26,6 +28,7 @@ interface FamilyMemberModalProps {
     generation_id: string | null
     parent_id: string | null
     parent2_id: string | null
+    link_kind: 'parent' | 'partner' | null
     relation_label: string | null
     linked_profile_id: string | null
     photoFile: File | null
@@ -39,6 +42,7 @@ interface FamilyMemberModalProps {
       generation_id: string | null
       parent_id: string | null
       parent2_id: string | null
+      link_kind: 'parent' | 'partner' | null
       relation_label: string | null
       linked_profile_id: string | null
       photoFile: File | null
@@ -62,6 +66,7 @@ export function FamilyMemberModal({
   treeMembers,
   prefillParentId = null,
   prefillParent2Id = null,
+  prefillLinkKind = null,
   onCreate,
   onUpdate,
 }: FamilyMemberModalProps) {
@@ -74,6 +79,7 @@ export function FamilyMemberModal({
   const [generationId, setGenerationId] = useState('')
   const [parentId, setParentId] = useState('')
   const [parent2Id, setParent2Id] = useState('')
+  const [linkKind, setLinkKind] = useState<'parent' | 'partner'>('parent')
   const [relationLabel, setRelationLabel] = useState('')
   const [linkedProfileId, setLinkedProfileId] = useState('')
   const [photoFile, setPhotoFile] = useState<File | null>(null)
@@ -90,13 +96,24 @@ export function FamilyMemberModal({
     setGenerationId(member?.generation_id ?? '')
     setParentId(member?.parent_id ?? prefillParentId ?? '')
     setParent2Id(member?.parent2_id ?? prefillParent2Id ?? '')
+    // Type de lien : édition = link_kind en base ; création = pré-remplissage
+    // (scotch latéral = partenaire) ou déduit de l'existant, défaut 'parent'
+    setLinkKind(
+      member
+        ? member.link_kind === 'partner'
+          ? 'partner'
+          : 'parent'
+        : prefillLinkKind === 'partner'
+          ? 'partner'
+          : 'parent',
+    )
     setRelationLabel(member?.relation_label ?? '')
     setLinkedProfileId(member?.linked_profile_id ?? '')
     setPhotoFile(null)
     setPhotoPreview(null)
     setRemovePhoto(false)
     setError(null)
-  }, [open, member, prefillParentId, prefillParent2Id])
+  }, [open, member, prefillParentId, prefillParent2Id, prefillLinkKind])
 
   useEffect(() => {
     if (!open) return
@@ -143,6 +160,7 @@ export function FamilyMemberModal({
       generation_id: generationId || null,
       parent_id: parentId || null,
       parent2_id: parent2Id || null,
+      link_kind: parentId ? linkKind : null,
       relation_label: relationLabel.trim() || null,
       linked_profile_id: linkedProfileId || null,
       photoFile,
@@ -188,7 +206,15 @@ export function FamilyMemberModal({
         {/* Accroche pré-remplie via le « + » */}
         {!isEditing && prefillParent && (
           <p className="text-sm bg-sauge/15 border border-sauge/40 rounded-xl px-4 py-3 mb-4">
-            Accrochée à <strong>{prefillParent.first_name}</strong> dans l'arbre.
+            {prefillLinkKind === 'partner' ? (
+              <>
+                À côté de <strong>{prefillParent.first_name}</strong> (partenaire — scotch entre les deux cartes).
+              </>
+            ) : (
+              <>
+                Accrochée à <strong>{prefillParent.first_name}</strong> dans l'arbre (en dessous).
+              </>
+            )}
           </p>
         )}
         {!isEditing && !prefillParent && (
@@ -223,7 +249,7 @@ export function FamilyMemberModal({
             placeholder="Mamie"
           />
 
-          {/* ---------- Relié à … (une ou deux personnes) ---------- */}
+          {/* ---------- Relié à … (type de lien + une ou deux personnes) ---------- */}
           <div className="rounded-2xl border-2 border-dashed border-terra/40 bg-creme p-4 space-y-4">
             <p className="font-bold text-encre">Relié à …</p>
             <div>
@@ -245,40 +271,79 @@ export function FamilyMemberModal({
                 ))}
               </select>
             </div>
-            <div>
-              <label htmlFor="member-parent2" className="block font-bold text-encre mb-1.5">
-                Et aussi (facultatif)
-              </label>
-              <select
-                id="member-parent2"
-                value={parent2Id}
-                onChange={(e) => setParent2Id(e.target.value)}
-                disabled={!parentId}
-                className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-4 py-2.5 focus:border-terra focus:outline-none disabled:opacity-50"
-              >
-                <option value="">— Une seule personne —</option>
-                {possibleParents2.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.first_name}
-                    {m.last_name ? ` ${m.last_name}` : ''}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {parentId && (
+              <div>
+                <span className="block font-bold text-encre mb-1.5">Type de lien</span>
+                <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Type de lien">
+                  <button
+                    type="button"
+                    role="radio"
+                    aria-checked={linkKind === 'parent'}
+                    onClick={() => {
+                      setLinkKind('parent')
+                      setParent2Id('')
+                    }}
+                    className={cn(
+                      'min-h-11 rounded-xl border-2 px-3 py-2 text-sm font-bold text-left transition-colors',
+                      linkKind === 'parent'
+                        ? 'border-terra bg-terra/10 text-encre'
+                        : 'border-encre/20 bg-creme text-encre-soft hover:border-terra/50',
+                    )}
+                  >
+                    Enfant — en dessous
+                  </button>
+                  <button
+                    type="button"
+                    role="radio"
+                    aria-checked={linkKind === 'partner'}
+                    onClick={() => setLinkKind('partner')}
+                    className={cn(
+                      'min-h-11 rounded-xl border-2 px-3 py-2 text-sm font-bold text-left transition-colors',
+                      linkKind === 'partner'
+                        ? 'border-terra bg-terra/10 text-encre'
+                        : 'border-encre/20 bg-creme text-encre-soft hover:border-terra/50',
+                    )}
+                  >
+                    Partenaire — à côté
+                  </button>
+                </div>
+                <p className="text-sm text-encre-soft mt-1.5">
+                  {linkKind === 'partner'
+                    ? 'Conjoint·e, copine, pacsé·e… : à côté, même génération (scotch entre les deux cartes).'
+                    : 'Fils, fille, recueilli·e… : en dessous du référent (l’arbre descend).'}
+                </p>
+              </div>
+            )}
+            {parentId && linkKind === 'parent' && (
+              <div>
+                <label htmlFor="member-parent2" className="block font-bold text-encre mb-1.5">
+                  Et aussi (facultatif)
+                </label>
+                <select
+                  id="member-parent2"
+                  value={parent2Id}
+                  onChange={(e) => setParent2Id(e.target.value)}
+                  className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-4 py-2.5 focus:border-terra focus:outline-none"
+                >
+                  <option value="">— Une seule personne —</option>
+                  {possibleParents2.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.first_name}
+                      {m.last_name ? ` ${m.last_name}` : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
             <TextInput
               label="Lien (écrit librement)"
               htmlFor="member-relation"
-              hint="« fils de », « fille de », « marié à », « recueilli par »… — écris ce que tu veux"
+              hint="« fils de », « marié à », « recueilli par »… — écris ce que tu veux, c’est juste pour la carte"
               value={relationLabel}
               onChange={(e) => setRelationLabel(e.target.value)}
               placeholder="fils de"
               disabled={!parentId}
             />
-            {parentId && (
-              <p className="text-sm text-encre-soft">
-                Le lien indique la branche : en dessous du référent (l'arbre descend) ou à côté (union).
-              </p>
-            )}
           </div>
 
           {/* Génération nommée (conservée pour historique, facultative) */}

@@ -185,7 +185,7 @@ export function FamilyPage() {
         </ul>
       </section>
 
-      {/* Arbre généalogique piloté par des « + » : une base, des branches selon l'emplacement du + */}
+      {/* Arbre généalogique piloté par des « + » et des scotchs : une base, des branches selon l'emplacement */}
       <section aria-labelledby="tree-title">
         <CardHeader
           kicker="L'arbre généalogique"
@@ -195,8 +195,9 @@ export function FamilyPage() {
           Un membre <span className="inline-flex items-center gap-1 font-bold text-bleu"><UserCheck size={14} aria-hidden="true" /> connecté</span> a
           un compte Savia. Un membre ajouté « de l'arbre » n'en a pas — mamie Jeanne, par exemple —
           mais elle peut être citée comme origine d'une recette. L'arbre grandit avec les « + » :
-          clique sur celui d'une personne pour accrocher un enfant (branche vers le bas) ou un
-          conjoint (branche horizontale). Le lien s'écrit librement.
+          en dessous d'une personne pour un enfant, sur le scotch « + » du côté pour un partenaire
+          (à côté, même génération), et le « + » carmine en haut pour un aîné au-dessus. Le lien
+          s'écrit librement sur la carte.
         </p>
         <div className="card-surface p-5 bg-sauge/5">
           <FamilyTree

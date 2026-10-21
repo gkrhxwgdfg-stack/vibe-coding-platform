@@ -47,12 +47,15 @@ export interface FamilyMemberFormValues {
   family_role: string
   /** Génération nommée choisie (null = génération 0, non classés) — conservé pour historique */
   generation_id: string | null
-  /** Premier référent (« relié à … ») : parent (branche montante) ou conjoint (branche horizontale) */
+  /** Premier référent (« relié à … ») : parent (branche vers le bas) ou partenaire (à côté) */
   parent_id: string | null
   /** Second référent facultatif (« et aussi » : relié aux deux) */
   parent2_id: string | null
+  /** Type de lien EXPLICITE : 'parent' (enfant, en dessous) ou 'partner'
+   *  (conjoint·e / copine, à côté, même génération). Jamais déduit du texte. */
+  link_kind: 'parent' | 'partner' | null
   /** Lien LIBRE avec le référent : l'utilisateur écrit ce qu'il veut
-   *  (« fils de », « marié à », « recueilli par »…) */
+   *  (« fils de », « marié à », « recueilli par »…) — affiché, jamais interprété. */
   relation_label: string | null
   linked_profile_id: string | null
   photoFile: File | null
@@ -60,27 +63,37 @@ export interface FamilyMemberFormValues {
   removePhoto?: boolean
 }
 
-/** Nature du lien déduite du libellé libre : tout libellé contenant « conjoint",
- *  « marié », « époux », « épouse », « union » dessine une branche horizontale. */
+/** Nature du lien : explicite (choix du formulaire), jamais déduite du texte. */
 function linkKindFor(values: FamilyMemberFormValues): 'parent' | 'partner' | null {
-  if (!values.parent_id || !values.relation_label) return null
-  const label = values.relation_label
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
-  if (
-    label.includes('conjoint') ||
-    label.includes('marie') ||
-    label.includes('mariee') ||
-    label.includes('epous') ||
-    label.includes('union') ||
-    label.includes('compagne') ||
-    label.includes('compagner') ||
-    label.includes('partenaire')
-  ) {
-    return 'partner'
-  }
-  return 'parent'
+  if (!values.parent_id) return null
+  return values.link_kind === 'partner' ? 'partner' : 'parent'
+}
+
+/**
+ * Auto-lien de la base : quand on crée une personne SANS référent (bouton
+ * « + » carmine du haut), les racines existantes de l'arbre (les aînés qui
+ * n'ont pas de parent) sont rattachées à cette nouvelle personne : elle
+ * devient leur parent, donc elle apparaît AU-DESSUS d'elles. L'arbre garde
+ * sa vraie structure (les aînés les plus anciens en haut), même si on les
+ * ajoute après coup.
+ */
+async function adoptExistingRoots(familyId: string, newMemberId: string): Promise<void> {
+  // Racines = membres sans parent_id (et pas des partenaires)
+  const { data: roots } = await supabase
+    .from('family_members')
+    .select('id, link_kind')
+    .eq('family_id', familyId)
+    .is('parent_id', null)
+  if (!roots || roots.length === 0) return
+  const rootIds = roots
+    .filter((r) => r.link_kind !== 'partner')
+    .map((r) => r.id)
+    .filter((id) => id !== newMemberId)
+  if (rootIds.length === 0) return
+  await supabase
+    .from('family_members')
+    .update({ parent_id: newMemberId, link_kind: 'parent' })
+    .in('id', rootIds)
 }
 
 export async function createFamilyMember(
@@ -114,7 +127,13 @@ export async function createFamilyMember(
     .select()
     .single()
   if (error || !data) return { error: error?.message ?? 'Ajout impossible.', member: null }
-  return { error: null, member: data as FamilyMember }
+  const member = data as FamilyMember
+  // Création sans référent (bouton « + » du haut) : les racines existantes
+  // deviennent ses enfants → elle passe au-dessus, l'arbre reste structuré.
+  if (!values.parent_id) {
+    await adoptExistingRoots(familyId, member.id)
+  }
+  return { error: null, member }
 }
 
 /** Modifie un membre de l'arbre (n'importe quel membre de la famille, cf. RLS) */

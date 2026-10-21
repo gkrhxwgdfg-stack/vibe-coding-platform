@@ -12,7 +12,6 @@ interface AddButtonProps {
 const labels: Record<AddAction['kind'], string> = {
   'new-recipe': 'Nouvelle recette',
   'planche-photo': 'Ajouter une photo à la planche familiale',
-  'family-member': "Ajouter un membre à l'arbre",
 }
 
 /**

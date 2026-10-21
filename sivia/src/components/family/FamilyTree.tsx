@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Plus } from 'lucide-react'
 import { buildFamilyTreeLayout, TREE_GEOMETRY, type TreeNode } from '@/lib/familyTreeLayout'
 import { FamilyMemberCard } from '@/components/family/FamilyMemberCard'
+import { Tape, TapeAddButton } from '@/components/family/Tape'
 import { FamilyMemberModal } from '@/components/family/FamilyMemberModal'
 import type { FamilyGeneration, FamilyMember } from '@/lib/types'
 import { cn } from '@/lib/utils'
@@ -19,6 +20,7 @@ interface FamilyTreeProps {
     generation_id: string | null
     parent_id: string | null
     parent2_id: string | null
+    link_kind: 'parent' | 'partner' | null
     relation_label: string | null
     linked_profile_id: string | null
     photoFile: File | null
@@ -32,6 +34,7 @@ interface FamilyTreeProps {
       generation_id: string | null
       parent_id: string | null
       parent2_id: string | null
+      link_kind: 'parent' | 'partner' | null
       relation_label: string | null
       linked_profile_id: string | null
       photoFile: File | null
@@ -41,16 +44,17 @@ interface FamilyTreeProps {
 }
 
 /**
- * Arbre généalogique piloté par un « + » unique par personne.
+ * Arbre généalogique piloté par des « + » et des scotchs.
  *
  * - L'arbre DESCEND de génération en génération : les aînés (la base) sont
- *   en haut, les jeunes en dessous. Lecture naturelle de la page.
- * - Chaque personne porte UN « + » sous sa carte : cliquer accroche une
- *   nouvelle personne reliée à elle (enfant = branche vers le bas, conjoint =
- *   branche horizontale — déduit du lien écrit librement).
- * - Un « + » carmine en haut de l'arbre permet d'ajouter une nouvelle base
- *   (un aîné) au-dessus, si la première personne ajoutée n'était pas le
- *   début de l'arbre.
+ *   en haut, les jeunes en dessous. La génération de chacun est calculée
+ *   UNIQUEMENT à partir des liens (jamais d'une génération nommée).
+ * - « + » sous une carte : ajouter un ENFANT en dessous.
+ * - Scotch « + » sur le bord droit d'une carte sans partenaire : ajouter un
+ *   PARTENAIRE à côté (même génération — conjoint·e, copine, pacsé·e…).
+ *   Les couples sont « scotchés » ensemble par un vrai ruban adhésif (Tape).
+ * - « + » carmine en haut : ajouter un aîné au-dessus (les racines existantes
+ *   deviennent ses enfants : elle passe au-dessus, l'arbre reste structuré).
  * - Coordonnées en pixels fournies par `buildFamilyTreeLayout` : aucune
  *   conversion ici. L'arbre est centré, les branches ne se chevauchent pas.
  */
@@ -69,6 +73,7 @@ export function FamilyTree({
   const [editingMember, setEditingMember] = useState<FamilyMember | null>(null)
   const [prefillParentId, setPrefillParentId] = useState<string | null>(null)
   const [prefillParent2Id, setPrefillParent2Id] = useState<string | null>(null)
+  const [prefillLinkKind, setPrefillLinkKind] = useState<'parent' | 'partner' | null>(null)
 
   const { CARD_W, PLUS_H, TOP_PAD } = TREE_GEOMETRY
 
@@ -77,16 +82,22 @@ export function FamilyTree({
     return (seed % 2 === 0 ? 1 : -1) * (1 + (seed % 3) * 0.75)
   }
 
-  function openAdd(parentId: string | null, parent2Id: string | null = null) {
+  function openAdd(
+    parentId: string | null,
+    parent2Id: string | null = null,
+    linkKind: 'parent' | 'partner' | null = null,
+  ) {
     setEditingMember(null)
     setPrefillParentId(parentId)
     setPrefillParent2Id(parent2Id)
+    setPrefillLinkKind(linkKind)
     setModalOpen(true)
   }
 
   function openEdit(member: FamilyMember) {
     setPrefillParentId(null)
     setPrefillParent2Id(null)
+    setPrefillLinkKind(null)
     setEditingMember(member)
     setModalOpen(true)
   }
@@ -115,17 +126,9 @@ export function FamilyTree({
               <feDropShadow dx="0" dy="1.5" stdDeviation="1" floodColor="#4a3728" floodOpacity="0.35" />
             </filter>
           </defs>
-          {segments.map((seg, i) => {
-            if (seg.kind === 'couple') {
-              const midX = (seg.x1 + seg.x2) / 2
-              const midY = (seg.y1 + seg.y2) / 2
-              return (
-                <g key={i} filter="url(#corde-relief)">
-                  <line x1={seg.x1} y1={seg.y1} x2={seg.x2} y2={seg.y2} stroke="#c4643a" strokeWidth={3} strokeLinecap="round" />
-                  <circle cx={midX} cy={midY} r={5} fill="#b33b3b" stroke="#fbf6ec" strokeWidth={2} />
-                </g>
-              )
-            }
+          {segments
+            .filter((seg) => seg.kind !== 'couple') // le scotch couple est en HTML (Tape)
+            .map((seg, i) => {
             return (
               <line
                 key={i}
@@ -140,7 +143,7 @@ export function FamilyTree({
                 opacity={0.85}
               />
             )
-          })}
+            })}
         </svg>
 
         {/* ---------- « + » carmine du haut : ajouter un aîné au-dessus ---------- */}
@@ -161,6 +164,13 @@ export function FamilyTree({
           </div>
         )}
 
+        {/* ---------- Scotchs entre les cartes des couples ---------- */}
+        {segments
+          .filter((seg) => seg.kind === 'couple')
+          .map((seg, i) => (
+            <Tape key={`tape-${i}`} x={seg.x1} y={seg.y1 - 13} width={seg.x2 - seg.x1} />
+          ))}
+
         {/* ---------- Nœuds + « + » unique sous chaque carte ---------- */}
         {nodes.map((node: TreeNode, index: number) => {
           const member = node.member
@@ -170,12 +180,19 @@ export function FamilyTree({
           const parent2 = member.parent2_id
             ? members.find((m) => m.id === member.parent2_id)
             : null
+          const hasPartner = !!node.coupleId
           return (
             <div
               key={member.id}
               className="absolute"
               style={{ left: node.x, top: node.y, width: CARD_W }}
             >
+              {!hasPartner && (
+                <TapeAddButton
+                  memberName={member.first_name}
+                  onClick={() => openAdd(member.id, null, 'partner')}
+                />
+              )}
               <FamilyMemberCard
                 member={member}
                 parent={parent}
@@ -221,8 +238,8 @@ export function FamilyTree({
 
       {/* Légende */}
       <p className="text-xs text-brun-soft text-center mt-2">
-        « + » sous une personne : ajouter quelqu'un relié à elle (l'arbre descend) · « + » carmine
-        en haut : ajouter un aîné au-dessus
+        « + » sous une personne : ajouter un enfant en dessous · scotch « + » sur le côté : ajouter un
+        partenaire à côté · « + » carmine en haut : ajouter un aîné au-dessus
       </p>
 
       {/* Modal interne : création via « + » (pré-rempli) ou édition */}
@@ -233,12 +250,14 @@ export function FamilyTree({
           setEditingMember(null)
           setPrefillParentId(null)
           setPrefillParent2Id(null)
+          setPrefillLinkKind(null)
         }}
         member={editingMember}
         generations={generations}
         treeMembers={members}
         prefillParentId={prefillParentId}
         prefillParent2Id={prefillParent2Id}
+        prefillLinkKind={prefillLinkKind}
         onCreate={onCreateMember}
         onUpdate={onUpdateMember}
       />
