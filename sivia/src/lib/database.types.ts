@@ -184,7 +184,8 @@ export interface Database {
       recipe_comments: {
         Row: {
           id: string
-          recipe_id: string
+          recipe_id: string | null
+          family_id: string | null
           author_id: string
           body: string | null
           photo_url: string | null
@@ -192,7 +193,8 @@ export interface Database {
         }
         Insert: {
           id?: string
-          recipe_id: string
+          recipe_id?: string | null
+          family_id?: string | null
           author_id: string
           body?: string | null
           photo_url?: string | null
@@ -200,7 +202,8 @@ export interface Database {
         }
         Update: {
           id?: string
-          recipe_id?: string
+          recipe_id?: string | null
+          family_id?: string | null
           author_id?: string
           body?: string | null
           photo_url?: string | null
@@ -215,10 +218,166 @@ export interface Database {
             referencedColumns: ['id']
           },
           {
+            foreignKeyName: 'recipe_comments_family_id_fkey'
+            columns: ['family_id']
+            isOneToOne: false
+            referencedRelation: 'families'
+            referencedColumns: ['id']
+          },
+          {
             foreignKeyName: 'recipe_comments_author_id_fkey'
             columns: ['author_id']
             isOneToOne: false
             referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      family_members: {
+        Row: {
+          id: string
+          family_id: string
+          first_name: string
+          last_name: string | null
+          family_role: string | null
+          photo_url: string | null
+          generation: number
+          parent_id: string | null
+          linked_profile_id: string | null
+          created_by: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          family_id: string
+          first_name: string
+          last_name?: string | null
+          family_role?: string | null
+          photo_url?: string | null
+          generation?: number
+          parent_id?: string | null
+          linked_profile_id?: string | null
+          created_by: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          family_id?: string
+          first_name?: string
+          last_name?: string | null
+          family_role?: string | null
+          photo_url?: string | null
+          generation?: number
+          parent_id?: string | null
+          linked_profile_id?: string | null
+          created_by?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'family_members_family_id_fkey'
+            columns: ['family_id']
+            isOneToOne: false
+            referencedRelation: 'families'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'family_members_parent_id_fkey'
+            columns: ['parent_id']
+            isOneToOne: false
+            referencedRelation: 'family_members'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'family_members_linked_profile_id_fkey'
+            columns: ['linked_profile_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'family_members_created_by_fkey'
+            columns: ['created_by']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      family_events: {
+        Row: {
+          id: string
+          family_id: string
+          title: string
+          event_date: string
+          note: string | null
+          photo_url: string | null
+          created_by: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          family_id: string
+          title: string
+          event_date: string
+          note?: string | null
+          photo_url?: string | null
+          created_by: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          family_id?: string
+          title?: string
+          event_date?: string
+          note?: string | null
+          photo_url?: string | null
+          created_by?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'family_events_family_id_fkey'
+            columns: ['family_id']
+            isOneToOne: false
+            referencedRelation: 'families'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'family_events_created_by_fkey'
+            columns: ['created_by']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      event_recipes: {
+        Row: {
+          event_id: string
+          recipe_id: string
+        }
+        Insert: {
+          event_id: string
+          recipe_id: string
+        }
+        Update: {
+          event_id?: string
+          recipe_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'event_recipes_event_id_fkey'
+            columns: ['event_id']
+            isOneToOne: false
+            referencedRelation: 'family_events'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'event_recipes_recipe_id_fkey'
+            columns: ['recipe_id']
+            isOneToOne: false
+            referencedRelation: 'recipes'
             referencedColumns: ['id']
           },
         ]

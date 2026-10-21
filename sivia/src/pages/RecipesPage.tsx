@@ -52,7 +52,7 @@ export function RecipesPage() {
       <div className="relative">
         <Search
           size={20}
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-encre-soft pointer-events-none"
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-brun-soft pointer-events-none"
           aria-hidden="true"
         />
         <input
@@ -68,7 +68,7 @@ export function RecipesPage() {
             type="button"
             onClick={() => setQuery('')}
             aria-label="Effacer la recherche"
-            className="absolute right-3 top-1/2 -translate-y-1/2 min-h-11 min-w-11 flex items-center justify-center text-encre-soft hover:text-encre"
+            className="absolute right-3 top-1/2 -translate-y-1/2 min-h-11 min-w-11 flex items-center justify-center text-brun-soft hover:text-encre"
           >
             <X size={20} aria-hidden="true" />
           </button>
@@ -98,7 +98,7 @@ export function RecipesPage() {
       {/* Filtre par membre */}
       {members.length > 1 && (
         <div role="group" aria-label="Filtrer par membre" className="flex flex-wrap gap-2 items-center">
-          <span className="text-sm font-bold text-encre-soft">Par membre :</span>
+          <span className="text-sm font-bold text-brun-soft">Par membre :</span>
           {[{ id: 'tous', name: 'Tous' }, ...members.map((m) => ({ id: m.id, name: m.display_name }))].map(
             (m) => (
               <button
@@ -147,7 +147,7 @@ export function RecipesPage() {
         </EmptyState>
       ) : (
         <>
-          <p className="text-encre-soft" aria-live="polite">
+          <p className="text-brun-soft" aria-live="polite">
             {recipes.length} recette{recipes.length > 1 ? 's' : ''} dans le carnet
           </p>
           <div className="grid gap-5 sm:grid-cols-2">

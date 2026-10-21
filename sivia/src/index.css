@@ -17,7 +17,11 @@
   --color-encre: #4a3728;
   --color-encre-soft: #7a6a58;
   --color-sauge: #8a9b6e;
+  --color-sauge-dark: #6f7f57;
   --color-carmine: #b33b3b;
+  /* Brun/cacao : accents secondaires (cadres, pieds de cartes, légendes) */
+  --color-brun: #6b4a32;
+  --color-brun-soft: #8a6a52;
 
   --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
   --font-sans: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -91,6 +95,14 @@ h3 {
 @utility card-surface {
   background-color: var(--color-creme);
   border: 1.5px solid rgba(74, 55, 40, 0.12);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-card);
+}
+
+/* Variante « carte secondaire » : fond sauge pour aérer sans multiplier le bleu */
+@utility card-surface-sauge {
+  background-color: rgba(138, 155, 110, 0.12);
+  border: 1.5px solid rgba(138, 155, 110, 0.35);
   border-radius: 1.25rem;
   box-shadow: var(--shadow-card);
 }

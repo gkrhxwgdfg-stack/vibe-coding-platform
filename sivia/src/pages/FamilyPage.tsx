@@ -1,8 +1,9 @@
-import { useState, type FormEvent } from 'react'
+import { useMemo, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { Check, Copy, Mail, Pencil, Trash2 } from 'lucide-react'
+import { Check, Copy, Mail, Pencil, Plus, Trash2, UserCheck } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { useCreateInvitation, useFamilyMembers, useInvitations } from '@/hooks/useFamily'
+import { useFamilyTree } from '@/hooks/useFamilyTree'
 import { supabase } from '@/lib/supabase'
 import { invitationLink } from '@/lib/paths'
 import { Avatar } from '@/components/ui/Avatar'
@@ -10,14 +11,23 @@ import { Button } from '@/components/ui/Button'
 import { Card, CardHeader } from '@/components/ui/Card'
 import { TextInput } from '@/components/ui/FormFields'
 import { Spinner } from '@/components/ui/Spinner'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { FamilyTree } from '@/components/family/FamilyTree'
+import { AddFamilyMemberModal } from '@/components/family/AddFamilyMemberModal'
+import { FamilyEvents } from '@/components/family/FamilyEvents'
 import { formatDate } from '@/lib/format'
-import type { Invitation } from '@/lib/types'
+import type { FamilyMember, Invitation } from '@/lib/types'
 
 export function FamilyPage() {
   const { profile, family, refreshProfile } = useAuth()
   const { members, loading: membersLoading } = useFamilyMembers()
   const { invitations, loading: invitationsLoading, refetch } = useInvitations()
   const createInvitation = useCreateInvitation()
+  const { members: treeMembers, loading: treeLoading, remove: removeTreeMember } = useFamilyTree()
+  const [memberModalOpen, setMemberModalOpen] = useState(false)
+
+  // Profils connectés, pour le badge « membre connecté » de l'arbre
+  const connectedProfileIds = useMemo(() => new Set(members.map((m) => m.id)), [members])
 
   const [email, setEmail] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -85,7 +95,13 @@ export function FamilyPage() {
     setTimeout(() => setCopiedId(null), 2000)
   }
 
-  if (membersLoading || invitationsLoading) return <Spinner label="On rassemble la famille…" />
+  if (membersLoading || invitationsLoading || treeLoading) return <Spinner label="On rassemble la famille…" />
+
+  function handleRemoveTreeMember(member: FamilyMember) {
+    if (window.confirm(`Retirer ${member.first_name} de l'arbre ?`)) {
+      void removeTreeMember(member.id)
+    }
+  }
 
   return (
     <div className="space-y-8">
@@ -160,6 +176,42 @@ export function FamilyPage() {
           ))}
         </ul>
       </section>
+
+      {/* Arbre généalogique : membres de l'arbre (sans compte) + membres connectés */}
+      <section aria-labelledby="tree-title">
+        <CardHeader
+          kicker="L'arbre généalogique"
+          title="La famille, fil par fil"
+          action={
+            <Button onClick={() => setMemberModalOpen(true)} aria-label="Ajouter un membre à l'arbre">
+              <Plus size={18} aria-hidden="true" /> Ajouter un membre
+            </Button>
+          }
+        />
+        <p className="text-sm text-encre-soft mb-4">
+          Un membre <span className="inline-flex items-center gap-1 font-bold text-bleu"><UserCheck size={14} aria-hidden="true" /> connecté</span> a
+          un compte Savia. Un membre ajouté « de l'arbre » n'en a pas — mamie Jeanne, par exemple —
+          mais elle peut être citée comme origine d'une recette.
+        </p>
+        {treeMembers.length === 0 ? (
+          <EmptyState handText="L'arbre n'a pas encore de branches. Accroche ta première personne.">
+            <Button size="lg" onClick={() => setMemberModalOpen(true)}>
+              <Plus size={20} aria-hidden="true" /> Planter l'arbre
+            </Button>
+          </EmptyState>
+        ) : (
+          <div className="card-surface p-5 bg-sauge/5">
+            <FamilyTree
+              members={treeMembers}
+              connectedProfileIds={connectedProfileIds}
+              onRemove={handleRemoveTreeMember}
+            />
+          </div>
+        )}
+      </section>
+
+      {/* Événements & souvenirs : la chronologie des repas de famille */}
+      <FamilyEvents />
 
       {/* Inviter */}
       <section aria-labelledby="invite-title">
@@ -252,6 +304,8 @@ export function FamilyPage() {
           Gérer mon profil
         </Link>
       </p>
+
+      <AddFamilyMemberModal open={memberModalOpen} onClose={() => setMemberModalOpen(false)} />
     </div>
   )
 }

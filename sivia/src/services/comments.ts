@@ -35,9 +35,25 @@ export async function fetchComments(recipeId: string): Promise<RecipeComment[]> 
   }))
 }
 
-/** Ajoute un commentaire (texte seul ou texte + photo) */
+/** Charge les moments de la planche familiale (commentaires sans recette) */
+export async function fetchPlancheComments(familyId: string): Promise<RecipeComment[]> {
+  const { data, error } = await supabase
+    .from('recipe_comments')
+    .select('*, author:profiles!recipe_comments_author_id_fkey(*)')
+    .eq('family_id', familyId)
+    .is('recipe_id', null)
+    .order('created_at', { ascending: false })
+  if (error || !data) return []
+  return (data as unknown as CommentRow[]).map((row) => ({
+    ...row,
+    author: row.author ?? undefined,
+  }))
+}
+
+/** Ajoute un commentaire (texte seul ou texte + photo).
+ *  recipeId = null -> moment de la planche familiale (rattaché à la famille). */
 export async function addComment(
-  recipeId: string,
+  recipeId: string | null,
   familyId: string,
   authorId: string,
   body: string,
@@ -54,6 +70,7 @@ export async function addComment(
   }
   const { error } = await supabase.from('recipe_comments').insert({
     recipe_id: recipeId,
+    family_id: familyId,
     author_id: authorId,
     body: text ? text : null,
     photo_url: photoPath,
@@ -90,7 +107,7 @@ export async function countComments(recipeIds: string[]): Promise<Map<string, nu
     .in('recipe_id', recipeIds)
   if (error || !data) return counts
   for (const row of data) {
-    counts.set(row.recipe_id, (counts.get(row.recipe_id) ?? 0) + 1)
+    if (row.recipe_id) counts.set(row.recipe_id, (counts.get(row.recipe_id) ?? 0) + 1)
   }
   return counts
 }

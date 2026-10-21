@@ -2,7 +2,9 @@ import { useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
   ArrowLeft,
+  Check,
   Clock,
+  Download,
   Heart,
   Lock,
   Minus,
@@ -15,6 +17,7 @@ import {
 import { useRecipe, useToggleFavorite } from '@/hooks/useRecipes'
 import { useAuth } from '@/context/AuthContext'
 import { deleteRecipe, photoPublicUrl, sealRecipe } from '@/services/recipes'
+import { printRecipe } from '@/services/recipePrint'
 import { categoryMeta } from '@/lib/constants'
 import { formatDate, formatDuration, formatRelative } from '@/lib/format'
 import { scaleIngredients } from '@/lib/scale'
@@ -31,13 +34,15 @@ import { cn } from '@/lib/utils'
 export function RecipeDetailPage() {
   const { id } = useParams<{ id: string }>()
   const { recipe, loading, error, setRecipe } = useRecipe(id)
-  const { user } = useAuth()
+  const { user, family } = useAuth()
   const toggleFavorite = useToggleFavorite()
   const navigate = useNavigate()
 
   const [servings, setServings] = useState<number | null>(null)
   const [favBusy, setFavBusy] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  // Export « carnet familial » : confirmation après le téléchargement
+  const [exported, setExported] = useState(false)
 
   const effectiveServings = servings ?? recipe?.servings ?? 4
 
@@ -60,6 +65,14 @@ export function RecipeDetailPage() {
   // À partir d'ici, recipe est défini (garde ci-dessus)
   const current = recipe
   const meta = categoryMeta(current.category)
+
+  function handleExport() {
+    const opened = printRecipe(current, family?.name ?? 'notre famille')
+    if (opened) {
+      setExported(true)
+      setTimeout(() => setExported(false), 4000)
+    }
+  }
   const isAuthor = user?.id === current.author_id
   const canEdit = isAuthor || !current.is_sealed
   const photo = photoPublicUrl(current.photo_url)
@@ -99,7 +112,7 @@ export function RecipeDetailPage() {
             {meta.label}
           </span>
           {recipe.is_sealed && (
-            <span className="absolute top-4 right-4 bg-creme/95 rounded-full px-4 py-1.5 font-bold text-encre inline-flex items-center gap-1.5">
+            <span className="absolute top-4 right-4 bg-creme/95 rounded-full px-4 py-1.5 font-bold text-carmine inline-flex items-center gap-1.5">
               <Lock size={15} aria-hidden="true" /> Recette scellée
             </span>
           )}
@@ -176,6 +189,11 @@ export function RecipeDetailPage() {
                 </Button>
               </Link>
             )}
+            {/* Export PDF « carnet familial » (mise en forme originale, polaroïd + tampon) */}
+            <Button variant="outline" onClick={handleExport}>
+              {exported ? <Check size={18} aria-hidden="true" /> : <Download size={18} aria-hidden="true" />}
+              {exported ? 'Préparé — choisis « Enregistrer en PDF »' : 'Télécharger la recette'}
+            </Button>
             <Button
               variant={recipe.is_favorite ? 'primary' : 'outline'}
               onClick={handleFavorite}
@@ -215,6 +233,7 @@ export function RecipeDetailPage() {
               {recipe.is_sealed
                 ? 'Recette scellée : tu es le seul à pouvoir modifier l’original.'
                 : 'Sceller une recette la rend non modifiable — sauf par toi, son créateur.'}
+              
             </p>
           )}
           {isAuthor && confirmDelete && (

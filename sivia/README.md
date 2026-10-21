@@ -31,7 +31,7 @@ L'application vérifie également la famille côté client avant chaque requête
 Identité chaleureuse et artisanale, pensée pour être utilisée par des
 grands-parents :
 
-- **Palette** : terracotta, moutarde, bleu ardoise, lin, crème, encre, sauge, carmine
+- **Palette** : terracotta, moutarde, bleu ardoise, lin, crème, encre, sauge, carmine, brun/cacao
 - **Typographies** : Fraunces (titres), Nunito Sans (texte), Caveat (manuscrit)
 - **Accessibilité** : typographie de base 17px, cibles tactiles ≥ 44px, focus
   visible, contraste élevé, parcours en 3 clics maximum
@@ -166,17 +166,21 @@ sivia/
 ├── supabase/
 │   ├── migrations/0001_initial_schema.sql   # tables, RLS, storage, triggers
 │   ├── migrations/0006_comments_and_family_role.sql  # commentaires, lien familial
+│   ├── migrations/0007_planche_family_photos.sql    # planche : commentaires sans recette
+│   ├── migrations/0008_family_tree_and_events.sql   # arbre généalogique + événements
 │   ├── seed/seed.sql                        # recettes de démonstration
 │   └── README.md                            # guide de configuration Supabase
 ├── src/
 │   ├── components/
 │   │   ├── ui/          # design system (Button, Card, Avatar, Stamp, Polaroid…)
-│   │   ├── layout/      # AppLayout, AuthShell, RequireAuth
-│   │   └── recipes/     # RecipeCard, RecipeForm, CommentThread
+│   │   ├── layout/      # AppLayout, AuthShell, RequireAuth, AddButton
+│   │   ├── recipes/     # RecipeCard, RecipeForm, CommentThread, CookingTimer
+│   │   ├── planche/     # AddPhotoModal (moments de la planche familiale)
+│   │   └── family/      # FamilyTree, AddFamilyMemberModal, FamilyEvents
 │   ├── context/         # AuthContext (session, profil, famille)
-│   ├── hooks/           # useRecipes, useFamily, useComments…
-│   ├── services/        # logique métier Supabase (recipes.ts, comments.ts)
-│   ├── lib/             # supabase client, types, utils, format, scale
+│   ├── hooks/           # useRecipes, useFamily, useComments, useFamilyTree…
+│   ├── services/        # logique métier Supabase (recipes.ts, comments.ts, familyTree.ts, recipePrint.ts)
+│   ├── lib/             # supabase client, types, utils, format, scale, cooking, addAction
 │   ├── pages/           # une page par écran
 │   └── App.tsx          # routes
 └── public/              # favicon (cuillère-monogramme)

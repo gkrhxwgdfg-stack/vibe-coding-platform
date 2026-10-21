@@ -36,7 +36,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
           {meta.label}
         </span>
         {recipe.is_sealed && (
-          <span className="absolute top-3 right-3 bg-creme/95 rounded-full px-3 py-1 text-sm font-bold text-encre flex items-center gap-1">
+          <span className="absolute top-3 right-3 bg-creme/95 rounded-full px-3 py-1 text-sm font-bold text-carmine flex items-center gap-1">
             <Lock size={13} aria-hidden="true" /> Scellée
           </span>
         )}
@@ -48,7 +48,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         <p className="text-hand text-bleu text-lg mt-0.5">
           créée par {recipe.author?.display_name ?? '…'}
         </p>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-encre-soft">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-brun-soft">
           <span className="inline-flex items-center gap-1">
             <Users size={15} aria-hidden="true" /> {recipe.servings} parts
           </span>
@@ -64,7 +64,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
             </span>
           )}
         </div>
-        <p className="text-xs text-encre-soft mt-2">Créée le {formatDate(recipe.created_at)}</p>
+        <p className="text-xs text-brun-soft mt-2">Créée le {formatDate(recipe.created_at)}</p>
       </div>
     </Link>
   )

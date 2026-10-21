@@ -25,7 +25,10 @@ export interface Profile {
 
 export interface RecipeComment {
   id: string
-  recipe_id: string
+  /** Recette visée, ou null pour un moment de la planche familiale */
+  recipe_id: string | null
+  /** Famille du commentaire (renseignée automatiquement) */
+  family_id: string | null
   author_id: string
   /** Texte du commentaire (null si photo seule) */
   body: string | null
@@ -99,4 +102,38 @@ export interface RecipeFormValues {
   anecdote: string
   origin_story: string
   photoFile: File | null
+}
+
+/** Membre « de l'arbre » : une personne de la famille, sans compte (ex : « Mamie Jeanne ») */
+export interface FamilyMember {
+  id: string
+  family_id: string
+  first_name: string
+  last_name: string | null
+  /** Lien familial : « maman », « papi », « cousine Léa »… */
+  family_role: string | null
+  /** Chemin de la photo dans le bucket storage */
+  photo_url: string | null
+  /** Rang/génération : 1 = les aînés, 2 = leurs enfants… */
+  generation: number
+  parent_id: string | null
+  /** Membre de l'arbre lié à un compte Supabase (badge « membre connecté ») */
+  linked_profile_id: string | null
+  created_by: string
+  created_at: string
+}
+
+/** Repas de famille : un souvenir du menu, sur la chronologie */
+export interface FamilyEvent {
+  id: string
+  family_id: string
+  title: string
+  /** Date du repas (format ISO AAAA-MM-JJ) */
+  event_date: string
+  note: string | null
+  photo_url: string | null
+  created_by: string
+  created_at: string
+  /** Recettes servies à l'événement (menu) */
+  recipes?: { id: string; title: string }[]
 }

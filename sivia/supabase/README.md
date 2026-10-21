@@ -12,8 +12,9 @@
 
 ## 2. Appliquer le schéma
 
-**À faire impérativement avant le premier lancement** : les 6 tables
-(`families`, `profiles`, `invitations`, `recipes`, `favorites`, `recipe_comments`),
+**À faire impérativement avant le premier lancement** : les 9 tables
+(`families`, `profiles`, `invitations`, `recipes`, `favorites`, `recipe_comments`,
+`family_members`, `family_events`, `event_recipes`),
 les policies RLS et le bucket `recipe-photos` ne sont **pas encore créés** sur le projet.
 
 **Via le dashboard (sans CLI)** — onglet **SQL Editor**, exécutez **dans l'ordre** :
@@ -33,6 +34,14 @@ les policies RLS et le bucket `recipe-photos` ne sont **pas encore créés** sur
    [`migrations/0006_comments_and_family_role.sql`](./migrations/0006_comments_and_family_role.sql) → **Run**
    (ajoute la table `recipe_comments` pour le fil de vie des recettes — commentaires
    et photos — et la colonne `profiles.family_role` pour le lien dans la famille)
+6. **New query** → collez le **contenu** de
+   [`migrations/0007_planche_family_photos.sql`](./migrations/0007_planche_family_photos.sql) → **Run**
+   (planche familiale : `recipe_comments.recipe_id` devient nullable et un commentaire
+   peut être rattaché à la famille seule, sans recette)
+7. **New query** → collez le **contenu** de
+   [`migrations/0008_family_tree_and_events.sql`](./migrations/0008_family_tree_and_events.sql) → **Run**
+   (arbre généalogique : tables `family_members`, `family_events` et `event_recipes`,
+   avec RLS identique au reste du schéma)
 
 > Erreur fréquente : coller le chemin `sivia/supabase/migrations/...` au lieu
 > du contenu SQL → `ERROR: 42601: syntax error`. Le SQL Editor attend du **code SQL**.

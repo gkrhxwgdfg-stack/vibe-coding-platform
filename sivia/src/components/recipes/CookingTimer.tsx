@@ -27,13 +27,14 @@ export function CookingTimer({ initialMinutes }: { initialMinutes: number }) {
   const [running, setRunning] = useState(false)
 
   // Décompte : une seconde à la fois, proprement nettoyé
+  const finished = remaining <= 0
   useEffect(() => {
-    if (!running || remaining <= 0) return
+    if (!running || finished) return
     const tick = setInterval(() => {
       setRemaining((value) => Math.max(0, value - 1))
     }, 1000)
     return () => clearInterval(tick)
-  }, [running, remaining <= 0])
+  }, [running, finished])
 
   // Fin du décompte : on arrête le minuteur
   useEffect(() => {

@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { BookOpen, Heart, Home, Plus, Users, UserRound } from 'lucide-react'
+import { NavLink, Outlet } from 'react-router-dom'
+import { BookOpen, Heart, Home, Users, UserRound } from 'lucide-react'
 import { Logo } from '@/components/ui/Logo'
+import { AddButtonHost } from '@/components/layout/AddButtonHost'
 import { useAuth } from '@/context/AuthContext'
 import { cn } from '@/lib/utils'
 
@@ -19,7 +20,6 @@ const navItems = [
  */
 export function AppLayout({ children }: { children?: ReactNode }) {
   const { family, profile } = useAuth()
-  const navigate = useNavigate()
 
   return (
     <div className="min-h-dvh flex flex-col pb-24">
@@ -41,15 +41,9 @@ export function AppLayout({ children }: { children?: ReactNode }) {
         {children ?? <Outlet />}
       </main>
 
-      {/* Bouton flottant « nouvelle recette » — action secondaire mais visible */}
-      <button
-        type="button"
-        onClick={() => navigate('/recettes/nouvelle')}
-        aria-label="Nouvelle recette"
-        className="fixed bottom-22 right-5 z-40 w-14 h-14 rounded-full bg-terra text-creme shadow-soft flex items-center justify-center hover:bg-terra-dark active:scale-95 transition-colors"
-      >
-        <Plus size={28} strokeWidth={2.5} aria-hidden="true" />
-      </button>
+      {/* Bouton flottant « + » contextuel (accueil : photo planche, recettes : nouvelle
+          recette, famille : membre de l'arbre ; absent sur favoris, profil, fiches) */}
+      <AddButtonHost />
 
       <nav
         aria-label="Navigation principale"

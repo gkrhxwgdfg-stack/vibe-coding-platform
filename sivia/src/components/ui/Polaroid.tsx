@@ -17,6 +17,7 @@ export function Polaroid({ src, caption, tilt = -2, className, overlay }: Polaro
     <figure
       className={cn(
         'bg-white p-2.5 pb-3 rounded-md shadow-card inline-block w-[200px] shrink-0',
+        'border-b-4 border-brun',
         className,
       )}
       style={{ transform: `rotate(${tilt}deg)` }}
@@ -40,7 +41,7 @@ export function Polaroid({ src, caption, tilt = -2, className, overlay }: Polaro
         )}
         {overlay}
       </div>
-      <figcaption className="text-hand text-bleu text-lg text-center pt-2 leading-tight max-h-[7.5rem] overflow-hidden">
+      <figcaption className="text-hand text-brun text-lg text-center pt-2 leading-tight max-h-[7.5rem] overflow-hidden">
         {caption}
       </figcaption>
     </figure>
