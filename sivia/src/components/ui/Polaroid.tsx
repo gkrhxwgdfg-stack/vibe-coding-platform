@@ -11,17 +11,17 @@ interface PolaroidProps {
   overlay?: ReactNode
 }
 
-/** Photo « polaroid » posée en biais avec un mot dessous */
+/** Photo « polaroid » posée en biais avec un mot dessous. Taille fixe, ne grandit pas. */
 export function Polaroid({ src, caption, tilt = -2, className, overlay }: PolaroidProps) {
   return (
     <figure
       className={cn(
-        'bg-white p-2.5 pb-3 rounded-md shadow-card inline-block max-w-full',
+        'bg-white p-2.5 pb-3 rounded-md shadow-card inline-block w-[200px] shrink-0',
         className,
       )}
       style={{ transform: `rotate(${tilt}deg)` }}
     >
-      <div className="relative aspect-[4/3] w-full min-w-[180px] overflow-hidden rounded-sm bg-lin">
+      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-lin">
         {src ? (
           <img src={src} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
         ) : (
@@ -40,7 +40,7 @@ export function Polaroid({ src, caption, tilt = -2, className, overlay }: Polaro
         )}
         {overlay}
       </div>
-      <figcaption className="text-hand text-bleu text-lg text-center pt-2 leading-tight">
+      <figcaption className="text-hand text-bleu text-lg text-center pt-2 leading-tight max-h-[7.5rem] overflow-hidden">
         {caption}
       </figcaption>
     </figure>

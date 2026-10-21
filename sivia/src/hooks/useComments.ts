@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/context/AuthContext'
-import { addComment, deleteComment, fetchComments } from '@/services/comments'
+import { addComment, deleteComment, fetchComments, updateComment } from '@/services/comments'
 import { photoPublicUrl } from '@/services/recipes'
 import type { RecipeComment } from '@/lib/types'
 
 /**
  * Fil de vie d'une recette : commentaires et photos de la famille.
- * Toute la famille peut \u00e9crire ; seul l'auteur peut retirer son message.
+ * Toute la famille peut écrire ; seul l'auteur peut retirer son message.
  */
 export function useComments(recipeId: string | undefined, familyId?: string) {
   const { profile } = useAuth()
@@ -62,7 +62,22 @@ export function useComments(recipeId: string | undefined, familyId?: string) {
     [],
   )
 
-  return { comments, loading, sending, error, refetch, send, remove, commentPhotoUrl: photoPublicUrl }
+  const edit = useCallback(
+    async (commentId: string, body: string) => {
+      const { error: updateError } = await updateComment(commentId, body)
+      if (updateError) {
+        setError(updateError)
+        return { error: updateError }
+      }
+      setComments((prev) =>
+        prev.map((c) => (c.id === commentId ? { ...c, body: body.trim() ? body.trim() : null } : c)),
+      )
+      return { error: null }
+    },
+    [],
+  )
+
+  return { comments, loading, sending, error, refetch, send, remove, edit, commentPhotoUrl: photoPublicUrl }
 }
 
 /** Derniers commentaires de la famille, tous confondus (pour les notifications d'accueil) */

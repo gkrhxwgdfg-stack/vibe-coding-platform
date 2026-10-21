@@ -3,8 +3,8 @@ import { STORAGE_BUCKET } from '@/lib/constants'
 import type { RecipeComment } from '@/lib/types'
 
 /**
- * Logique m\u00e9tier du fil de vie des recettes : commentaires et photos
- * partag\u00e9es par la famille. Garde les vues l\u00e9g\u00e8res.
+ * Logique métier du fil de vie des recettes : commentaires et photos
+ * partagées par la famille. Garde les vues légères.
  */
 
 type CommentRow = RecipeComment & { author: import('@/lib/types').Profile | null }
@@ -21,7 +21,7 @@ async function uploadCommentPhoto(familyId: string, authorId: string, file: File
   return path
 }
 
-/** Charge les commentaires d'une recette, du plus ancien au plus r\u00e9cent */
+/** Charge les commentaires d'une recette, du plus ancien au plus récent */
 export async function fetchComments(recipeId: string): Promise<RecipeComment[]> {
   const { data, error } = await supabase
     .from('recipe_comments')
@@ -50,7 +50,7 @@ export async function addComment(
   let photoPath: string | null = null
   if (photoFile) {
     photoPath = await uploadCommentPhoto(familyId, authorId, photoFile)
-    if (!photoPath) return { error: "La photo n’a pas pu \u00eatre envoy\u00e9e. R\u00e9essaie ?" }
+    if (!photoPath) return { error: "La photo n’a pas pu être envoyée. Réessaie ?" }
   }
   const { error } = await supabase.from('recipe_comments').insert({
     recipe_id: recipeId,
@@ -58,6 +58,19 @@ export async function addComment(
     body: text ? text : null,
     photo_url: photoPath,
   })
+  return { error: error?.message ?? null }
+}
+
+/** Modifie le texte d'un commentaire (son auteur uniquement, cf. RLS) */
+export async function updateComment(
+  commentId: string,
+  body: string,
+): Promise<{ error: string | null }> {
+  const text = body.trim()
+  const { error } = await supabase
+    .from('recipe_comments')
+    .update({ body: text ? text : null })
+    .eq('id', commentId)
   return { error: error?.message ?? null }
 }
 

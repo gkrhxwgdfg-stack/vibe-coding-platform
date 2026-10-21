@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { ImagePlus, MessageCircle, Send, Trash2 } from 'lucide-react'
+import { Check, ImagePlus, MessageCircle, Pencil, Send, Trash2, X } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { useComments } from '@/hooks/useComments'
 import { Avatar } from '@/components/ui/Avatar'
@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
 import { formatRelative } from '@/lib/format'
 import { cn } from '@/lib/utils'
+import type { RecipeComment } from '@/lib/types'
 
 interface CommentThreadProps {
   recipeId: string
@@ -19,11 +20,13 @@ interface CommentThreadProps {
  */
 export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
   const { profile } = useAuth()
-  const { comments, loading, sending, error, send, remove, commentPhotoUrl } = useComments(recipeId, familyId)
+  const { comments, loading, sending, error, send, remove, edit, commentPhotoUrl } = useComments(recipeId, familyId)
 
   const [body, setBody] = useState('')
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editBody, setEditBody] = useState('')
 
   function handlePhoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null
@@ -47,6 +50,19 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
     }
   }
 
+  function startEdit(comment: RecipeComment) {
+    setEditingId(comment.id)
+    setEditBody(comment.body ?? '')
+  }
+
+  async function saveEdit(commentId: string) {
+    const { error: editError } = await edit(commentId, editBody)
+    if (!editError) {
+      setEditingId(null)
+      setEditBody('')
+    }
+  }
+
   return (
     <section aria-labelledby="comments-title" className="card-surface p-5">
       <div className="flex items-center gap-2 mb-4">
@@ -65,13 +81,14 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
         <ul className="space-y-4 mb-6">
           {comments.length === 0 && (
             <li className="text-encre-soft">
-              Personne n'a encore racont\u00e9 cette recette. Sois le premier \u2014 la famille
+              Personne n'a encore raconté cette recette. Sois le premier — la famille
               suivra.
             </li>
           )}
           {comments.map((comment) => {
             const photo = commentPhotoUrl(comment.photo_url)
             const isMine = comment.author_id === profile?.id
+            const isEditing = editingId === comment.id
             return (
               <li key={comment.id} className="flex items-start gap-3">
                 {comment.author && (
@@ -80,34 +97,77 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                 <div className="min-w-0 flex-1">
                   <div className="rounded-2xl bg-lin px-4 py-3">
                     <p className="font-bold">
-                      {comment.author?.display_name ?? '\u2026'}
+                      {comment.author?.display_name ?? '…'}
                       {comment.author?.family_role && (
-                        <span className="text-encre-soft font-normal"> \u00b7 {comment.author.family_role}</span>
+                        <span className="text-encre-soft font-normal"> · {comment.author.family_role}</span>
                       )}
                     </p>
-                    {comment.body && <p className="text-lg whitespace-pre-line mt-0.5">{comment.body}</p>}
-                    {photo && (
-                      <img
-                        src={photo}
-                        alt={`Photo partag\u00e9e par ${comment.author?.display_name ?? 'la famille'}`}
-                        loading="lazy"
-                        className="mt-2 w-full max-w-xs aspect-[4/3] object-cover rounded-xl border-2 border-encre/10"
-                      />
+                    {isEditing ? (
+                      <div className="mt-1 space-y-2">
+                        <textarea
+                          rows={2}
+                          value={editBody}
+                          onChange={(e) => setEditBody(e.target.value)}
+                          className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-3 py-2 text-encre placeholder:text-encre-soft/60 focus:border-terra focus:outline-none"
+                          aria-label="Modifier mon message"
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => saveEdit(comment.id)}
+                            className="inline-flex items-center gap-1 min-h-11 px-4 rounded-xl bg-terra text-creme font-bold"
+                          >
+                            <Check size={16} aria-hidden="true" /> Enregistrer
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingId(null)
+                              setEditBody('')
+                            }}
+                            className="inline-flex items-center gap-1 min-h-11 px-4 rounded-xl border-2 border-encre/25 font-bold hover:border-encre/50"
+                          >
+                            <X size={16} aria-hidden="true" /> Annuler
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        {comment.body && <p className="text-lg whitespace-pre-line mt-0.5">{comment.body}</p>}
+                        {photo && (
+                          <img
+                            src={photo}
+                            alt={`Photo partagée par ${comment.author?.display_name ?? 'la famille'}`}
+                            loading="lazy"
+                            className="mt-2 w-full max-w-xs aspect-[4/3] object-cover rounded-xl border-2 border-encre/10"
+                          />
+                        )}
+                      </>
                     )}
                   </div>
                   <p className="text-xs text-encre-soft mt-1 px-1">
                     {formatRelative(comment.created_at)}
                   </p>
                 </div>
-                {isMine && (
-                  <button
-                    type="button"
-                    onClick={() => remove(comment.id)}
-                    aria-label="Retirer mon message"
-                    className="min-h-11 min-w-11 shrink-0 rounded-xl text-encre-soft hover:text-carmine inline-flex items-center justify-center"
-                  >
-                    <Trash2 size={18} aria-hidden="true" />
-                  </button>
+                {isMine && !isEditing && (
+                  <div className="flex shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => startEdit(comment)}
+                      aria-label="Modifier mon message"
+                      className="min-h-11 min-w-11 rounded-xl text-encre-soft hover:text-terra inline-flex items-center justify-center"
+                    >
+                      <Pencil size={18} aria-hidden="true" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => remove(comment.id)}
+                      aria-label="Retirer mon message"
+                      className="min-h-11 min-w-11 rounded-xl text-encre-soft hover:text-carmine inline-flex items-center justify-center"
+                    >
+                      <Trash2 size={18} aria-hidden="true" />
+                    </button>
+                  </div>
                 )}
               </li>
             )
@@ -117,14 +177,14 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
 
       <form onSubmit={handleSubmit} noValidate className="space-y-3">
         <label htmlFor="comment-body" className="block font-bold text-encre">
-          Raconte ta version, ta photo\u2026
+          Raconte ta version, ta photo…
         </label>
         <textarea
           id="comment-body"
           rows={2}
           value={body}
           onChange={(e) => setBody(e.target.value)}
-          placeholder="Celle de dimanche, avec une touche de thym en plus\u2026"
+          placeholder="Celle de dimanche, avec une touche de thym en plus…"
           className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-4 py-2.5 text-encre placeholder:text-encre-soft/60 focus:border-terra focus:outline-none"
         />
         <div className="flex flex-wrap items-center gap-3">
@@ -143,7 +203,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
             <span className="relative inline-block">
               <img
                 src={photoPreview}
-                alt="Aper\u00e7u de la photo"
+                alt="Aperçu de la photo"
                 className="w-20 h-20 object-cover rounded-xl border-2 border-encre/10"
               />
               <button
@@ -161,7 +221,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
           )}
           <Button type="submit" disabled={sending || (!body.trim() && !photoFile)} className="ml-auto">
             <Send size={18} aria-hidden="true" />
-            {sending ? 'On envoie\u2026' : 'Envoyer'}
+            {sending ? 'On envoie…' : 'Envoyer'}
           </Button>
         </div>
         {error && (
