@@ -1,7 +1,13 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { ImagePlus, Send, Trash2, X } from 'lucide-react'
 import { familyPhotoUrl } from '@/services/familyTree'
-import { FAMILY_RELATIONS, type FamilyGeneration, type FamilyMember } from '@/lib/types'
+import {
+  FAMILY_RELATIONS,
+  linkKindForRelation,
+  type FamilyGeneration,
+  type FamilyMember,
+  type FamilyRelation,
+} from '@/lib/types'
 import { useFamilyMembers } from '@/hooks/useFamily'
 import { Button } from '@/components/ui/Button'
 import { TextInput } from '@/components/ui/FormFields'
@@ -206,72 +212,92 @@ export function FamilyMemberModal({
             placeholder="Mamie"
           />
 
-          {/* Génération nommée */}
-          <div>
-            <label htmlFor="member-generation" className="block font-bold text-encre mb-1.5">
-              Génération
-            </label>
-            <select
-              id="member-generation"
-              value={generationId}
-              onChange={(e) => setGenerationId(e.target.value)}
-              className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-4 py-2.5 focus:border-terra focus:outline-none"
-            >
-              <option value="">Génération 0 — non classés</option>
-              {generations.map((g) => (
-                <option key={g.id} value={g.id}>
-                  {g.name}
-                </option>
-              ))}
-            </select>
-            <p className="text-sm text-encre-soft mt-1.5">
-              Les générations nommées s'affichent comme onglets dans l'arbre.
-            </p>
-          </div>
-
-          {/* Référent + lien typé */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Génération nommée (conservée pour historique, non utilisée pour l'arbre) */}
+          {generations.length > 0 && (
             <div>
-              <label htmlFor="member-parent" className="block font-bold text-encre mb-1.5">
-                Référent dans l'arbre (facultatif)
+              <label htmlFor="member-generation" className="block font-bold text-encre mb-1.5">
+                Génération (facultative)
               </label>
               <select
-                id="member-parent"
-                value={parentId}
-                onChange={(e) => setParentId(e.target.value)}
+                id="member-generation"
+                value={generationId}
+                onChange={(e) => setGenerationId(e.target.value)}
                 className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-4 py-2.5 focus:border-terra focus:outline-none"
               >
-                <option value="">— Aucun —</option>
-                {possibleParents.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.first_name}
-                    {m.last_name ? ` ${m.last_name}` : ''}
+                <option value="">— Non classée —</option>
+                {generations.map((g) => (
+                  <option key={g.id} value={g.id}>
+                    {g.name}
                   </option>
                 ))}
               </select>
             </div>
-            <div>
-              <label htmlFor="member-relation" className="block font-bold text-encre mb-1.5">
-                Lien avec ce référent
-              </label>
-              <select
-                id="member-relation"
-                value={relationLabel}
-                onChange={(e) => setRelationLabel(e.target.value)}
-                disabled={!parentId}
-                className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-4 py-2.5 focus:border-terra focus:outline-none disabled:opacity-50"
-              >
-                <option value="">— Choisir un lien —</option>
-                {FAMILY_RELATIONS.map((r) => (
-                  <option key={r.value} value={r.value}>
-                    {r.label}
-                  </option>
-                ))}
-              </select>
-              <p className="text-sm text-encre-soft mt-1.5">
-                « Cousine de » mamie Jeanne, « enfant de » papi… — pour bien différencier les liens.
+          )}
+
+          {/* Référent + lien typé : c'est le lien qui construit l'arbre */}
+          <div className="rounded-2xl border-2 border-dashed border-terra/40 bg-creme p-4 space-y-4">
+            <p className="font-bold text-encre">
+              Où accrocher {isEditing ? member.first_name : 'ce membre'} dans l'arbre ?
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="member-parent" className="block font-bold text-encre mb-1.5">
+                  Relié(e) à (facultatif)
+                </label>
+                <select
+                  id="member-parent"
+                  value={parentId}
+                  onChange={(e) => setParentId(e.target.value)}
+                  className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-4 py-2.5 focus:border-terra focus:outline-none"
+                >
+                  <option value="">— Personne (racine de l'arbre) —</option>
+                  {possibleParents.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.first_name}
+                      {m.last_name ? ` ${m.last_name}` : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="member-relation" className="block font-bold text-encre mb-1.5">
+                  Lien avec cette personne
+                </label>
+                <select
+                  id="member-relation"
+                  value={relationLabel}
+                  onChange={(e) => setRelationLabel(e.target.value)}
+                  disabled={!parentId}
+                  className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-4 py-2.5 focus:border-terra focus:outline-none disabled:opacity-50"
+                >
+                  <option value="">— Choisir un lien —</option>
+                  {FAMILY_RELATIONS.map((r) => (
+                    <option key={r.value} value={r.value}>
+                      {r.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            {parentId && relationLabel && (
+              <p className="text-sm text-encre-soft">
+                {linkKindForRelation(relationLabel as FamilyRelation) === 'partner' ? (
+                  <>
+                    <strong>Branche horizontale</strong> : le conjoint apparaîtra à côté de son
+                    partenaire, relié par un trait.
+                  </>
+                ) : (
+                  <>
+                    <strong>Branche descendante</strong> : {isEditing ? member.first_name : 'Ce membre'}{' '}
+                    apparaîtra sous son référent, dans la fratrie.
+                  </>
+                )}
               </p>
-            </div>
+            )}
+            <p className="text-sm text-encre-soft">
+              « Fils / fille de » construit les branches vers le bas ; « conjoint·e de » place la
+              personne à côté de son partenaire.
+            </p>
           </div>
 
           {/* Lien vers un compte Savia */}

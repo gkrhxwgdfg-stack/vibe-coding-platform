@@ -47,6 +47,10 @@ les policies RLS et le bucket `recipe-photos` ne sont **pas encore créés** sur
    (arbre v2 : table `family_generations` pour les générations nommées en onglets,
    `family_members.generation_id` remplace l'ancien entier `generation`,
    et `family_members.relation_label` pour les liens familiaux typés)
+9. **New query** → collez le **contenu** de
+   [`migrations/0010_family_tree_links_kind.sql`](./migrations/0010_family_tree_links_kind.sql) → **Run**
+   (arbre complet : `family_members.link_kind` distingue les liens de parenté
+   (`parent` = branche descendante) des liens de couple (`partner` = branche horizontale))
 
 > Erreur fréquente : coller le chemin `sivia/supabase/migrations/...` au lieu
 > du contenu SQL → `ERROR: 42601: syntax error`. Le SQL Editor attend du **code SQL**.

@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import { STORAGE_BUCKET } from '@/lib/constants'
 import type { Database } from '@/lib/database.types'
-import type { FamilyEvent, FamilyGeneration, FamilyMember } from '@/lib/types'
+import { linkKindForRelation, type FamilyEvent, type FamilyGeneration, type FamilyMember, type FamilyRelation } from '@/lib/types'
 
 /**
  * Logique métier de la section Famille : arbre généalogique (membres
@@ -45,15 +45,22 @@ export interface FamilyMemberFormValues {
   first_name: string
   last_name: string
   family_role: string
-  /** Génération nommée choisie (null = génération 0, non classés) */
+  /** Génération nommée choisie (null = génération 0, non classés) — conservé pour historique */
   generation_id: string | null
+  /** Référent du lien : le parent (branche descendante) ou le conjoint (branche horizontale) */
   parent_id: string | null
-  /** Libellé du lien vers le référent (« cousine », « enfant »…) */
-  relation_label: string | null
+  /** Libellé du lien vers le référent (« fille », « conjoint »…) */
+  relation_label: FamilyRelation | string | null
   linked_profile_id: string | null
   photoFile: File | null
   /** Retirer la photo existante (édition) */
   removePhoto?: boolean
+}
+
+/** Nature du lien déduite du libellé choisi (« conjoint » -> branche horizontale) */
+function linkKindFor(values: FamilyMemberFormValues): 'parent' | 'partner' | null {
+  if (!values.parent_id || !values.relation_label) return null
+  return linkKindForRelation(values.relation_label as FamilyRelation)
 }
 
 export async function createFamilyMember(
@@ -77,6 +84,7 @@ export async function createFamilyMember(
       family_role: values.family_role.trim() || null,
       generation_id: values.generation_id,
       parent_id: values.parent_id,
+      link_kind: linkKindFor(values),
       relation_label: values.relation_label,
       linked_profile_id: values.linked_profile_id,
       photo_url: photoPath,
@@ -111,6 +119,7 @@ export async function updateFamilyMember(
     family_role: values.family_role.trim() || null,
     generation_id: values.generation_id,
     parent_id: values.parent_id,
+    link_kind: linkKindFor(values),
     relation_label: values.relation_label,
     linked_profile_id: values.linked_profile_id,
   }

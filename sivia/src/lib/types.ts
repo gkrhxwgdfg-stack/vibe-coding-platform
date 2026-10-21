@@ -116,10 +116,17 @@ export interface FamilyGeneration {
   created_at: string
 }
 
-/** Libellés de liens familiaux proposés (vers le référent parent_id) */
+/** Nature du lien vers le référent (parent_id) : branche de l'arbre */
+export type FamilyLinkKind = 'parent' | 'partner'
+
+/** Libellés de liens familiaux proposés (vers le référent parent_id).
+ *  Le genre du lien (fils/fille, conjoint/conjointe) est porté par `link_kind`
+ *  et le libellé s'adapte à l'affichage. */
 export type FamilyRelation =
-  | 'enfant'
-  | 'petit-enfant'
+  | 'fils'
+  | 'fille'
+  | 'petit-fils'
+  | 'petite-fille'
   | 'frere'
   | 'soeur'
   | 'cousin'
@@ -128,12 +135,16 @@ export type FamilyRelation =
   | 'niece'
   | 'oncle'
   | 'tante'
-  | 'beau-parent'
+  | 'beau-pere'
+  | 'belle-mere'
+  | 'conjoint'
   | 'autre'
 
 export const FAMILY_RELATIONS: { value: FamilyRelation; label: string }[] = [
-  { value: 'enfant', label: 'Enfant de' },
-  { value: 'petit-enfant', label: 'Petit-enfant de' },
+  { value: 'fils', label: 'Fils de' },
+  { value: 'fille', label: 'Fille de' },
+  { value: 'petit-fils', label: 'Petit-fils de' },
+  { value: 'petite-fille', label: 'Petite-fille de' },
   { value: 'frere', label: 'Frère de' },
   { value: 'soeur', label: 'Sœur de' },
   { value: 'cousin', label: 'Cousin de' },
@@ -142,9 +153,16 @@ export const FAMILY_RELATIONS: { value: FamilyRelation; label: string }[] = [
   { value: 'niece', label: 'Nièce de' },
   { value: 'oncle', label: 'Oncle de' },
   { value: 'tante', label: 'Tante de' },
-  { value: 'beau-parent', label: 'Beau-parent de' },
+  { value: 'beau-pere', label: 'Beau-père de' },
+  { value: 'belle-mere', label: 'Belle-mère de' },
+  { value: 'conjoint', label: 'Conjoint·e de' },
   { value: 'autre', label: 'Lié(e) à' },
 ]
+
+/** Déduit la nature du lien (branche) depuis le libellé choisi */
+export function linkKindForRelation(relation: FamilyRelation): FamilyLinkKind {
+  return relation === 'conjoint' ? 'partner' : 'parent'
+}
 
 /** Membre « de l'arbre » : une personne de la famille, sans compte (ex : « Mamie Jeanne ») */
 export interface FamilyMember {
@@ -156,10 +174,13 @@ export interface FamilyMember {
   family_role: string | null
   /** Chemin de la photo dans le bucket storage */
   photo_url: string | null
-  /** Génération nommée (null = génération 0, non classés) */
+  /** Génération nommée (null = génération 0, non classés) — conservé pour historique */
   generation_id: string | null
+  /** Référent du lien : le parent (branche descendante) ou le conjoint (branche horizontale) */
   parent_id: string | null
-  /** Libellé du lien vers le référent : « cousine », « enfant »… */
+  /** Nature du lien vers le référent : parent (descendance) ou conjoint (couple) */
+  link_kind: FamilyLinkKind | null
+  /** Libellé du lien vers le référent : « fille », « conjoint »… */
   relation_label: string | null
   /** Membre de l'arbre lié à un compte Supabase (badge « membre connecté ») */
   linked_profile_id: string | null

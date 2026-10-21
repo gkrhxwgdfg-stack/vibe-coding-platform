@@ -285,6 +285,7 @@ export interface Database {
           photo_url: string | null
           generation_id: string | null
           parent_id: string | null
+          link_kind: 'parent' | 'partner' | null
           relation_label: string | null
           linked_profile_id: string | null
           created_by: string
@@ -299,6 +300,7 @@ export interface Database {
           photo_url?: string | null
           generation_id?: string | null
           parent_id?: string | null
+          link_kind?: 'parent' | 'partner' | null
           relation_label?: string | null
           linked_profile_id?: string | null
           created_by: string
@@ -313,6 +315,7 @@ export interface Database {
           photo_url?: string | null
           generation_id?: string | null
           parent_id?: string | null
+          link_kind?: 'parent' | 'partner' | null
           relation_label?: string | null
           linked_profile_id?: string | null
           created_by?: string

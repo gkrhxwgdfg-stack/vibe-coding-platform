@@ -1,246 +1,147 @@
-import { useMemo, useState } from 'react'
-import { Plus, X } from 'lucide-react'
+import { useMemo } from 'react'
+import { buildFamilyTreeLayout, type TreeSegment } from '@/lib/familyTreeLayout'
 import { FamilyMemberCard } from '@/components/family/FamilyMemberCard'
-import { cn } from '@/lib/utils'
-import type { FamilyGeneration, FamilyMember } from '@/lib/types'
+import type { FamilyMember } from '@/lib/types'
 
 interface FamilyTreeProps {
   members: FamilyMember[]
-  generations: FamilyGeneration[]
   /** ids des profils connectés de la famille (badge « membre connecté ») */
   connectedProfileIds: Set<string>
   onEditMember?: (member: FamilyMember) => void
   onRemoveMember?: (member: FamilyMember) => void
-  onAddGeneration?: (name: string) => Promise<{ error: string | null }>
-  onRemoveGeneration?: (generation: FamilyGeneration) => void
 }
 
-/** Onglet « Génération 0 » : les membres non classés */
-const GENERATION_0_LABEL = 'Génération 0'
-
 /**
- * Arbre générationnel de la famille, présenté en onglets de générations :
- * - « Génération 0 » : les membres non classés (toujours présent, en premier)
- * - puis un onglet par génération nommée (« Les aînés », « Les cousins »…)
+ * Vrai arbre généalogique : construit à partir des liens entre personnes.
+ * - « fils / fille de » → branche descendante (fratrie sous une barre)
+ * - « conjoint·e de » → branche horizontale (trait entre les deux époux)
  *
- * À l'intérieur d'un onglet, les membres sont reliés à leur référent par
- * une corde dessinée (fil vertical + coude) — avec du relief (ombre portée
- * sous la carte, corde en deux tons) pour un effet artisanal.
- * Sur mobile, chaque onglet défile horizontalement.
+ * La disposition est calculée par `buildFamilyTreeLayout` (logique pure) ;
+ * la corde est dessinée en SVG derrière les cartes, avec du relief
+ * (ombre portée, deux tons). Défilement horizontal sur mobile.
  */
 export function FamilyTree({
   members,
-  generations,
   connectedProfileIds,
   onEditMember,
   onRemoveMember,
-  onAddGeneration,
-  onRemoveGeneration,
 }: FamilyTreeProps) {
-  const [activeTab, setActiveTab] = useState<string>('0')
-  const [newGenerationName, setNewGenerationName] = useState('')
-  const [creatingGeneration, setCreatingGeneration] = useState(false)
-  const [generationError, setGenerationError] = useState<string | null>(null)
+  const layout = useMemo(() => buildFamilyTreeLayout(members), [members])
 
-  const byId = useMemo(() => new Map(members.map((m) => [m.id, m])), [members])
+  const { nodes, segments, columns, rows } = layout
 
-  // Membres par onglet : '0' = non classés, sinon id de la génération
-  const membersByTab = useMemo(() => {
-    const map = new Map<string, FamilyMember[]>()
-    map.set('0', [])
-    for (const member of members) {
-      const key = member.generation_id ?? '0'
-      const list = map.get(key) ?? []
-      list.push(member)
-      map.set(key, list)
-    }
-    return map
-  }, [members])
+  // Géométrie : une carte fait ~ 11rem (176px), la rangée ~ 15rem (240px)
+  const CARD_W = 176
+  const CARD_H = 240
+  const PITCH_X = CARD_W + 28
+  const PITCH_Y = 260
 
-  const tabs = useMemo(
-    () => [
-      { key: '0', label: GENERATION_0_LABEL, generation: null as FamilyGeneration | null },
-      ...generations.map((g) => ({ key: g.id, label: g.name, generation: g })),
-    ],
-    [generations],
-  )
+  const width = Math.max(columns * PITCH_X + CARD_W, 320)
+  const height = Math.max(rows * PITCH_Y + CARD_H, 320)
 
-  const currentKey = tabs.some((t) => t.key === activeTab) ? activeTab : '0'
-  const currentMembers = membersByTab.get(currentKey) ?? []
-  const currentGeneration = tabs.find((t) => t.key === currentKey)?.generation ?? null
-
-  async function handleCreateGeneration() {
-    if (!onAddGeneration || !newGenerationName.trim()) return
-    setCreatingGeneration(true)
-    setGenerationError(null)
-    const { error } = await onAddGeneration(newGenerationName.trim())
-    setCreatingGeneration(false)
-    if (error) {
-      setGenerationError(error)
-      return
-    }
-    setNewGenerationName('')
-  }
+  // Position du centre haut d'une carte (x + 0.5, y) en pixels
+  const centerX = (x: number) => x * PITCH_X + CARD_W / 2
+  const topY = (y: number) => y * PITCH_Y
 
   function tiltFor(member: FamilyMember, index: number): number {
-    // Rotation douce et stable, déterminée par le prénom + la position
     const seed = member.first_name.length + index
     return (seed % 2 === 0 ? 1 : -1) * (1 + (seed % 3) * 0.75)
   }
 
   return (
-    <div className="space-y-4">
-      {/* Onglets de générations */}
-      <div
-        role="tablist"
-        aria-label="Générations de la famille"
-        className="flex flex-wrap gap-2 items-center"
-      >
-        {tabs.map((tab) => {
-          const count = (membersByTab.get(tab.key) ?? []).length
-          const isActive = tab.key === currentKey
+    <div
+      className="overflow-x-auto -mx-2 px-2 pb-2"
+      role="group"
+      aria-label="Arbre généalogique de la famille"
+    >
+      <div className="relative mx-auto" style={{ width, height }}>
+        {/* ---------- Corde (SVG derrière les cartes) ---------- */}
+        <svg
+          className="absolute inset-0 pointer-events-none"
+          width={width}
+          height={height}
+          viewBox={`0 0 ${width} ${height}`}
+          aria-hidden="true"
+        >
+          <defs>
+            {/* Ombre portée de la corde pour le relief */}
+            <filter id="corde-relief" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="1.5" stdDeviation="1" floodColor="#4a3728" floodOpacity="0.35" />
+            </filter>
+          </defs>
+          {segments.map((seg: TreeSegment, i: number) => {
+            const x1 = seg.x1 * PITCH_X + CARD_W / 2
+            const x2 = seg.x2 * PITCH_X + CARD_W / 2
+            const y1 = seg.y1 * PITCH_Y + CARD_H / 2
+            const y2 = seg.y2 * PITCH_Y + CARD_H / 2
+            if (seg.kind === 'couple') {
+              // Trait horizontal entre conjoints, avec un point carmine au milieu
+              const midX = (x1 + x2) / 2
+              const midY = (y1 + y2) / 2
+              return (
+                <g key={i} filter="url(#corde-relief)">
+                  <line
+                    x1={x1}
+                    y1={y1}
+                    x2={x2}
+                    y2={y2}
+                    stroke="#c4643a"
+                    strokeWidth={3}
+                    strokeLinecap="round"
+                  />
+                  <circle cx={midX} cy={midY} r={5} fill="#b33b3b" stroke="#fbf6ec" strokeWidth={2} />
+                </g>
+              )
+            }
+            return (
+              <line
+                key={i}
+                x1={x1}
+                y1={y1}
+                x2={x2}
+                y2={y2}
+                stroke="#c4643a"
+                strokeWidth={seg.kind === 'horizontal' ? 3 : 2.5}
+                strokeLinecap="round"
+                filter="url(#corde-relief)"
+                opacity={0.85}
+              />
+            )
+          })}
+        </svg>
+
+        {/* ---------- Nœuds (cartes polaroïd) ---------- */}
+        {nodes.map((node, index) => {
+          const parent = node.member.parent_id
+            ? members.find((m) => m.id === node.member.parent_id)
+            : null
           return (
-            <button
-              key={tab.key}
-              type="button"
-              role="tab"
-              aria-selected={isActive}
-              aria-controls={`generation-panel-${tab.key}`}
-              onClick={() => setActiveTab(tab.key)}
-              className={cn(
-                'min-h-11 px-4 rounded-full border-2 font-bold transition-colors inline-flex items-center gap-2',
-                isActive
-                  ? 'bg-terra text-creme border-terra'
-                  : 'bg-creme text-encre border-encre/20 hover:border-terra hover:text-terra',
-              )}
+            <div
+              key={node.member.id}
+              className="absolute"
+              style={{
+                left: centerX(node.x) - CARD_W / 2,
+                top: topY(node.y),
+                width: CARD_W,
+              }}
             >
-              {tab.label}
-              <span
-                className={cn(
-                  'text-xs rounded-full px-1.5 py-0.5',
-                  isActive ? 'bg-creme/25' : 'bg-encre/10',
-                )}
-              >
-                {count}
-              </span>
-            </button>
+              <FamilyMemberCard
+                member={node.member}
+                parent={parent}
+                connectedProfileIds={connectedProfileIds}
+                tilt={tiltFor(node.member, index)}
+                onEdit={onEditMember}
+                onRemove={onRemoveMember}
+              />
+            </div>
           )
         })}
-
-        {/* Créer une génération nommée */}
-        {onAddGeneration && (
-          <span className="inline-flex items-center gap-2">
-            <input
-              type="text"
-              value={newGenerationName}
-              onChange={(e) => setNewGenerationName(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault()
-                  void handleCreateGeneration()
-                }
-              }}
-              placeholder="Nouvelle génération…"
-              aria-label="Nom de la nouvelle génération"
-              className="min-h-11 w-44 rounded-full border-2 border-dashed border-encre/25 bg-creme px-4 text-sm focus:border-terra focus:outline-none"
-            />
-            <button
-              type="button"
-              onClick={() => void handleCreateGeneration()}
-              disabled={creatingGeneration || !newGenerationName.trim()}
-              aria-label="Créer cette génération"
-              className="min-h-11 min-w-11 rounded-full bg-sauge text-creme inline-flex items-center justify-center hover:bg-sauge-dark disabled:opacity-50"
-            >
-              <Plus size={18} aria-hidden="true" />
-            </button>
-          </span>
-        )}
       </div>
 
-      {generationError && (
-        <p className="text-carmine font-bold text-sm" role="alert">
-          {generationError}
-        </p>
-      )}
-
-      {/* Panneau de l'onglet actif */}
-      <div
-        role="tabpanel"
-        id={`generation-panel-${currentKey}`}
-        aria-label={currentGeneration ? `Génération ${currentGeneration.name}` : GENERATION_0_LABEL}
-      >
-        <div className="flex items-center justify-between mb-3">
-          <p className="kicker">
-            {currentGeneration ? currentGeneration.name : GENERATION_0_LABEL}
-            {currentGeneration ? '' : ' — non classés'}
-          </p>
-          {currentGeneration && onRemoveGeneration && (
-            <button
-              type="button"
-              onClick={() => {
-                if (
-                  window.confirm(
-                    `Supprimer la génération « ${currentGeneration.name} » ? Ses membres resteront dans l'arbre, non classés.`,
-                  )
-                ) {
-                  onRemoveGeneration(currentGeneration)
-                }
-              }}
-              aria-label={`Supprimer la génération ${currentGeneration.name}`}
-              className="min-h-11 px-3 rounded-full text-sm font-bold text-encre-soft hover:text-carmine inline-flex items-center gap-1.5"
-            >
-              <X size={15} aria-hidden="true" /> Supprimer la génération
-            </button>
-          )}
-        </div>
-
-        {currentMembers.length === 0 ? (
-          <p className="text-brun-soft text-center py-6">
-            {currentKey === '0'
-              ? 'Aucun membre non classé. Crée une génération nommée pour organiser l’arbre.'
-              : 'Cette génération est encore vide.'}
-          </p>
-        ) : (
-          /* Rangée horizontale défilante, reliée par la corde */
-          <div className="relative">
-            {/* Corde horizontale principale (fil de la génération) */}
-            <div
-              className="absolute left-2 right-2 top-[-10px] h-1 rounded-full bg-gradient-to-r from-terra/20 via-terra/60 to-terra/20"
-              aria-hidden="true"
-            />
-            <div className="flex gap-5 overflow-x-auto pb-3 pt-3 justify-start snap-x">
-              {currentMembers.map((member, index) => {
-                const parent = member.parent_id ? byId.get(member.parent_id) : null
-                const hasParentInTab = !!parent && (parent.generation_id ?? '0') === currentKey
-                return (
-                  <div key={member.id} className="relative">
-                    {/* Corde verticale : le nœud pend au fil de la génération */}
-                    <div className="flex flex-col items-center" aria-hidden="true">
-                      <span className="block w-0.5 h-5 bg-terra/70" />
-                      <span className="block w-2.5 h-2.5 rounded-full bg-terra shadow-[0_1px_2px_rgba(74,55,40,0.4)] -mt-0.5" />
-                    </div>
-                    {/* Relier visuellement au référent quand il est dans le même onglet */}
-                    {hasParentInTab && (
-                      <span
-                        className="absolute -top-2.5 left-1/2 w-6 h-0.5 bg-terra/50"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <FamilyMemberCard
-                      member={member}
-                      parent={parent}
-                      connectedProfileIds={connectedProfileIds}
-                      tilt={tiltFor(member, index)}
-                      onEdit={onEditMember}
-                      onRemove={onRemoveMember}
-                    />
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        )}
-      </div>
+      {/* Légende */}
+      <p className="text-xs text-brun-soft text-center mt-2">
+        Trait horizontal avec un point carmine : conjoint·e · Branche verticale : fils / fille de
+      </p>
     </div>
   )
 }

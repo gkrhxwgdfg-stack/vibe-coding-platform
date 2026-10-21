@@ -31,12 +31,10 @@ export function FamilyPage() {
     edit: editTreeMember,
     remove: removeTreeMember,
   } = useFamilyTree()
-  const {
-    generations,
-    loading: generationsLoading,
-    add: addGeneration,
-    remove: removeGeneration,
-  } = useFamilyGenerations()
+  // Générations nommées : conservées en base pour historique (le modal les
+  // propose encore en facultatif), mais l'arbre se construit désormais
+  // uniquement à partir des liens entre personnes.
+  const { generations } = useFamilyGenerations()
   const [memberModalOpen, setMemberModalOpen] = useState(false)
   /** Membre en cours d'édition dans le modal (null = création) */
   const [editingMember, setEditingMember] = useState<FamilyMember | null>(null)
@@ -139,7 +137,7 @@ export function FamilyPage() {
     }
   }, [openAddMemberRequested])
 
-  if (membersLoading || invitationsLoading || treeLoading || generationsLoading)
+  if (membersLoading || invitationsLoading || treeLoading)
     return <Spinner label="On rassemble la famille…" />
 
   return (
@@ -230,9 +228,9 @@ export function FamilyPage() {
         <p className="text-sm text-encre-soft mb-4">
           Un membre <span className="inline-flex items-center gap-1 font-bold text-bleu"><UserCheck size={14} aria-hidden="true" /> connecté</span> a
           un compte Savia. Un membre ajouté « de l'arbre » n'en a pas — mamie Jeanne, par exemple —
-          mais elle peut être citée comme origine d'une recette. Les générations nommées
-          (« Les aînés », « Les cousins »…) organisent l'arbre en onglets ; les membres sans
-          génération forment la « génération 0 ».
+          mais elle peut être citée comme origine d'une recette. L'arbre se construit avec les
+          liens : « fils / fille de » pour les branches vers le bas, « conjoint·e de » pour les
+          couples côte à côte.
         </p>
         {treeMembers.length === 0 ? (
           <EmptyState handText="L'arbre n'a pas encore de branches. Accroche ta première personne.">
@@ -244,12 +242,9 @@ export function FamilyPage() {
           <div className="card-surface p-5 bg-sauge/5">
             <FamilyTree
               members={treeMembers}
-              generations={generations}
               connectedProfileIds={connectedProfileIds}
               onEditMember={handleEditTreeMember}
               onRemoveMember={handleRemoveTreeMember}
-              onAddGeneration={addGeneration}
-              onRemoveGeneration={(g) => void removeGeneration(g.id)}
             />
           </div>
         )}
