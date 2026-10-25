@@ -71,7 +71,7 @@ export function ResetPasswordPage() {
         </form>
       )}
       <p className="mt-6 text-center">
-        <Link to="/connexion" className="text-bleu font-bold hover:underline">
+        <Link to="/connexion" className="text-bleu-dark font-bold hover:underline">
           Retour à la connexion
         </Link>
       </p>

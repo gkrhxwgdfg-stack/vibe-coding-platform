@@ -28,7 +28,7 @@ export function Torchon({ label, className }: TorchonProps) {
     >
       {label && (
         <span
-          className="w-16 h-16 rounded-full bg-creme/95 border-2 border-bleu/40 text-bleu font-serif font-bold text-3xl flex items-center justify-center shadow-card"
+          className="w-16 h-16 rounded-full bg-creme/95 border-2 border-bleu-dark/40 text-bleu-dark font-serif font-bold text-3xl flex items-center justify-center shadow-card"
           aria-hidden="true"
         >
           {label.charAt(0)}

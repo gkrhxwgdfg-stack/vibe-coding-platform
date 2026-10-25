@@ -30,7 +30,7 @@ export function Logo({ className, link = true }: LogoProps) {
         />
       </svg>
       <span className="font-serif font-bold text-2xl text-encre">
-        Savia<span className="text-terra">.</span>
+        Savia<span className="text-terra-dark">.</span>
       </span>
     </span>
   )

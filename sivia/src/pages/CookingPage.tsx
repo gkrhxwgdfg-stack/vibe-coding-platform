@@ -214,7 +214,7 @@ export function CookingPage() {
             type="button"
             onClick={quit}
             aria-label="Ranger le mode cuisson"
-            className="min-h-12 min-w-12 rounded-full bg-creme border-2 border-encre/10 inline-flex items-center justify-center hover:border-terra hover:text-terra"
+            className="touch-target-lg min-h-12 min-w-12 rounded-full bg-creme border-2 border-encre/10 inline-flex items-center justify-center hover:border-terra-dark hover:text-terra-dark"
           >
             <X size={22} aria-hidden="true" />
           </button>
@@ -233,7 +233,7 @@ export function CookingPage() {
                 type="button"
                 onClick={() => setServings(Math.max(1, effectiveServings - 1))}
                 aria-label="Une part de moins"
-                className="min-h-12 min-w-12 rounded-full border-2 border-encre/20 bg-creme hover:border-terra hover:text-terra inline-flex items-center justify-center"
+                className="touch-target-lg min-h-12 min-w-12 rounded-full border-2 border-encre/20 bg-creme hover:border-terra-dark hover:text-terra-dark inline-flex items-center justify-center"
               >
                 <ChevronLeft size={20} aria-hidden="true" />
               </button>
@@ -244,7 +244,7 @@ export function CookingPage() {
                 type="button"
                 onClick={() => setServings(effectiveServings + 1)}
                 aria-label="Une part de plus"
-                className="min-h-12 min-w-12 rounded-full border-2 border-encre/20 bg-creme hover:border-terra hover:text-terra inline-flex items-center justify-center"
+                className="touch-target-lg min-h-12 min-w-12 rounded-full border-2 border-encre/20 bg-creme hover:border-terra-dark hover:text-terra-dark inline-flex items-center justify-center"
               >
                 <Plus size={20} aria-hidden="true" />
               </button>
@@ -276,10 +276,10 @@ export function CookingPage() {
                         aria-hidden="true"
                         className={cn(
                           'mt-1.5 w-6 h-6 rounded-md border-2 shrink-0 inline-flex items-center justify-center transition-colors',
-                          isChecked ? 'bg-terra border-terra text-creme' : 'border-encre/30 bg-creme',
+                          isChecked ? 'bg-terra-dark border-terra-dark text-creme' : 'border-encre/30 bg-creme',
                         )}
                       >
-                        {isChecked && <Check size={16} strokeWidth={3} />}
+                        {isChecked && <Check size={16} strokeWidth={3} aria-hidden="true" />}
                       </span>
                       <span className={cn('text-lg', isChecked ? 'text-encre-soft line-through' : 'text-encre')}>
                         {line}
@@ -309,7 +309,7 @@ export function CookingPage() {
       <div className="relative min-h-[100dvh] bg-lin flex flex-col items-center justify-center px-4 py-10 overflow-hidden anim-fold-in">
         <ConfettiPaper />
         <div className="relative z-10 flex flex-col items-center gap-6 text-center max-w-md">
-          <h1 className="font-serif text-4xl font-bold text-terra">C'est prêt !</h1>
+          <h1 className="font-serif text-4xl font-bold text-terra-dark">C'est prêt !</h1>
           {photo && (
             <Polaroid
               src={photo}
@@ -318,13 +318,13 @@ export function CookingPage() {
               className="w-[220px]"
             />
           )}
-          <p className="text-hand text-bleu text-2xl">Bonne dégustation, la famille !</p>
+          <p className="text-hand text-bleu-dark text-2xl">Bonne dégustation, la famille !</p>
 
           {/* Ajouter une photo du plat */}
           <div className="w-full">
             <label
               htmlFor="cooked-photo"
-              className="cursor-pointer w-full min-h-12 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 border-dashed border-encre/25 bg-creme font-bold hover:border-terra hover:text-terra transition-colors"
+              className="cursor-pointer w-full min-h-12 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 border-dashed border-encre/25 bg-creme font-bold hover:border-terra-dark hover:text-terra-dark transition-colors"
             >
               <ImagePlus size={20} aria-hidden="true" />
               {photoFile ? 'Changer la photo' : 'Ajouter une photo du plat'}
@@ -344,7 +344,7 @@ export function CookingPage() {
                     setPhotoPreview(null)
                   }}
                   aria-label="Retirer la photo"
-                  className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-carmine text-creme flex items-center justify-center"
+                  className="absolute -top-2 -right-2 touch-target-lg min-h-11 min-w-11 rounded-full bg-carmine text-creme flex items-center justify-center"
                 >
                   <X size={14} aria-hidden="true" />
                 </button>
@@ -395,7 +395,7 @@ export function CookingPage() {
           type="button"
           onClick={quit}
           aria-label="Ranger le mode cuisson"
-          className="min-h-12 min-w-12 rounded-full bg-creme border-2 border-encre/10 inline-flex items-center justify-center hover:border-terra hover:text-terra"
+          className="touch-target-lg min-h-12 min-w-12 rounded-full bg-creme border-2 border-encre/10 inline-flex items-center justify-center hover:border-terra-dark hover:text-terra-dark"
         >
           <X size={22} aria-hidden="true" />
         </button>
@@ -431,13 +431,13 @@ export function CookingPage() {
       <main className="flex-1 flex flex-col items-center justify-center gap-6 px-4 py-6 text-center max-w-3xl w-full mx-auto">
         {/* Numéro d'étape */}
         <span
-          className="w-14 h-14 rounded-full bg-terra text-creme font-serif font-bold text-2xl flex items-center justify-center"
+          className="w-14 h-14 rounded-full bg-terra-dark text-creme font-serif font-bold text-2xl flex items-center justify-center"
           aria-hidden="true"
         >
           {index + 1}
         </span>
         {/* Étape : 1.9 rem (2.3 rem si .reading-lg — chantier 8) */}
-        <p className="text-[1.9rem] leading-relaxed font-medium text-encre max-w-xl">
+        <p className="cooking-step text-[1.9rem] leading-relaxed font-medium text-encre max-w-xl">
           {stepData.step}
         </p>
 
@@ -495,7 +495,7 @@ export function CookingPage() {
             onClick={goPrev}
             disabled={index === 0}
             aria-label="Étape précédente"
-            className="min-h-16 min-w-16 rounded-full bg-creme border-2 border-encre/10 inline-flex items-center justify-center hover:border-terra hover:text-terra disabled:opacity-40 disabled:cursor-not-allowed"
+            className="touch-target-lg min-h-16 min-w-16 rounded-full bg-creme border-2 border-encre/10 inline-flex items-center justify-center hover:border-terra-dark hover:text-terra-dark disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <ChevronLeft size={28} aria-hidden="true" />
           </button>
@@ -509,7 +509,7 @@ export function CookingPage() {
               type="button"
               onClick={goNext}
               aria-label="Étape suivante"
-              className="min-h-16 min-w-16 rounded-full bg-terra text-creme inline-flex items-center justify-center shadow-soft hover:bg-terra-dark"
+              className="touch-target-lg min-h-16 min-w-16 rounded-full bg-terra-dark text-creme inline-flex items-center justify-center shadow-soft hover:bg-[#8f4525]"
             >
               <ChevronRight size={28} aria-hidden="true" />
             </button>

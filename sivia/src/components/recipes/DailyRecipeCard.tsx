@@ -38,15 +38,15 @@ export function DailyRecipeCard({ recipe }: DailyRecipeCardProps) {
         ) : (
           <Torchon label={meta.label} />
         )}
-        <span className="absolute top-3 left-3 bg-creme/95 rounded-full px-3 py-1 text-sm font-bold text-terra inline-flex items-center gap-1.5">
+        <span className="absolute top-3 left-3 bg-creme/95 rounded-full px-3 py-1 text-sm font-bold text-terra-dark inline-flex items-center gap-1.5">
           <Sun size={14} aria-hidden="true" /> Le plat du dimanche
         </span>
       </div>
       <div className="p-4">
-        <h2 className="font-serif font-semibold text-2xl leading-snug group-hover:text-terra transition-colors">
+        <h2 className="font-serif font-semibold text-2xl leading-snug group-hover:text-terra-dark transition-colors">
           {recipe.title}
         </h2>
-        <p className="text-hand text-bleu text-lg mt-0.5">
+        <p className="text-hand text-bleu-dark text-lg mt-0.5">
           transmise par {recipe.author?.display_name ?? '…'}
         </p>
       </div>

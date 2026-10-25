@@ -99,7 +99,7 @@ export function CookingTimerV2({ timer, onChange }: CookingTimerV2Props) {
   }
 
   return (
-    <div className={cn('rounded-2xl card-surface p-4', prealert && !reducedMotion && 'timer-prealert')}>
+    <div className={cn('rounded-2xl card-surface card-pad p-4', prealert && !reducedMotion && 'timer-prealert')}>
       <div className="flex items-center justify-between gap-3 mb-2">
         <p className="font-serif font-semibold text-lg">{timer.label}</p>
         <button
@@ -107,7 +107,7 @@ export function CookingTimerV2({ timer, onChange }: CookingTimerV2Props) {
           onClick={() => setMuted((m) => !m)}
           aria-label={muted ? 'Activer le son à la fin du minuteur' : 'Couper le son du minuteur'}
           aria-pressed={!muted}
-          className="min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra inline-flex items-center justify-center"
+          className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra-dark inline-flex items-center justify-center"
         >
           {muted ? <VolumeX size={20} aria-hidden="true" /> : <Volume2 size={20} aria-hidden="true" />}
         </button>

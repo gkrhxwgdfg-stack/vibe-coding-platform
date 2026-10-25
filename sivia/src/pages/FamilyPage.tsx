@@ -185,7 +185,7 @@ export function FamilyPage() {
                 setEditingName(true)
               }}
               aria-label="Renommer la famille"
-              className="min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra inline-flex items-center justify-center"
+              className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra-dark inline-flex items-center justify-center"
             >
               <Pencil size={20} aria-hidden="true" />
             </button>
@@ -196,7 +196,7 @@ export function FamilyPage() {
             {renameError}
           </p>
         )}
-        <p className="text-hand text-bleu text-2xl mt-1">
+        <p className="text-hand text-bleu-dark text-2xl mt-1">
           {members.length} membre{members.length > 1 ? 's' : ''} en cuisine
         </p>
       </div>
@@ -213,14 +213,14 @@ export function FamilyPage() {
                   <p className="font-serif text-xl font-semibold truncate">
                     {member.display_name}
                     {member.id === profile?.id && (
-                      <span className="text-sm text-terra font-sans font-bold"> · toi</span>
+                      <span className="text-sm text-terra-dark font-sans font-bold"> · toi</span>
                     )}
                   </p>
                   {member.family_role && (
-                    <p className="text-hand text-bleu text-xl">{member.family_role}</p>
+                    <p className="text-hand text-bleu-dark text-xl">{member.family_role}</p>
                   )}
                   {member.bio && <p className="text-sm text-encre-soft truncate">{member.bio}</p>}
-                  <p className="text-xs text-encre-soft">En cuisine depuis {formatDate(member.created_at)}</p>
+                  <p className="text-sm text-encre-soft">En cuisine depuis {formatDate(member.created_at)}</p>
                 </div>
               </Card>
             </li>
@@ -235,14 +235,14 @@ export function FamilyPage() {
           title="La famille, fil par fil"
         />
         <p className="text-sm text-encre-soft mb-4">
-          Un membre <span className="inline-flex items-center gap-1 font-bold text-bleu"><UserCheck size={14} aria-hidden="true" /> connecté</span> a
+          Un membre <span className="inline-flex items-center gap-1 font-bold text-bleu-dark"><UserCheck size={14} aria-hidden="true" /> connecté</span> a
           un compte Savia. Un membre ajouté « de l'arbre » n'en a pas — mamie Jeanne, par exemple —
           mais elle peut être citée comme origine d'une recette. L'arbre grandit avec les « + » :
           en dessous d'une personne pour un enfant, sur le scotch « + » du côté pour un partenaire
           (à côté, même génération), et le « + » carmine en haut pour un aîné au-dessus. Le lien
           s'écrit librement sur la carte.
         </p>
-        <div className="card-surface p-5 bg-sauge/5">
+        <div className="card-surface card-pad p-5 bg-sauge/5">
           <FamilyTree
             members={treeMembers}
             generations={generations}
@@ -266,7 +266,7 @@ export function FamilyPage() {
             <p className="text-carmine font-bold mb-3" role="alert">{bookError}</p>
           )}
           {bookDone && (
-            <p className="text-sauge font-bold mb-3" role="status">
+            <p className="text-sauge-ink font-bold mb-3" role="status">
               Le carnet est dans vos téléchargements. {profile?.display_name} a imprimé le carnet — la famille le sait.
             </p>
           )}
@@ -380,7 +380,7 @@ export function FamilyPage() {
       )}
 
       <p className="text-center text-encre-soft">
-        <Link to="/profil" className="text-terra font-bold hover:underline">
+        <Link to="/profil" className="text-terra-dark font-bold hover:underline">
           Gérer mon profil
         </Link>
       </p>

@@ -197,7 +197,7 @@ export function FamilyMemberModal({
             type="button"
             onClick={onClose}
             aria-label="Ranger"
-            className="min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra inline-flex items-center justify-center"
+            className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra-dark inline-flex items-center justify-center"
           >
             <X size={22} aria-hidden="true" />
           </button>
@@ -401,7 +401,7 @@ export function FamilyMemberModal({
                 'cursor-pointer w-full min-h-11 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 border-dashed font-bold transition-colors',
                 photoFile
                   ? 'border-sauge bg-sauge/10 text-encre'
-                  : 'border-encre/25 bg-creme hover:border-terra hover:text-terra',
+                  : 'border-encre/25 bg-creme hover:border-terra-dark hover:text-terra',
               )}
             >
               <ImagePlus size={20} aria-hidden="true" />
@@ -423,7 +423,7 @@ export function FamilyMemberModal({
                     setRemovePhoto(true)
                   }}
                   aria-label="Retirer la photo"
-                  className="absolute top-2 right-2 min-h-11 min-w-11 rounded-full bg-carmine text-creme flex items-center justify-center"
+                  className="absolute top-2 right-2 touch-target-lg min-h-11 min-w-11 rounded-full bg-carmine text-creme flex items-center justify-center"
                 >
                   <Trash2 size={18} aria-hidden="true" />
                 </button>

@@ -131,7 +131,7 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
               type="button"
               onClick={() => update('servings', Math.max(1, values.servings - 1))}
               aria-label="Une portion de moins"
-              className="min-h-11 min-w-11 rounded-full border-2 border-encre/20 bg-creme hover:border-terra hover:text-terra inline-flex items-center justify-center"
+              className="touch-target-lg min-h-11 min-w-11 rounded-full border-2 border-encre/20 bg-creme hover:border-terra-dark hover:text-terra-dark inline-flex items-center justify-center"
             >
               <Minus size={18} aria-hidden="true" />
             </button>
@@ -142,7 +142,7 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
               type="button"
               onClick={() => update('servings', values.servings + 1)}
               aria-label="Une portion de plus"
-              className="min-h-11 min-w-11 rounded-full border-2 border-encre/20 bg-creme hover:border-terra hover:text-terra inline-flex items-center justify-center"
+              className="touch-target-lg min-h-11 min-w-11 rounded-full border-2 border-encre/20 bg-creme hover:border-terra-dark hover:text-terra-dark inline-flex items-center justify-center"
             >
               <Plus size={18} aria-hidden="true" />
             </button>
@@ -181,7 +181,7 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
             htmlFor="photo"
             className={cn(
               'cursor-pointer inline-flex items-center gap-2 min-h-11 px-5 rounded-2xl border-2 border-dashed font-bold transition-colors',
-              'border-encre/25 bg-creme hover:border-terra hover:text-terra',
+              'border-encre/25 bg-creme hover:border-terra-dark hover:text-terra',
             )}
           >
             <ImagePlus size={20} aria-hidden="true" />
@@ -203,7 +203,7 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
                   setPhotoPreview(null)
                 }}
                 aria-label="Retirer la photo"
-                className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-carmine text-creme flex items-center justify-center"
+                className="absolute -top-2 -right-2 touch-target-lg min-h-11 min-w-11 rounded-full bg-carmine text-creme flex items-center justify-center"
               >
                 <Trash2 size={14} aria-hidden="true" />
               </button>
@@ -231,7 +231,7 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
                 type="button"
                 onClick={() => removeListItem('ingredients', i)}
                 aria-label={`Retirer l’ingrédient ${i + 1}`}
-                className="min-h-11 min-w-11 shrink-0 rounded-xl text-encre-soft hover:text-carmine inline-flex items-center justify-center"
+                className="touch-target-lg min-h-11 min-w-11 shrink-0 rounded-xl text-encre-soft hover:text-carmine inline-flex items-center justify-center"
               >
                 <Trash2 size={18} aria-hidden="true" />
               </button>
@@ -250,7 +250,7 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
           {values.steps.map((step, i) => (
             <div key={i} className="flex items-start gap-2">
               <span
-                className="w-9 h-9 mt-1 rounded-full bg-terra text-creme font-serif font-bold flex items-center justify-center shrink-0"
+                className="touch-target-lg min-h-11 min-w-11 mt-1 rounded-full bg-terra-dark text-creme font-serif font-bold flex items-center justify-center shrink-0"
                 aria-hidden="true"
               >
                 {i + 1}
@@ -267,7 +267,7 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
                 type="button"
                 onClick={() => removeListItem('steps', i)}
                 aria-label={`Retirer l’étape ${i + 1}`}
-                className="min-h-11 min-w-11 shrink-0 rounded-xl text-encre-soft hover:text-carmine inline-flex items-center justify-center"
+                className="touch-target-lg min-h-11 min-w-11 shrink-0 rounded-xl text-encre-soft hover:text-carmine inline-flex items-center justify-center"
               >
                 <Trash2 size={18} aria-hidden="true" />
               </button>

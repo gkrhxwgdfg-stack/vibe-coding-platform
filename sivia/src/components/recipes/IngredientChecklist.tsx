@@ -41,10 +41,10 @@ export function IngredientChecklist({ lines }: IngredientChecklistProps) {
                 aria-hidden="true"
                 className={cn(
                   'mt-1.5 w-6 h-6 rounded-md border-2 shrink-0 inline-flex items-center justify-center transition-colors',
-                  isChecked ? 'bg-terra border-terra text-creme' : 'border-encre/30 bg-creme',
+                  isChecked ? 'bg-terra-dark border-terra-dark text-creme' : 'border-encre/30 bg-creme',
                 )}
               >
-                {isChecked && <Check size={16} strokeWidth={3} />}
+                {isChecked && <Check size={16} strokeWidth={3} aria-hidden="true" />}
               </span>
               <span className="relative text-lg">
                 <span

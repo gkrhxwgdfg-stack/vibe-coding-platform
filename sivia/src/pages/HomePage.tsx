@@ -70,7 +70,7 @@ export function HomePage() {
         <h1 id="home-title" className="text-4xl font-bold mt-1">
           Bonjour, {profile?.display_name}
         </h1>
-        <p className="text-hand text-bleu text-2xl mt-1">Qu’est-ce qu’on cuisine aujourd’hui ?</p>
+        <p className="text-hand text-bleu-dark text-2xl mt-1">Qu’est-ce qu’on cuisine aujourd’hui ?</p>
       </section>
 
       {/* Le plat du dimanche : choix stable pour la journée (graine AAAAMMJJ) */}

@@ -67,13 +67,13 @@ export function LoginPage() {
       </form>
       <div className="mt-6 text-center space-y-2">
         <p>
-          <Link to="/mot-de-passe-oublie" className="text-bleu font-bold hover:underline">
+          <Link to="/mot-de-passe-oublie" className="text-bleu-dark font-bold hover:underline">
             Mot de passe oublié ?
           </Link>
         </p>
         <p className="text-encre-soft">
           Pas encore de compte ?{' '}
-          <Link to="/inscription" className="text-terra font-bold hover:underline">
+          <Link to="/inscription" className="text-terra-dark font-bold hover:underline">
             S’inscrire
           </Link>
         </p>

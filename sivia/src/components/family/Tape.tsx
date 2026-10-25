@@ -59,7 +59,7 @@ export function TapeAddButton({ memberName, onClick }: TapeAddButtonProps) {
       aria-label={`Ajouter un partenaire à côté de ${memberName}`}
       title={`Ajouter un partenaire à côté de ${memberName} (même génération)`}
       className={cn(
-        'absolute -right-3 top-24 z-10 min-h-11 min-w-11 rounded-sm shadow-card',
+        'absolute -right-3 top-24 z-10 touch-target-lg min-h-11 min-w-11 rounded-sm shadow-card',
         'inline-flex items-center justify-center transition-transform hover:scale-110 active:scale-95',
       )}
       style={{

@@ -5,6 +5,7 @@ import { AuthShell } from '@/components/layout/AuthShell'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { TextInput } from '@/components/ui/FormFields'
+import { ReadingSizePicker } from '@/components/ui/ReadingSizePicker'
 import { supabase } from '@/lib/supabase'
 import { invitationLink } from '@/lib/paths'
 import { useAuth } from '@/context/AuthContext'
@@ -149,7 +150,7 @@ export function OnboardingPage() {
           <button
             type="button"
             onClick={() => setMode('choix')}
-            className="mt-4 w-full text-bleu font-bold hover:underline min-h-11"
+            className="mt-4 w-full text-bleu-dark font-bold hover:underline min-h-11"
           >
             Retour
           </button>
@@ -177,7 +178,7 @@ export function OnboardingPage() {
           <button
             type="button"
             onClick={() => setMode('choix')}
-            className="mt-4 w-full text-bleu font-bold hover:underline min-h-11"
+            className="mt-4 w-full text-bleu-dark font-bold hover:underline min-h-11"
           >
             Retour
           </button>
@@ -190,7 +191,7 @@ export function OnboardingPage() {
     return (
       <AuthShell title="Ta famille est prête !" handNote="Passe la recette — comme une assiette, tendue.">
         <Card className="text-center">
-          <Users size={40} className="mx-auto text-terra mb-3" aria-hidden="true" />
+          <Users size={40} className="mx-auto text-terra-dark mb-3" aria-hidden="true" />
           <p className="mb-4">
             Voici le <strong>lien d’invitation</strong> de ta famille. Envoie-le à ceux que tu
             veux réunir en cuisine — grands-parents, cousins, enfants.
@@ -220,11 +221,15 @@ export function OnboardingPage() {
 
   return (
     <AuthShell title="Bienvenue en cuisine." handNote="On commence par qui ?">
+      {/* Chantier 8 : le réglage de taille du texte est proposé d\u00e8s le premier \u00e9cran */}
+      <div className="mb-6">
+        <ReadingSizePicker hint="Tu pourras le changer plus tard, dans ton profil." />
+      </div>
       <div className="grid gap-4">
         <button
           type="button"
           onClick={() => setMode('creer')}
-          className="card-surface p-5 text-left hover:shadow-soft transition-shadow w-full"
+          className="card-surface card-pad p-5 text-left hover:shadow-soft transition-shadow w-full"
         >
           <span className="font-serif font-semibold text-xl block">Créer ma famille</span>
           <span className="text-encre-soft">J’aménage la cuisine et j’invite les miens.</span>
@@ -232,7 +237,7 @@ export function OnboardingPage() {
         <button
           type="button"
           onClick={() => setMode('rejoindre')}
-          className="card-surface p-5 text-left hover:shadow-soft transition-shadow w-full"
+          className="card-surface card-pad p-5 text-left hover:shadow-soft transition-shadow w-full"
         >
           <span className="font-serif font-semibold text-xl block">Rejoindre ma famille</span>
           <span className="text-encre-soft">J’ai reçu un lien d’invitation.</span>

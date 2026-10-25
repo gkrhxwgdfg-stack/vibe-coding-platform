@@ -130,7 +130,7 @@ export function RecipeDetailPage() {
 
   return (
     <div className="space-y-6">
-      <Link to="/recettes" className="inline-flex items-center gap-1 text-bleu font-bold min-h-11 hover:underline">
+      <Link to="/recettes" className="inline-flex items-center gap-1 text-bleu-dark font-bold min-h-11 hover:underline">
         <ArrowLeft size={18} aria-hidden="true" /> Retour au carnet
       </Link>
 
@@ -142,7 +142,7 @@ export function RecipeDetailPage() {
           ) : (
             <Torchon label={meta.label} className="[&>span]:w-24 [&>span]:h-24 [&>span]:text-5xl" />
           )}
-          <span className="absolute top-4 left-4 bg-creme/95 rounded-full px-4 py-1.5 font-bold text-terra">
+          <span className="absolute top-4 left-4 bg-creme/95 rounded-full px-4 py-1.5 font-bold text-terra-dark">
             {meta.label}
           </span>
           {recipe.is_sealed && (
@@ -156,7 +156,7 @@ export function RecipeDetailPage() {
             <div className="flex-1 min-w-0">
               <h1 className="text-3xl sm:text-4xl font-bold">{recipe.title}</h1>
               {/* Origine : par qui, depuis quand */}
-              <p className="text-hand text-bleu text-2xl mt-1">
+              <p className="text-hand text-bleu-dark text-2xl mt-1">
                 créée par {recipe.author?.display_name ?? '…'}
                 {recipe.author?.family_role && (
                   <span className="text-encre-soft text-lg"> ({recipe.author.family_role})</span>
@@ -192,7 +192,7 @@ export function RecipeDetailPage() {
                   type="button"
                   onClick={() => setServings(Math.max(1, effectiveServings - 1))}
                   aria-label="Une part de moins"
-                  className="min-h-12 min-w-12 rounded-l-full border-2 border-encre/20 bg-creme hover:border-terra hover:text-terra inline-flex items-center justify-center"
+                  className="touch-target-lg min-h-12 min-w-12 rounded-l-full border-2 border-encre/20 bg-creme hover:border-terra-dark hover:text-terra-dark inline-flex items-center justify-center"
                 >
                   <Minus size={18} aria-hidden="true" />
                 </button>
@@ -200,7 +200,7 @@ export function RecipeDetailPage() {
                   type="button"
                   onClick={() => setServings(effectiveServings + 1)}
                   aria-label="Une part de plus"
-                  className="min-h-12 min-w-12 rounded-r-full border-2 border-l-0 border-encre/20 bg-creme hover:border-terra hover:text-terra inline-flex items-center justify-center"
+                  className="touch-target-lg min-h-12 min-w-12 rounded-r-full border-2 border-l-0 border-encre/20 bg-creme hover:border-terra-dark hover:text-terra-dark inline-flex items-center justify-center"
                 >
                   <Plus size={18} aria-hidden="true" />
                 </button>
@@ -320,7 +320,7 @@ export function RecipeDetailPage() {
             {recipe.steps.map((step, i) => (
               <li key={i} className="flex items-start gap-4">
                 <span
-                  className="w-9 h-9 rounded-full bg-terra text-creme font-serif font-bold flex items-center justify-center shrink-0"
+                  className="touch-target-lg min-h-11 min-w-11 rounded-full bg-terra-dark text-creme font-serif font-bold flex items-center justify-center shrink-0"
                   aria-hidden="true"
                 >
                   {i + 1}
@@ -362,7 +362,7 @@ export function RecipeDetailPage() {
       )}
 
       <p className="text-center text-sm text-encre-soft mt-2">
-        <Link to="/recettes/nouvelle" className="text-terra font-bold hover:underline">
+        <Link to="/recettes/nouvelle" className="text-terra-dark font-bold hover:underline">
           Écrire une autre recette de la famille
         </Link>
       </p>

@@ -49,7 +49,7 @@ export function RecipeFormPage() {
       <h1 className="text-3xl font-bold mt-1 mb-1">
         {isEdit ? 'Modifier la recette' : 'Raconte ta recette'}
       </h1>
-      <p className="text-hand text-bleu text-2xl mb-6">
+      <p className="text-hand text-bleu-dark text-2xl mb-6">
         {isEdit ? 'On améliore, on précise, on transmet.' : 'Qui t’a appris ce plat ?'}
       </p>
       <RecipeForm initial={isEdit ? recipe : null} submitting={submitting} onSubmit={handleSubmit} />

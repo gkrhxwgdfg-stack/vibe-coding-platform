@@ -143,7 +143,7 @@ export function DiagnosticPage() {
           {(['anim-enter', 'skeleton-paper', 'anim-press'] as const).map((demo, i) => (
             <div
               key={`${demo}-${replayKey}`}
-              className={`card-surface p-4 min-h-24 flex items-center justify-center text-center text-sm font-semibold ${demo === 'anim-press' ? 'anim-press cursor-pointer select-none' : demo}`}
+              className={`card-surface card-pad p-4 min-h-24 flex items-center justify-center text-center text-sm font-semibold ${demo === 'anim-press' ? 'anim-press cursor-pointer select-none' : demo}`}
               style={demo === 'skeleton-paper' ? undefined : { animationDelay: `${i * MOTION.stagger}ms` }}
               role={demo === 'anim-press' ? 'button' : undefined}
               tabIndex={demo === 'anim-press' ? 0 : undefined}
@@ -175,7 +175,7 @@ export function DiagnosticPage() {
           {checks.map((check) => (
             <li key={check.name} className="flex items-start gap-3">
               {check.status === 'pending' && <Loader2 size={20} className="text-encre-soft animate-spin shrink-0 mt-0.5" aria-hidden="true" />}
-              {check.status === 'ok' && <Check size={20} className="text-sauge shrink-0 mt-0.5" aria-hidden="true" />}
+              {check.status === 'ok' && <Check size={20} className="text-sauge-ink shrink-0 mt-0.5" aria-hidden="true" />}
               {check.status === 'error' && <X size={20} className="text-carmine shrink-0 mt-0.5" aria-hidden="true" />}
               <div className="min-w-0">
                 <p className={`font-semibold ${check.status === 'error' ? 'text-carmine' : ''}`}>{check.name}</p>
@@ -188,7 +188,7 @@ export function DiagnosticPage() {
         </ul>
 
         <div className="mt-6 pt-4 border-t border-encre/10">
-          {allOk && <p className="text-sauge font-bold text-center">Tout fonctionne ! L’application est prête.</p>}
+          {allOk && <p className="text-sauge-ink font-bold text-center">Tout fonctionne ! L’application est prête.</p>}
           {anyError && <p className="text-carmine font-bold text-center">Des problèmes ont été détectés. Voir les détails ci-dessus.</p>}
           {!allOk && !anyError && <p className="text-encre-soft text-center">Vérification en cours…</p>}
         </div>

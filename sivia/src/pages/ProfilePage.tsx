@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button'
 import { Card, CardHeader } from '@/components/ui/Card'
 import { Stamp } from '@/components/ui/Stamp'
 import { TextInput, TextArea } from '@/components/ui/FormFields'
+import { ReadingSizePicker } from '@/components/ui/ReadingSizePicker'
 import { formatDate } from '@/lib/format'
 
 const NO_FILTERS = { query: '', category: 'toutes' as const, authorId: 'tous' as const }
@@ -69,7 +70,7 @@ export function ProfilePage() {
           <Stamp name={profile.display_name} />
         </div>
         {profile.family_role && (
-          <p className="text-hand text-bleu text-2xl">{profile.family_role}</p>
+          <p className="text-hand text-bleu-dark text-2xl">{profile.family_role}</p>
         )}
         <p className="text-sm text-encre-soft mt-1">En cuisine depuis {formatDate(memberSince)}</p>
       </section>
@@ -77,12 +78,12 @@ export function ProfilePage() {
       {/* Mes recettes / favoris */}
       <section aria-label="Mes recettes et favoris">
         <div className="grid grid-cols-2 gap-4">
-          <Link to="/recettes" className="card-surface p-5 text-center hover:shadow-soft transition-shadow">
-            <BookOpen size={28} className="mx-auto text-terra mb-2" aria-hidden="true" />
+          <Link to="/recettes" className="card-surface card-pad p-5 text-center hover:shadow-soft transition-shadow">
+            <BookOpen size={28} className="mx-auto text-terra-dark mb-2" aria-hidden="true" />
             <span className="font-serif text-3xl font-bold block">{myRecipes.length}</span>
             <span className="text-encre-soft">recette{myRecipes.length > 1 ? 's' : ''} écrites</span>
           </Link>
-          <Link to="/favoris" className="card-surface p-5 text-center hover:shadow-soft transition-shadow">
+          <Link to="/favoris" className="card-surface card-pad p-5 text-center hover:shadow-soft transition-shadow">
             <Heart size={28} className="mx-auto text-carmine mb-2" aria-hidden="true" />
             <span className="font-serif text-3xl font-bold block">{myFavorites.length}</span>
             <span className="text-encre-soft">favori{myFavorites.length > 1 ? 's' : ''}</span>
@@ -126,7 +127,7 @@ export function ProfilePage() {
               </p>
             </div>
             {error && <p className="text-carmine font-bold" role="alert">{error}</p>}
-            {saved && <p className="text-sauge font-bold">C’est noté !</p>}
+            {saved && <p className="text-sauge-ink font-bold">C’est noté !</p>}
             <Button type="submit" size="lg" className="w-full" disabled={saving || !displayName.trim()}>
               {saving ? 'On enregistre…' : 'Enfourner mon profil'}
             </Button>
@@ -138,13 +139,16 @@ export function ProfilePage() {
       <section aria-labelledby="settings-title">
         <Card>
           <CardHeader kicker="Paramètres" title="Ta cuisine à toi" />
+          <div className="mb-6">
+            <ReadingSizePicker hint="Plus gros, c\u2019est plus confortable pour lire les recettes." />
+          </div>
           <ul className="space-y-2">
             <li className="flex items-center justify-between gap-4 py-2">
               <span>
                 <strong>Notifications</strong>
                 <span className="block text-sm text-encre-soft">Les derniers commentaires et photos de la famille, sur l’accueil</span>
               </span>
-              <Link to="/" className="text-sm text-terra font-bold hover:underline">Voir</Link>
+              <Link to="/" className="text-sm text-terra-dark font-bold hover:underline">Voir</Link>
             </li>
             <li className="flex items-center justify-between gap-4 py-2">
               <span>

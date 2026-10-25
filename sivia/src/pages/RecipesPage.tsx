@@ -70,7 +70,7 @@ export function RecipesPage() {
             type="button"
             onClick={() => setQuery('')}
             aria-label="Effacer la recherche"
-            className="absolute right-3 top-1/2 -translate-y-1/2 min-h-11 min-w-11 flex items-center justify-center text-brun-soft hover:text-encre"
+            className="absolute right-3 top-1/2 -translate-y-1/2 touch-target-lg min-h-11 min-w-11 flex items-center justify-center text-brun-soft hover:text-encre"
           >
             <X size={20} aria-hidden="true" />
           </button>
@@ -88,8 +88,8 @@ export function RecipesPage() {
             className={cn(
               'chip-underline anim-enter min-h-11 px-4 rounded-full border-2 font-bold transition-colors',
               category === c.value
-                ? 'bg-terra text-creme border-terra'
-                : 'bg-creme text-encre border-encre/20 hover:border-terra hover:text-terra',
+                ? 'bg-terra-dark text-creme border-terra-dark'
+                : 'bg-creme text-encre border-encre/20 hover:border-terra-dark hover:text-terra',
             )}
             style={{ animationDelay: `${i * MOTION.stagger}ms` }}
           >
@@ -112,8 +112,8 @@ export function RecipesPage() {
                 className={cn(
                   'min-h-11 px-4 rounded-full border-2 font-bold transition-colors',
                   authorId === m.id
-                    ? 'bg-bleu text-creme border-bleu'
-                    : 'bg-creme text-encre border-encre/20 hover:border-bleu hover:text-bleu',
+                    ? 'bg-bleu-dark text-creme border-bleu-dark'
+                    : 'bg-creme text-encre border-encre/20 hover:border-bleu-dark hover:text-bleu',
                 )}
               >
                 {m.name}

@@ -9,7 +9,7 @@ interface AvatarProps {
 }
 
 const sizes = {
-  sm: 'w-9 h-9 text-sm',
+  sm: 'w-11 h-11 text-sm',
   md: 'w-12 h-12 text-lg',
   lg: 'w-20 h-20 text-3xl',
 }
@@ -19,7 +19,7 @@ export function Avatar({ name, src, size = 'md', className }: AvatarProps) {
     <span
       className={cn(
         'inline-flex items-center justify-center rounded-full shrink-0 overflow-hidden',
-        'bg-bleu text-creme font-serif font-bold border-2 border-creme shadow-card',
+        'bg-bleu-dark text-creme font-serif font-bold border-2 border-creme shadow-card',
         sizes[size],
         className,
       )}

@@ -92,7 +92,7 @@ export function FamilyEvents() {
                                   <li key={recipe.id}>
                                     <Link
                                       to={`/recettes/${recipe.id}`}
-                                      className="inline-block bg-creme border-2 border-encre/15 rounded-full px-3 py-1 text-sm font-bold text-encre hover:border-terra hover:text-terra"
+                                      className="inline-block bg-creme border-2 border-encre/15 rounded-full px-3 py-1 text-sm font-bold text-encre hover:border-terra-dark hover:text-terra-dark"
                                     >
                                       {recipe.title}
                                     </Link>
@@ -105,7 +105,7 @@ export function FamilyEvents() {
                             type="button"
                             onClick={() => remove(event.id)}
                             aria-label={`Retirer le souvenir ${event.title}`}
-                            className="min-h-11 min-w-11 rounded-full text-encre-soft hover:text-carmine inline-flex items-center justify-center shrink-0"
+                            className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-soft hover:text-carmine inline-flex items-center justify-center shrink-0"
                           >
                             <Trash2 size={18} aria-hidden="true" />
                           </button>
@@ -212,7 +212,7 @@ function AddEventModal({ recipes, onClose, onCreated, add }: AddEventModalProps)
             type="button"
             onClick={onClose}
             aria-label="Ranger"
-            className="min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra inline-flex items-center justify-center"
+            className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra-dark inline-flex items-center justify-center"
           >
             <X size={22} aria-hidden="true" />
           </button>
@@ -259,8 +259,8 @@ function AddEventModal({ recipes, onClose, onCreated, add }: AddEventModalProps)
                       className={cn(
                         'min-h-11 px-4 rounded-full border-2 font-bold transition-colors',
                         selected
-                          ? 'bg-terra text-creme border-terra'
-                          : 'bg-creme text-encre border-encre/20 hover:border-terra hover:text-terra',
+                          ? 'bg-terra-dark text-creme border-terra'
+                          : 'bg-creme text-encre border-encre/20 hover:border-terra-dark hover:text-terra',
                       )}
                     >
                       {recipe.title}
@@ -279,7 +279,7 @@ function AddEventModal({ recipes, onClose, onCreated, add }: AddEventModalProps)
                 'cursor-pointer w-full min-h-11 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 border-dashed font-bold transition-colors',
                 photoFile
                   ? 'border-sauge bg-sauge/10 text-encre'
-                  : 'border-encre/25 bg-creme hover:border-terra hover:text-terra',
+                  : 'border-encre/25 bg-creme hover:border-terra-dark hover:text-terra',
               )}
             >
               <ImagePlus size={20} aria-hidden="true" />
@@ -300,7 +300,7 @@ function AddEventModal({ recipes, onClose, onCreated, add }: AddEventModalProps)
                     setPhotoPreview(null)
                   }}
                   aria-label="Retirer la photo"
-                  className="absolute top-2 right-2 min-h-11 min-w-11 rounded-full bg-carmine text-creme flex items-center justify-center"
+                  className="absolute top-2 right-2 touch-target-lg min-h-11 min-w-11 rounded-full bg-carmine text-creme flex items-center justify-center"
                 >
                   <Trash2 size={18} aria-hidden="true" />
                 </button>

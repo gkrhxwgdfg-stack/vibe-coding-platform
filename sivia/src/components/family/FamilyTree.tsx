@@ -155,7 +155,7 @@ export function FamilyTree({
               aria-label="Ajouter une personne au-dessus — nouvelle base de l'arbre"
               title="Ajouter une base au-dessus (l'arbre descend)"
               className={cn(
-                'min-h-11 min-w-11 rounded-full bg-creme border-2 border-carmine text-carmine',
+                'touch-target-lg min-h-11 min-w-11 rounded-full bg-creme border-2 border-carmine text-carmine',
                 'inline-flex items-center justify-center hover:bg-carmine hover:text-creme transition-colors shadow-card',
               )}
             >
@@ -211,8 +211,8 @@ export function FamilyTree({
                   aria-label={`Ajouter une personne reliée à ${member.first_name}`}
                   title={`Ajouter une personne reliée à ${member.first_name}`}
                   className={cn(
-                    'min-h-11 min-w-11 rounded-full bg-creme border-2 border-terra text-terra',
-                    'inline-flex items-center justify-center hover:bg-terra hover:text-creme transition-colors shadow-card',
+                    'touch-target-lg min-h-11 min-w-11 rounded-full bg-creme border-2 border-terra text-terra',
+                    'inline-flex items-center justify-center hover:bg-terra-dark hover:text-creme transition-colors shadow-card',
                   )}
                 >
                   <Plus size={20} strokeWidth={2.5} aria-hidden="true" />
@@ -228,7 +228,7 @@ export function FamilyTree({
             <button
               type="button"
               onClick={() => openAdd(null)}
-              className="min-h-13 px-6 py-3 rounded-full bg-terra text-creme font-bold inline-flex items-center gap-2 shadow-soft hover:bg-terra-dark"
+              className="touch-target-lg min-h-13 px-6 py-3 rounded-full bg-terra-dark text-creme font-bold inline-flex items-center gap-2 shadow-soft hover:bg-[#8f4525]"
             >
               <Plus size={22} aria-hidden="true" /> Créer la base de l'arbre
             </button>
@@ -237,7 +237,7 @@ export function FamilyTree({
       </div>
 
       {/* Légende */}
-      <p className="text-xs text-brun-soft text-center mt-2">
+      <p className="text-sm text-brun-soft text-center mt-2">
         « + » sous une personne : ajouter un enfant en dessous · scotch « + » sur le côté : ajouter un
         partenaire à côté · « + » carmine en haut : ajouter un aîné au-dessus
       </p>

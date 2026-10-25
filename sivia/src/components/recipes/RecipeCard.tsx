@@ -34,7 +34,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         ) : (
           <Torchon label={meta.label} />
         )}
-        <span className="absolute top-3 left-3 bg-creme/95 rounded-full px-3 py-1 text-sm font-bold text-terra">
+        <span className="absolute top-3 left-3 bg-creme/95 rounded-full px-3 py-1 text-sm font-bold text-terra-dark">
           {meta.label}
         </span>
         {recipe.is_sealed && (
@@ -44,10 +44,10 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         )}
       </div>
       <div className="p-4">
-        <h3 className="font-serif font-semibold text-xl leading-snug group-hover:text-terra transition-colors">
+        <h3 className="font-serif font-semibold text-xl leading-snug group-hover:text-terra-dark transition-colors">
           {recipe.title}
         </h3>
-        <p className="text-hand text-bleu text-lg mt-0.5">
+        <p className="text-hand text-bleu-dark text-lg mt-0.5">
           créée par {recipe.author?.display_name ?? '…'}
         </p>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-brun-soft">
@@ -66,7 +66,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
             </span>
           )}
         </div>
-        <p className="text-xs text-brun-soft mt-2">Créée le {formatDate(recipe.created_at)}</p>
+        <p className="text-sm text-brun-soft mt-2">Créée le {formatDate(recipe.created_at)}</p>
       </div>
     </Link>
   )

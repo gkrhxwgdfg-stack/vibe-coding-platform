@@ -32,7 +32,7 @@ export function TransmissionBanner({ author, recipeCreatedAt, cookedCount }: Tra
         {' · '}
         {cookedCount > 0 ? (
           <>
-            cuisinée <strong className="text-terra">{cookedCount} fois</strong>
+            cuisinée <strong className="text-terra-dark">{cookedCount} fois</strong>
           </>
         ) : (
           'pas encore sortie du four'

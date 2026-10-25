@@ -35,7 +35,7 @@ export class ErrorBoundary extends Component<Props, State> {
               <Logo link={false} />
             </div>
             <Card className="py-8">
-              <p className="font-serif text-4xl text-terra mb-3" aria-hidden="true">Savia</p>
+              <p className="font-serif text-4xl text-terra-dark mb-3" aria-hidden="true">Savia</p>
               <h1 className="font-serif text-2xl font-semibold mb-2">Ratée, la page a débordé.</h1>
               <p className="text-encre-soft mb-2">On essuie et on recommence ?</p>
               <Button size="lg" onClick={() => window.location.assign('/')}>

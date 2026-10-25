@@ -5,6 +5,10 @@ import './index.css'
 import { App } from './App'
 import { AuthProvider } from './context/AuthContext'
 import { ErrorBoundary } from './components/layout/ErrorBoundary'
+import { applyReadingSize, readReadingSize } from './lib/readingSize'
+
+// Taille du texte persistée : appliquée avant le premier rendu (chantier 8)
+applyReadingSize(readReadingSize())
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
