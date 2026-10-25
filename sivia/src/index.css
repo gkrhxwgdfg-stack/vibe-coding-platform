@@ -381,6 +381,49 @@ h3 {
   }
 }
 
+/* ============================================================
+   Feuille print dédiée (chantier 6) — A5, marges 15 mm,
+   print-color-adjust: exact (les fonds papier/tampon s'impriment),
+   break-inside: avoid (une carte ne se coupe pas en deux).
+   Sert de référence visuelle au PDF généré par services/recipePdf.ts.
+   ============================================================ */
+@page {
+  size: A5 portrait;
+  margin: 15mm;
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  /* On n'imprime que le contenu utile */
+  header,
+  nav,
+  .no-print {
+    display: none !important;
+  }
+
+  main {
+    max-width: none;
+    padding: 0;
+  }
+
+  /* Les fonds (papiers, tampons, bandeaux) s'impriment */
+  * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Une carte ne se coupe pas en deux */
+  .card-surface,
+  .card-surface-sauge,
+  [class*='paper-aged'],
+  blockquote {
+    break-inside: avoid;
+  }
+}
+
 /* Scrollbar discrète */
 ::-webkit-scrollbar {
   width: 10px;

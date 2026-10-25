@@ -11,6 +11,7 @@ import {
   Pencil,
   Play,
   Plus,
+  Printer,
   Trash2,
   Users,
 } from 'lucide-react'
@@ -18,6 +19,7 @@ import { useRecipe, useToggleFavorite } from '@/hooks/useRecipes'
 import { useAuth } from '@/context/AuthContext'
 import { deleteRecipe, photoPublicUrl, sealRecipe } from '@/services/recipes'
 import { printRecipe } from '@/services/recipePrint'
+import { generateRecipePdf } from '@/services/recipePdf'
 import { categoryMeta } from '@/lib/constants'
 import { formatDate, formatDuration, formatRelative } from '@/lib/format'
 import { scaleIngredients } from '@/lib/scale'
@@ -57,6 +59,9 @@ export function RecipeDetailPage() {
   const cookedCount = useCookedCount(id)
   // Export « carnet familial » : confirmation après le téléchargement
   const [exported, setExported] = useState(false)
+  const [pdfBusy, setPdfBusy] = useState(false)
+  const [pdfError, setPdfError] = useState<string | null>(null)
+  const [pdfDone, setPdfDone] = useState(false)
 
   const effectiveServings = servings ?? recipe?.servings ?? 4
 
@@ -85,6 +90,21 @@ export function RecipeDetailPage() {
     if (opened) {
       setExported(true)
       setTimeout(() => setExported(false), 4000)
+    }
+  }
+
+  /** Export PDF direct (jsPDF, import dynamique au clic) */
+  async function handlePdfExport() {
+    setPdfBusy(true)
+    setPdfError(null)
+    try {
+      await generateRecipePdf(current, family?.name ?? 'notre famille')
+      setPdfDone(true)
+      setTimeout(() => setPdfDone(false), 4000)
+    } catch {
+      setPdfError(COPY.errors.reseau)
+    } finally {
+      setPdfBusy(false)
     }
   }
   const isAuthor = user?.id === current.author_id
@@ -216,11 +236,18 @@ export function RecipeDetailPage() {
                 </Button>
               </Link>
             )}
-            {/* Export PDF « carnet familial » (mise en forme originale, polaroïd + tampon) */}
-            <Button variant="outline" onClick={handleExport}>
-              {exported ? <Check size={18} aria-hidden="true" /> : <Download size={18} aria-hidden="true" />}
-              {exported ? 'Préparé — choisis « Enregistrer en PDF »' : 'Télécharger la recette'}
+            {/* Export PDF direct (bouton principal) + impression navigateur en 2e choix */}
+            <Button variant="outline" onClick={handlePdfExport} disabled={pdfBusy}>
+              {pdfDone ? <Check size={18} aria-hidden="true" /> : <Download size={18} aria-hidden="true" />}
+              {pdfBusy ? 'On prépare le PDF…' : pdfDone ? 'La recette est dans vos téléchargements.' : 'Télécharger (PDF)'}
             </Button>
+            <Button variant="ghost" onClick={handleExport}>
+              {exported ? <Check size={18} aria-hidden="true" /> : <Printer size={18} aria-hidden="true" />}
+              {exported ? 'Prêt — choisis « Enregistrer en PDF »' : 'Imprimer'}
+            </Button>
+            {pdfError && (
+              <p className="text-sm text-carmine font-bold" role="alert">{pdfError}</p>
+            )}
             <Button
               variant={recipe.is_favorite ? 'primary' : 'outline'}
               onClick={handleFavorite}
