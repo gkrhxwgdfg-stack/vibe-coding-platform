@@ -1,17 +1,17 @@
 import { Link } from 'react-router-dom'
 import { AuthShell } from '@/components/layout/AuthShell'
+import { EmptyState } from '@/components/ui/EmptyState'
 import { Button } from '@/components/ui/Button'
+import { COPY } from '@/lib/copy'
 
 export function NotFoundPage() {
   return (
     <AuthShell title="Page perdue" handNote="Ratée, la page a débordé. On essuie et on recommence ?">
-      <div className="text-center">
-        <p className="font-serif text-6xl text-terra mb-4" aria-hidden="true">Savia</p>
-        <p className="text-lg mb-6">Cette recette n’est pas dans le carnet.</p>
+      <EmptyState title="Cette page a dû sortir du four" handText={COPY.empty.recetteIntrouvable}>
         <Link to="/">
-          <Button size="lg">Retour en cuisine</Button>
+          <Button size="lg">{COPY.nav.retourCarnet}</Button>
         </Link>
-      </div>
+      </EmptyState>
     </AuthShell>
   )
 }

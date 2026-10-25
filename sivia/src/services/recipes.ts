@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase'
 import { STORAGE_BUCKET } from '@/lib/constants'
 import type { RecipeFormValues } from '@/lib/types'
 import type { Database } from '@/lib/database.types'
+import { friendlyError } from '@/lib/copy'
 
 /**
  * Logique métier des recettes : création / mise à jour / photo / scellage.
@@ -54,7 +55,7 @@ export async function createRecipe(familyId: string, authorId: string, values: R
   }
 
   const { data, error } = await supabase.from('recipes').insert(payload).select().single()
-  if (error) return { data: null, error: error.message }
+  if (error) return { data: null, error: friendlyError(error.message) }
   return { data, error: null }
 }
 
@@ -90,7 +91,7 @@ export async function updateRecipe(
     .eq('id', recipeId)
     .select()
     .single()
-  if (error) return { data: null, error: error.message }
+  if (error) return { data: null, error: friendlyError(error.message) }
   return { data, error: null }
 }
 
@@ -100,10 +101,10 @@ export async function sealRecipe(recipeId: string, sealed: boolean) {
     .from('recipes')
     .update({ is_sealed: sealed })
     .eq('id', recipeId)
-  return { error: error?.message ?? null }
+  return { error: error ? friendlyError(error.message) : null }
 }
 
 export async function deleteRecipe(recipeId: string) {
   const { error } = await supabase.from('recipes').delete().eq('id', recipeId)
-  return { error: error?.message ?? null }
+  return { error: error ? friendlyError(error.message) : null }
 }

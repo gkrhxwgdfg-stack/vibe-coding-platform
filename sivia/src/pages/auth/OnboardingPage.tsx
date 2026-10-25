@@ -45,11 +45,7 @@ export function OnboardingPage() {
       .single()
 
     if (familyError || !family) {
-      setError(
-        familyError
-          ? `Impossible de créer la famille : ${familyError.message}`
-          : 'Impossible de créer la famille pour le moment. Réessaie ?',
-      )
+      setError('La famille n’a pas pu être créée. La sauce a raté. On recommence ?')
       setSubmitting(false)
       return
     }

@@ -196,7 +196,7 @@ export function FamilyMemberModal({
           <button
             type="button"
             onClick={onClose}
-            aria-label="Fermer"
+            aria-label="Ranger"
             className="min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra inline-flex items-center justify-center"
           >
             <X size={22} aria-hidden="true" />
@@ -439,11 +439,11 @@ export function FamilyMemberModal({
 
           <div className="flex justify-end gap-3">
             <Button type="button" variant="ghost" onClick={onClose}>
-              Annuler
+              Ranger
             </Button>
             <Button type="submit" disabled={sending || !firstName.trim()}>
               <Send size={18} aria-hidden="true" />
-              {sending ? 'On enregistre…' : isEditing ? 'Enregistrer' : 'Accrocher dans l’arbre'}
+              {sending ? 'On enregistre…' : isEditing ? 'Enfourner' : 'Accrocher dans l’arbre'}
             </Button>
           </div>
         </form>

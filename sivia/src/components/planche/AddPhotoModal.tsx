@@ -101,7 +101,7 @@ export function AddPhotoModal({ open, onClose, onPublished }: AddPhotoModalProps
           <button
             type="button"
             onClick={onClose}
-            aria-label="Fermer"
+            aria-label="Ranger"
             className="min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra inline-flex items-center justify-center"
           >
             <X size={22} aria-hidden="true" />
@@ -167,11 +167,11 @@ export function AddPhotoModal({ open, onClose, onPublished }: AddPhotoModalProps
 
           <div className="flex justify-end gap-3">
             <Button type="button" variant="ghost" onClick={onClose}>
-              Annuler
+              Ranger
             </Button>
             <Button type="submit" disabled={sending || !photoFile}>
               <Send size={18} aria-hidden="true" />
-              {sending ? 'On accroche la photo…' : 'Publier sur la planche'}
+              {sending ? 'On accroche la photo…' : 'Partager à la famille'}
             </Button>
           </div>
         </form>

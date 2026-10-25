@@ -14,6 +14,7 @@ import { Spinner } from '@/components/ui/Spinner'
 import { FamilyTree } from '@/components/family/FamilyTree'
 import { FamilyEvents } from '@/components/family/FamilyEvents'
 import { formatDate } from '@/lib/format'
+import { COPY } from '@/lib/copy'
 import type { FamilyMember, Invitation } from '@/lib/types'
 
 export function FamilyPage() {
@@ -82,7 +83,7 @@ export function FamilyPage() {
     const { error: inviteError, invitation } = await createInvitation(email.trim())
     setSubmitting(false)
     if (inviteError || !invitation) {
-      setError(inviteError ?? 'Impossible de créer l’invitation.')
+      setError(inviteError ?? COPY.errors.generique)
       return
     }
     setEmail('')
@@ -102,14 +103,13 @@ export function FamilyPage() {
     setTimeout(() => setCopiedId(null), 2000)
   }
 
-  function handleRemoveTreeMember(member: FamilyMember) {
-    if (window.confirm(`Retirer ${member.first_name} de l'arbre ?`)) {
-      void removeTreeMember(member.id)
-    }
+  async function handleRemoveTreeMember(member: FamilyMember) {
+    const { error: removeError } = await removeTreeMember(member.id)
+    if (removeError) setError(removeError)
   }
 
   if (membersLoading || invitationsLoading || treeLoading)
-    return <Spinner label="On rassemble la famille…" />
+    return <Spinner label={COPY.loading.famille} />
 
   return (
     <div className="space-y-8">
@@ -128,7 +128,7 @@ export function FamilyPage() {
               {renaming ? 'On écrit…' : 'Renommer'}
             </Button>
             <Button type="button" variant="ghost" size="md" onClick={() => setEditingName(false)}>
-              Annuler
+              Ranger
             </Button>
           </form>
         ) : (
@@ -289,7 +289,7 @@ export function FamilyPage() {
                     variant="ghost"
                     className="text-carmine"
                     onClick={() => cancelInvitation(invitation)}
-                    aria-label={`Annuler l’invitation de ${invitation.email}`}
+                    aria-label={`Retirer l’invitation de ${invitation.email}`}
                   >
                     <Trash2 size={18} aria-hidden="true" />
                   </Button>

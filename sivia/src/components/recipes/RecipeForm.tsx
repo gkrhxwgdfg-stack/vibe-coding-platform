@@ -7,6 +7,7 @@ import { photoPublicUrl } from '@/services/recipes'
 import { Button } from '@/components/ui/Button'
 import { TextInput, TextArea, Select } from '@/components/ui/FormFields'
 import { cn } from '@/lib/utils'
+import { COPY } from '@/lib/copy'
 
 interface RecipeFormProps {
   initial?: Recipe | null
@@ -306,10 +307,10 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
       <div className="flex flex-col gap-3 pt-2">
         <Button type="submit" size="lg" className="w-full" disabled={submitting}>
           {submitting
-            ? 'On écrit dans le carnet…'
+            ? COPY.loading.ecriture
             : initial
-              ? 'Enregistrer les changements'
-              : 'Publier dans le carnet de famille'}
+              ? 'Enfourner les changements'
+              : COPY.actions.partager}
         </Button>
         <Button type="button" variant="ghost" className="w-full" onClick={() => navigate(-1)}>
           Annuler

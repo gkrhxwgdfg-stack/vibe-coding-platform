@@ -14,6 +14,7 @@ import {
   type FamilyMemberFormValues,
 } from '@/services/familyTree'
 import type { FamilyEvent, FamilyGeneration, FamilyMember } from '@/lib/types'
+import { COPY, friendlyError } from '@/lib/copy'
 
 /** Membres « de l'arbre » de la famille (sans compte, ajoutés à la main) */
 export function useFamilyTree() {
@@ -38,7 +39,7 @@ export function useFamilyTree() {
 
   const add = useCallback(
     async (values: FamilyMemberFormValues) => {
-      if (!profile?.family_id || !profile.id) return { error: 'Non connecté', member: null }
+      if (!profile?.family_id || !profile.id) return { error: COPY.errors.session, member: null }
       const result = await createFamilyMember(profile.family_id, profile.id, values)
       if (!result.error) await refetch()
       return result
@@ -48,7 +49,7 @@ export function useFamilyTree() {
 
   const edit = useCallback(
     async (memberId: string, values: FamilyMemberFormValues) => {
-      if (!profile?.family_id) return { error: 'Non connecté', member: null }
+      if (!profile?.family_id) return { error: COPY.errors.session, member: null }
       const result = await updateFamilyMember(memberId, profile.family_id, values)
       if (!result.error) await refetch()
       return result
@@ -60,7 +61,7 @@ export function useFamilyTree() {
     async (memberId: string) => {
       const { error } = await deleteFamilyMember(memberId)
       if (!error) setMembers((prev) => prev.filter((m) => m.id !== memberId))
-      return { error }
+      return { error: error ? friendlyError(error) : null }
     },
     [],
   )
@@ -91,7 +92,7 @@ export function useFamilyGenerations() {
 
   const add = useCallback(
     async (name: string) => {
-      if (!profile?.family_id || !profile.id) return { error: 'Non connecté', generation: null }
+      if (!profile?.family_id || !profile.id) return { error: COPY.errors.session, generation: null }
       const result = await createFamilyGeneration(profile.family_id, profile.id, name)
       if (!result.error) await refetch()
       return result
@@ -103,7 +104,7 @@ export function useFamilyGenerations() {
     async (generationId: string) => {
       const { error } = await deleteFamilyGeneration(generationId)
       if (!error) setGenerations((prev) => prev.filter((g) => g.id !== generationId))
-      return { error }
+      return { error: error ? friendlyError(error) : null }
     },
     [],
   )
@@ -134,7 +135,7 @@ export function useFamilyEvents() {
 
   const add = useCallback(
     async (values: Parameters<typeof createFamilyEvent>[2]) => {
-      if (!profile?.family_id || !profile.id) return { error: 'Non connecté', event: null }
+      if (!profile?.family_id || !profile.id) return { error: COPY.errors.session, event: null }
       const result = await createFamilyEvent(profile.family_id, profile.id, values)
       if (!result.error) await refetch()
       return result
@@ -146,7 +147,7 @@ export function useFamilyEvents() {
     async (eventId: string) => {
       const { error } = await deleteFamilyEvent(eventId)
       if (!error) setEvents((prev) => prev.filter((e) => e.id !== eventId))
-      return { error }
+      return { error: error ? friendlyError(error) : null }
     },
     [],
   )

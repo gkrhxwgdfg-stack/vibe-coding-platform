@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Pencil, Trash2, UserCheck } from 'lucide-react'
 import { familyPhotoUrl } from '@/services/familyTree'
 import { type FamilyMember } from '@/lib/types'
@@ -32,6 +33,8 @@ export function FamilyMemberCard({
   onEdit,
   onRemove,
 }: FamilyMemberCardProps) {
+  // Confirmation douce avant retrait : plus de window.confirm bloquant
+  const [confirming, setConfirming] = useState(false)
   const photo = familyPhotoUrl(member.photo_url)
   const isConnected = !!member.linked_profile_id && connectedProfileIds.has(member.linked_profile_id)
   // Lien tel qu'écrit par l'utilisateur, affiché sous la forme « <lien> <prénom du référent> »
@@ -97,14 +100,24 @@ export function FamilyMemberCard({
               <Pencil size={17} aria-hidden="true" />
             </button>
           )}
-          {onRemove && (
+          {onRemove && !confirming && (
             <button
               type="button"
-              onClick={() => onRemove(member)}
+              onClick={() => setConfirming(true)}
               aria-label={`Retirer ${member.first_name} de l'arbre`}
               className="min-h-11 min-w-11 rounded-full text-encre-soft hover:text-carmine inline-flex items-center justify-center"
             >
               <Trash2 size={17} aria-hidden="true" />
+            </button>
+          )}
+          {onRemove && confirming && (
+            <button
+              type="button"
+              onClick={() => onRemove(member)}
+              aria-label={`Confirmer : retirer ${member.first_name} de l'arbre`}
+              className="min-h-11 px-3 rounded-full text-sm font-bold bg-carmine text-creme inline-flex items-center justify-center"
+            >
+              Retirer de l'arbre ?
             </button>
           )}
         </div>

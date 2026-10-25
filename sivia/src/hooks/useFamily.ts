@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/context/AuthContext'
 import type { Invitation, Profile } from '@/lib/types'
+import { COPY, friendlyError } from '@/lib/copy'
 
 /** Membres de la famille (profils) */
 export function useFamilyMembers() {
@@ -66,13 +67,13 @@ export function useCreateInvitation() {
   const { profile } = useAuth()
   return useCallback(
     async (email: string) => {
-      if (!profile?.family_id) return { error: 'Aucune famille', invitation: null as Invitation | null }
+      if (!profile?.family_id) return { error: COPY.errors.generique, invitation: null as Invitation | null }
       const { data, error } = await supabase
         .from('invitations')
         .insert({ family_id: profile.family_id, email, invited_by: profile.id })
         .select()
         .single()
-      if (error || !data) return { error: error?.message ?? 'Erreur', invitation: null }
+      if (error || !data) return { error: error ? friendlyError(error.message) : COPY.errors.generique, invitation: null }
       return { error: null, invitation: data as Invitation }
     },
     [profile],
@@ -99,7 +100,7 @@ export function useInvitationByToken(token: string | undefined) {
         .maybeSingle()
 
       if (fetchError || !data) {
-        setError('Invitation introuvable ou expirée.')
+        setError('Ce lien d’invitation n’est plus valide. Demande un nouveau lien à ta famille.')
         setInvitation(null)
       } else if (data.status !== 'pending' || new Date(data.expires_at) < new Date()) {
         setError('Cette invitation a déjà été utilisée ou a expiré.')

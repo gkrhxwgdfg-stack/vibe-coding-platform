@@ -5,10 +5,11 @@ import { useRecipes } from '@/hooks/useRecipes'
 import { useFamilyMembers } from '@/hooks/useFamily'
 import { CATEGORIES } from '@/lib/constants'
 import type { RecipeCategory, RecipeFilters } from '@/lib/types'
-import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { ErrorState } from '@/components/ui/ErrorState'
 import { Spinner } from '@/components/ui/Spinner'
+import { COPY } from '@/lib/copy'
 import { RecipeCard } from '@/components/recipes/RecipeCard'
 import { cn } from '@/lib/utils'
 
@@ -23,7 +24,7 @@ export function RecipesPage() {
     () => ({ query, category, authorId }),
     [query, category, authorId],
   )
-  const { recipes, loading, error } = useRecipes(filters)
+  const { recipes, loading, error, refetch } = useRecipes(filters)
   const { members } = useFamilyMembers()
 
   const hasActiveFilters = query.trim() !== '' || category !== 'toutes' || authorId !== 'tous'
@@ -122,29 +123,31 @@ export function RecipesPage() {
 
       {hasActiveFilters && (
         <button type="button" onClick={resetFilters} className="text-carmine font-bold min-h-11 hover:underline">
-          Tout réafficher
+          {COPY.actions.remuer}
         </button>
       )}
 
       {/* Résultats */}
       {loading ? (
-        <Spinner label="On farfouille dans le carnet…" />
+        <Spinner label={COPY.loading.recherche} />
       ) : error ? (
-        <Card className="text-center text-carmine font-bold">{error}</Card>
+        <ErrorState message={error} onRetry={refetch} />
       ) : recipes.length === 0 ? (
-        <EmptyState
-          handText={
-            hasActiveFilters
-              ? 'Rien dans le carnet pour ça… Essaie un autre mot ?'
-              : 'Toute famille a une première recette. Laquelle est la vôtre ?'
-          }
-        >
-          <Link to="/recettes/nouvelle">
-            <Button size="lg">
-              <Plus size={20} aria-hidden="true" /> Écrire une recette
+        hasActiveFilters ? (
+          <EmptyState title="Rien à cette page" handText={COPY.empty.recherche}>
+            <Button size="lg" variant="outline" onClick={resetFilters}>
+              <X size={20} aria-hidden="true" /> Effacer
             </Button>
-          </Link>
-        </EmptyState>
+          </EmptyState>
+        ) : (
+          <EmptyState title="Le carnet est vide" handText="Toute famille a une première recette. Laquelle est la vôtre ?">
+            <Link to="/recettes/nouvelle">
+              <Button size="lg">
+                <Plus size={20} aria-hidden="true" /> Écrire une recette
+              </Button>
+            </Link>
+          </EmptyState>
+        )
       ) : (
         <>
           <p className="text-brun-soft" aria-live="polite">

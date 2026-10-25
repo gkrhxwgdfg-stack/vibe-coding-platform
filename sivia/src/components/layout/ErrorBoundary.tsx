@@ -9,7 +9,6 @@ interface Props {
 
 interface State {
   hasError: boolean
-  message: string
 }
 
 /**
@@ -17,10 +16,10 @@ interface State {
  * on affiche un message chaleureux au lieu d'une page blanche.
  */
 export class ErrorBoundary extends Component<Props, State> {
-  state: State = { hasError: false, message: '' }
+  state: State = { hasError: false }
 
-  static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, message: error.message }
+  static getDerivedStateFromError(): State {
+    return { hasError: true }
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
@@ -39,13 +38,8 @@ export class ErrorBoundary extends Component<Props, State> {
               <p className="font-serif text-4xl text-terra mb-3" aria-hidden="true">Savia</p>
               <h1 className="font-serif text-2xl font-semibold mb-2">Ratée, la page a débordé.</h1>
               <p className="text-encre-soft mb-2">On essuie et on recommence ?</p>
-              {this.state.message && (
-                <p className="text-sm text-carmine font-mono bg-lin rounded-lg px-3 py-2 mb-4 break-all">
-                  {this.state.message}
-                </p>
-              )}
               <Button size="lg" onClick={() => window.location.assign('/')}>
-                Retour en cuisine
+                Retour au carnet
               </Button>
             </Card>
           </div>

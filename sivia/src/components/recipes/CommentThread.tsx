@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
 import { formatRelative } from '@/lib/format'
 import { cn } from '@/lib/utils'
+import { COPY } from '@/lib/copy'
 import type { RecipeComment } from '@/lib/types'
 
 interface CommentThreadProps {
@@ -76,7 +77,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
       </div>
 
       {loading ? (
-        <Spinner label="On rassemble les messages de la famille…" />
+        <Spinner label={COPY.loading.messages} />
       ) : (
         <ul className="space-y-4 mb-6">
           {comments.length === 0 && (
@@ -127,7 +128,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                             }}
                             className="inline-flex items-center gap-1 min-h-11 px-4 rounded-xl border-2 border-encre/25 font-bold hover:border-encre/50"
                           >
-                            <X size={16} aria-hidden="true" /> Annuler
+                            <X size={16} aria-hidden="true" /> Ranger
                           </button>
                         </div>
                       </div>
@@ -221,7 +222,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
           )}
           <Button type="submit" disabled={sending || (!body.trim() && !photoFile)} className="ml-auto">
             <Send size={18} aria-hidden="true" />
-            {sending ? 'On envoie…' : 'Envoyer'}
+            {sending ? 'On envoie…' : 'Partager à la famille'}
           </Button>
         </div>
         {error && (

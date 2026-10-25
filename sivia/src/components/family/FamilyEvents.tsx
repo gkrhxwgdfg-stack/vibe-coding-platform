@@ -5,6 +5,7 @@ import { useFamilyEvents } from '@/hooks/useFamilyTree'
 import { useRecipes } from '@/hooks/useRecipes'
 import { familyPhotoUrl } from '@/services/familyTree'
 import { formatDate } from '@/lib/format'
+import { COPY } from '@/lib/copy'
 import { Button } from '@/components/ui/Button'
 import { Card, CardHeader } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -47,9 +48,9 @@ export function FamilyEvents() {
       />
 
       {loading ? (
-        <Spinner label="On déroule les souvenirs…" />
+        <Spinner label={COPY.loading.souvenirs} />
       ) : events.length === 0 ? (
-        <EmptyState handText="Aucun repas noté pour l'instant. Noël approche — on commence par là ?">
+        <EmptyState title="Pas encore de souvenirs" handText="Aucun repas noté pour l'instant. Noël approche — on commence par là ?">
           <Button size="lg" onClick={() => setOpen(true)}>
             <Plus size={20} aria-hidden="true" /> Noter notre premier repas
           </Button>
@@ -103,7 +104,7 @@ export function FamilyEvents() {
                           <button
                             type="button"
                             onClick={() => remove(event.id)}
-                            aria-label={`Supprimer le souvenir ${event.title}`}
+                            aria-label={`Retirer le souvenir ${event.title}`}
                             className="min-h-11 min-w-11 rounded-full text-encre-soft hover:text-carmine inline-flex items-center justify-center shrink-0"
                           >
                             <Trash2 size={18} aria-hidden="true" />
@@ -210,7 +211,7 @@ function AddEventModal({ recipes, onClose, onCreated, add }: AddEventModalProps)
           <button
             type="button"
             onClick={onClose}
-            aria-label="Fermer"
+            aria-label="Ranger"
             className="min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra inline-flex items-center justify-center"
           >
             <X size={22} aria-hidden="true" />
@@ -315,11 +316,11 @@ function AddEventModal({ recipes, onClose, onCreated, add }: AddEventModalProps)
 
           <div className="flex justify-end gap-3">
             <Button type="button" variant="ghost" onClick={onClose}>
-              Annuler
+              Ranger
             </Button>
             <Button type="submit" disabled={sending || !title.trim() || !eventDate}>
               <Send size={18} aria-hidden="true" />
-              {sending ? 'On grave le souvenir…' : 'Ajouter au fil'}
+              {sending ? 'On grave le souvenir…' : 'Enfourner le souvenir'}
             </Button>
           </div>
         </form>

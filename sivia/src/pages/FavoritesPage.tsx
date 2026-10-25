@@ -4,6 +4,7 @@ import { useRecipes } from '@/hooks/useRecipes'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Spinner } from '@/components/ui/Spinner'
+import { COPY } from '@/lib/copy'
 import { RecipeCard } from '@/components/recipes/RecipeCard'
 
 const NO_FILTERS = { query: '', category: 'toutes' as const, authorId: 'tous' as const }
@@ -22,9 +23,9 @@ export function FavoritesPage() {
         </h1>
       </div>
       {loading ? (
-        <Spinner label="On rassemble tes préférées…" />
+        <Spinner label={COPY.loading.favoris} />
       ) : favorites.length === 0 ? (
-        <EmptyState handText="Pas encore de favori. Un cœur sur une recette, et elle reste là, pour toujours.">
+        <EmptyState title="Pas encore de chouchous" handText={COPY.empty.favoris}>
           <Link to="/recettes">
             <Button size="lg">Farfouiller dans le carnet</Button>
           </Link>

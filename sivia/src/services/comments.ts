@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { friendlyError } from '@/lib/copy'
 import { STORAGE_BUCKET } from '@/lib/constants'
 import type { RecipeComment } from '@/lib/types'
 
@@ -75,7 +76,7 @@ export async function addComment(
     body: text ? text : null,
     photo_url: photoPath,
   })
-  return { error: error?.message ?? null }
+  return { error: error ? friendlyError(error.message) : null }
 }
 
 /** Modifie le texte d'un commentaire (son auteur uniquement, cf. RLS) */
@@ -88,13 +89,13 @@ export async function updateComment(
     .from('recipe_comments')
     .update({ body: text ? text : null })
     .eq('id', commentId)
-  return { error: error?.message ?? null }
+  return { error: error ? friendlyError(error.message) : null }
 }
 
 /** Supprime un commentaire (son auteur uniquement, cf. RLS) */
 export async function deleteComment(commentId: string): Promise<{ error: string | null }> {
   const { error } = await supabase.from('recipe_comments').delete().eq('id', commentId)
-  return { error: error?.message ?? null }
+  return { error: error ? friendlyError(error.message) : null }
 }
 
 /** Compte les commentaires d'une recette (pour les notifications d'accueil) */

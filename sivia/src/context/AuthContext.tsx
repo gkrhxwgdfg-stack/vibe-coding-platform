@@ -10,6 +10,7 @@ import {
 import type { Session, User } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
 import { appUrl } from '@/lib/paths'
+import { friendlyError } from '@/lib/copy'
 import type { Family, Profile } from '@/lib/types'
 
 interface AuthContextValue {
@@ -33,8 +34,9 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 
+/** Message brut -> message Savia (jamais de texte technique dans l'UI) */
 function errorMessage(error: { message: string } | null): string | null {
-  return error ? error.message : null
+  return error ? friendlyError(error.message) : null
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -181,12 +183,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const setFamilyId = useCallback(
     async (familyId: string) => {
-      if (!session?.user) return { error: 'Non connecté' }
+      if (!session?.user) return { error: 'Reconnecte-toi pour continuer.' }
       const { error } = await supabase
         .from('profiles')
         .update({ family_id: familyId })
         .eq('id', session.user.id)
-      if (error) return { error: error.message }
+      if (error) return { error: friendlyError(error.message) }
       await loadProfile(session.user.id)
       return { error: null }
     },

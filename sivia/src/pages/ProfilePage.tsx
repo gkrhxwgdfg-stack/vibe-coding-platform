@@ -128,7 +128,7 @@ export function ProfilePage() {
             {error && <p className="text-carmine font-bold" role="alert">{error}</p>}
             {saved && <p className="text-sauge font-bold">C’est noté !</p>}
             <Button type="submit" size="lg" className="w-full" disabled={saving || !displayName.trim()}>
-              {saving ? 'On enregistre…' : 'Enregistrer mon profil'}
+              {saving ? 'On enregistre…' : 'Enfourner mon profil'}
             </Button>
           </form>
         </Card>

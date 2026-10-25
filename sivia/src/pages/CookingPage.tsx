@@ -8,6 +8,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { Spinner } from '@/components/ui/Spinner'
 import { CookingTimer } from '@/components/recipes/CookingTimer'
 import { cn } from '@/lib/utils'
+import { COPY } from '@/lib/copy'
 
 /**
  * Mode cuisson : plein écran, une étape à la fois, façon diaporama.
@@ -73,10 +74,10 @@ export function CookingPage() {
     else goPrev()
   }
 
-  if (loading) return <Spinner label="On attache le tablier…" />
+  if (loading) return <Spinner label={COPY.loading.cuisson} />
   if (error || !recipe || !stepData) {
     return (
-      <EmptyState handText="Cette recette n’a pas encore d’étapes à suivre en cuisine.">
+      <EmptyState title="Pas de cuisson possible" handText={COPY.empty.etapes}>
         <Link to={'/recettes/' + id}>
           <Button variant="outline">Retour à la recette</Button>
         </Link>
@@ -183,7 +184,7 @@ export function CookingPage() {
 
           {lastStep ? (
             <Button variant="primary" onClick={() => navigate('/recettes/' + recipe.id)}>
-              Terminé <ChevronRight size={20} aria-hidden="true" />
+              C’est prêt ! <ChevronRight size={20} aria-hidden="true" />
             </Button>
           ) : (
             <Button variant="primary" onClick={goNext} aria-label="Étape suivante">

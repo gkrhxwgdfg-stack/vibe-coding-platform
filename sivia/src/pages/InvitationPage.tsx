@@ -4,6 +4,7 @@ import { AuthShell } from '@/components/layout/AuthShell'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Spinner } from '@/components/ui/Spinner'
+import { COPY } from '@/lib/copy'
 import { useInvitationByToken } from '@/hooks/useFamily'
 import { useAuth } from '@/context/AuthContext'
 import { supabase } from '@/lib/supabase'
@@ -40,7 +41,7 @@ export function InvitationPage() {
   if (loading) {
     return (
       <AuthShell title="Invitation">
-        <Spinner label="On vérifie le lien…" />
+        <Spinner label={COPY.loading.lien} />
       </AuthShell>
     )
   }
@@ -49,16 +50,16 @@ export function InvitationPage() {
     return (
       <AuthShell title="Invitation" handNote="Ratée, la page a débordé. On essuie et on recommence ?">
         <Card className="text-center">
-          <p className="text-lg mb-2">{error ?? 'Invitation introuvable.'}</p>
+          <p className="text-lg mb-2">{error ?? 'Ce lien d’invitation n’est plus valide.'}</p>
           <p className="text-encre-soft mb-5">
             Demande un nouveau lien à ta famille, ou connecte-toi si tu as déjà un compte.
           </p>
           <div className="flex flex-col gap-3">
             <Button size="lg" onClick={() => navigate('/connexion')}>
-              Se connecter
+              {COPY.nav.seConnecter}
             </Button>
             <Button size="lg" variant="outline" onClick={() => navigate('/inscription')}>
-              S’inscrire
+              {COPY.nav.sInscrire}
             </Button>
           </div>
         </Card>

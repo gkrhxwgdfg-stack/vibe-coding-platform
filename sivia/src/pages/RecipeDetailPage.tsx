@@ -30,6 +30,7 @@ import { Stamp } from '@/components/ui/Stamp'
 import { CommentThread } from '@/components/recipes/CommentThread'
 import { Torchon } from '@/components/ui/Torchon'
 import { cn } from '@/lib/utils'
+import { COPY } from '@/lib/copy'
 
 export function RecipeDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -51,12 +52,12 @@ export function RecipeDetailPage() {
     return scaleIngredients(recipe.ingredients, recipe.servings, effectiveServings)
   }, [recipe, effectiveServings])
 
-  if (loading) return <Spinner label="On ouvre le carnet…" />
+  if (loading) return <Spinner label={COPY.loading.recette} />
   if (error || !recipe) {
     return (
-      <EmptyState handText="Il manque un bout de l’histoire. Tu l’ajouteras plus tard — elle attendra.">
+      <EmptyState title="Cette recette a dû sortir du four" handText={COPY.empty.recetteIntrouvable}>
         <Link to="/recettes">
-          <Button variant="outline">Retour au carnet</Button>
+          <Button variant="outline">{COPY.nav.retourCarnet}</Button>
         </Link>
       </EmptyState>
     )
@@ -185,7 +186,7 @@ export function RecipeDetailPage() {
             {recipe.steps.length > 0 && (
               <Link to={'/recettes/' + recipe.id + '/cuisson'}>
                 <Button variant="primary">
-                  <Play size={18} aria-hidden="true" /> Lancer la recette
+                  <Play size={18} aria-hidden="true" /> Cuisiner
                 </Button>
               </Link>
             )}
@@ -219,11 +220,11 @@ export function RecipeDetailPage() {
             {isAuthor && (
               confirmDelete ? (
                 <Button variant="danger" onClick={handleDelete}>
-                  <Trash2 size={18} aria-hidden="true" /> Confirmer la suppression
+                  <Trash2 size={18} aria-hidden="true" /> Oui, retirer du carnet
                 </Button>
               ) : (
                 <Button variant="ghost" className="text-carmine" onClick={() => setConfirmDelete(true)}>
-                  <Trash2 size={18} aria-hidden="true" /> Supprimer
+                  <Trash2 size={18} aria-hidden="true" /> {COPY.actions.retirer}
                 </Button>
               )
             )}

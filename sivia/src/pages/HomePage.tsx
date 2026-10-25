@@ -13,6 +13,7 @@ import { Spinner } from '@/components/ui/Spinner'
 import { Polaroid } from '@/components/ui/Polaroid'
 import { ExpandableText } from '@/components/ui/ExpandableText'
 import { photoPublicUrl } from '@/services/recipes'
+import { COPY } from '@/lib/copy'
 import type { RecipeComment } from '@/lib/types'
 
 const NO_FILTERS = { query: '', category: 'toutes' as const, authorId: 'tous' as const }
@@ -72,9 +73,9 @@ export function HomePage() {
           </Button>
         </div>
         {isLoading ? (
-          <Spinner label="On décore la planche…" />
+          <Spinner label={COPY.loading.planche} />
         ) : plancheEmpty ? (
-          <EmptyState handText="La planche est encore vide. La première photo de la famille la remplira.">
+          <EmptyState title="La planche est vide" handText={COPY.empty.planche}>
             <Button size="lg" onClick={() => setPhotoModalOpen(true)}>
               <Plus size={20} aria-hidden="true" /> Accrocher la première photo
             </Button>
