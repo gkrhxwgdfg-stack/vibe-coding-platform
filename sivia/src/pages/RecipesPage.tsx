@@ -8,8 +8,9 @@ import type { RecipeCategory, RecipeFilters } from '@/lib/types'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { ErrorState } from '@/components/ui/ErrorState'
-import { Spinner } from '@/components/ui/Spinner'
 import { COPY } from '@/lib/copy'
+import { MOTION } from '@/lib/motion'
+import { RecipeCardSkeletonGrid } from '@/components/recipes/RecipeCardSkeleton'
 import { RecipeCard } from '@/components/recipes/RecipeCard'
 import { cn } from '@/lib/utils'
 
@@ -76,20 +77,21 @@ export function RecipesPage() {
         )}
       </div>
 
-      {/* Filtres par catégorie (intercalaires) */}
+      {/* Filtres par catégorie (intercalaires) : soulignement glissant sur la fiche active */}
       <div role="group" aria-label="Filtrer par catégorie" className="flex flex-wrap gap-2">
-        {[{ value: 'toutes' as const, label: 'Toutes' }, ...CATEGORIES].map((c) => (
+        {[{ value: 'toutes' as const, label: 'Toutes' }, ...CATEGORIES].map((c, i) => (
           <button
             key={c.value}
             type="button"
             onClick={() => setCategory(c.value)}
             aria-pressed={category === c.value}
             className={cn(
-              'min-h-11 px-4 rounded-full border-2 font-bold transition-colors',
+              'chip-underline anim-enter min-h-11 px-4 rounded-full border-2 font-bold transition-colors',
               category === c.value
                 ? 'bg-terra text-creme border-terra'
                 : 'bg-creme text-encre border-encre/20 hover:border-terra hover:text-terra',
             )}
+            style={{ animationDelay: `${i * MOTION.stagger}ms` }}
           >
             {c.label}
           </button>
@@ -129,7 +131,7 @@ export function RecipesPage() {
 
       {/* Résultats */}
       {loading ? (
-        <Spinner label={COPY.loading.recherche} />
+        <RecipeCardSkeletonGrid count={4} />
       ) : error ? (
         <ErrorState message={error} onRetry={refetch} />
       ) : recipes.length === 0 ? (
@@ -154,8 +156,18 @@ export function RecipesPage() {
             {recipes.length} recette{recipes.length > 1 ? 's' : ''} dans le carnet
           </p>
           <div className="grid gap-5 sm:grid-cols-2">
-            {recipes.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} />
+            {recipes.map((recipe, i) => (
+              <div
+                key={recipe.id}
+                className="anim-pop hover:-translate-y-[3px] transition-transform"
+                style={{
+                  animationDelay: `${i * MOTION.stagger}ms`,
+                  transitionDuration: '250ms',
+                  transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
+                }}
+              >
+                <RecipeCard recipe={recipe} />
+              </div>
             ))}
           </div>
         </>

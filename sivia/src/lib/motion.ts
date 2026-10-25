@@ -26,6 +26,31 @@ export const MOTION = {
   staggerPlanche: 60,
 } as const
 
+/**
+ * Rotation stable d'un polaroïd à partir de son identifiant : même id, même
+ * biais, à chaque rendu et à chaque visite. Jamais d'aléatoire.
+ */
+export function stableTilt(id: string, range = 2.5): number {
+  let hash = 0
+  for (let i = 0; i < id.length; i++) {
+    hash = (hash * 31 + id.charCodeAt(i)) >>> 0
+  }
+  return ((hash % 1000) / 1000) * range * 2 - range
+}
+
+/**
+ * Sélection stable « plat du dimanche » : la graine est la date AAAAMMJJ,
+ * le même choix toute la journée, différent d'un jour à l'autre.
+ */
+export function pickDaily<T>(items: readonly T[], date = new Date()): T | null {
+  if (items.length === 0) return null
+  const seed =
+    date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate()
+  // Multiplicateur de Lehmer : dispersion stable d'un jour à l'autre
+  const mixed = (seed * 2654435761) >>> 0
+  return items[mixed % items.length]
+}
+
 /** Media query d'accessibilité : l'utilisateur demande moins de mouvement */
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
 

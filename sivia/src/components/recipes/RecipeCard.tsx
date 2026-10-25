@@ -19,7 +19,8 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
   return (
     <Link
       to={`/recettes/${recipe.id}`}
-      className="group block card-surface overflow-hidden p-0 hover:shadow-soft transition-shadow"
+      className="group block card-surface overflow-hidden p-0 hover:shadow-soft hover:-translate-y-[3px] transition-all"
+      style={{ transitionDuration: '250ms', transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)' }}
     >
       <div className="relative aspect-[16/10] bg-lin overflow-hidden">
         {photo ? (
@@ -27,7 +28,8 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
             src={photo}
             alt={recipe.title}
             loading="lazy"
-            className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform"
+            style={{ transitionDuration: '250ms', transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)' }}
           />
         ) : (
           <Torchon label={meta.label} />

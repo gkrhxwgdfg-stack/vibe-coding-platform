@@ -141,6 +141,46 @@ h3 {
   }
 }
 
+/* Cascade à ressort : polaroïds de la planche et cartes de la bibliothèque.
+   Le délai (stagger 40/60 ms) se pose en inline style via MOTION.stagger*. */
+@utility anim-pop {
+  animation: anim-pop-in 350ms cubic-bezier(0.34, 1.4, 0.4, 1) both;
+}
+
+@keyframes anim-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Soulignement glissant des chips de catégorie (fiche active) */
+@utility chip-underline {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    bottom: 0.375rem;
+    height: 3px;
+    border-radius: 999px;
+    background-color: var(--color-creme);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 250ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  &[aria-pressed="true"]::after {
+    transform: scaleX(1);
+  }
+}
+
 /* Retour tactile d'un contrôle : scale 0.97 au appui */
 @utility anim-press {
   transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -175,6 +215,14 @@ h3 {
 
   .anim-enter {
     animation: anim-enter-fade 350ms ease-out both;
+  }
+
+  .anim-pop {
+    animation: anim-enter-fade 350ms ease-out both;
+  }
+
+  .chip-underline::after {
+    transition: none;
   }
 
   .skeleton-paper {
