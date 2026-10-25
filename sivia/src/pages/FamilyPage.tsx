@@ -1,10 +1,13 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { Check, Copy, Mail, Pencil, Trash2, UserCheck } from 'lucide-react'
+import { BookOpen, Check, Copy, Mail, Pencil, Printer, Trash2, UserCheck } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { useCreateInvitation, useFamilyMembers, useInvitations } from '@/hooks/useFamily'
 import { useFamilyGenerations, useFamilyTree } from '@/hooks/useFamilyTree'
+import { useRecipes } from '@/hooks/useRecipes'
 import { supabase } from '@/lib/supabase'
+import { addComment } from '@/services/comments'
+import { estimateBookPageCount, generateFamilyBookPdf } from '@/services/familyBookPdf'
 import { invitationLink } from '@/lib/paths'
 import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
@@ -39,6 +42,16 @@ export function FamilyPage() {
 
   const [email, setEmail] = useState('')
   const [error, setError] = useState<string | null>(null)
+  // Génération du livre « carnet familial » (chantier 7)
+  const { recipes, loading: recipesLoading } = useRecipes({
+    query: '',
+    category: 'toutes' as const,
+    authorId: 'tous' as const,
+  })
+  const [bookBusy, setBookBusy] = useState(false)
+  const [bookDone, setBookDone] = useState(false)
+  const [bookError, setBookError] = useState<string | null>(null)
+  const [bookPreviewOpen, setBookPreviewOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [lastLink, setLastLink] = useState<string | null>(null)
   const [copiedId, setCopiedId] = useState<string | null>(null)
@@ -106,6 +119,36 @@ export function FamilyPage() {
   async function handleRemoveTreeMember(member: FamilyMember) {
     const { error: removeError } = await removeTreeMember(member.id)
     if (removeError) setError(removeError)
+  }
+
+  /** Génère le livre A5 du carnet familial + notification dans le fil de vie */
+  async function handlePrintBook() {
+    if (!family || !profile) return
+    setBookBusy(true)
+    setBookError(null)
+    try {
+      const { pageCount } = await generateFamilyBookPdf({
+        familyName: family.name,
+        recipes,
+        treeMembers,
+        printedBy: profile.display_name,
+      })
+      setBookDone(true)
+      setTimeout(() => setBookDone(false), 5000)
+      // Notification dans le fil de vie (planche familiale, recipeId = null)
+      await addComment(
+        null,
+        family.id,
+        profile.id,
+        `${profile.display_name} a impriméé le carnet de ${family.name} (${pageCount} pages).`,
+        null,
+      )
+    } catch {
+      setBookError('Le carnet n\'a pas pu être imprimé. La sauce a raté. On recommence ?')
+    } finally {
+      setBookBusy(false)
+      setBookPreviewOpen(false)
+    }
   }
 
   if (membersLoading || invitationsLoading || treeLoading)
@@ -211,6 +254,42 @@ export function FamilyPage() {
         </div>
       </section>
 
+      {/* Le carnet familial : le livre (chantier 7) */}
+      <section aria-labelledby="book-title">
+        <Card>
+          <CardHeader kicker="Le livre" title={`Imprimer le carnet de ${family?.name ?? 'ta famille'}`} />
+          <p className="text-encre-soft mb-4">
+            Toutes les recettes de la famille réunies en un livre A5 : couverture, sommaire,
+            recettes scellées d'abord, index par auteur. {recipes.length} recette{recipes.length > 1 ? 's' : ''} au compteur.
+          </p>
+          {bookError && (
+            <p className="text-carmine font-bold mb-3" role="alert">{bookError}</p>
+          )}
+          {bookDone && (
+            <p className="text-sauge font-bold mb-3" role="status">
+              Le carnet est dans vos téléchargements. {profile?.display_name} a imprimé le carnet — la famille le sait.
+            </p>
+          )}
+          <div className="flex flex-wrap gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setBookPreviewOpen(true)}
+              disabled={recipesLoading || recipes.length === 0}
+            >
+              <BookOpen size={18} aria-hidden="true" />
+              Aperçu
+            </Button>
+            <Button
+              onClick={handlePrintBook}
+              disabled={bookBusy || recipesLoading || recipes.length === 0}
+            >
+              <Printer size={18} aria-hidden="true" />
+              {bookBusy ? 'On relie le carnet…' : 'Imprimer le carnet'}
+            </Button>
+          </div>
+        </Card>
+      </section>
+
       {/* Événements & souvenirs : la chronologie des repas de famille */}
       <FamilyEvents />
 
@@ -305,6 +384,44 @@ export function FamilyPage() {
           Gérer mon profil
         </Link>
       </p>
+
+      {/* Aperçu avant génération du livre */}
+      {bookPreviewOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-encre/40 backdrop-blur-sm p-4"
+          role="presentation"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setBookPreviewOpen(false)
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="book-preview-title"
+            className="card-surface w-full max-w-md p-6"
+          >
+            <h2 id="book-preview-title" className="text-2xl font-semibold mb-2">
+              Le carnet de {family?.name ?? 'ta famille'}
+            </h2>
+            <p className="text-encre-soft mb-1">
+              {recipes.length} recette{recipes.length > 1 ? 's' : ''} — {estimateBookPageCount(recipes.length).label}
+            </p>
+            <p className="text-encre-soft mb-1">Pour qui ? Toute la famille, de génération en génération.</p>
+            <p className="text-encre-soft mb-4">
+              Couverture, sommaire, recettes scellées d'abord, index par auteur.
+            </p>
+            <div className="flex flex-col gap-3">
+              <Button size="lg" onClick={handlePrintBook} disabled={bookBusy}>
+                <Printer size={18} aria-hidden="true" />
+                {bookBusy ? 'On relie le carnet…' : 'Imprimer le carnet'}
+              </Button>
+              <Button size="lg" variant="ghost" onClick={() => setBookPreviewOpen(false)}>
+                Ranger
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   )
