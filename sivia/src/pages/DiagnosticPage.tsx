@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Check, X, Loader2 } from 'lucide-react'
+import { Check, X, Loader2, Play, Square } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { AuthShell } from '@/components/layout/AuthShell'
+import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
+import { MOTION, usePrefersReducedMotion } from '@/lib/motion'
 
 interface CheckResult {
   name: string
@@ -13,6 +15,7 @@ interface CheckResult {
 /**
  * Page de diagnostic : vérifie en temps réel que toute la chaîne fonctionne.
  * Accessible publiquement à /diagnostic — utile pour le support.
+ * Sert aussi de bac à sable visuel pour les tokens de motion (chantier 1).
  */
 export function DiagnosticPage() {
   const [checks, setChecks] = useState<CheckResult[]>([
@@ -125,10 +128,49 @@ export function DiagnosticPage() {
 
   const allOk = checks.every((c) => c.status === 'ok')
   const anyError = checks.some((c) => c.status === 'error')
+  const reducedMotion = usePrefersReducedMotion()
+  const [replayKey, setReplayKey] = useState(0)
 
   return (
     <AuthShell title="Diagnostic Savia" handNote="On vérifie que tout est bien branché.">
-      <Card>
+      <Card className="anim-enter">
+        <p className="text-sm text-encre-soft mb-4">
+          Bac à sable motion (chantier 1) — les cartes ci-dessous rejouent leur
+          entrée à chaque clic. Avec « mouvement réduit » demandé, seul un fondu
+          simple reste.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-3 mb-6">
+          {(['anim-enter', 'skeleton-paper', 'anim-press'] as const).map((demo, i) => (
+            <div
+              key={`${demo}-${replayKey}`}
+              className={`card-surface p-4 min-h-24 flex items-center justify-center text-center text-sm font-semibold ${demo === 'anim-press' ? 'anim-press cursor-pointer select-none' : demo}`}
+              style={demo === 'skeleton-paper' ? undefined : { animationDelay: `${i * MOTION.stagger}ms` }}
+              role={demo === 'anim-press' ? 'button' : undefined}
+              tabIndex={demo === 'anim-press' ? 0 : undefined}
+              onClick={demo === 'anim-press' ? () => setReplayKey((k) => k + 1) : undefined}
+              onKeyDown={demo === 'anim-press' ? (e) => e.key === 'Enter' && setReplayKey((k) => k + 1) : undefined}
+            >
+              {demo === 'skeleton-paper' ? 'skeleton-paper' : demo}
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-wrap items-center gap-3 mb-6">
+          <Button
+            variant="outline"
+            size="md"
+            onClick={() => setReplayKey((k) => k + 1)}
+            aria-label="Rejouer l’animation d’entrée des cartes de test"
+          >
+            <Play size={18} aria-hidden="true" />
+            Rejouer l’entrée
+          </Button>
+          <span className="text-sm text-encre-soft">
+            prefers-reduced-motion : {reducedMotion ? 'activé' : 'désactivé'}
+          </span>
+          <span className="text-sm text-encre-soft inline-flex items-center gap-1">
+            <Square size={14} aria-hidden="true" /> animation active
+          </span>
+        </div>
         <ul className="space-y-3">
           {checks.map((check) => (
             <li key={check.name} className="flex items-start gap-3">
