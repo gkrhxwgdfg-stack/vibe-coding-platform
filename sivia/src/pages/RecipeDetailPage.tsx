@@ -28,7 +28,10 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { Spinner } from '@/components/ui/Spinner'
 import { Stamp } from '@/components/ui/Stamp'
 import { CommentThread } from '@/components/recipes/CommentThread'
+import { IngredientChecklist } from '@/components/recipes/IngredientChecklist'
+import { TransmissionBanner } from '@/components/recipes/TransmissionBanner'
 import { Torchon } from '@/components/ui/Torchon'
+import { useCookedCount } from '@/hooks/useCookedCount'
 import { cn } from '@/lib/utils'
 import { COPY } from '@/lib/copy'
 
@@ -42,6 +45,16 @@ export function RecipeDetailPage() {
   const [servings, setServings] = useState<number | null>(null)
   const [favBusy, setFavBusy] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  // Pulsation douce du bouton « Cuisiner » : une seule fois par session
+  // (désactivée ensuite pour le reste de la session)
+  const [cookPulse] = useState(() => {
+    if (typeof sessionStorage === 'undefined') return false
+    const key = `savia-cook-pulse-${id}`
+    if (sessionStorage.getItem(key)) return false
+    sessionStorage.setItem(key, '1')
+    return true
+  })
+  const cookedCount = useCookedCount(id)
   // Export « carnet familial » : confirmation après le téléchargement
   const [exported, setExported] = useState(false)
 
@@ -133,7 +146,20 @@ export function RecipeDetailPage() {
                 dans le carnet depuis {formatDate(recipe.created_at)} · {formatRelative(recipe.created_at)}
               </p>
             </div>
-            {recipe.author && <Stamp name={recipe.author.display_name} />}
+            {recipe.author && (
+              <span className="stamp-in inline-block">
+                <Stamp name={recipe.author.display_name} rotate={-2} className="opacity-90" />
+              </span>
+            )}
+          </div>
+
+          {/* Bandeau transmission : point de couture */}
+          <div className="mt-4">
+            <TransmissionBanner
+              author={recipe.author}
+              recipeCreatedAt={recipe.created_at}
+              cookedCount={cookedCount}
+            />
           </div>
 
           {/* Meta : portions, temps */}
@@ -146,7 +172,7 @@ export function RecipeDetailPage() {
                   type="button"
                   onClick={() => setServings(Math.max(1, effectiveServings - 1))}
                   aria-label="Une part de moins"
-                  className="min-h-11 min-w-11 rounded-l-full border-2 border-encre/20 bg-creme hover:border-terra hover:text-terra inline-flex items-center justify-center"
+                  className="min-h-12 min-w-12 rounded-l-full border-2 border-encre/20 bg-creme hover:border-terra hover:text-terra inline-flex items-center justify-center"
                 >
                   <Minus size={18} aria-hidden="true" />
                 </button>
@@ -154,7 +180,7 @@ export function RecipeDetailPage() {
                   type="button"
                   onClick={() => setServings(effectiveServings + 1)}
                   aria-label="Une part de plus"
-                  className="min-h-11 min-w-11 rounded-r-full border-2 border-l-0 border-encre/20 bg-creme hover:border-terra hover:text-terra inline-flex items-center justify-center"
+                  className="min-h-12 min-w-12 rounded-r-full border-2 border-l-0 border-encre/20 bg-creme hover:border-terra hover:text-terra inline-flex items-center justify-center"
                 >
                   <Plus size={18} aria-hidden="true" />
                 </button>
@@ -252,17 +278,7 @@ export function RecipeDetailPage() {
         {ingredients.length === 0 ? (
           <p className="text-encre-soft">Pas encore d’ingrédients notés.</p>
         ) : (
-          <ul className="space-y-2">
-            {ingredients.map((line, i) => (
-              <li key={i} className="flex items-start gap-3">
-                <span
-                  className="mt-1.5 w-2 h-2 rounded-full bg-terra shrink-0"
-                  aria-hidden="true"
-                />
-                <span className="text-lg">{line}</span>
-              </li>
-            ))}
-          </ul>
+          <IngredientChecklist lines={ingredients} />
         )}
       </Card>
 
@@ -289,12 +305,12 @@ export function RecipeDetailPage() {
         )}
       </Card>
 
-      {/* Anecdote — mise en valeur */}
+      {/* Anecdote — mise en valeur : papier âgé, bord ondulé, en exergue */}
       {recipe.anecdote && (
-        <Card className="bg-gradient-to-br from-creme to-bleu/10 border-bleu/25">
+        <Card className="paper-aged border-transparent shadow-soft px-6 pt-5 pb-7 anim-enter">
           <p className="kicker">Le secret</p>
           <h2 className="text-2xl font-semibold mb-3">— celui qu’on ne dit qu’à la famille</h2>
-          <blockquote className="text-hand text-bleu-dark text-3xl leading-relaxed">
+          <blockquote className="text-hand text-[#5b4632] text-3xl leading-relaxed">
             « {recipe.anecdote} »
           </blockquote>
           <p className="mt-3 flex items-center gap-2 text-encre-soft">
@@ -304,27 +320,19 @@ export function RecipeDetailPage() {
         </Card>
       )}
 
-      {/* Transmission : qui a transmis, depuis quand */}
-      <Card className="flex items-center gap-4">
-        {recipe.author && <Avatar name={recipe.author.display_name} src={recipe.author.avatar_url} size="lg" />}
-        <div>
-          <p className="kicker">Créée par</p>
-          <p className="font-serif text-xl font-semibold">
-            {recipe.author?.display_name}
-            {recipe.author?.family_role && (
-              <span className="text-encre-soft font-sans text-base font-normal">
-                {' '}· {recipe.author.family_role}
-              </span>
-            )}
-          </p>
-          <p className="text-encre-soft">
-            dans la famille depuis {formatDate(recipe.author?.created_at)} · recette créée {formatRelative(recipe.created_at)}
-          </p>
-        </div>
-      </Card>
-
       {/* Fil de vie : commentaires et photos de la famille */}
       <CommentThread recipeId={recipe.id} familyId={recipe.family_id} />
+
+      {/* Bouton « Cuisiner » sticky en bas de fiche (au-dessus de la nav fixe) */}
+      {recipe.steps.length > 0 && (
+        <div className="sticky bottom-20 z-30 flex justify-center pointer-events-none">
+          <Link to={'/recettes/' + recipe.id + '/cuisson'} className="pointer-events-auto">
+            <Button size="lg" className={cn('shadow-soft', cookPulse && 'pulse-once')}>
+              <Play size={20} aria-hidden="true" /> Cuisiner
+            </Button>
+          </Link>
+        </div>
+      )}
 
       <p className="text-center text-sm text-encre-soft mt-2">
         <Link to="/recettes/nouvelle" className="text-terra font-bold hover:underline">
