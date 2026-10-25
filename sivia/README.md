@@ -7,22 +7,23 @@ Rassemblez les recettes de ceux que vous aimez : les annotations à la main de
 grand-mère, la photo du plat du dimanche, le secret de la sauce qui se transmet
 de génération en génération.
 
-## Fonctionnalités (MVP)
+## Fonctionnalités (v2 livrée)
 
 - **Inscription / connexion** (email + mot de passe, mot de passe oublié)
 - **Groupe familial privé** avec **lien d'invitation sécurisé** (token, expiration 30 jours)
 - **Publier une recette** : titre, catégorie, portions, temps, ingrédients, étapes, photo, anecdote, origine du plat
 - **Recherche et filtres** : mot-clé (titre, ingrédients, étapes, anecdotes), catégorie, auteur
 - **Favoris** (cœur sur une recette)
-- **Fiche recette** : photo, ingrédients mis à l'échelle selon les portions (− / +), étapes numérotées, **anecdote mise en valeur**, **tampon d'authenticité** (cercle tamponné au nom du créateur), origine et date de transmission
+- **Fiche recette v2** : **tampon d'authenticité** animé à l'entrée, **bandeau de transmission** (qui a transmis, depuis quand, cuisinée N fois), **cases ingrédients cochables**, ingrédients mis à l'échelle selon les portions (− / +), étapes numérotées, **anecdote en exergue** (papier âgé, bord ondulé, Caveat), bouton « Cuisiner » sticky en bas de fiche
 - **Commentaires et photos** : chaque recette porte son **fil de vie** — la famille commente, partage ses photos, et on voit quand la recette est utilisée
-- **Accueil vivant** : **planche familiale** (tableau de photos partagées) et **notifications** des derniers contenus de la famille
+- **Accueil vivant** : **planche familiale animée** (cascade de polaroïds, rubans Washi), carte « Le plat du dimanche » (sélection stable par jour), **notifications** des derniers contenus de la famille
 - **Sceller une recette** (créateur uniquement) : l'original devient non modifiable
-- **Mode cuisson** : diaporama plein écran, une étape à la fois (swipe, flèches clavier), ingrédients de l'étape surlignés, écran maintenu allumé (Wake Lock) et **minuteur façon horloge artisanale** (contour pointillé terracotta, deux aiguilles, décompte au centre, alerte visuelle carmine à la fin — sans son)
-- **Export « carnet familial »** : bouton « Télécharger la recette » — mise en forme originale (titre Fraunces, photo polaroïd, anecdote manuscrite en Caveat, tampon d'authenticité, origine et date de transmission), imprimable / enregistrable en PDF depuis le navigateur
+- **Mode cuisson v2** : écran « La mise en place » (checklist ingrédients + portions), diaporama plein écran une étape à la fois (flèches 64 px, swipe, clavier), barre couture de progression, ingrédients de l'étape surlignés moutarde, écran maintenu allumé (Wake Lock), **minuteurs libellés** (cercle couture, pré-alerte 1 min, fin carmine + vibration, son muet par défaut), écran « C'est prêt ! » avec confettis papier, écriture automatique « Cuisinée par {prénom} le {date} » dans le fil de vie, persistance localStorage (reprise après verrouillage)
+- **Export PDF fiche recette** : bouton « Télécharger (PDF) » — A5 multi-pages (titre Fraunces, photo polaroïd, bandeau transmission, ingrédients 2 colonnes, étapes numérotées, anecdote Caveat sur papier âgé, tampon, pied de page famille), polices TTF embarquées, nom `sivia—{titre}—{famille}.pdf` ; impression navigateur conservée en 2e choix
+- **Export « Le carnet de {famille} »** : livre A5 complet (couverture + mini-arbre des générations, page de garde, sommaire, recettes scellées d'abord puis par catégorie, index par auteur, intercalaires anecdotes), pieds de page numérotés, notification dans le fil de vie
 - **Espace famille** : membres avec leur **lien familial** (maman, papi…), **renommage de la famille**, invitations (créer / copier / annuler), **arbre généalogique piloté par des « + » et des scotchs** : l'arbre **descend** de génération en génération (les aînés — la base — en haut, les jeunes en dessous), la génération de chacun est calculée **uniquement à partir des liens** ; le « + » sous une personne ajoute un **enfant** en dessous, le **scotch « + »** sur le côté d'une carte ajoute un **partenaire** à côté (même génération — les couples sont « scotchés » ensemble par un vrai ruban adhésif), le « + » carmine en haut ajoute un **aîné** au-dessus (les racines existantes deviennent ses enfants) ; le lien s'écrit **librement** sur la carte ; l'arbre est **centré** et compact, la corde est dessinée en SVG avec relief et **chronologie des repas de famille** (événements, menu servi, photos — le « souvenir du menu »)
 - **Bouton « + » contextuel** : action selon la page (photo planche / nouvelle recette ; absent sur famille — l'arbre a ses propres « + » et scotchs —, favoris et profil)
-- **Profil** : prénom, bio, lien dans la famille, statistiques, déconnexion
+- **Profil** : prénom, bio, lien dans la famille, statistiques, **réglage « Taille du texte »** (Standard / Grande / Très grande), déconnexion
 ### Sécurité
 
 Toute la sécurité repose sur la **Row Level Security (RLS)** de Supabase :
@@ -36,8 +37,14 @@ grands-parents :
 
 - **Palette** : terracotta, moutarde, bleu ardoise, lin, crème, encre, sauge, carmine, brun/cacao
 - **Typographies** : Fraunces (titres), Nunito Sans (texte), Caveat (manuscrit)
-- **Accessibilité** : typographie de base 17px, cibles tactiles ≥ 44px, focus
-  visible, contraste élevé, parcours en 3 clics maximum
+- **Accessibilité** : typographie de base 17px, **réglage « Taille du texte »**
+  (Standard / Grande 19px / Très grande 21px — proposé dès l'onboarding et dans
+  le profil), cibles tactiles ≥ 44px (52px en grande lecture), focus visible,
+  **contrastes WCAG AA vérifiés sur toutes les paires texte/fond**, `aria-label`
+  sur toutes les icônes seules, `prefers-reduced-motion` respecté partout,
+  parcours en 3 clics maximum
+- **Motion** : système de tokens (`src/lib/motion.ts` + utilitaires CSS) —
+  cascade d'entrée, tampon qui se pose, squelettes papier, soulignement glissant
 
 ## Stack technique
 
@@ -47,6 +54,7 @@ grands-parents :
 | UI | Tailwind CSS 4 |
 | Backend | Supabase (auth, base de données PostgreSQL, stockage photos) |
 | Commentaires | Table `recipe_comments` + photos dans le bucket `recipe-photos` |
+| PDF | jsPDF (import dynamique au clic, polices Fraunces/Caveat en TTF) |
 | Routage | React Router 7 |
 | Déploiement | Vercel (recommandé) ou tout hébergeur statique |
 
@@ -178,18 +186,21 @@ sivia/
 │   └── README.md                            # guide de configuration Supabase
 ├── src/
 │   ├── components/
-│   │   ├── ui/          # design system (Button, Card, Avatar, Stamp, Polaroid…)
+│   │   ├── ui/          # design system (Button, Card, Avatar, Stamp, Polaroid, Washi, Torchon, EmptyState, ErrorState, ReadingSizePicker…)
 │   │   ├── layout/      # AppLayout, AuthShell, RequireAuth, AddButton
-│   │   ├── recipes/     # RecipeCard, RecipeForm, CommentThread, CookingTimer
+│   │   ├── recipes/     # RecipeCard, DailyRecipeCard, RecipeForm, CommentThread, CookingTimerV2, IngredientChecklist, TransmissionBanner
 │   │   ├── planche/     # AddPhotoModal (moments de la planche familiale)
-│   │   └── family/      # FamilyTree, FamilyMemberCard, FamilyMemberModal, FamilyEvents
+│   │   └── family/      # FamilyTree, FamilyMemberCard, FamilyMemberModal, FamilyEvents, Tape
 │   ├── context/         # AuthContext (session, profil, famille)
-│   ├── hooks/           # useRecipes, useFamily, useComments, useFamilyTree…
-│   ├── services/        # logique métier Supabase (recipes.ts, comments.ts, familyTree.ts, recipePrint.ts)
-│   ├── lib/             # supabase client, types, utils, format, scale, cooking, addAction, familyTreeLayout
-│   ├── pages/           # une page par écran
+│   ├── hooks/           # useRecipes, useFamily, useComments, useFamilyTree, useCookedCount, useReadingSize…
+│   ├── services/        # logique métier Supabase (recipes.ts, comments.ts, familyTree.ts, recipePdf.ts, familyBookPdf.ts)
+│   ├── lib/             # supabase client, types, utils, format, scale, motion, readingSize, cooking, cookingSession, copy (charte éditoriale), familyTreeLayout
+│   ├── pages/           # une page par écran (+ auth/, CookingPage plein écran)
+│   ├── index.css        # design tokens (@theme), utilitaires motion, grande lecture (.reading-lg/.reading-xl), feuille print A5
 │   └── App.tsx          # routes
-└── public/              # favicon (cuillère-monogramme)
+└── public/
+    ├── favicon.svg      # cuillère-monogramme
+    └── fonts/           # Fraunces + Caveat en TTF (embarqués dans les PDF)
 ```
 
 **Règle d'or du code** : aucune logique métier dans les vues. Les pages
@@ -197,10 +208,14 @@ orchestrent ; les hooks et `services/` portent la logique Supabase.
 
 ## Feuille de route
 
-- **v1 (livrée)** : MVP complet ci-dessus, **commentaires et photos** compris
-- **v2 (volontairement non implémentée)** : mode cuisson avec minuteur,
-  export PDF / impression, timeline familiale, arbre généalogique,
-  mode hors-ligne
+- **v1 (livrée)** : MVP complet, **commentaires et photos** compris
+- **v2 (livrée)** : dossier de raffinement v2 en 8 chantiers — fondations
+  motion + tokens, ton de voix Savia, accueil/bibliothèque animés, fiche
+  recette v2 (tampon, transmission, anecdote), mode cuisson v2 (mise en place,
+  minuteurs, fil de vie), export PDF fiche + impression, **le carnet familial
+  en livre A5**, grande lecture + audit accessibilité WCAG AA
+- **v3 (volontairement non implémentée)** : mode hors-ligne, timeline
+  familiale détaillée, impression avancée
 
 ## Licence
 
