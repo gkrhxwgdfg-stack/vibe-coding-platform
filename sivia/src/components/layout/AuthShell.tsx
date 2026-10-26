@@ -1,3 +1,4 @@
+import { APP_BUILD_MARKER } from '@/lib/constants'
 import type { ReactNode } from 'react'
 import { Logo } from '@/components/ui/Logo'
 
@@ -11,6 +12,7 @@ export function AuthShell({ title, handNote, children }: { title: string; handNo
             <Logo link={false} />
           </div>
           <p className="text-hand text-bleu-dark text-2xl">Le savoir qui se transmet en cuisine.</p>
+          <span aria-hidden="true" className="sr-only">{APP_BUILD_MARKER}</span>
         </div>
         <div className="card-surface card-pad p-6 sm:p-8">
           <h1 className="text-3xl font-semibold mb-1">{title}</h1>
