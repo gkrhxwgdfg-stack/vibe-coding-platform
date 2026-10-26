@@ -140,7 +140,7 @@ export function ProfilePage() {
         <Card>
           <CardHeader kicker="Paramètres" title="Ta cuisine à toi" />
           <div className="mb-6">
-            <ReadingSizePicker hint="Plus gros, c\u2019est plus confortable pour lire les recettes." />
+            <ReadingSizePicker hint="Plus gros, c’est plus confortable pour lire les recettes." />
           </div>
           <ul className="space-y-2">
             <li className="flex items-center justify-between gap-4 py-2">

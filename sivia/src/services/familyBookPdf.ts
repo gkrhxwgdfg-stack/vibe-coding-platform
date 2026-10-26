@@ -58,6 +58,13 @@ function bookPageLabel(familyName: string) {
   return (pageNumber: number) => `Carnet ${familyName} — page ${pageNumber}`
 }
 
+
+/** Calcule la position x pour centrer un texte sur la page (alignement gauche du bloc centré) */
+function centeredX(doc: JsPdfLike, text: string): number {
+  const w = doc.getTextWidth(text)
+  return Math.max(MARGIN, (PAGE_W - w) / 2)
+}
+
 /** Fond crème pleine page */
 function paintPageBackground(doc: JsPdfLike) {
   doc.setFillColor(COLORS.CREME.r, COLORS.CREME.g, COLORS.CREME.b)
@@ -173,13 +180,14 @@ export async function generateFamilyBookPdf(input: FamilyBookInput): Promise<{ p
   doc.setFontSize(30)
   doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
   doc.splitTextToSize(`Le carnet de ${familyName}`, CONTENT_W).forEach((line, i) => {
-    doc.text(line, PAGE_W / 2, cursor.y + i * 12, { maxWidth: CONTENT_W })
+    doc.text(line, centeredX(doc, line), cursor.y + i * 12)
   })
   cursor.space(20)
   doc.setFont(fonts.hand, fonts.handStyle)
   doc.setFontSize(16)
   doc.setTextColor(COLORS.TERRA.r, COLORS.TERRA.g, COLORS.TERRA.b)
-  doc.text('Le savoir qui se transmet à table.', PAGE_W / 2, cursor.y)
+  const tagline = 'Le savoir qui se transmet à table.'
+  doc.text(tagline, centeredX(doc, tagline), cursor.y)
   cursor.space(16)
   drawCenteredStamp(doc, familyName, cursor.y + 16)
   cursor.space(40)
@@ -199,19 +207,22 @@ export async function generateFamilyBookPdf(input: FamilyBookInput): Promise<{ p
   doc.setFont(fonts.serif, fonts.serifStyle)
   doc.setFontSize(18)
   doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
-  doc.text('Ce carnet appartient à la famille', PAGE_W / 2, cursor.y, { maxWidth: CONTENT_W })
+  const gardeLine = 'Ce carnet appartient à la famille'
+  doc.text(gardeLine, centeredX(doc, gardeLine), cursor.y)
   cursor.space(14)
   doc.setFont(fonts.serif, fonts.serifStyle)
   doc.setFontSize(26)
   doc.setTextColor(COLORS.TERRA.r, COLORS.TERRA.g, COLORS.TERRA.b)
-  doc.text(familyName, PAGE_W / 2, cursor.y, { maxWidth: CONTENT_W })
+  doc.text(familyName, centeredX(doc, familyName), cursor.y)
   cursor.space(20)
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(11)
   doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
-  doc.text(`${recipes.length} recette${recipes.length > 1 ? 's' : ''} au sommaire`, PAGE_W / 2, cursor.y, { maxWidth: CONTENT_W })
+  const sommaireLine = `${recipes.length} recette${recipes.length > 1 ? 's' : ''} au sommaire`
+  doc.text(sommaireLine, centeredX(doc, sommaireLine), cursor.y)
   cursor.space(8)
-  doc.text(`Imprimé par ${printedBy} le ${formatDate(new Date().toISOString())}`, PAGE_W / 2, cursor.y, { maxWidth: CONTENT_W })
+  const imprimeLine = `Imprimé par ${printedBy} le ${formatDate(new Date().toISOString())}`
+  doc.text(imprimeLine, centeredX(doc, imprimeLine), cursor.y)
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(8)
   doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
