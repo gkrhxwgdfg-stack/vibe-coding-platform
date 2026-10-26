@@ -17,4 +17,5 @@ export const STORAGE_BUCKET = 'recipe-photos'
 
 export const APP_NAME = 'Savia'
 export const APP_TAGLINE = 'Le savoir qui se transmet en cuisine.'
+export const APP_BUILD_MARKER = 'v2.0.2-deploy-1793016711'
 // v2.0.2 deploy 1793016711
