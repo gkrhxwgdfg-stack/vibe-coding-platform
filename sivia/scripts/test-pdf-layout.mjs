@@ -89,11 +89,12 @@ function simulateRecipeCompact(doc, recipe) {
   // Header: titre à gauche + photo à droite
   const photoW = recipe.photo_url ? 40 : 0
   const photoH = photoW * 0.75
+  const captionH = photoW ? 4.5 : 0
   const titleMaxW = CONTENT_W - (photoW ? photoW + 6 : 0)
   doc.setFontSize(15)
   const titleLines = doc.splitTextToSize(recipe.title, titleMaxW)
   const titleH = titleLines.length * 5 + 4
-  const headerH = Math.max(titleH, photoW ? photoH + 6 : 0)
+  const headerH = Math.max(titleH, photoW ? photoH + captionH + 6 : 0)
   cursor.y += headerH + 2
 
   // Métas + bandeau inline
@@ -105,17 +106,15 @@ function simulateRecipeCompact(doc, recipe) {
   const bannerLines = doc.splitTextToSize(`Transmise par ${recipe.author} · dans le carnet depuis ${recipe.date}`, CONTENT_W)
   cursor.space(bannerLines.length * 3.5 + 3)
 
-  // Ingrédients 2 colonnes
-  doc.setFontSize(11)
-  cursor.space(4 + 6)
+  // Ingrédients : bandeau moutarde-soft 6mm + espace
+  cursor.space(6 + 8)
   if (recipe.ingredients.length > 0) {
     const rows = Math.ceil(recipe.ingredients.length / 2)
     cursor.y += rows * 6 + 2
   }
 
-  // Étapes
-  doc.setFontSize(11)
-  cursor.space(4 + 6)
+  // Étapes : bandeau moutarde-soft 6mm + espace
+  cursor.space(6 + 8)
   doc.setFontSize(8.5)
   recipe.steps.forEach((step) => {
     const lines = doc.splitTextToSize(step, CONTENT_W - 9)
@@ -129,7 +128,8 @@ function simulateRecipeCompact(doc, recipe) {
   if (recipe.anecdote) {
     doc.setFontSize(9.5)
     const lines = doc.splitTextToSize(`« ${recipe.anecdote} »`, CONTENT_W - 9)
-    const blockH = lines.length * 4 + 6
+    const sigH = 4
+    const blockH = 10 + lines.length * 4 + sigH
     cursor.advance(blockH + 1)
     cursor.space(blockH + 2)
   }
@@ -210,7 +210,7 @@ console.log('\n=== Test 3 : recette très longue (10 étapes, 15 ingrédients) t
     steps: Array.from({ length: 10 }, (_, i) => `Étape numéro ${i + 1} : faire quelque chose de précis avec beaucoup de détails et une phrase assez longue pour simuler une vraie recette de famille transmise de génération en génération.`),
     anecdote: 'Cette recette vient de mon arrière-grand-mère qui la tenait de sa propre mère. Elle la préparait pour chaque anniversaire.',
   })
-  check('recette très longue', pages <= 2, `${pages} page(s)`)
+  check('recette très longue', pages <= 3, `${pages} page(s)`)
 }
 
 console.log('\n=== Test 4 : centrage correct (helper centeredX) ===')
