@@ -8,7 +8,7 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 /** Surface crème arrondie — le « papier » de la maison */
 export function Card({ className, children, ...props }: CardProps) {
   return (
-    <div className={cn('card-surface p-5', className)} {...props}>
+    <div className={cn('card-surface card-pad p-5', className)} {...props}>
       {children}
     </div>
   )

@@ -36,7 +36,7 @@ export function ForgotPasswordPage() {
             Regarde ta boîte mail à l’adresse <strong>{email}</strong> et suis le lien pour choisir
             un nouveau mot de passe.
           </p>
-          <Link to="/connexion" className="text-terra font-bold hover:underline">
+          <Link to="/connexion" className="text-terra-dark font-bold hover:underline">
             Retour à la connexion
           </Link>
         </div>
@@ -64,7 +64,7 @@ export function ForgotPasswordPage() {
         </form>
       )}
       <p className="mt-6 text-center">
-        <Link to="/connexion" className="text-bleu font-bold hover:underline">
+        <Link to="/connexion" className="text-bleu-dark font-bold hover:underline">
           Retour à la connexion
         </Link>
       </p>

@@ -5,6 +5,7 @@ import { useFamilyEvents } from '@/hooks/useFamilyTree'
 import { useRecipes } from '@/hooks/useRecipes'
 import { familyPhotoUrl } from '@/services/familyTree'
 import { formatDate } from '@/lib/format'
+import { COPY } from '@/lib/copy'
 import { Button } from '@/components/ui/Button'
 import { Card, CardHeader } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -47,9 +48,9 @@ export function FamilyEvents() {
       />
 
       {loading ? (
-        <Spinner label="On déroule les souvenirs…" />
+        <Spinner label={COPY.loading.souvenirs} />
       ) : events.length === 0 ? (
-        <EmptyState handText="Aucun repas noté pour l'instant. Noël approche — on commence par là ?">
+        <EmptyState title="Pas encore de souvenirs" handText="Aucun repas noté pour l'instant. Noël approche — on commence par là ?">
           <Button size="lg" onClick={() => setOpen(true)}>
             <Plus size={20} aria-hidden="true" /> Noter notre premier repas
           </Button>
@@ -91,7 +92,7 @@ export function FamilyEvents() {
                                   <li key={recipe.id}>
                                     <Link
                                       to={`/recettes/${recipe.id}`}
-                                      className="inline-block bg-creme border-2 border-encre/15 rounded-full px-3 py-1 text-sm font-bold text-encre hover:border-terra hover:text-terra"
+                                      className="inline-block bg-creme border-2 border-encre/15 rounded-full px-3 py-1 text-sm font-bold text-encre hover:border-terra-dark hover:text-terra-dark"
                                     >
                                       {recipe.title}
                                     </Link>
@@ -103,8 +104,8 @@ export function FamilyEvents() {
                           <button
                             type="button"
                             onClick={() => remove(event.id)}
-                            aria-label={`Supprimer le souvenir ${event.title}`}
-                            className="min-h-11 min-w-11 rounded-full text-encre-soft hover:text-carmine inline-flex items-center justify-center shrink-0"
+                            aria-label={`Retirer le souvenir ${event.title}`}
+                            className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-soft hover:text-carmine inline-flex items-center justify-center shrink-0"
                           >
                             <Trash2 size={18} aria-hidden="true" />
                           </button>
@@ -210,8 +211,8 @@ function AddEventModal({ recipes, onClose, onCreated, add }: AddEventModalProps)
           <button
             type="button"
             onClick={onClose}
-            aria-label="Fermer"
-            className="min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra inline-flex items-center justify-center"
+            aria-label="Ranger"
+            className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra-dark inline-flex items-center justify-center"
           >
             <X size={22} aria-hidden="true" />
           </button>
@@ -258,8 +259,8 @@ function AddEventModal({ recipes, onClose, onCreated, add }: AddEventModalProps)
                       className={cn(
                         'min-h-11 px-4 rounded-full border-2 font-bold transition-colors',
                         selected
-                          ? 'bg-terra text-creme border-terra'
-                          : 'bg-creme text-encre border-encre/20 hover:border-terra hover:text-terra',
+                          ? 'bg-terra-dark text-creme border-terra'
+                          : 'bg-creme text-encre border-encre/20 hover:border-terra-dark hover:text-terra',
                       )}
                     >
                       {recipe.title}
@@ -278,7 +279,7 @@ function AddEventModal({ recipes, onClose, onCreated, add }: AddEventModalProps)
                 'cursor-pointer w-full min-h-11 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 border-dashed font-bold transition-colors',
                 photoFile
                   ? 'border-sauge bg-sauge/10 text-encre'
-                  : 'border-encre/25 bg-creme hover:border-terra hover:text-terra',
+                  : 'border-encre/25 bg-creme hover:border-terra-dark hover:text-terra',
               )}
             >
               <ImagePlus size={20} aria-hidden="true" />
@@ -299,7 +300,7 @@ function AddEventModal({ recipes, onClose, onCreated, add }: AddEventModalProps)
                     setPhotoPreview(null)
                   }}
                   aria-label="Retirer la photo"
-                  className="absolute top-2 right-2 min-h-11 min-w-11 rounded-full bg-carmine text-creme flex items-center justify-center"
+                  className="absolute top-2 right-2 touch-target-lg min-h-11 min-w-11 rounded-full bg-carmine text-creme flex items-center justify-center"
                 >
                   <Trash2 size={18} aria-hidden="true" />
                 </button>
@@ -315,11 +316,11 @@ function AddEventModal({ recipes, onClose, onCreated, add }: AddEventModalProps)
 
           <div className="flex justify-end gap-3">
             <Button type="button" variant="ghost" onClick={onClose}>
-              Annuler
+              Ranger
             </Button>
             <Button type="submit" disabled={sending || !title.trim() || !eventDate}>
               <Send size={18} aria-hidden="true" />
-              {sending ? 'On grave le souvenir…' : 'Ajouter au fil'}
+              {sending ? 'On grave le souvenir…' : 'Enfourner le souvenir'}
             </Button>
           </div>
         </form>

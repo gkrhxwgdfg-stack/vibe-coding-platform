@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/context/AuthContext'
 import type { Profile, Recipe, RecipeFilters, RecipeWithMeta } from '@/lib/types'
+import { COPY, friendlyError } from '@/lib/copy'
 
 interface UseRecipesResult {
   recipes: RecipeWithMeta[]
@@ -51,7 +52,7 @@ export function useRecipes(filters: RecipeFilters): UseRecipesResult {
 
     const { data, error: fetchError } = await query
     if (fetchError) {
-      setError(fetchError.message)
+      setError(friendlyError(fetchError.message))
       setRecipes([])
       setLoading(false)
       return
@@ -122,7 +123,7 @@ export function useRecipe(recipeId: string | undefined) {
       .maybeSingle()
 
     if (fetchError || !data) {
-      setError(fetchError?.message ?? 'Recette introuvable')
+      setError(fetchError ? friendlyError(fetchError.message) : COPY.errors.introuvable)
       setRecipe(null)
       setLoading(false)
       return
@@ -158,19 +159,19 @@ export function useToggleFavorite() {
   const { user } = useAuth()
   return useCallback(
     async (recipeId: string, isFavorite: boolean) => {
-      if (!user) return { error: 'Non connecté' }
+      if (!user) return { error: COPY.errors.session }
       if (isFavorite) {
         const { error } = await supabase
           .from('favorites')
           .delete()
           .eq('user_id', user.id)
           .eq('recipe_id', recipeId)
-        return { error: error?.message ?? null }
+        return { error: error ? friendlyError(error.message) : null }
       }
       const { error } = await supabase
         .from('favorites')
         .insert({ user_id: user.id, recipe_id: recipeId })
-      return { error: error?.message ?? null }
+      return { error: error ? friendlyError(error.message) : null }
     },
     [user],
   )

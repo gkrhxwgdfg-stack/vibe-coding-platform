@@ -5,10 +5,12 @@ import { useRecipes } from '@/hooks/useRecipes'
 import { useFamilyMembers } from '@/hooks/useFamily'
 import { CATEGORIES } from '@/lib/constants'
 import type { RecipeCategory, RecipeFilters } from '@/lib/types'
-import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
-import { Spinner } from '@/components/ui/Spinner'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { COPY } from '@/lib/copy'
+import { MOTION } from '@/lib/motion'
+import { RecipeCardSkeletonGrid } from '@/components/recipes/RecipeCardSkeleton'
 import { RecipeCard } from '@/components/recipes/RecipeCard'
 import { cn } from '@/lib/utils'
 
@@ -23,7 +25,7 @@ export function RecipesPage() {
     () => ({ query, category, authorId }),
     [query, category, authorId],
   )
-  const { recipes, loading, error } = useRecipes(filters)
+  const { recipes, loading, error, refetch } = useRecipes(filters)
   const { members } = useFamilyMembers()
 
   const hasActiveFilters = query.trim() !== '' || category !== 'toutes' || authorId !== 'tous'
@@ -68,27 +70,28 @@ export function RecipesPage() {
             type="button"
             onClick={() => setQuery('')}
             aria-label="Effacer la recherche"
-            className="absolute right-3 top-1/2 -translate-y-1/2 min-h-11 min-w-11 flex items-center justify-center text-brun-soft hover:text-encre"
+            className="absolute right-3 top-1/2 -translate-y-1/2 touch-target-lg min-h-11 min-w-11 flex items-center justify-center text-brun-soft hover:text-encre"
           >
             <X size={20} aria-hidden="true" />
           </button>
         )}
       </div>
 
-      {/* Filtres par catégorie (intercalaires) */}
+      {/* Filtres par catégorie (intercalaires) : soulignement glissant sur la fiche active */}
       <div role="group" aria-label="Filtrer par catégorie" className="flex flex-wrap gap-2">
-        {[{ value: 'toutes' as const, label: 'Toutes' }, ...CATEGORIES].map((c) => (
+        {[{ value: 'toutes' as const, label: 'Toutes' }, ...CATEGORIES].map((c, i) => (
           <button
             key={c.value}
             type="button"
             onClick={() => setCategory(c.value)}
             aria-pressed={category === c.value}
             className={cn(
-              'min-h-11 px-4 rounded-full border-2 font-bold transition-colors',
+              'chip-underline anim-enter min-h-11 px-4 rounded-full border-2 font-bold transition-colors',
               category === c.value
-                ? 'bg-terra text-creme border-terra'
-                : 'bg-creme text-encre border-encre/20 hover:border-terra hover:text-terra',
+                ? 'bg-terra-dark text-creme border-terra-dark'
+                : 'bg-creme text-encre border-encre/20 hover:border-terra-dark hover:text-terra',
             )}
+            style={{ animationDelay: `${i * MOTION.stagger}ms` }}
           >
             {c.label}
           </button>
@@ -109,8 +112,8 @@ export function RecipesPage() {
                 className={cn(
                   'min-h-11 px-4 rounded-full border-2 font-bold transition-colors',
                   authorId === m.id
-                    ? 'bg-bleu text-creme border-bleu'
-                    : 'bg-creme text-encre border-encre/20 hover:border-bleu hover:text-bleu',
+                    ? 'bg-bleu-dark text-creme border-bleu-dark'
+                    : 'bg-creme text-encre border-encre/20 hover:border-bleu-dark hover:text-bleu',
                 )}
               >
                 {m.name}
@@ -122,37 +125,49 @@ export function RecipesPage() {
 
       {hasActiveFilters && (
         <button type="button" onClick={resetFilters} className="text-carmine font-bold min-h-11 hover:underline">
-          Tout réafficher
+          {COPY.actions.remuer}
         </button>
       )}
 
       {/* Résultats */}
       {loading ? (
-        <Spinner label="On farfouille dans le carnet…" />
+        <RecipeCardSkeletonGrid count={4} />
       ) : error ? (
-        <Card className="text-center text-carmine font-bold">{error}</Card>
+        <ErrorState message={error} onRetry={refetch} />
       ) : recipes.length === 0 ? (
-        <EmptyState
-          handText={
-            hasActiveFilters
-              ? 'Rien dans le carnet pour ça… Essaie un autre mot ?'
-              : 'Toute famille a une première recette. Laquelle est la vôtre ?'
-          }
-        >
-          <Link to="/recettes/nouvelle">
-            <Button size="lg">
-              <Plus size={20} aria-hidden="true" /> Écrire une recette
+        hasActiveFilters ? (
+          <EmptyState title="Rien à cette page" handText={COPY.empty.recherche}>
+            <Button size="lg" variant="outline" onClick={resetFilters}>
+              <X size={20} aria-hidden="true" /> Effacer
             </Button>
-          </Link>
-        </EmptyState>
+          </EmptyState>
+        ) : (
+          <EmptyState title="Le carnet est vide" handText="Toute famille a une première recette. Laquelle est la vôtre ?">
+            <Link to="/recettes/nouvelle">
+              <Button size="lg">
+                <Plus size={20} aria-hidden="true" /> Écrire une recette
+              </Button>
+            </Link>
+          </EmptyState>
+        )
       ) : (
         <>
           <p className="text-brun-soft" aria-live="polite">
             {recipes.length} recette{recipes.length > 1 ? 's' : ''} dans le carnet
           </p>
           <div className="grid gap-5 sm:grid-cols-2">
-            {recipes.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} />
+            {recipes.map((recipe, i) => (
+              <div
+                key={recipe.id}
+                className="anim-pop hover:-translate-y-[3px] transition-transform"
+                style={{
+                  animationDelay: `${i * MOTION.stagger}ms`,
+                  transitionDuration: '250ms',
+                  transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
+                }}
+              >
+                <RecipeCard recipe={recipe} />
+              </div>
             ))}
           </div>
         </>

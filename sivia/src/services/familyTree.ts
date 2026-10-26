@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { COPY, friendlyError } from '@/lib/copy'
 import { STORAGE_BUCKET } from '@/lib/constants'
 import type { Database } from '@/lib/database.types'
 import type { FamilyEvent, FamilyGeneration, FamilyMember } from '@/lib/types'
@@ -126,7 +127,7 @@ export async function createFamilyMember(
     })
     .select()
     .single()
-  if (error || !data) return { error: error?.message ?? 'Ajout impossible.', member: null }
+  if (error || !data) return { error: error ? friendlyError(error.message) : COPY.errors.generique, member: null }
   const member = data as FamilyMember
   // Création sans référent (bouton « + » du haut) : les racines existantes
   // deviennent ses enfants → elle passe au-dessus, l'arbre reste structuré.
@@ -172,13 +173,13 @@ export async function updateFamilyMember(
     .eq('id', memberId)
     .select()
     .single()
-  if (error || !data) return { error: error?.message ?? 'Modification impossible.', member: null }
+  if (error || !data) return { error: error ? friendlyError(error.message) : COPY.errors.generique, member: null }
   return { error: null, member: data as FamilyMember }
 }
 
 export async function deleteFamilyMember(memberId: string): Promise<{ error: string | null }> {
   const { error } = await supabase.from('family_members').delete().eq('id', memberId)
-  return { error: error?.message ?? null }
+  return { error: error ? friendlyError(error.message) : null }
 }
 
 // ---------- Générations nommées ----------
@@ -208,14 +209,14 @@ export async function createFamilyGeneration(
     .insert({ family_id: familyId, name: trimmed, position, created_by: createdBy })
     .select()
     .single()
-  if (error || !data) return { error: error?.message ?? 'Création impossible.', generation: null }
+  if (error || !data) return { error: error ? friendlyError(error.message) : COPY.errors.generique, generation: null }
   return { error: null, generation: data as FamilyGeneration }
 }
 
 export async function deleteFamilyGeneration(generationId: string): Promise<{ error: string | null }> {
   // Les membres de cette génération redeviennent « non classés » (génération 0)
   const { error } = await supabase.from('family_generations').delete().eq('id', generationId)
-  return { error: error?.message ?? null }
+  return { error: error ? friendlyError(error.message) : null }
 }
 
 // ---------- Événements & souvenirs ----------
@@ -270,18 +271,18 @@ export async function createFamilyEvent(
     })
     .select()
     .single()
-  if (error || !data) return { error: error?.message ?? 'Création impossible.', event: null }
+  if (error || !data) return { error: error ? friendlyError(error.message) : COPY.errors.generique, event: null }
   const event = data as FamilyEvent
   if (values.recipeIds.length > 0) {
     const { error: linkError } = await supabase
       .from('event_recipes')
       .insert(values.recipeIds.map((recipe_id) => ({ event_id: event.id, recipe_id })))
-    if (linkError) return { error: linkError.message, event }
+    if (linkError) return { error: friendlyError(linkError.message), event }
   }
   return { error: null, event }
 }
 
 export async function deleteFamilyEvent(eventId: string): Promise<{ error: string | null }> {
   const { error } = await supabase.from('family_events').delete().eq('id', eventId)
-  return { error: error?.message ?? null }
+  return { error: error ? friendlyError(error.message) : null }
 }

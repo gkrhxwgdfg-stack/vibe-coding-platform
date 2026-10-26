@@ -1,6 +1,7 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import { Spinner } from '@/components/ui/Spinner'
+import { COPY } from '@/lib/copy'
 
 /**
  * Garde de route : redirige vers la connexion si non authentifié,
@@ -13,7 +14,7 @@ export function RequireAuth() {
   // Tant que la session ET le profil ne sont pas chargés, on patiente :
   // évite le flash « page beige » quand le profil arrive après la session.
   if (loading || (user && !profile)) {
-    return <Spinner label="On installe la cuisine…" />
+    return <Spinner label={COPY.loading.carnet} />
   }
   if (!user) {
     return <Navigate to="/connexion" state={{ from: location.pathname }} replace />

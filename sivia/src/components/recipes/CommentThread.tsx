@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
 import { formatRelative } from '@/lib/format'
 import { cn } from '@/lib/utils'
+import { COPY } from '@/lib/copy'
 import type { RecipeComment } from '@/lib/types'
 
 interface CommentThreadProps {
@@ -66,7 +67,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
   return (
     <section aria-labelledby="comments-title" className="card-surface p-5">
       <div className="flex items-center gap-2 mb-4">
-        <MessageCircle size={22} className="text-terra" aria-hidden="true" />
+        <MessageCircle size={22} className="text-terra-dark" aria-hidden="true" />
         <h2 id="comments-title" className="text-2xl font-semibold">
           La recette vit ici
         </h2>
@@ -76,7 +77,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
       </div>
 
       {loading ? (
-        <Spinner label="On rassemble les messages de la famille…" />
+        <Spinner label={COPY.loading.messages} />
       ) : (
         <ul className="space-y-4 mb-6">
           {comments.length === 0 && (
@@ -115,7 +116,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                           <button
                             type="button"
                             onClick={() => saveEdit(comment.id)}
-                            className="inline-flex items-center gap-1 min-h-11 px-4 rounded-xl bg-terra text-creme font-bold"
+                            className="inline-flex items-center gap-1 min-h-11 px-4 rounded-xl bg-terra-dark text-creme font-bold"
                           >
                             <Check size={16} aria-hidden="true" /> Enregistrer
                           </button>
@@ -127,7 +128,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                             }}
                             className="inline-flex items-center gap-1 min-h-11 px-4 rounded-xl border-2 border-encre/25 font-bold hover:border-encre/50"
                           >
-                            <X size={16} aria-hidden="true" /> Annuler
+                            <X size={16} aria-hidden="true" /> Ranger
                           </button>
                         </div>
                       </div>
@@ -145,7 +146,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                       </>
                     )}
                   </div>
-                  <p className="text-xs text-encre-soft mt-1 px-1">
+                  <p className="text-sm text-encre-soft mt-1 px-1">
                     {formatRelative(comment.created_at)}
                   </p>
                 </div>
@@ -155,7 +156,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                       type="button"
                       onClick={() => startEdit(comment)}
                       aria-label="Modifier mon message"
-                      className="min-h-11 min-w-11 rounded-xl text-encre-soft hover:text-terra inline-flex items-center justify-center"
+                      className="touch-target-lg min-h-11 min-w-11 rounded-xl text-encre-soft hover:text-terra-dark inline-flex items-center justify-center"
                     >
                       <Pencil size={18} aria-hidden="true" />
                     </button>
@@ -163,7 +164,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                       type="button"
                       onClick={() => remove(comment.id)}
                       aria-label="Retirer mon message"
-                      className="min-h-11 min-w-11 rounded-xl text-encre-soft hover:text-carmine inline-flex items-center justify-center"
+                      className="touch-target-lg min-h-11 min-w-11 rounded-xl text-encre-soft hover:text-carmine inline-flex items-center justify-center"
                     >
                       <Trash2 size={18} aria-hidden="true" />
                     </button>
@@ -192,7 +193,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
             htmlFor="comment-photo"
             className={cn(
               'cursor-pointer inline-flex items-center gap-2 min-h-11 px-5 rounded-2xl border-2 border-dashed font-bold transition-colors',
-              'border-encre/25 bg-creme hover:border-terra hover:text-terra',
+              'border-encre/25 bg-creme hover:border-terra-dark hover:text-terra',
             )}
           >
             <ImagePlus size={20} aria-hidden="true" />
@@ -213,7 +214,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                   setPhotoPreview(null)
                 }}
                 aria-label="Retirer la photo"
-                className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-carmine text-creme flex items-center justify-center"
+                className="absolute -top-2 -right-2 touch-target-lg min-h-11 min-w-11 rounded-full bg-carmine text-creme flex items-center justify-center"
               >
                 <Trash2 size={14} aria-hidden="true" />
               </button>
@@ -221,7 +222,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
           )}
           <Button type="submit" disabled={sending || (!body.trim() && !photoFile)} className="ml-auto">
             <Send size={18} aria-hidden="true" />
-            {sending ? 'On envoie…' : 'Envoyer'}
+            {sending ? 'On envoie…' : 'Partager à la famille'}
           </Button>
         </div>
         {error && (

@@ -5,6 +5,7 @@ import { useRecipe } from '@/hooks/useRecipes'
 import { useAuth } from '@/context/AuthContext'
 import { createRecipe, updateRecipe } from '@/services/recipes'
 import { Spinner } from '@/components/ui/Spinner'
+import { COPY } from '@/lib/copy'
 import type { RecipeFormValues } from '@/lib/types'
 
 /**
@@ -19,14 +20,14 @@ export function RecipeFormPage() {
   const navigate = useNavigate()
   const [submitting, setSubmitting] = useState(false)
 
-  if (isEdit && loading) return <Spinner label="On retrouve la recette…" />
+  if (isEdit && loading) return <Spinner label={COPY.loading.recette} />
   if (isEdit && !recipe) {
     navigate('/recettes', { replace: true })
     return null
   }
 
   async function handleSubmit(values: RecipeFormValues & { keepExistingPhoto?: boolean }) {
-    if (!profile?.family_id || !profile.id) return { error: 'Reconnecte-toi pour publier.' }
+    if (!profile?.family_id || !profile.id) return { error: COPY.errors.session }
     setSubmitting(true)
     if (isEdit && recipe) {
       const { error } = await updateRecipe(recipe.id, recipe.family_id, profile.id, values)
@@ -37,7 +38,7 @@ export function RecipeFormPage() {
     }
     const { data, error } = await createRecipe(profile.family_id, profile.id, values)
     setSubmitting(false)
-    if (error || !data) return { error: error ?? 'Erreur inconnue' }
+    if (error || !data) return { error: error ?? COPY.errors.generique }
     navigate(`/recettes/${data.id}`, { replace: true })
     return { error: null }
   }
@@ -48,7 +49,7 @@ export function RecipeFormPage() {
       <h1 className="text-3xl font-bold mt-1 mb-1">
         {isEdit ? 'Modifier la recette' : 'Raconte ta recette'}
       </h1>
-      <p className="text-hand text-bleu text-2xl mb-6">
+      <p className="text-hand text-bleu-dark text-2xl mb-6">
         {isEdit ? 'On améliore, on précise, on transmet.' : 'Qui t’a appris ce plat ?'}
       </p>
       <RecipeForm initial={isEdit ? recipe : null} submitting={submitting} onSubmit={handleSubmit} />

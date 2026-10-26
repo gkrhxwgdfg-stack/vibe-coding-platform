@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Pencil, Trash2, UserCheck } from 'lucide-react'
 import { familyPhotoUrl } from '@/services/familyTree'
 import { type FamilyMember } from '@/lib/types'
@@ -32,6 +33,8 @@ export function FamilyMemberCard({
   onEdit,
   onRemove,
 }: FamilyMemberCardProps) {
+  // Confirmation douce avant retrait : plus de window.confirm bloquant
+  const [confirming, setConfirming] = useState(false)
   const photo = familyPhotoUrl(member.photo_url)
   const isConnected = !!member.linked_profile_id && connectedProfileIds.has(member.linked_profile_id)
   // Lien tel qu'écrit par l'utilisateur, affiché sous la forme « <lien> <prénom du référent> »
@@ -53,7 +56,7 @@ export function FamilyMemberCard({
             />
           ) : (
             <div
-              className="absolute inset-0 flex items-center justify-center font-serif font-bold text-3xl text-bleu"
+              className="absolute inset-0 flex items-center justify-center font-serif font-bold text-3xl text-bleu-dark"
               role="img"
               aria-label={`Pas de photo pour ${member.first_name}`}
             >
@@ -62,7 +65,7 @@ export function FamilyMemberCard({
           )}
           {isConnected && (
             <span
-              className="absolute top-1.5 right-1.5 inline-flex items-center gap-1 bg-creme/95 rounded-full px-2 py-1 text-[11px] font-extrabold text-bleu"
+              className="absolute top-1.5 right-1.5 inline-flex items-center gap-1 bg-creme/95 rounded-full px-2 py-1 text-xs font-extrabold text-bleu-dark"
               title="Membre connecté à Savia"
             >
               <UserCheck size={13} aria-hidden="true" /> Connecté
@@ -75,10 +78,10 @@ export function FamilyMemberCard({
             {member.last_name ? ` ${member.last_name}` : ''}
           </p>
           {member.family_role && (
-            <p className="text-hand text-bleu text-lg leading-tight">{member.family_role}</p>
+            <p className="text-hand text-bleu-dark text-lg leading-tight">{member.family_role}</p>
           )}
           {parent && relationLabel && (
-            <p className="text-xs text-brun-soft font-bold mt-0.5">
+            <p className="text-sm text-brun-soft font-bold mt-0.5">
               {relationLabel} {parent.first_name}
               {parent2 ? ` et ${parent2.first_name}` : ''}
             </p>
@@ -92,19 +95,29 @@ export function FamilyMemberCard({
               type="button"
               onClick={() => onEdit(member)}
               aria-label={`Modifier ${member.first_name}`}
-              className="min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra inline-flex items-center justify-center"
+              className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra-dark inline-flex items-center justify-center"
             >
               <Pencil size={17} aria-hidden="true" />
             </button>
           )}
-          {onRemove && (
+          {onRemove && !confirming && (
+            <button
+              type="button"
+              onClick={() => setConfirming(true)}
+              aria-label={`Retirer ${member.first_name} de l'arbre`}
+              className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-soft hover:text-carmine inline-flex items-center justify-center"
+            >
+              <Trash2 size={17} aria-hidden="true" />
+            </button>
+          )}
+          {onRemove && confirming && (
             <button
               type="button"
               onClick={() => onRemove(member)}
-              aria-label={`Retirer ${member.first_name} de l'arbre`}
-              className="min-h-11 min-w-11 rounded-full text-encre-soft hover:text-carmine inline-flex items-center justify-center"
+              aria-label={`Confirmer : retirer ${member.first_name} de l'arbre`}
+              className="min-h-11 px-3 rounded-full text-sm font-bold bg-carmine text-creme inline-flex items-center justify-center"
             >
-              <Trash2 size={17} aria-hidden="true" />
+              Retirer de l'arbre ?
             </button>
           )}
         </div>

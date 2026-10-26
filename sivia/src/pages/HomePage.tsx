@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useMemo } from 'react'
 import { Plus } from 'lucide-react'
 import { useRecipes } from '@/hooks/useRecipes'
 import { useRecentComments } from '@/hooks/useComments'
@@ -13,6 +14,10 @@ import { Spinner } from '@/components/ui/Spinner'
 import { Polaroid } from '@/components/ui/Polaroid'
 import { ExpandableText } from '@/components/ui/ExpandableText'
 import { photoPublicUrl } from '@/services/recipes'
+import { COPY } from '@/lib/copy'
+import { MOTION, pickDaily, stableTilt } from '@/lib/motion'
+import { Washi } from '@/components/ui/Washi'
+import { DailyRecipeCard } from '@/components/recipes/DailyRecipeCard'
 import type { RecipeComment } from '@/lib/types'
 
 const NO_FILTERS = { query: '', category: 'toutes' as const, authorId: 'tous' as const }
@@ -51,6 +56,12 @@ export function HomePage() {
   const plancheEmpty = recentPhotos.length === 0 && photoComments.length === 0 && moments.length === 0
   const isLoading = loading || activityLoading || plancheLoading
 
+  // Sélection stable « plat du dimanche » : graine = AAAAMMJJ, identique toute la journée
+  const dailyRecipe = useMemo(
+    () => (recipes.length > 1 ? pickDaily(recipes) : recipes[0] ?? null),
+    [recipes],
+  )
+
   return (
     <div className="space-y-6">
       {/* Hero doux */}
@@ -59,8 +70,16 @@ export function HomePage() {
         <h1 id="home-title" className="text-4xl font-bold mt-1">
           Bonjour, {profile?.display_name}
         </h1>
-        <p className="text-hand text-bleu text-2xl mt-1">Qu’est-ce qu’on cuisine aujourd’hui ?</p>
+        <p className="text-hand text-bleu-dark text-2xl mt-1">Qu’est-ce qu’on cuisine aujourd’hui ?</p>
       </section>
+
+      {/* Le plat du dimanche : choix stable pour la journée (graine AAAAMMJJ) */}
+      {dailyRecipe && (
+        <section aria-labelledby="daily-title" className="anim-enter">
+          <p id="daily-title" className="kicker mb-2">Le plat du dimanche</p>
+          <DailyRecipeCard recipe={dailyRecipe} />
+        </section>
+      )}
 
       {/* Planche familiale : moments de cuisine partagés (tableau de photos) */}
       <section aria-labelledby="planche-title">
@@ -72,9 +91,9 @@ export function HomePage() {
           </Button>
         </div>
         {isLoading ? (
-          <Spinner label="On décore la planche…" />
+          <Spinner label={COPY.loading.planche} />
         ) : plancheEmpty ? (
-          <EmptyState handText="La planche est encore vide. La première photo de la famille la remplira.">
+          <EmptyState title="La planche est vide" handText={COPY.empty.planche}>
             <Button size="lg" onClick={() => setPhotoModalOpen(true)}>
               <Plus size={20} aria-hidden="true" /> Accrocher la première photo
             </Button>
@@ -82,16 +101,36 @@ export function HomePage() {
         ) : (
           <div className="flex flex-wrap gap-4 justify-center">
             {recentPhotos.map((recipe, i) => (
-              <Link key={recipe.id} to={`/recettes/${recipe.id}`} className="hover:-translate-y-1 transition-transform">
+              <Link
+                key={recipe.id}
+                to={`/recettes/${recipe.id}`}
+                className="relative block anim-pop hover:-translate-y-[3px] transition-transform"
+                style={{
+                  animationDelay: `${i * MOTION.staggerPlanche}ms`,
+                  transitionDuration: '250ms',
+                  transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
+                }}
+              >
+                <Washi corner={i % 2 === 0 ? 'top-left' : 'top-right'} />
                 <Polaroid
                   src={photoPublicUrl(recipe.photo_url)}
                   caption={`${recipe.title} — ${recipe.author?.display_name ?? ''}`}
-                  tilt={i % 2 === 0 ? -2.5 : 2.5}
+                  tilt={stableTilt(recipe.id)}
                 />
               </Link>
             ))}
             {photoComments.map((comment, i) => (
-              <Link key={comment.id} to={`/recettes/${comment.recipe_id}`} className="hover:-translate-y-1 transition-transform">
+              <Link
+                key={comment.id}
+                to={`/recettes/${comment.recipe_id}`}
+                className="relative block anim-pop hover:-translate-y-[3px] transition-transform"
+                style={{
+                  animationDelay: `${(recentPhotos.length + i) * MOTION.staggerPlanche}ms`,
+                  transitionDuration: '250ms',
+                  transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
+                }}
+              >
+                <Washi corner={i % 2 === 0 ? 'top-right' : 'top-left'} />
                 <Polaroid
                   src={photoPublicUrl(comment.photo_url)}
                   caption={
@@ -107,26 +146,32 @@ export function HomePage() {
                       </span>
                     </span>
                   }
-                  tilt={i % 2 === 0 ? 2.5 : -2.5}
+                  tilt={stableTilt(comment.id)}
                 />
               </Link>
             ))}
             {moments.map((comment, i) => (
-              <Polaroid
+              <div
                 key={comment.id}
-                src={photoPublicUrl(comment.photo_url)}
-                caption={
-                  <span className="block">
-                    {comment.body ? (
-                      <span className="block text-encre text-base leading-snug mb-0.5">
-                        « <ExpandableText text={comment.body} maxLength={70} /> »
-                      </span>
-                    ) : null}
-                    <span className="block">{comment.author?.display_name ?? ''}</span>
-                  </span>
-                }
-                tilt={(recentPhotos.length + photoComments.length + i) % 2 === 0 ? -2.5 : 2.5}
-              />
+                className="relative inline-block anim-pop"
+                style={{ animationDelay: `${(recentPhotos.length + photoComments.length + i) * MOTION.staggerPlanche}ms` }}
+              >
+                <Washi corner={i % 2 === 0 ? 'top-left' : 'top-right'} />
+                <Polaroid
+                  src={photoPublicUrl(comment.photo_url)}
+                  caption={
+                    <span className="block">
+                      {comment.body ? (
+                        <span className="block text-encre text-base leading-snug mb-0.5">
+                          « <ExpandableText text={comment.body} maxLength={70} /> »
+                        </span>
+                      ) : null}
+                      <span className="block">{comment.author?.display_name ?? ''}</span>
+                    </span>
+                  }
+                  tilt={stableTilt(comment.id)}
+                />
+              </div>
             ))}
           </div>
         )}

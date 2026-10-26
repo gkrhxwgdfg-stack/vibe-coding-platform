@@ -15,13 +15,17 @@
   --color-lin: #efe8dc;
   --color-creme: #fbf6ec;
   --color-encre: #4a3728;
-  --color-encre-soft: #7a6a58;
+  /* Assombri au chantier 8 : #7a6a58 = 4.28:1 sur lin, \u00e9chec WCAG AA */
+  --color-encre-soft: #6b5b4a;
   --color-sauge: #8a9b6e;
   --color-sauge-dark: #6f7f57;
+  /* Vert fonc\u00e9 pour les textes de succ\u00e8s : sauge #8a9b6e = 2.79:1 sur cr\u00e8me, \u00e9chec AA */
+  --color-sauge-ink: #5d6b49;
   --color-carmine: #b33b3b;
   /* Brun/cacao : accents secondaires (cadres, pieds de cartes, légendes) */
   --color-brun: #6b4a32;
-  --color-brun-soft: #8a6a52;
+  /* Assombri au chantier 8 : #8a6a52 = 4.04:1 sur lin, \u00e9chec WCAG AA */
+  --color-brun-soft: #7a5c44;
 
   --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
   --font-sans: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -115,9 +119,347 @@ h3 {
   font-weight: 800;
 }
 
+/* Bandeau « transmission » : bord pointillé terracotta façon couture */
+@utility stitch-border {
+  border: 1.5px dashed var(--color-terra);
+  border-radius: 12px;
+}
+
+/* Anecdote : fond papier âgé #f3ead9, bord inférieur ondulé (clip-path) */
+@utility paper-aged {
+  background-color: #f3ead9;
+  clip-path: polygon(
+    0 0, 100% 0, 100% calc(100% - 8px),
+    96% 100%, 90% calc(100% - 6px), 84% 100%, 78% calc(100% - 7px),
+    72% 100%, 66% calc(100% - 5px), 60% 100%, 54% calc(100% - 6px),
+    48% 100%, 42% calc(100% - 7px), 36% 100%, 30% calc(100% - 5px),
+    24% 100%, 18% calc(100% - 6px), 12% 100%, 6% calc(100% - 7px),
+    0 calc(100% - 5px)
+  );
+}
+
 @utility touch-target {
   min-height: 44px;
   min-width: 44px;
+}
+
+/* ============================================================
+   Grande lecture (chantier 8) — r\u00e9glage \u00ab Taille du texte \u00bb.
+   Classe pos\u00e9e sur <html> : .reading-lg (19 px) / .reading-xl (21 px).
+   Toutes les tailles en rem suivent automatiquement.
+   En grande lecture : cibles tactiles 52 px et paddings de cartes
+   augment\u00e9s ; l'\u00e9tape du mode cuisson passe \u00e0 2.3 rem.
+   ============================================================ */
+html.reading-lg {
+  font-size: 19px;
+}
+
+html.reading-xl {
+  font-size: 21px;
+}
+
+/* Cibles tactiles 52 px en grande lecture (WCAG 2.5.5, confort aîn\u00e9s) */
+html.reading-lg .touch-target-lg,
+html.reading-xl .touch-target-lg {
+  min-height: 52px;
+  min-width: 52px;
+}
+
+/* \u00c9tape du mode cuisson : 1.9 rem -> 2.3 rem en grande lecture */
+html.reading-lg .cooking-step,
+html.reading-xl .cooking-step {
+  font-size: 2.3rem;
+}
+
+/* Paddings de cartes augment\u00e9s en grande lecture */
+html.reading-lg .card-pad,
+html.reading-xl .card-pad {
+  padding: 1.5rem;
+}
+
+/* ============================================================
+   Motion — tokens du chantier 1 (source JS : src/lib/motion.ts)
+   Toute durée/courbe d'animation passe par ces utilitaires.
+   ============================================================ */
+
+/* Entrée standard d'un écran ou d'une carte : fondu + translateY(8px) */
+@utility anim-enter {
+  animation: anim-enter-in 350ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes anim-enter-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Cascade à ressort : polaroïds de la planche et cartes de la bibliothèque.
+   Le délai (stagger 40/60 ms) se pose en inline style via MOTION.stagger*. */
+@utility anim-pop {
+  animation: anim-pop-in 350ms cubic-bezier(0.34, 1.4, 0.4, 1) both;
+}
+
+@keyframes anim-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Tampon qui se pose à l'entrée de la fiche recette : rotation -6° -> -2°,
+   scale 1.25 -> 1, opacité 0 -> 0.88, 600 ms, une seule fois par visite
+   (l'animation ne se joue qu'au montage du composant). */
+@utility stamp-in {
+  animation: stamp-in 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes stamp-in {
+  0% {
+    opacity: 0;
+    transform: rotate(-6deg) scale(1.25);
+  }
+  70% {
+    opacity: 0.9;
+    transform: rotate(-1.5deg) scale(0.98);
+  }
+  100% {
+    opacity: 0.88;
+    transform: rotate(-2deg) scale(1);
+  }
+}
+
+/* Entrée du mode cuisson : la fiche se replie (scale 0.96 + fondu, 400 ms) */
+@utility anim-fold-in {
+  animation: anim-fold-in 400ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes anim-fold-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Confettis papier de l'écran « C'est prêt ! » : chute + rotation, 1.8 s,
+   une fois. Coupés si prefers-reduced-motion (fondu simple à la place). */
+@utility confetti-piece {
+  position: absolute;
+  top: -12px;
+  animation: confetti-fall 1.8s ease-in both;
+}
+
+@keyframes confetti-fall {
+  0% {
+    opacity: 0;
+    transform: translateY(0) rotate(0deg);
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--drift, 0px), 60vh) rotate(540deg);
+  }
+}
+
+/* Pré-alerte minuteur : halo pulsant 1 min avant la fin */
+@utility timer-prealert {
+  animation: timer-prealert 1s ease-in-out infinite;
+}
+
+@keyframes timer-prealert {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(179, 59, 59, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 14px rgba(179, 59, 59, 0);
+  }
+}
+
+/* Pulsation douce du bouton « Cuisiner » au premier passage de la session */
+@utility pulse-once {
+  animation: pulse-once 600ms cubic-bezier(0.22, 1, 0.36, 1) 1;
+}
+
+@keyframes pulse-once {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.04);
+  }
+  70% {
+    transform: scale(1.02);
+  }
+}
+
+/* Soulignement glissant des chips de catégorie (fiche active) */
+@utility chip-underline {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    bottom: 0.375rem;
+    height: 3px;
+    border-radius: 999px;
+    background-color: var(--color-creme);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 250ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  &[aria-pressed="true"]::after {
+    transform: scaleX(1);
+  }
+}
+
+/* Retour tactile d'un contrôle : scale 0.97 au appui */
+@utility anim-press {
+  transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+/* Squelette papier en chargement : fond lin + pulsation d'opacité */
+@utility skeleton-paper {
+  background-color: var(--color-lin);
+  border-radius: 0.75rem;
+  animation: skeleton-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+/* Accessibilité : moins de mouvement demandé — fondu simple, sans translation */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .anim-enter {
+    animation: anim-enter-fade 350ms ease-out both;
+  }
+
+  .anim-pop {
+    animation: anim-enter-fade 350ms ease-out both;
+  }
+
+  .stamp-in {
+    animation: anim-enter-fade 350ms ease-out both;
+  }
+
+  .pulse-once {
+    animation: none;
+  }
+
+  .anim-fold-in {
+    animation: anim-enter-fade 350ms ease-out both;
+  }
+
+  .confetti-piece {
+    animation: none;
+    opacity: 0;
+  }
+
+  .timer-prealert {
+    animation: none;
+  }
+
+  .chip-underline::after {
+    transition: none;
+  }
+
+  .skeleton-paper {
+    animation: none;
+    opacity: 0.7;
+  }
+
+  .anim-press {
+    transition: none;
+
+    &:active {
+      transform: none;
+    }
+  }
+}
+
+@keyframes anim-enter-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================================
+   Feuille print dédiée (chantier 6) — A5, marges 15 mm,
+   print-color-adjust: exact (les fonds papier/tampon s'impriment),
+   break-inside: avoid (une carte ne se coupe pas en deux).
+   Sert de référence visuelle au PDF généré par services/recipePdf.ts.
+   ============================================================ */
+@page {
+  size: A5 portrait;
+  margin: 15mm;
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  /* On n'imprime que le contenu utile */
+  header,
+  nav,
+  .no-print {
+    display: none !important;
+  }
+
+  main {
+    max-width: none;
+    padding: 0;
+  }
+
+  /* Les fonds (papiers, tampons, bandeaux) s'impriment */
+  * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Une carte ne se coupe pas en deux */
+  .card-surface,
+  .card-surface-sauge,
+  [class*='paper-aged'],
+  blockquote {
+    break-inside: avoid;
+  }
 }
 
 /* Scrollbar discrète */

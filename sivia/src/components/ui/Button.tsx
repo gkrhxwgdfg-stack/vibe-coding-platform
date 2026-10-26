@@ -12,18 +12,18 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const variants: Record<ButtonVariant, string> = {
   // Bouton « cuisson » : arrondi généreux, ombre douce — on clique comme on goûte
   primary:
-    'bg-terra text-creme hover:bg-terra-dark shadow-soft border-transparent',
+    'bg-terra-dark text-creme hover:bg-[#8f4525] shadow-soft border-transparent',
   ghost:
     'bg-transparent text-encre hover:bg-creme border-transparent',
   outline:
-    'bg-creme text-encre border-encre/25 hover:border-terra hover:text-terra',
+    'bg-creme text-encre border-encre/25 hover:border-terra-dark hover:text-terra',
   danger:
     'bg-carmine text-creme hover:bg-[#9a3232] shadow-soft border-transparent',
 }
 
 const sizes: Record<ButtonSize, string> = {
   md: 'min-h-11 px-5 py-2.5 text-base rounded-2xl',
-  lg: 'min-h-13 px-7 py-3.5 text-lg rounded-full',
+  lg: 'touch-target-lg min-h-13 px-7 py-3.5 text-lg rounded-full',
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(

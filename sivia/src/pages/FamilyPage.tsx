@@ -1,10 +1,13 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { Check, Copy, Mail, Pencil, Trash2, UserCheck } from 'lucide-react'
+import { BookOpen, Check, Copy, Mail, Pencil, Printer, Trash2, UserCheck } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { useCreateInvitation, useFamilyMembers, useInvitations } from '@/hooks/useFamily'
 import { useFamilyGenerations, useFamilyTree } from '@/hooks/useFamilyTree'
+import { useRecipes } from '@/hooks/useRecipes'
 import { supabase } from '@/lib/supabase'
+import { addComment } from '@/services/comments'
+import { estimateBookPageCount, generateFamilyBookPdf } from '@/services/familyBookPdf'
 import { invitationLink } from '@/lib/paths'
 import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
@@ -14,6 +17,7 @@ import { Spinner } from '@/components/ui/Spinner'
 import { FamilyTree } from '@/components/family/FamilyTree'
 import { FamilyEvents } from '@/components/family/FamilyEvents'
 import { formatDate } from '@/lib/format'
+import { COPY } from '@/lib/copy'
 import type { FamilyMember, Invitation } from '@/lib/types'
 
 export function FamilyPage() {
@@ -38,6 +42,16 @@ export function FamilyPage() {
 
   const [email, setEmail] = useState('')
   const [error, setError] = useState<string | null>(null)
+  // Génération du livre « carnet familial » (chantier 7)
+  const { recipes, loading: recipesLoading } = useRecipes({
+    query: '',
+    category: 'toutes' as const,
+    authorId: 'tous' as const,
+  })
+  const [bookBusy, setBookBusy] = useState(false)
+  const [bookDone, setBookDone] = useState(false)
+  const [bookError, setBookError] = useState<string | null>(null)
+  const [bookPreviewOpen, setBookPreviewOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [lastLink, setLastLink] = useState<string | null>(null)
   const [copiedId, setCopiedId] = useState<string | null>(null)
@@ -82,7 +96,7 @@ export function FamilyPage() {
     const { error: inviteError, invitation } = await createInvitation(email.trim())
     setSubmitting(false)
     if (inviteError || !invitation) {
-      setError(inviteError ?? 'Impossible de créer l’invitation.')
+      setError(inviteError ?? COPY.errors.generique)
       return
     }
     setEmail('')
@@ -102,14 +116,43 @@ export function FamilyPage() {
     setTimeout(() => setCopiedId(null), 2000)
   }
 
-  function handleRemoveTreeMember(member: FamilyMember) {
-    if (window.confirm(`Retirer ${member.first_name} de l'arbre ?`)) {
-      void removeTreeMember(member.id)
+  async function handleRemoveTreeMember(member: FamilyMember) {
+    const { error: removeError } = await removeTreeMember(member.id)
+    if (removeError) setError(removeError)
+  }
+
+  /** Génère le livre A5 du carnet familial + notification dans le fil de vie */
+  async function handlePrintBook() {
+    if (!family || !profile) return
+    setBookBusy(true)
+    setBookError(null)
+    try {
+      const { pageCount } = await generateFamilyBookPdf({
+        familyName: family.name,
+        recipes,
+        treeMembers,
+        printedBy: profile.display_name,
+      })
+      setBookDone(true)
+      setTimeout(() => setBookDone(false), 5000)
+      // Notification dans le fil de vie (planche familiale, recipeId = null)
+      await addComment(
+        null,
+        family.id,
+        profile.id,
+        `${profile.display_name} a impriméé le carnet de ${family.name} (${pageCount} pages).`,
+        null,
+      )
+    } catch {
+      setBookError('Le carnet n\'a pas pu être imprimé. La sauce a raté. On recommence ?')
+    } finally {
+      setBookBusy(false)
+      setBookPreviewOpen(false)
     }
   }
 
   if (membersLoading || invitationsLoading || treeLoading)
-    return <Spinner label="On rassemble la famille…" />
+    return <Spinner label={COPY.loading.famille} />
 
   return (
     <div className="space-y-8">
@@ -128,7 +171,7 @@ export function FamilyPage() {
               {renaming ? 'On écrit…' : 'Renommer'}
             </Button>
             <Button type="button" variant="ghost" size="md" onClick={() => setEditingName(false)}>
-              Annuler
+              Ranger
             </Button>
           </form>
         ) : (
@@ -142,7 +185,7 @@ export function FamilyPage() {
                 setEditingName(true)
               }}
               aria-label="Renommer la famille"
-              className="min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra inline-flex items-center justify-center"
+              className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra-dark inline-flex items-center justify-center"
             >
               <Pencil size={20} aria-hidden="true" />
             </button>
@@ -153,7 +196,7 @@ export function FamilyPage() {
             {renameError}
           </p>
         )}
-        <p className="text-hand text-bleu text-2xl mt-1">
+        <p className="text-hand text-bleu-dark text-2xl mt-1">
           {members.length} membre{members.length > 1 ? 's' : ''} en cuisine
         </p>
       </div>
@@ -170,14 +213,14 @@ export function FamilyPage() {
                   <p className="font-serif text-xl font-semibold truncate">
                     {member.display_name}
                     {member.id === profile?.id && (
-                      <span className="text-sm text-terra font-sans font-bold"> · toi</span>
+                      <span className="text-sm text-terra-dark font-sans font-bold"> · toi</span>
                     )}
                   </p>
                   {member.family_role && (
-                    <p className="text-hand text-bleu text-xl">{member.family_role}</p>
+                    <p className="text-hand text-bleu-dark text-xl">{member.family_role}</p>
                   )}
                   {member.bio && <p className="text-sm text-encre-soft truncate">{member.bio}</p>}
-                  <p className="text-xs text-encre-soft">En cuisine depuis {formatDate(member.created_at)}</p>
+                  <p className="text-sm text-encre-soft">En cuisine depuis {formatDate(member.created_at)}</p>
                 </div>
               </Card>
             </li>
@@ -192,14 +235,14 @@ export function FamilyPage() {
           title="La famille, fil par fil"
         />
         <p className="text-sm text-encre-soft mb-4">
-          Un membre <span className="inline-flex items-center gap-1 font-bold text-bleu"><UserCheck size={14} aria-hidden="true" /> connecté</span> a
+          Un membre <span className="inline-flex items-center gap-1 font-bold text-bleu-dark"><UserCheck size={14} aria-hidden="true" /> connecté</span> a
           un compte Savia. Un membre ajouté « de l'arbre » n'en a pas — mamie Jeanne, par exemple —
           mais elle peut être citée comme origine d'une recette. L'arbre grandit avec les « + » :
           en dessous d'une personne pour un enfant, sur le scotch « + » du côté pour un partenaire
           (à côté, même génération), et le « + » carmine en haut pour un aîné au-dessus. Le lien
           s'écrit librement sur la carte.
         </p>
-        <div className="card-surface p-5 bg-sauge/5">
+        <div className="card-surface card-pad p-5 bg-sauge/5">
           <FamilyTree
             members={treeMembers}
             generations={generations}
@@ -209,6 +252,42 @@ export function FamilyPage() {
             onUpdateMember={editTreeMember}
           />
         </div>
+      </section>
+
+      {/* Le carnet familial : le livre (chantier 7) */}
+      <section aria-labelledby="book-title">
+        <Card>
+          <CardHeader kicker="Le livre" title={`Imprimer le carnet de ${family?.name ?? 'ta famille'}`} />
+          <p className="text-encre-soft mb-4">
+            Toutes les recettes de la famille réunies en un livre A5 : couverture, sommaire,
+            recettes scellées d'abord, index par auteur. {recipes.length} recette{recipes.length > 1 ? 's' : ''} au compteur.
+          </p>
+          {bookError && (
+            <p className="text-carmine font-bold mb-3" role="alert">{bookError}</p>
+          )}
+          {bookDone && (
+            <p className="text-sauge-ink font-bold mb-3" role="status">
+              Le carnet est dans vos téléchargements. {profile?.display_name} a imprimé le carnet — la famille le sait.
+            </p>
+          )}
+          <div className="flex flex-wrap gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setBookPreviewOpen(true)}
+              disabled={recipesLoading || recipes.length === 0}
+            >
+              <BookOpen size={18} aria-hidden="true" />
+              Aperçu
+            </Button>
+            <Button
+              onClick={handlePrintBook}
+              disabled={bookBusy || recipesLoading || recipes.length === 0}
+            >
+              <Printer size={18} aria-hidden="true" />
+              {bookBusy ? 'On relie le carnet…' : 'Imprimer le carnet'}
+            </Button>
+          </div>
+        </Card>
       </section>
 
       {/* Événements & souvenirs : la chronologie des repas de famille */}
@@ -289,7 +368,7 @@ export function FamilyPage() {
                     variant="ghost"
                     className="text-carmine"
                     onClick={() => cancelInvitation(invitation)}
-                    aria-label={`Annuler l’invitation de ${invitation.email}`}
+                    aria-label={`Retirer l’invitation de ${invitation.email}`}
                   >
                     <Trash2 size={18} aria-hidden="true" />
                   </Button>
@@ -301,10 +380,48 @@ export function FamilyPage() {
       )}
 
       <p className="text-center text-encre-soft">
-        <Link to="/profil" className="text-terra font-bold hover:underline">
+        <Link to="/profil" className="text-terra-dark font-bold hover:underline">
           Gérer mon profil
         </Link>
       </p>
+
+      {/* Aperçu avant génération du livre */}
+      {bookPreviewOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-encre/40 backdrop-blur-sm p-4"
+          role="presentation"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setBookPreviewOpen(false)
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="book-preview-title"
+            className="card-surface w-full max-w-md p-6"
+          >
+            <h2 id="book-preview-title" className="text-2xl font-semibold mb-2">
+              Le carnet de {family?.name ?? 'ta famille'}
+            </h2>
+            <p className="text-encre-soft mb-1">
+              {recipes.length} recette{recipes.length > 1 ? 's' : ''} — {estimateBookPageCount(recipes.length).label}
+            </p>
+            <p className="text-encre-soft mb-1">Pour qui ? Toute la famille, de génération en génération.</p>
+            <p className="text-encre-soft mb-4">
+              Couverture, sommaire, recettes scellées d'abord, index par auteur.
+            </p>
+            <div className="flex flex-col gap-3">
+              <Button size="lg" onClick={handlePrintBook} disabled={bookBusy}>
+                <Printer size={18} aria-hidden="true" />
+                {bookBusy ? 'On relie le carnet…' : 'Imprimer le carnet'}
+              </Button>
+              <Button size="lg" variant="ghost" onClick={() => setBookPreviewOpen(false)}>
+                Ranger
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   )

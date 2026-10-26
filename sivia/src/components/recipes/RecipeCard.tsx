@@ -19,7 +19,8 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
   return (
     <Link
       to={`/recettes/${recipe.id}`}
-      className="group block card-surface overflow-hidden p-0 hover:shadow-soft transition-shadow"
+      className="group block card-surface overflow-hidden p-0 hover:shadow-soft hover:-translate-y-[3px] transition-all"
+      style={{ transitionDuration: '250ms', transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)' }}
     >
       <div className="relative aspect-[16/10] bg-lin overflow-hidden">
         {photo ? (
@@ -27,12 +28,13 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
             src={photo}
             alt={recipe.title}
             loading="lazy"
-            className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform"
+            style={{ transitionDuration: '250ms', transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)' }}
           />
         ) : (
           <Torchon label={meta.label} />
         )}
-        <span className="absolute top-3 left-3 bg-creme/95 rounded-full px-3 py-1 text-sm font-bold text-terra">
+        <span className="absolute top-3 left-3 bg-creme/95 rounded-full px-3 py-1 text-sm font-bold text-terra-dark">
           {meta.label}
         </span>
         {recipe.is_sealed && (
@@ -42,10 +44,10 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         )}
       </div>
       <div className="p-4">
-        <h3 className="font-serif font-semibold text-xl leading-snug group-hover:text-terra transition-colors">
+        <h3 className="font-serif font-semibold text-xl leading-snug group-hover:text-terra-dark transition-colors">
           {recipe.title}
         </h3>
-        <p className="text-hand text-bleu text-lg mt-0.5">
+        <p className="text-hand text-bleu-dark text-lg mt-0.5">
           créée par {recipe.author?.display_name ?? '…'}
         </p>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-brun-soft">
@@ -64,7 +66,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
             </span>
           )}
         </div>
-        <p className="text-xs text-brun-soft mt-2">Créée le {formatDate(recipe.created_at)}</p>
+        <p className="text-sm text-brun-soft mt-2">Créée le {formatDate(recipe.created_at)}</p>
       </div>
     </Link>
   )
