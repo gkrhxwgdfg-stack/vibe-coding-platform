@@ -300,189 +300,170 @@ export async function drawRecipeOnPdf(
   const prep = formatDuration(recipe.prep_time)
   const cook = formatDuration(recipe.cook_time)
 
-  // Fond crème de la page
+  // Fond cr\u00e8me de la page
   doc.setFillColor(COLORS.CREME.r, COLORS.CREME.g, COLORS.CREME.b)
   doc.rect(0, 0, PAGE_W, PAGE_H, 'F')
 
-  // Kicker + titre
+  // Kicker
   doc.setFont('helvetica', 'bold')
-  doc.setFontSize(9)
+  doc.setFontSize(7.5)
   doc.setTextColor(COLORS.TERRA.r, COLORS.TERRA.g, COLORS.TERRA.b)
-  doc.text(`SAVIA · ${meta.label.toUpperCase()}`, MARGIN, cursor.y + 4)
-  cursor.space(8)
+  doc.text(`SAVIA · ${meta.label.toUpperCase()}`, MARGIN, cursor.y + 3)
+  cursor.space(6)
 
-  doc.setFont(serif, serifStyle)
-  doc.setFontSize(24)
-  doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
-  doc.splitTextToSize(recipe.title, CONTENT_W).forEach((line) => {
-    doc.text(line, MARGIN, cursor.y + 6)
-    cursor.space(8)
-  })
-  cursor.space(2)
-
-  doc.setFont(hand, handStyle)
-  doc.setFontSize(14)
-  doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
-  doc.text(`créée par ${author}${authorRole}`, MARGIN, cursor.y + 4)
-  cursor.space(8)
-
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(10)
-  doc.text(
-    [`${recipe.servings} part${recipe.servings > 1 ? 's' : ''}`, prep ? `Prépa ${prep}` : null, cook ? `Cuisson ${cook}` : null]
-      .filter(Boolean)
-      .join('  ·  '),
-    MARGIN,
-    cursor.y + 4,
-  )
-  cursor.space(10)
-
-  // Photo polaroïd
+  // ---- En-t\u00eate compact : titre \u00e0 gauche, photo \u00e0 droite ----
   const photoUrl = photoPublicUrl(recipe.photo_url)
-  if (photoUrl) {
-    const jpeg = await loadPhotoAsJpeg(photoUrl)
-    if (jpeg) {
-      const polaroidW = 90
-      const imgH = polaroidW * 0.75
-      const x = (PAGE_W - polaroidW) / 2
-      cursor.advance(imgH + 26)
-      doc.setFillColor(COLORS.BLANC.r, COLORS.BLANC.g, COLORS.BLANC.b)
-      doc.setDrawColor(200, 190, 175)
-      doc.setLineWidth(0.3)
-      doc.roundedRect(x - 3, cursor.y - 3, polaroidW + 6, imgH + 22, 1.5, 1.5, 'FD')
-      try {
-        doc.addImage(jpeg, 'JPEG', x, cursor.y, polaroidW, imgH)
-      } catch {
-        // image illisible : cadre vide
-      }
-      doc.setFont(hand, handStyle)
-      doc.setFontSize(12)
-      doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
-      doc.text(recipe.title, PAGE_W / 2, cursor.y + imgH + 8, { angle: -2 })
-      cursor.space(imgH + 16)
-    }
-  }
+  let photoJpeg: string | null = null
+  if (photoUrl) photoJpeg = await loadPhotoAsJpeg(photoUrl)
+  const photoW = photoJpeg ? 40 : 0
+  const photoH = photoW * 0.75
+  const titleMaxW = CONTENT_W - (photoJpeg ? photoW + 6 : 0)
 
-  // Bandeau transmission
-  const bannerText = `Transmise par ${author} · dans le carnet depuis ${formatDate(recipe.created_at)}`
-  const bannerLines = doc.splitTextToSize(bannerText, CONTENT_W - 8)
-  const bannerH = bannerLines.length * 4.5 + 8
-  cursor.advance(bannerH + 4)
-  drawDashedRect(doc, MARGIN, cursor.y, CONTENT_W, bannerH, COLORS.TERRA, 1.5)
-  doc.setFont('helvetica', 'normal')
-  doc.setFontSize(9.5)
-  doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
-  bannerLines.forEach((line, i) => {
-    doc.text(line, MARGIN + 4, cursor.y + 6 + i * 4.5)
-  })
-  cursor.space(bannerH + 8)
-
-  // Ingrédients : 2 colonnes
-  cursor.advance(10)
   doc.setFont(serif, serifStyle)
   doc.setFontSize(15)
   doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
-  doc.text('Ce qu\'il faut', MARGIN, cursor.y + 5)
-  cursor.space(9)
+  const titleLines = doc.splitTextToSize(recipe.title, titleMaxW)
+  const titleH = titleLines.length * 5 + 4
+  const headerH = Math.max(titleH, photoJpeg ? photoH + 6 : 0)
+  const headerY = cursor.y
+  titleLines.forEach((line, i) => {
+    doc.text(line, MARGIN, headerY + 4 + i * 5)
+  })
+
+  // Photo polaro\u00efd compacte, \u00e0 droite de l'en-t\u00eate
+  if (photoJpeg) {
+    const px = PAGE_W - MARGIN - photoW
+    doc.setFillColor(COLORS.BLANC.r, COLORS.BLANC.g, COLORS.BLANC.b)
+    doc.setDrawColor(200, 190, 175)
+    doc.setLineWidth(0.3)
+    doc.roundedRect(px - 2, headerY - 2, photoW + 4, photoH + 4, 1, 1, 'FD')
+    try {
+      doc.addImage(photoJpeg, 'JPEG', px, headerY, photoW, photoH)
+    } catch {
+      // image illisible : cadre vide
+    }
+  }
+  cursor.y = headerY + headerH + 2
+
+  // M\u00e9tas en ligne (auteur, parts, temps) + bandeau transmission inline
+  doc.setFont(hand, handStyle)
+  doc.setFontSize(10)
+  doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
+  const metaLine = [`créée par ${author}${authorRole}`, `${recipe.servings} part${recipe.servings > 1 ? 's' : ''}`, prep ? `Prépa ${prep}` : null, cook ? `Cuisson ${cook}` : null]
+    .filter(Boolean)
+    .join('  ·  ')
+  doc.splitTextToSize(metaLine, CONTENT_W).forEach((line, i) => {
+    doc.text(line, MARGIN, cursor.y + 3 + i * 3.5)
+  })
+  cursor.space(4.5)
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(7.5)
+  doc.setTextColor(COLORS.TERRA.r, COLORS.TERRA.g, COLORS.TERRA.b)
+  const bannerText = `Transmise par ${author} · dans le carnet depuis ${formatDate(recipe.created_at)}`
+  doc.splitTextToSize(bannerText, CONTENT_W).forEach((line, i) => {
+    doc.text(line, MARGIN, cursor.y + 3 + i * 3.5)
+  })
+  cursor.space(6.5)
+
+  // Ingr\u00e9dients : 2 colonnes compactes
+  doc.setFont(serif, serifStyle)
+  doc.setFontSize(11)
+  doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
+  doc.text("Ce qu'il faut", MARGIN, cursor.y + 4)
+  cursor.space(6)
 
   if (recipe.ingredients.length > 0) {
-    const colW = (CONTENT_W - 6) / 2
-    const lineH = 5
+    const colW = (CONTENT_W - 4) / 2
+    const lineH = 3.2
     const rows = Math.ceil(recipe.ingredients.length / 2)
-    const blockH = rows * lineH + 4
-    cursor.advance(blockH)
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(10)
-    doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
     const startY = cursor.y
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(7.5)
+    doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
     const drawCol = (lines: string[], x: number) => {
       lines.forEach((line, i) => {
+        const wrapped = doc.splitTextToSize(line, colW - 5)
+        const rowY = startY + i * 6
         doc.setFillColor(COLORS.TERRA.r, COLORS.TERRA.g, COLORS.TERRA.b)
-        doc.circle(x + 1.5, startY + 2 + i * lineH - 1.2, 1, 'F')
-        doc.splitTextToSize(line, colW - 6).forEach((w, wi) => {
-          doc.text(w, x + 4, startY + 2 + i * lineH + wi * 4)
+        doc.circle(x + 1.2, rowY + 1.5, 0.8, 'F')
+        wrapped.forEach((w, wi) => {
+          doc.text(w, x + 3, rowY + 2 + wi * lineH)
         })
       })
     }
     drawCol(recipe.ingredients.slice(0, rows), MARGIN)
-    drawCol(recipe.ingredients.slice(rows), MARGIN + colW + 6)
-    cursor.y = startY + blockH
-    cursor.space(6)
+    drawCol(recipe.ingredients.slice(rows), MARGIN + colW + 4)
+    cursor.y = startY + rows * 6 + 2
   }
 
-  // Étapes numérotées
-  cursor.advance(10)
+  // \u00c9tapes num\u00e9rot\u00e9es compactes
   doc.setFont(serif, serifStyle)
-  doc.setFontSize(15)
+  doc.setFontSize(11)
   doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
-  doc.text('La recette, étape par étape', MARGIN, cursor.y + 5)
-  cursor.space(10)
+  doc.text('La recette, étape par étape', MARGIN, cursor.y + 4)
+  cursor.space(6)
 
   doc.setFont('helvetica', 'normal')
-  doc.setFontSize(10.5)
+  doc.setFontSize(8.5)
   recipe.steps.forEach((step, i) => {
-    const lines = doc.splitTextToSize(step, CONTENT_W - 14)
-    const blockH = lines.length * 4.8 + 4
+    const lines = doc.splitTextToSize(step, CONTENT_W - 9)
+    const blockH = lines.length * 3.5 + 1
     cursor.advance(blockH)
     doc.setFillColor(COLORS.TERRA.r, COLORS.TERRA.g, COLORS.TERRA.b)
-    doc.circle(MARGIN + 4, cursor.y + 2, 3.2, 'F')
+    doc.circle(MARGIN + 3, cursor.y + 1.5, 2.4, 'F')
     doc.setTextColor(COLORS.CREME.r, COLORS.CREME.g, COLORS.CREME.b)
     doc.setFont('helvetica', 'bold')
-    doc.setFontSize(9)
-    doc.text(String(i + 1), MARGIN + 4, cursor.y + 3.2)
+    doc.setFontSize(7)
+    doc.text(String(i + 1), MARGIN + 3, cursor.y + 2.4)
     doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
     doc.setFont('helvetica', 'normal')
-    doc.setFontSize(10.5)
+    doc.setFontSize(8.5)
     lines.forEach((line, li) => {
-      doc.text(line, MARGIN + 12, cursor.y + 3 + li * 4.8)
+      doc.text(line, MARGIN + 9, cursor.y + 2 + li * 3.5)
     })
-    cursor.space(blockH)
+    cursor.space(1)
   })
-  cursor.space(4)
+  cursor.space(1)
 
-  // Anecdote sur fond papier-âgé
+  // Anecdote sur fond papier-\u00e2g\u00e9 (compacte)
   if (recipe.anecdote) {
     doc.setFont(hand, handStyle)
-    doc.setFontSize(14)
-    const anecdoteLines = doc.splitTextToSize(`« ${recipe.anecdote} »`, CONTENT_W - 12)
-    const blockH = anecdoteLines.length * 6 + 16
-    cursor.advance(blockH + 4)
+    doc.setFontSize(9.5)
+    const anecdoteLines = doc.splitTextToSize(`« ${recipe.anecdote} »`, CONTENT_W - 9)
+    const blockH = anecdoteLines.length * 4 + 6
+    cursor.advance(blockH + 1)
     doc.setFillColor(COLORS.PAPIER_AGE.r, COLORS.PAPIER_AGE.g, COLORS.PAPIER_AGE.b)
-    doc.roundedRect(MARGIN, cursor.y, CONTENT_W, blockH, 3, 3, 'F')
+    doc.roundedRect(MARGIN, cursor.y, CONTENT_W, blockH, 2, 2, 'F')
     doc.setFont('helvetica', 'bold')
-    doc.setFontSize(9)
+    doc.setFontSize(7)
     doc.setTextColor(COLORS.TERRA.r, COLORS.TERRA.g, COLORS.TERRA.b)
-    doc.text('LE SECRET — CELUI QU\'ON NE DIT QU\'À LA FAMILLE', MARGIN + 6, cursor.y + 7)
+    doc.text('LE SECRET', MARGIN + 4, cursor.y + 5)
     doc.setFont(hand, handStyle)
-    doc.setFontSize(14)
+    doc.setFontSize(9.5)
     doc.setTextColor(91, 70, 50)
     anecdoteLines.forEach((line, i) => {
-      doc.text(line, MARGIN + 6, cursor.y + 14 + i * 6)
+      doc.text(line, MARGIN + 4, cursor.y + 10 + i * 4)
     })
     doc.setFont('helvetica', 'normal')
-    doc.setFontSize(9)
+    doc.setFontSize(7)
     doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
-    doc.text(`— ${author}`, MARGIN + 6, cursor.y + blockH - 4)
-    cursor.space(blockH + 8)
+    doc.text(`— ${author}`, MARGIN + 4, cursor.y + blockH - 2)
+    cursor.space(blockH + 2)
   }
 
-  // Tampon + pied de page famille
-  cursor.advance(30)
-  drawStamp(doc, author, PAGE_W - MARGIN - 20, cursor.y + 12)
+  // Tampon + pied de page famille (compact)
+  cursor.advance(8)
+  drawStamp(doc, author, PAGE_W - MARGIN - 14, cursor.y + 8)
   doc.setFont('helvetica', 'normal')
-  doc.setFontSize(9)
+  doc.setFontSize(7)
   doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
-  doc.text(`Savia — le carnet de la famille ${familyName}`, MARGIN, cursor.y + 8)
-  doc.setFont(hand, handStyle)
-  doc.setFontSize(12)
-  doc.setTextColor(COLORS.TERRA.r, COLORS.TERRA.g, COLORS.TERRA.b)
-  doc.text(`Dans le carnet depuis le ${formatDate(recipe.created_at)}`, MARGIN, cursor.y + 14)
+  doc.text(`Savia — le carnet de la famille ${familyName}`, MARGIN, cursor.y + 5)
 
-  // Pied de page numéroté
+  // Pied de page num\u00e9rot\u00e9
   const pageNumber = doc.internal.getCurrentPageInfo().pageNumber
   doc.setFont('helvetica', 'normal')
-  doc.setFontSize(8)
+  doc.setFontSize(7)
   doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
   const label = pageLabel ? pageLabel(pageNumber) : `Savia — le carnet de recettes de famille · page ${pageNumber}`
-  doc.text(label, MARGIN, PAGE_H - 8)
+  doc.text(label, MARGIN, PAGE_H - 7)
 }
