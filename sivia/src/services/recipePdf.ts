@@ -32,6 +32,7 @@ export const COLORS = {
   CARMINE: { r: 179, g: 59, b: 59 },
   SAUGE: { r: 138, g: 155, b: 110 },
   MOUTARDE: { r: 217, g: 164, b: 65 },
+  MOUTARDE_SOFT: { r: 247, g: 234, b: 209 },  // #f7ead1 — token --color-moutarde-soft
   BLANC: { r: 255, g: 255, b: 255 },
 } as const
 
@@ -304,6 +305,9 @@ export async function drawRecipeOnPdf(
   doc.setFillColor(COLORS.CREME.r, COLORS.CREME.g, COLORS.CREME.b)
   doc.rect(0, 0, PAGE_W, PAGE_H, 'F')
 
+  // Cadre pointill\u00e9 sauge (point de couture) sur toute la page \u2014 style carnet
+  drawDashedRect(doc, 5, 5, PAGE_W - 10, PAGE_H - 10, COLORS.SAUGE, 1.2)
+
   // Kicker
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(7.5)
@@ -317,6 +321,7 @@ export async function drawRecipeOnPdf(
   if (photoUrl) photoJpeg = await loadPhotoAsJpeg(photoUrl)
   const photoW = photoJpeg ? 40 : 0
   const photoH = photoW * 0.75
+  const captionH = photoJpeg ? 4.5 : 0
   const titleMaxW = CONTENT_W - (photoJpeg ? photoW + 6 : 0)
 
   doc.setFont(serif, serifStyle)
@@ -324,7 +329,7 @@ export async function drawRecipeOnPdf(
   doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
   const titleLines = doc.splitTextToSize(recipe.title, titleMaxW)
   const titleH = titleLines.length * 5 + 4
-  const headerH = Math.max(titleH, photoJpeg ? photoH + 6 : 0)
+  const headerH = Math.max(titleH, photoJpeg ? photoH + captionH + 6 : 0)
   const headerY = cursor.y
   titleLines.forEach((line, i) => {
     doc.text(line, MARGIN, headerY + 4 + i * 5)
@@ -336,12 +341,18 @@ export async function drawRecipeOnPdf(
     doc.setFillColor(COLORS.BLANC.r, COLORS.BLANC.g, COLORS.BLANC.b)
     doc.setDrawColor(200, 190, 175)
     doc.setLineWidth(0.3)
-    doc.roundedRect(px - 2, headerY - 2, photoW + 4, photoH + 4, 1, 1, 'FD')
+    doc.roundedRect(px - 2, headerY - 2, photoW + 4, photoH + captionH + 4, 1, 1, 'FD')
     try {
       doc.addImage(photoJpeg, 'JPEG', px, headerY, photoW, photoH)
     } catch {
       // image illisible : cadre vide
     }
+    // L\u00e9gende manuscrite sous la photo (style polaroid)
+    doc.setFont(hand, handStyle)
+    doc.setFontSize(8)
+    doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
+    const caption = doc.splitTextToSize(recipe.title, photoW)[0]
+    doc.text(caption, px + photoW / 2 - doc.getTextWidth(caption) / 2, headerY + photoH + 2.5)
   }
   cursor.y = headerY + headerH + 2
 
@@ -365,12 +376,14 @@ export async function drawRecipeOnPdf(
   })
   cursor.space(6.5)
 
-  // Ingr\u00e9dients : 2 colonnes compactes
+  // Ingr\u00e9dients : titre sur bandeau moutarde, puis 2 colonnes compactes
+  doc.setFillColor(COLORS.MOUTARDE_SOFT.r, COLORS.MOUTARDE_SOFT.g, COLORS.MOUTARDE_SOFT.b)
+  doc.roundedRect(MARGIN, cursor.y, CONTENT_W, 6, 1.5, 1.5, 'F')
   doc.setFont(serif, serifStyle)
-  doc.setFontSize(11)
+  doc.setFontSize(10.5)
   doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
-  doc.text("Ce qu'il faut", MARGIN, cursor.y + 4)
-  cursor.space(6)
+  doc.text("CE QU'IL FAUT", MARGIN + 3, cursor.y + 4.2)
+  cursor.space(8)
 
   if (recipe.ingredients.length > 0) {
     const colW = (CONTENT_W - 4) / 2
@@ -396,12 +409,14 @@ export async function drawRecipeOnPdf(
     cursor.y = startY + rows * 6 + 2
   }
 
-  // \u00c9tapes num\u00e9rot\u00e9es compactes
+  // \u00c9tapes : titre sur bandeau moutarde, puis \u00e9tapes num\u00e9rot\u00e9es compactes
+  doc.setFillColor(COLORS.MOUTARDE_SOFT.r, COLORS.MOUTARDE_SOFT.g, COLORS.MOUTARDE_SOFT.b)
+  doc.roundedRect(MARGIN, cursor.y, CONTENT_W, 6, 1.5, 1.5, 'F')
   doc.setFont(serif, serifStyle)
-  doc.setFontSize(11)
+  doc.setFontSize(10.5)
   doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
-  doc.text('La recette, étape par étape', MARGIN, cursor.y + 4)
-  cursor.space(6)
+  doc.text('LA RECETTE, ÉTAPE PAR ÉTAPE', MARGIN + 3, cursor.y + 4.2)
+  cursor.space(8)
 
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(8.5)
@@ -430,7 +445,8 @@ export async function drawRecipeOnPdf(
     doc.setFont(hand, handStyle)
     doc.setFontSize(9.5)
     const anecdoteLines = doc.splitTextToSize(`« ${recipe.anecdote} »`, CONTENT_W - 9)
-    const blockH = anecdoteLines.length * 4 + 6
+    const sigH = 4
+    const blockH = 10 + anecdoteLines.length * 4 + sigH
     cursor.advance(blockH + 1)
     doc.setFillColor(COLORS.PAPIER_AGE.r, COLORS.PAPIER_AGE.g, COLORS.PAPIER_AGE.b)
     doc.roundedRect(MARGIN, cursor.y, CONTENT_W, blockH, 2, 2, 'F')
@@ -447,7 +463,7 @@ export async function drawRecipeOnPdf(
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(7)
     doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
-    doc.text(`— ${author}`, MARGIN + 4, cursor.y + blockH - 2)
+    doc.text(`— ${author}`, MARGIN + 4, cursor.y + 10 + anecdoteLines.length * 4 + 1)
     cursor.space(blockH + 2)
   }
 

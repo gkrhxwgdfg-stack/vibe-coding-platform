@@ -10,6 +10,8 @@
   --color-terra: #c4643a;
   --color-terra-dark: #a34e2b;
   --color-moutarde: #d9a441;
+  /* Moutarde-soft : surlignage doux (mode cuisson, bandeaux PDF) */
+  --color-moutarde-soft: #f7ead1;
   --color-bleu: #5b7a9e;
   --color-bleu-dark: #46617f;
   --color-lin: #efe8dc;

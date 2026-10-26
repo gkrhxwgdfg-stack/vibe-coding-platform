@@ -5,6 +5,7 @@ import {
   COLORS,
   CONTENT_W,
   Cursor,
+  drawDashedRect,
   drawRecipeOnPdf,
   drawStamp,
   MARGIN,
@@ -172,61 +173,72 @@ export async function generateFamilyBookPdf(input: FamilyBookInput): Promise<{ p
     return b.created_at.localeCompare(a.created_at)
   })
 
-  // ---------- Couverture ----------
+  // ---------- Couverture (style carnet manuscrit : cadre couture, titre serif, tampon, arbre) ----------
   paintPageBackground(doc)
   let cursor = new Cursor(doc)
-  cursor.y = 60
+
+  // Cadre pointillé terracotta (point de couture) sur toute la page, marge intérieure 6mm
+  drawDashedRect(doc, 6, 6, PAGE_W - 12, PAGE_H - 12, COLORS.TERRA, 1.5)
+
+  // Kicker "SAVIA" en haut, centré
+  cursor.y = 22
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(9)
+  doc.setTextColor(COLORS.TERRA.r, COLORS.TERRA.g, COLORS.TERRA.b)
+  const kicker = 'SAVIA'
+  doc.text(kicker, centeredX(doc, kicker), cursor.y)
+
+  // Titre principal : "Le carnet de {famille}" en Fraunces, grand, centré
+  cursor.y = 48
   doc.setFont(fonts.serif, fonts.serifStyle)
-  doc.setFontSize(30)
+  doc.setFontSize(28)
   doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
-  doc.splitTextToSize(`Le carnet de ${familyName}`, CONTENT_W).forEach((line, i) => {
-    doc.text(line, centeredX(doc, line), cursor.y + i * 12)
+  doc.splitTextToSize(`Le carnet de ${familyName}`, CONTENT_W - 12).forEach((line, i) => {
+    doc.text(line, centeredX(doc, line), cursor.y + i * 11)
   })
-  cursor.space(20)
+  cursor.space(28)
+
+  // Tagline en Caveat, terracotta, centrée
   doc.setFont(fonts.hand, fonts.handStyle)
-  doc.setFontSize(16)
+  doc.setFontSize(18)
   doc.setTextColor(COLORS.TERRA.r, COLORS.TERRA.g, COLORS.TERRA.b)
   const tagline = 'Le savoir qui se transmet à table.'
   doc.text(tagline, centeredX(doc, tagline), cursor.y)
-  cursor.space(16)
+  cursor.space(20)
+
+  // Tampon centré (plus grand : rayon 16mm déjà dans drawStamp)
   drawCenteredStamp(doc, familyName, cursor.y + 16)
-  cursor.space(40)
-  // Mini-arbre des générations
+  cursor.space(42)
+
+  // Séparateur décoratif : petite ligne pointillée centrée
+  doc.setDrawColor(COLORS.TERRA.r, COLORS.TERRA.g, COLORS.TERRA.b)
+  doc.setLineWidth(0.4)
+  const sepW = 40
+  const sepX = (PAGE_W - sepW) / 2
+  for (let d = 0; d < sepW; d += 3) {
+    doc.line(sepX + d, cursor.y, sepX + d + 1.5, cursor.y)
+  }
+  cursor.space(10)
+
+  // Mini-arbre des générations (centré lui aussi)
   drawGenerationTree(doc, cursor, treeMembers, fonts)
+  cursor.space(12)
+
+  // Infos couverture : nb recettes + imprimé par (centré)
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(9)
+  doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
+  const couvInfo = `${recipes.length} recette${recipes.length > 1 ? 's' : ''} au sommaire · Imprimé par ${printedBy} le ${formatDate(new Date().toISOString())}`
+  doc.splitTextToSize(couvInfo, CONTENT_W - 12).forEach((line, i) => {
+    doc.text(line, centeredX(doc, line), cursor.y + i * 4)
+  })
+
   // Pied de page couverture
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(8)
   doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
-  doc.text(label(1), MARGIN, PAGE_H - 8)
-
-  // ---------- Page de garde ----------
-  doc.addPage()
-  paintPageBackground(doc)
-  cursor = new Cursor(doc)
-  cursor.y = 70
-  doc.setFont(fonts.serif, fonts.serifStyle)
-  doc.setFontSize(18)
-  doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
-  const gardeLine = 'Ce carnet appartient à la famille'
-  doc.text(gardeLine, centeredX(doc, gardeLine), cursor.y)
-  cursor.space(14)
-  doc.setFont(fonts.serif, fonts.serifStyle)
-  doc.setFontSize(26)
-  doc.setTextColor(COLORS.TERRA.r, COLORS.TERRA.g, COLORS.TERRA.b)
-  doc.text(familyName, centeredX(doc, familyName), cursor.y)
-  cursor.space(20)
-  doc.setFont('helvetica', 'normal')
-  doc.setFontSize(11)
-  doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
-  const sommaireLine = `${recipes.length} recette${recipes.length > 1 ? 's' : ''} au sommaire`
-  doc.text(sommaireLine, centeredX(doc, sommaireLine), cursor.y)
-  cursor.space(8)
-  const imprimeLine = `Imprimé par ${printedBy} le ${formatDate(new Date().toISOString())}`
-  doc.text(imprimeLine, centeredX(doc, imprimeLine), cursor.y)
-  doc.setFont('helvetica', 'normal')
-  doc.setFontSize(8)
-  doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
-  doc.text(label(2), MARGIN, PAGE_H - 8)
+  const couvFooter = `Carnet ${familyName}`
+  doc.text(couvFooter, centeredX(doc, couvFooter), PAGE_H - 10)
 
   // ---------- Sommaire ----------
   doc.addPage()
@@ -262,16 +274,11 @@ export async function generateFamilyBookPdf(input: FamilyBookInput): Promise<{ p
     const authorWidth = doc.getTextWidth(author)
     doc.text(author, PAGE_W - MARGIN - authorWidth, cursor.y + 4)
   }
-  // Index par auteur (page estimée à la fin)
-  cursor.advance(12)
-  doc.setFont(fonts.serif, fonts.serifStyle)
-  doc.setFontSize(16)
-  doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
-  doc.text('Index par auteur', MARGIN, cursor.y + 4)
+  // Pied de page du sommaire
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(8)
   doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
-  doc.text(label(3), MARGIN, PAGE_H - 8)
+  doc.text(label(2), MARGIN, PAGE_H - 8)
 
   // ---------- Recettes ----------
   for (const recipe of sorted) {
@@ -327,8 +334,8 @@ export async function generateFamilyBookPdf(input: FamilyBookInput): Promise<{ p
 
 /** Compte les pages estimées (pour l'aperçu avant génération) */
 export function estimateBookPageCount(recipeCount: number): { pages: number; label: string } {
-  // couverture + garde + sommaire + recettes (≈1 page chacune) + index
-  const pages = 3 + recipeCount + 1
+  // couverture + sommaire + recettes (1 page chacune, mise en page compacte) + index
+  const pages = 2 + recipeCount + 1
   return { pages, label: `≈ ${pages} pages` }
 }
 
