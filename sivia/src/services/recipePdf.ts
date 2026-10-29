@@ -369,17 +369,17 @@ export async function drawRecipeOnPdf(
     .filter(Boolean)
     .join('  ·  ')
   doc.splitTextToSize(metaLine, CONTENT_W).forEach((line, i) => {
-    doc.text(line, MARGIN, cursor.y + 3 + i * 3.5)
+    doc.text(line, MARGIN, cursor.y + 3.5 + i * 4.5)
   })
-  cursor.space(4.5)
+  cursor.space(6)
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(7.5)
   doc.setTextColor(COLORS.TERRA.r, COLORS.TERRA.g, COLORS.TERRA.b)
   const bannerText = `Transmise par ${author} · dans le carnet depuis ${formatDate(recipe.created_at)}`
   doc.splitTextToSize(bannerText, CONTENT_W).forEach((line, i) => {
-    doc.text(line, MARGIN, cursor.y + 3 + i * 3.5)
+    doc.text(line, MARGIN, cursor.y + 3.5 + i * 4.5)
   })
-  cursor.space(6.5)
+  cursor.space(7.5)
 
   // Ingr\u00e9dients : titre sur bandeau moutarde, puis 2 colonnes compactes
   doc.setFillColor(COLORS.MOUTARDE_SOFT.r, COLORS.MOUTARDE_SOFT.g, COLORS.MOUTARDE_SOFT.b)
@@ -392,26 +392,27 @@ export async function drawRecipeOnPdf(
 
   if (recipe.ingredients.length > 0) {
     const colW = (CONTENT_W - 4) / 2
-    const lineH = 3.2
+    const lineH = 4.5
     const rows = Math.ceil(recipe.ingredients.length / 2)
+    const rowH = 7
     const startY = cursor.y
     doc.setFont('helvetica', 'normal')
-    doc.setFontSize(7.5)
+    doc.setFontSize(8.5)
     doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
     const drawCol = (lines: string[], x: number) => {
       lines.forEach((line, i) => {
         const wrapped = doc.splitTextToSize(line, colW - 5)
-        const rowY = startY + i * 6
+        const rowY = startY + i * rowH
         doc.setFillColor(COLORS.TERRA.r, COLORS.TERRA.g, COLORS.TERRA.b)
-        doc.circle(x + 1.2, rowY + 1.5, 0.8, 'F')
+        doc.circle(x + 1.2, rowY + 2, 0.9, 'F')
         wrapped.forEach((w, wi) => {
-          doc.text(w, x + 3, rowY + 2 + wi * lineH)
+          doc.text(w, x + 3.5, rowY + 3 + wi * lineH)
         })
       })
     }
     drawCol(recipe.ingredients.slice(0, rows), MARGIN)
     drawCol(recipe.ingredients.slice(rows), MARGIN + colW + 4)
-    cursor.y = startY + rows * 6 + 2
+    cursor.y = startY + rows * rowH + 2
   }
 
   // \u00c9tapes : titre sur bandeau moutarde, puis \u00e9tapes num\u00e9rot\u00e9es compactes
@@ -424,51 +425,53 @@ export async function drawRecipeOnPdf(
   cursor.space(8)
 
   doc.setFont('helvetica', 'normal')
-  doc.setFontSize(8.5)
+  doc.setFontSize(9.5)
+  const STEP_LH = 4.8
+  const STEP_GAP = 2.5
   recipe.steps.forEach((step, i) => {
-    const lines = doc.splitTextToSize(step, CONTENT_W - 9)
-    const blockH = lines.length * 3.5 + 1
+    const lines = doc.splitTextToSize(step, CONTENT_W - 10)
+    const blockH = lines.length * STEP_LH + STEP_GAP
     cursor.advance(blockH)
     doc.setFillColor(COLORS.TERRA.r, COLORS.TERRA.g, COLORS.TERRA.b)
-    doc.circle(MARGIN + 3, cursor.y + 1.5, 2.4, 'F')
+    doc.circle(MARGIN + 3.5, cursor.y + 2.5, 2.6, 'F')
     doc.setTextColor(COLORS.CREME.r, COLORS.CREME.g, COLORS.CREME.b)
     doc.setFont('helvetica', 'bold')
-    doc.setFontSize(7)
-    doc.text(String(i + 1), MARGIN + 3, cursor.y + 2.4)
+    doc.setFontSize(8)
+    doc.text(String(i + 1), MARGIN + 3.5, cursor.y + 3.5)
     doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
     doc.setFont('helvetica', 'normal')
-    doc.setFontSize(8.5)
+    doc.setFontSize(9.5)
     lines.forEach((line, li) => {
-      doc.text(line, MARGIN + 9, cursor.y + 2 + li * 3.5)
+      doc.text(line, MARGIN + 10, cursor.y + 3 + li * STEP_LH)
     })
-    cursor.space(1)
+    cursor.space(blockH)
   })
-  cursor.space(1)
 
   // Anecdote sur fond papier-\u00e2g\u00e9 (compacte)
   if (recipe.anecdote) {
     doc.setFont(hand, handStyle)
-    doc.setFontSize(9.5)
-    const anecdoteLines = doc.splitTextToSize(`« ${recipe.anecdote} »`, CONTENT_W - 9)
-    const sigH = 4
-    const blockH = 10 + anecdoteLines.length * 4 + sigH
+    doc.setFontSize(11)
+    const anecdoteLines = doc.splitTextToSize(`« ${recipe.anecdote} »`, CONTENT_W - 10)
+    const ANECDOTE_LH = 5.5
+    const sigH = 5
+    const blockH = 11 + anecdoteLines.length * ANECDOTE_LH + sigH
     cursor.advance(blockH + 1)
     doc.setFillColor(COLORS.PAPIER_AGE.r, COLORS.PAPIER_AGE.g, COLORS.PAPIER_AGE.b)
     doc.roundedRect(MARGIN, cursor.y, CONTENT_W, blockH, 2, 2, 'F')
     doc.setFont('helvetica', 'bold')
-    doc.setFontSize(7)
+    doc.setFontSize(7.5)
     doc.setTextColor(COLORS.TERRA.r, COLORS.TERRA.g, COLORS.TERRA.b)
-    doc.text('LE SECRET', MARGIN + 4, cursor.y + 5)
+    doc.text('LE SECRET', MARGIN + 4, cursor.y + 5.5)
     doc.setFont(hand, handStyle)
-    doc.setFontSize(9.5)
+    doc.setFontSize(11)
     doc.setTextColor(91, 70, 50)
     anecdoteLines.forEach((line, i) => {
-      doc.text(line, MARGIN + 4, cursor.y + 10 + i * 4)
+      doc.text(line, MARGIN + 5, cursor.y + 12 + i * ANECDOTE_LH)
     })
     doc.setFont('helvetica', 'normal')
-    doc.setFontSize(7)
+    doc.setFontSize(7.5)
     doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
-    doc.text(`— ${author}`, MARGIN + 4, cursor.y + 10 + anecdoteLines.length * 4 + 1)
+    doc.text(`— ${author}`, MARGIN + 5, cursor.y + 12 + anecdoteLines.length * ANECDOTE_LH + 1)
     cursor.space(blockH + 2)
   }
 

@@ -1,6 +1,7 @@
 /**
  * Test de la mise en page PDF — simule jsPDF et vérifie :
- * 1. Une recette complexe tient en 1 page (2 max) en A5 — mise en page compacte.
+ * 1. Une recette complexe tient en 2 pages max en A5 — interligne généreux
+ *    prioritaire (lisibilité grands-parents > compacité).
  * 2. Le texte centré est bien centré (pas de décalage).
  * 3. Les pieds de page sont numérotés correctement.
  * 4. Aucune séquence \uXXXX littérale dans les chaînes affichées.
@@ -101,35 +102,34 @@ function simulateRecipeCompact(doc, recipe) {
   doc.setFontSize(10)
   const metaLine = `créée par ${recipe.author} · ${recipe.servings} parts · Prépa 30 min · Cuisson 1h30`
   const metaLines = doc.splitTextToSize(metaLine, CONTENT_W)
-  cursor.space(metaLines.length * 3.5 + 1)
+  cursor.space(metaLines.length * 4.5 + 2)
   doc.setFontSize(7.5)
   const bannerLines = doc.splitTextToSize(`Transmise par ${recipe.author} · dans le carnet depuis ${recipe.date}`, CONTENT_W)
-  cursor.space(bannerLines.length * 3.5 + 3)
+  cursor.space(bannerLines.length * 4.5 + 4)
 
   // Ingrédients : bandeau moutarde-soft 6mm + espace
   cursor.space(6 + 8)
   if (recipe.ingredients.length > 0) {
     const rows = Math.ceil(recipe.ingredients.length / 2)
-    cursor.y += rows * 6 + 2
+    cursor.y += rows * 7 + 2
   }
 
   // Étapes : bandeau moutarde-soft 6mm + espace
   cursor.space(6 + 8)
-  doc.setFontSize(8.5)
+  doc.setFontSize(9.5)
   recipe.steps.forEach((step) => {
-    const lines = doc.splitTextToSize(step, CONTENT_W - 9)
-    const blockH = lines.length * 3.5 + 1
+    const lines = doc.splitTextToSize(step, CONTENT_W - 10)
+    const blockH = lines.length * 4.8 + 2.5
     cursor.advance(blockH)
-    cursor.space(1)
+    cursor.space(blockH)
   })
-  cursor.space(1)
 
   // Anecdote
   if (recipe.anecdote) {
-    doc.setFontSize(9.5)
-    const lines = doc.splitTextToSize(`« ${recipe.anecdote} »`, CONTENT_W - 9)
-    const sigH = 4
-    const blockH = 10 + lines.length * 4 + sigH
+    doc.setFontSize(11)
+    const lines = doc.splitTextToSize(`« ${recipe.anecdote} »`, CONTENT_W - 10)
+    const sigH = 5
+    const blockH = 11 + lines.length * 5.5 + sigH
     cursor.advance(blockH + 1)
     cursor.space(blockH + 2)
   }
@@ -174,11 +174,11 @@ function check(label, cond, detail = '') {
   if (!cond) failures++
 }
 
-console.log('=== Test 1 : recette complexe tient en 1 page (mise en page compacte) ===')
+console.log('=== Test 1 : recette complexe tient en 2 pages max (interligne généreux) ===')
 {
   const doc = new MockDoc()
   const pages = simulateRecipeCompact(doc, complexRecipe)
-  check('recette complexe (photo + 8 ingrédients + 6 étapes longues + anecdote longue)', pages === 1, `${pages} page(s)`)
+  check('recette complexe (photo + 8 ingrédients + 6 étapes longues + anecdote longue)', pages <= 2, `${pages} page(s)`)
 }
 
 console.log('\n=== Test 2 : recette simple tient en 1 page ===')
@@ -197,7 +197,7 @@ console.log('\n=== Test 2 : recette simple tient en 1 page ===')
   check('recette simple sans photo', pages === 1, `${pages} page(s)`)
 }
 
-console.log('\n=== Test 3 : recette très longue (10 étapes, 15 ingrédients) tient en 2 pages max ===')
+console.log('\n=== Test 3 : recette très longue (10 étapes, 15 ingrédients) tient en 3 pages max ===')
 {
   const doc = new MockDoc()
   const pages = simulateRecipeCompact(doc, {
@@ -210,7 +210,7 @@ console.log('\n=== Test 3 : recette très longue (10 étapes, 15 ingrédients) t
     steps: Array.from({ length: 10 }, (_, i) => `Étape numéro ${i + 1} : faire quelque chose de précis avec beaucoup de détails et une phrase assez longue pour simuler une vraie recette de famille transmise de génération en génération.`),
     anecdote: 'Cette recette vient de mon arrière-grand-mère qui la tenait de sa propre mère. Elle la préparait pour chaque anniversaire.',
   })
-  check('recette très longue', pages <= 3, `${pages} page(s)`)
+  check('recette très longue', pages <= 4, `${pages} page(s)`)
 }
 
 console.log('\n=== Test 4 : centrage correct (helper centeredX) ===')
