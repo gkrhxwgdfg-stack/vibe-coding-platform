@@ -7,16 +7,17 @@
    ============================================================ */
 
 @theme {
-  --color-terra: #c4643a;
-  --color-terra-dark: #a34e2b;
+  --color-terra: #bf5b38;
+  --color-terra-dark: #a34a29;
   --color-moutarde: #d9a441;
   /* Moutarde-soft : surlignage doux (mode cuisson, bandeaux PDF) */
   --color-moutarde-soft: #f7ead1;
   --color-bleu: #5b7a9e;
   --color-bleu-dark: #46617f;
-  --color-lin: #efe8dc;
-  --color-creme: #fbf6ec;
-  --color-encre: #4a3728;
+  /* Lin réchauffé : base « torchon de cuisine » — beige chaud */
+  --color-lin: #f3ead9;
+  --color-creme: #fdfaf1;
+  --color-encre: #43301f;
   /* Assombri au chantier 8 : #7a6a58 = 4.28:1 sur lin, \u00e9chec WCAG AA */
   --color-encre-soft: #6b5b4a;
   --color-sauge: #8a9b6e;
@@ -28,6 +29,8 @@
   --color-brun: #6b4a32;
   /* Assombri au chantier 8 : #8a6a52 = 4.04:1 sur lin, \u00e9chec WCAG AA */
   --color-brun-soft: #7a5c44;
+  /* Ficelle de cuisine : cordelette terracotta foncée des attaches */
+  --color-ficelle: #8f5732;
 
   --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
   --font-sans: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -48,8 +51,8 @@ body {
   color: var(--color-encre);
   line-height: 1.6;
   background:
-    radial-gradient(ellipse at 15% 0%, rgba(217, 164, 65, 0.12), transparent 55%),
-    radial-gradient(ellipse at 95% 20%, rgba(196, 100, 58, 0.08), transparent 50%),
+    radial-gradient(ellipse at 15% 0%, rgba(217, 164, 65, 0.14), transparent 55%),
+    radial-gradient(ellipse at 95% 20%, rgba(191, 91, 56, 0.07), transparent 50%),
     var(--color-lin);
   min-height: 100dvh;
 }

@@ -5,7 +5,7 @@ import { categoryMeta } from '@/lib/constants'
 import { photoPublicUrl } from '@/services/recipes'
 import { Stamp } from '@/components/ui/Stamp'
 import { Torchon } from '@/components/ui/Torchon'
-import { Washi } from '@/components/ui/Washi'
+import { Twine } from '@/components/ui/Twine'
 
 interface DailyRecipeCardProps {
   recipe: RecipeWithMeta
@@ -25,7 +25,7 @@ export function DailyRecipeCard({ recipe }: DailyRecipeCardProps) {
       to={`/recettes/${recipe.id}`}
       className="group relative block card-surface overflow-visible p-0 anim-pop hover:-translate-y-[3px] transition-transform"
     >
-      <Washi corner="top-left" />
+      <Twine corner="top-left" />
       <div className="relative aspect-[16/10] bg-lin overflow-hidden rounded-t-[1.25rem]">
         {photo ? (
           <img

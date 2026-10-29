@@ -52,7 +52,7 @@ interface FamilyTreeProps {
  * - « + » sous une carte : ajouter un ENFANT en dessous.
  * - Scotch « + » sur le bord droit d'une carte sans partenaire : ajouter un
  *   PARTENAIRE à côté (même génération — conjoint·e, copine, pacsé·e…).
- *   Les couples sont « scotchés » ensemble par un vrai ruban adhésif (Tape).
+ *   Les couples sont reliés par une ficelle de cuisine (Tape).
  * - « + » carmine en haut : ajouter un aîné au-dessus (les racines existantes
  *   deviennent ses enfants : elle passe au-dessus, l'arbre reste structuré).
  * - Coordonnées en pixels fournies par `buildFamilyTreeLayout` : aucune
@@ -127,7 +127,7 @@ export function FamilyTree({
             </filter>
           </defs>
           {segments
-            .filter((seg) => seg.kind !== 'couple') // le scotch couple est en HTML (Tape)
+            .filter((seg) => seg.kind !== 'couple') // la ficelle couple est en HTML (Tape)
             .map((seg, i) => {
             return (
               <line

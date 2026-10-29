@@ -2,42 +2,41 @@ import { Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 /**
- * Scotch adhésif artisanal — deux usages dans l'arbre généalogique :
+ * Ficelle de cuisine — deux usages dans l'arbre généalogique :
  *
- * - `Tape` (entre deux cartes d'un couple) : ruban qui « scotche » les deux
- *   personnes ensemble, à cheval sur le bord des deux polaroïds, légèrement
- *   incliné. Remplace l'ancienne ligne + point.
- * - `TapeAddButton` (sur le bord droit d'une carte sans partenaire) : petit
- *   scotch avec un « + » qui invite à accoler un partenaire (conjoint·e,
- *   copine…) à côté de la personne, même génération.
+ * - `Tape` (entre deux cartes d'un couple) : cordelette torsadée brun-
+ *   terracotta qui relie les deux personnes, à la façon des cuisines
+ *   traditionnelles. Remplace l'ancien scotch washi texturé.
+ * - `TapeAddButton` (sur le bord droit d'une carte sans partenaire) :
+ *   petite pastille « ficelle » avec un « + » pour inviter à accoler un
+ *   partenaire (conjoint·e, copine…) à côté, même génération.
  */
 
 interface TapeProps {
-  /** Bord gauche du scotch, en px (relatif au canevas de l'arbre) */
+  /** Bord gauche de la ficelle, en px (relatif au canevas de l'arbre) */
   x: number
-  /** Bord haut du scotch, en px */
+  /** Bord haut de la ficelle, en px */
   y: number
-  /** Largeur du scotch en px (l'écart entre les deux cartes) */
+  /** Largeur du lien en px (l'écart entre les deux cartes) */
   width: number
   className?: string
 }
 
-/** Scotch entre deux cartes d'un couple (décoration, non interactif) */
+/** Ficelle entre deux cartes d'un couple (décoration, non interactive) */
 export function Tape({ x, y, width, className }: TapeProps) {
   return (
     <div
       aria-hidden="true"
-      className={cn('absolute pointer-events-none', className)}
+      className={cn('absolute pointer-events-none flex items-center', className)}
       style={{ left: x, top: y, width, height: 26 }}
     >
-      <div
-        className="w-full h-full rounded-sm shadow-card"
+      {/* Cordelette torsadée tendue entre les deux polaroïds */}
+      <span
+        className="block w-full h-1.5 rounded-full"
         style={{
           background:
-            'linear-gradient(105deg, rgba(217,164,65,0.85) 0%, rgba(217,164,65,0.65) 45%, rgba(196,100,58,0.7) 100%)',
-          transform: 'rotate(-2deg)',
-          borderLeft: '2px dashed rgba(251,246,236,0.6)',
-          borderRight: '2px dashed rgba(251,246,236,0.6)',
+            'repeating-linear-gradient(90deg, var(--color-terra) 0px, var(--color-terra) 5px, var(--color-ficelle) 5px, var(--color-ficelle) 10px)',
+          boxShadow: '0 1px 2px rgba(74, 55, 40, 0.3)',
         }}
       />
     </div>
@@ -50,7 +49,7 @@ interface TapeAddButtonProps {
   onClick: () => void
 }
 
-/** Petit scotch « + » cliquable sur le bord droit d'une carte (ajouter un partenaire) */
+/** Pastille « + » ficelle cliquable sur le bord droit d'une carte (ajouter un partenaire) */
 export function TapeAddButton({ memberName, onClick }: TapeAddButtonProps) {
   return (
     <button
@@ -59,15 +58,13 @@ export function TapeAddButton({ memberName, onClick }: TapeAddButtonProps) {
       aria-label={`Ajouter un partenaire à côté de ${memberName}`}
       title={`Ajouter un partenaire à côté de ${memberName} (même génération)`}
       className={cn(
-        'absolute -right-3 top-24 z-10 touch-target-lg min-h-11 min-w-11 rounded-sm shadow-card',
+        'absolute -right-3.5 top-24 z-10 touch-target-lg min-h-11 min-w-11 rounded-full shadow-card',
         'inline-flex items-center justify-center transition-transform hover:scale-110 active:scale-95',
       )}
       style={{
         background:
-          'linear-gradient(105deg, rgba(217,164,65,0.9) 0%, rgba(217,164,65,0.7) 45%, rgba(196,100,58,0.75) 100%)',
-        transform: 'rotate(3deg)',
-        borderLeft: '2px dashed rgba(251,246,236,0.6)',
-        borderRight: '2px dashed rgba(251,246,236,0.6)',
+          'radial-gradient(circle at 35% 30%, var(--color-terra-dark) 0%, var(--color-ficelle) 100%)',
+        border: '2px solid rgba(251, 246, 236, 0.85)',
       }}
     >
       <Plus size={18} strokeWidth={3} className="text-creme drop-shadow" aria-hidden="true" />

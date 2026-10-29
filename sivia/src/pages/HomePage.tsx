@@ -16,7 +16,7 @@ import { ExpandableText } from '@/components/ui/ExpandableText'
 import { photoPublicUrl } from '@/services/recipes'
 import { COPY } from '@/lib/copy'
 import { MOTION, pickDaily, stableTilt } from '@/lib/motion'
-import { Washi } from '@/components/ui/Washi'
+import { Twine } from '@/components/ui/Twine'
 import { DailyRecipeCard } from '@/components/recipes/DailyRecipeCard'
 import type { RecipeComment } from '@/lib/types'
 
@@ -111,7 +111,7 @@ export function HomePage() {
                   transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
                 }}
               >
-                <Washi corner={i % 2 === 0 ? 'top-left' : 'top-right'} />
+                <Twine corner={i % 2 === 0 ? 'top-left' : 'top-right'} />
                 <Polaroid
                   src={photoPublicUrl(recipe.photo_url)}
                   caption={`${recipe.title} — ${recipe.author?.display_name ?? ''}`}
@@ -130,7 +130,7 @@ export function HomePage() {
                   transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
                 }}
               >
-                <Washi corner={i % 2 === 0 ? 'top-right' : 'top-left'} />
+                <Twine corner={i % 2 === 0 ? 'top-right' : 'top-left'} />
                 <Polaroid
                   src={photoPublicUrl(comment.photo_url)}
                   caption={
@@ -156,7 +156,7 @@ export function HomePage() {
                 className="relative inline-block anim-pop"
                 style={{ animationDelay: `${(recentPhotos.length + photoComments.length + i) * MOTION.staggerPlanche}ms` }}
               >
-                <Washi corner={i % 2 === 0 ? 'top-left' : 'top-right'} />
+                <Twine corner={i % 2 === 0 ? 'top-left' : 'top-right'} />
                 <Polaroid
                   src={photoPublicUrl(comment.photo_url)}
                   caption={
