@@ -31,10 +31,14 @@ export function FavoritesPage() {
           </Link>
         </EmptyState>
       ) : (
-        <div className="grid gap-5 sm:grid-cols-2">
-          {favorites.map((recipe) => (
-            <RecipeCard key={recipe.id} recipe={recipe} />
-          ))}
+        <div className="relative">
+          {/* Tamis très léger derrière la grille (mapping §8 — signature Favoris) */}
+          <div className="absolute inset-0 motif-tamis opacity-40 pointer-events-none" aria-hidden="true" />
+          <div className="grid gap-5 sm:grid-cols-2">
+            {favorites.map((recipe) => (
+              <RecipeCard key={recipe.id} recipe={recipe} />
+            ))}
+          </div>
         </div>
       )}
     </div>

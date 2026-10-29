@@ -129,10 +129,25 @@ export function RecipeDetailPage() {
     if (!deleteError) navigate('/recettes', { replace: true })
   }
 
+  // Onglet de chapitre : couleur de la catégorie (§7 — Entrées vert, Plats
+  // tomate, Desserts blé, Fêtes cannelle ; texte encre sur le blé, contraste)
+  const CHAPTER_TAB: Record<string, string> = {
+    entree: 'bg-vert text-white',
+    plat: 'bg-tomate text-white',
+    dessert: 'bg-ble text-encre',
+    fete: 'bg-cannelle text-white',
+  }
+
   return (
     <div className="relative space-y-6">
       {/* Trace d'ingrédient de la catégorie : une seule, sous le contenu (§8) */}
       <CategoryTrace category={current.category} />
+      {/* Onglet de chapitre : marqueur de carnet débordant du haut de la fiche */}
+      <div className="flex" aria-hidden="true">
+        <span className={cn('-mb-2 rounded-t-xl px-5 py-1.5 font-extrabold text-sm uppercase tracking-[0.12em] shadow-card', CHAPTER_TAB[current.category] ?? 'bg-carte text-encre')}>
+          {meta.label}
+        </span>
+      </div>
       <Link to="/recettes" className="relative inline-flex items-center gap-1 text-vert font-bold min-h-11 hover:underline">
         <ArrowLeft size={18} aria-hidden="true" /> Retour au carnet
       </Link>
@@ -343,20 +358,18 @@ export function RecipeDetailPage() {
         )}
       </Card>
 
-      {/* Anecdote — mise en valeur : papier âgé, bord ondulé, en exergue */}
+      {/* Anecdote — marginalia : 1 note max par page, astuces transmises (§7) */}
       {recipe.anecdote && (
-        <Card className="paper-aged cadre-couture motif-tamis border-transparent shadow-soft px-6 pt-5 pb-7 anim-enter">
-          <p className="kicker">Le secret</p>
-          <h2 className="font-serif text-2xl font-semibold mb-3">— celui qu’on ne dit qu’à la famille</h2>
-          <blockquote className="font-serif italic text-encre text-2xl leading-relaxed">
+        <aside className="marge-note anim-enter" aria-label="Le secret de la famille">
+          <p className="kicker mb-2">Le secret — celui qu’on ne dit qu’à la famille</p>
+          <p className="font-serif italic text-encre text-2xl leading-relaxed">
             « {recipe.anecdote} »
-          </blockquote>
-          <hr className="filet-double" />
-          <p className="mt-3 flex items-center gap-2 text-encre-doux font-bold">
+          </p>
+          <p className="mt-3 flex items-center gap-2 text-encre-doux font-bold not-italic">
             {recipe.author && <Avatar name={recipe.author.display_name} src={recipe.author.avatar_url} size="sm" />}
             <span>— {recipe.author?.display_name}</span>
           </p>
-        </Card>
+        </aside>
       )}
 
       {/* Fil de vie : commentaires et photos de la famille */}
