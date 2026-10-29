@@ -197,7 +197,7 @@ export function FamilyMemberModal({
             type="button"
             onClick={onClose}
             aria-label="Ranger"
-            className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra-dark inline-flex items-center justify-center"
+            className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-doux hover:text-tomate inline-flex items-center justify-center"
           >
             <X size={22} aria-hidden="true" />
           </button>
@@ -205,7 +205,7 @@ export function FamilyMemberModal({
 
         {/* Accroche pré-remplie via le « + » */}
         {!isEditing && prefillParent && (
-          <p className="text-sm bg-sauge/15 border border-sauge/40 rounded-xl px-4 py-3 mb-4">
+          <p className="text-sm bg-vert/15 border border-vert/40 rounded-xl px-4 py-3 mb-4">
             {prefillLinkKind === 'partner' ? (
               <>
                 À côté de <strong>{prefillParent.first_name}</strong> (partenaire — scotch entre les deux cartes).
@@ -218,7 +218,7 @@ export function FamilyMemberModal({
           </p>
         )}
         {!isEditing && !prefillParent && (
-          <p className="text-sm text-encre-soft mb-4">
+          <p className="text-sm text-encre-doux mb-4">
             Pour quelqu'un qui n'a pas de compte — mamie Jeanne, par exemple. Elle figurera dans
             l'arbre et pourra être citée comme origine d'une recette.
           </p>
@@ -250,7 +250,7 @@ export function FamilyMemberModal({
           />
 
           {/* ---------- Relié à … (type de lien + une ou deux personnes) ---------- */}
-          <div className="rounded-2xl bg-sauge/15 p-4 space-y-4">
+          <div className="rounded-2xl bg-vert/15 p-4 space-y-4">
             <p className="font-bold text-encre">Relié à …</p>
             <div>
               <label htmlFor="member-parent" className="block font-bold text-encre mb-1.5">
@@ -260,7 +260,7 @@ export function FamilyMemberModal({
                 id="member-parent"
                 value={parentId}
                 onChange={(e) => setParentId(e.target.value)}
-                className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-4 py-2.5 focus:border-terra focus:outline-none"
+                className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-carte px-4 py-2.5 focus:border-tomate focus:outline-none"
               >
                 <option value="">— Personne (base de l'arbre) —</option>
                 {possibleParents.map((m) => (
@@ -286,8 +286,8 @@ export function FamilyMemberModal({
                     className={cn(
                       'min-h-11 rounded-xl border-2 px-3 py-2 text-sm font-bold text-left transition-colors',
                       linkKind === 'parent'
-                        ? 'border-terra bg-terra/10 text-encre'
-                        : 'border-encre/20 bg-creme text-encre-soft hover:border-terra/50',
+                        ? 'border-tomate bg-tomate/10 text-encre'
+                        : 'border-encre/20 bg-carte text-encre-doux hover:border-tomate/50',
                     )}
                   >
                     Enfant — en dessous
@@ -300,14 +300,14 @@ export function FamilyMemberModal({
                     className={cn(
                       'min-h-11 rounded-xl border-2 px-3 py-2 text-sm font-bold text-left transition-colors',
                       linkKind === 'partner'
-                        ? 'border-terra bg-terra/10 text-encre'
-                        : 'border-encre/20 bg-creme text-encre-soft hover:border-terra/50',
+                        ? 'border-tomate bg-tomate/10 text-encre'
+                        : 'border-encre/20 bg-carte text-encre-doux hover:border-tomate/50',
                     )}
                   >
                     Partenaire — à côté
                   </button>
                 </div>
-                <p className="text-sm text-encre-soft mt-1.5">
+                <p className="text-sm text-encre-doux mt-1.5">
                   {linkKind === 'partner'
                     ? 'Conjoint·e, copine, pacsé·e… : à côté, même génération (scotch entre les deux cartes).'
                     : 'Fils, fille, recueilli·e… : en dessous du référent (l’arbre descend).'}
@@ -323,7 +323,7 @@ export function FamilyMemberModal({
                   id="member-parent2"
                   value={parent2Id}
                   onChange={(e) => setParent2Id(e.target.value)}
-                  className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-4 py-2.5 focus:border-terra focus:outline-none"
+                  className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-carte px-4 py-2.5 focus:border-tomate focus:outline-none"
                 >
                   <option value="">— Une seule personne —</option>
                   {possibleParents2.map((m) => (
@@ -356,7 +356,7 @@ export function FamilyMemberModal({
                 id="member-generation"
                 value={generationId}
                 onChange={(e) => setGenerationId(e.target.value)}
-                className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-4 py-2.5 focus:border-terra focus:outline-none"
+                className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-carte px-4 py-2.5 focus:border-tomate focus:outline-none"
               >
                 <option value="">— Non classée —</option>
                 {generations.map((g) => (
@@ -377,7 +377,7 @@ export function FamilyMemberModal({
               id="member-profile"
               value={linkedProfileId}
               onChange={(e) => setLinkedProfileId(e.target.value)}
-              className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-4 py-2.5 focus:border-terra focus:outline-none"
+              className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-carte px-4 py-2.5 focus:border-tomate focus:outline-none"
             >
               <option value="">— Personne sans compte —</option>
               {profiles.map((p) => (
@@ -387,7 +387,7 @@ export function FamilyMemberModal({
                 </option>
               ))}
             </select>
-            <p className="text-sm text-encre-soft mt-1.5">
+            <p className="text-sm text-encre-doux mt-1.5">
               Le membre portera le badge « connecté » dans l'arbre.
             </p>
           </div>
@@ -400,8 +400,8 @@ export function FamilyMemberModal({
               className={cn(
                 'cursor-pointer w-full min-h-11 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 font-bold transition-colors',
                 photoFile
-                  ? 'border-sauge bg-sauge/10 text-encre'
-                  : 'border-encre/25 bg-creme hover:border-terra-dark hover:text-terra',
+                  ? 'border-vert bg-vert/10 text-encre'
+                  : 'border-encre/25 bg-carte hover:border-tomate hover:text-tomate',
               )}
             >
               <ImagePlus size={20} aria-hidden="true" />
@@ -423,7 +423,7 @@ export function FamilyMemberModal({
                     setRemovePhoto(true)
                   }}
                   aria-label="Retirer la photo"
-                  className="absolute top-2 right-2 touch-target-lg min-h-11 min-w-11 rounded-full bg-carmine text-creme flex items-center justify-center"
+                  className="absolute top-2 right-2 touch-target-lg min-h-11 min-w-11 rounded-full bg-tomate text-white flex items-center justify-center"
                 >
                   <Trash2 size={18} aria-hidden="true" />
                 </button>
@@ -432,7 +432,7 @@ export function FamilyMemberModal({
           </div>
 
           {error && (
-            <p className="text-carmine font-bold" role="alert">
+            <p className="text-tomate font-bold" role="alert">
               {error}
             </p>
           )}

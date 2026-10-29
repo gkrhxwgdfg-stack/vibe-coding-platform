@@ -22,18 +22,27 @@ export const PAGE_H = 210
 export const MARGIN = 15
 export const CONTENT_W = PAGE_W - MARGIN * 2
 
-// ---------- Palette Savia ----------
+// ---------- Palette « Farine & Blé » (tokens §2.1) ----------
 export const COLORS = {
-  TERRA: { r: 196, g: 100, b: 58 },
-  ENCRE: { r: 74, g: 55, b: 40 },
-  ENCRE_SOFT: { r: 107, g: 74, b: 50 },
-  CREME: { r: 251, g: 246, b: 236 },
-  PAPIER_AGE: { r: 243, g: 234, b: 217 },
-  CARMINE: { r: 179, g: 59, b: 59 },
-  SAUGE: { r: 138, g: 155, b: 110 },
-  MOUTARDE: { r: 217, g: 164, b: 65 },
-  MOUTARDE_SOFT: { r: 247, g: 234, b: 209 },  // #f7ead1 — token --color-moutarde-soft
+  VERT: { r: 46, g: 89, b: 57 },       // structure
+  VERT_CLAIR: { r: 231, g: 239, b: 227 },
+  TOMATE: { r: 201, g: 58, b: 43 },     // action / émotion
+  TOMATE_CLAIR: { r: 250, g: 233, b: 228 },
+  BLE: { r: 228, g: 169, b: 60 },       // motifs uniquement, jamais texte
+  BLE_CLAIR: { r: 249, g: 239, b: 219 },
+  CANNELLE: { r: 138, g: 90, b: 43 },   // line-arts patrimoniaux
+  ENCRE: { r: 42, g: 33, b: 27 },
+  ENCRE_SOFT: { r: 107, g: 93, b: 79 },
+  PAPIER: { r: 253, g: 251, b: 247 },
   BLANC: { r: 255, g: 255, b: 255 },
+  /* Alias hérités (familyBookPdf, tampon, etc.) → rôles Farine & Blé */
+  TERRA: { r: 201, g: 58, b: 43 },
+  CARMINE: { r: 201, g: 58, b: 43 },
+  MOUTARDE: { r: 228, g: 169, b: 60 },
+  MOUTARDE_SOFT: { r: 249, g: 239, b: 219 },
+  SAUGE: { r: 46, g: 89, b: 57 },
+  PAPIER_AGE: { r: 231, g: 239, b: 227 },
+  CREME: { r: 255, g: 255, b: 255 },
 } as const
 
 const ENCRE_SOFT = COLORS.ENCRE_SOFT

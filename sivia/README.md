@@ -30,21 +30,35 @@ Toute la sécurité repose sur la **Row Level Security (RLS)** de Supabase :
 chaque groupe familial ne peut lire et écrire **que ses propres données**.
 L'application vérifie également la famille côté client avant chaque requête.
 
-### Design
+### Design — système graphique « Farine & Blé »
 
-Identité chaleureuse et artisanale, pensée pour être utilisée par des
-grands-parents :
+Identitée chaleureuse et épurée, pensée pour être utilisée par des
+grands-parents. La matière (farine, sauce, caramel, marginalia, tampons) vit
+dans les fonds et les structures ; les contrôles restent modernes et épurés.
 
-- **Palette** : terracotta, moutarde, bleu ardoise, lin, crème, encre, sauge, carmine, brun/cacao
-- **Typographies** : Fraunces (titres), Nunito Sans (texte), Caveat (manuscrit)
-- **Accessibilité** : typographie de base 17px, **réglage « Taille du texte »**
-  (Standard / Grande 19px / Très grande 21px — proposé dès l'onboarding et dans
-  le profil), cibles tactiles ≥ 44px (52px en grande lecture), focus visible,
-  **contrastes WCAG AA vérifiés sur toutes les paires texte/fond**, `aria-label`
-  sur toutes les icônes seules, `prefers-reduced-motion` respecté partout,
-  parcours en 3 clics maximum
+- **Palette** (`src/index.css`, tokens `--sivia-*`) : papier, carte, encre,
+  vert (structure), tomate (action/émotion), blé (décor, jamais texte),
+  cannelle (line-arts), bois (épingles)
+- **Typographies** : Fraunces (titres, italique réservé à l'émotion), Nunito
+  (corps, graisses 400/700/800)
+- **Motifs** (§ bibliothèque) : farine tamisée (M3), vichy torchon (M4),
+  cadre couture (M6), pluie de farine (M1, accueil), étoile M2 (succès),
+  traces d'ingrédient par catégorie (herbes/sauce/caramel/cannelle — fiche
+  recette uniquement), corde à linge + polaroïds à épingle (toutes les
+  photos), arbre généalogique line-art (membres = feuilles, recettes =
+  fruits)
+- **Structures du livre** : folio « Recette n° X », filets doubles, estampille
+  « Testée & approuvée » dès 2 favoris familiaux, marginalia (1 max/page)
+- **Accessibilité** : typographie de base 18px, **réglage « Taille du texte »**
+  (Standard / Grande 20px / Très grande 22px — proposé dès l'onboarding et
+  dans le profil), cibles tactiles ≥ 44px (52px en grande lecture), focus
+  visible (ring vert 3px), **contrastes WCAG AA vérifiés sur toutes les paires
+  texte/fond**, `aria-label` sur toutes les icônes seules,
+  `prefers-reduced-motion` coupe pluie/balance/scintillement, parcours en 3
+  clics maximum
 - **Motion** : système de tokens (`src/lib/motion.ts` + utilitaires CSS) —
-  cascade d'entrée, tampon qui se pose, squelettes papier, soulignement glissant
+  cascade d'entrée, tampon qui se pose, squelettes « farine tamisée »,
+  soulignement glissant
 
 ## Stack technique
 

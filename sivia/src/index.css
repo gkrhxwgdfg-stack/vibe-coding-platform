@@ -7,42 +7,79 @@
    ============================================================ */
 
 @theme {
-  --color-terra: #bf5b38;
-  --color-terra-dark: #a34a29;
-  --color-moutarde: #d9a441;
-  /* Moutarde-soft : surlignage doux (mode cuisson, bandeaux PDF) */
-  --color-moutarde-soft: #f7ead1;
-  --color-bleu: #5b7a9e;
-  --color-bleu-dark: #46617f;
-  /* Lin réchauffé : base « torchon de cuisine » — beige chaud */
-  --color-lin: #f3ead9;
-  --color-creme: #fdfaf1;
-  --color-encre: #43301f;
-  /* Assombri au chantier 8 : #7a6a58 = 4.28:1 sur lin, \u00e9chec WCAG AA */
-  --color-encre-soft: #6b5b4a;
-  --color-sauge: #8a9b6e;
-  --color-sauge-dark: #6f7f57;
-  /* Vert fonc\u00e9 pour les textes de succ\u00e8s : sauge #8a9b6e = 2.79:1 sur cr\u00e8me, \u00e9chec AA */
-  --color-sauge-ink: #5d6b49;
-  --color-carmine: #b33b3b;
-  /* Brun/cacao : accents secondaires (cadres, pieds de cartes, légendes) */
-  --color-brun: #6b4a32;
-  /* Assombri au chantier 8 : #8a6a52 = 4.04:1 sur lin, \u00e9chec WCAG AA */
-  --color-brun-soft: #7a5c44;
-  /* Ficelle de cuisine : cordelette terracotta foncée des attaches */
-  --color-ficelle: #8f5732;
+  /* ============================================================
+     Palette « Farine & Blé » — tokens canoniques.
+     Rôles non échangeables : vert = structure · tomate = action et
+     émotion · blé = lumière et décor (jamais du texte).
+     ============================================================ */
+  --color-papier: #fdfbf7;
+  --color-carte: #ffffff;
+  --color-encre: #2a211b;
+  --color-encre-doux: #6b5d4f;
+  --color-vert: #2e5939;
+  --color-vert-clair: #e7efe3;
+  --color-tomate: #c93a2b;
+  --color-tomate-clair: #fae9e4;
+  --color-ble: #e4a93c;
+  --color-ble-clair: #f9efdb;
+  --color-cannelle: #8a5a2b;
+  --color-bois: #b08968;
+
+  /* Alias hérités : l'ancienne palette est migrée sur Farine & Blé.
+     Aucun beige, aucun orange ne subsiste — les rôles sont respectés. */
+  --color-terra: #c93a2b;
+  --color-terra-dark: #a72f23;
+  --color-moutarde: #e4a93c;
+  --color-moutarde-soft: #f9efdb;
+  --color-bleu: #2e5939;
+  --color-bleu-dark: #2e5939;
+  --color-lin: #fdfbf7;
+  --color-creme: #ffffff;
+  --color-encre-soft: #6b5d4f;
+  --color-sauge: #2e5939;
+  --color-sauge-dark: #2e5939;
+  --color-sauge-ink: #2e5939;
+  --color-carmine: #c93a2b;
+  --color-brun: #8a5a2b;
+  --color-brun-soft: #8a5a2b;
+  --color-ficelle: #8a5a2b;
 
   --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
-  --font-sans: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-hand: "Caveat", "Segoe Script", cursive;
+  --font-sans: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-hand: "Fraunces", Georgia, serif;
 
-  --shadow-soft: 0 10px 24px -14px rgba(74, 55, 40, 0.35);
-  --shadow-card: 0 6px 18px -10px rgba(74, 55, 40, 0.28);
+  --radius-sivia: 20px;
+
+  /* Ombres chaudes uniquement — jamais de gris froid */
+  --shadow-soft: 0 10px 30px rgba(63, 44, 26, 0.1);
+  --shadow-card: 0 6px 18px -10px rgba(63, 44, 26, 0.18);
+  --shadow-sivia: 0 10px 30px rgba(63, 44, 26, 0.1);
+}
+
+/* Variables canoniques du dossier d'int\u00e9gration (\u00a72.1) */
+:root {
+  --sivia-papier: #fdfbf7;
+  --sivia-carte: #ffffff;
+  --sivia-encre: #2a211b;
+  --sivia-encre-doux: #6b5d4f;
+  --sivia-vert: #2e5939;
+  --sivia-vert-clair: #e7efe3;
+  --sivia-tomate: #c93a2b;
+  --sivia-tomate-clair: #fae9e4;
+  --sivia-ble: #e4a93c;
+  --sivia-ble-clair: #f9efdb;
+  --sivia-cannelle: #8a5a2b;
+  --sivia-bois: #b08968;
+  --sivia-radius: 20px;
+  --sivia-ombre: 0 10px 30px rgba(63, 44, 26, 0.1);
+  --sivia-font-display: "Fraunces", Georgia, serif;
+  --sivia-font-corps: "Nunito", system-ui, sans-serif;
 }
 
 /* Grande typographie de base : priorité accessibilité (grands-parents) */
 html {
-  font-size: 17px;
+  /* Corps ≥ 18 px (dossier §9 — public seniors, non négociable) */
+  font-size: 18px;
   scroll-behavior: smooth;
 }
 
@@ -50,10 +87,7 @@ body {
   font-family: var(--font-sans);
   color: var(--color-encre);
   line-height: 1.6;
-  background:
-    radial-gradient(ellipse at 15% 0%, rgba(217, 164, 65, 0.14), transparent 55%),
-    radial-gradient(ellipse at 95% 20%, rgba(191, 91, 56, 0.07), transparent 50%),
-    var(--color-lin);
+  background: var(--sivia-papier);
   min-height: 100dvh;
 }
 
@@ -69,12 +103,12 @@ body::after {
 }
 
 ::selection {
-  background: rgba(196, 100, 58, 0.28);
+  background: rgba(201, 58, 43, 0.22);
 }
 
 /* Focus toujours visible — parcours au clavier et lecteurs d'écran */
 :focus-visible {
-  outline: 3px solid var(--color-terra);
+  outline: 3px solid var(--sivia-vert);
   outline-offset: 2px;
   border-radius: 6px;
 }
@@ -97,22 +131,18 @@ h3 {
 }
 
 /* Utilitaires maison */
-@utility text-hand {
-  font-family: var(--font-hand);
-}
-
 @utility card-surface {
-  background-color: var(--color-creme);
-  border: 1.5px solid rgba(74, 55, 40, 0.12);
-  border-radius: 1.25rem;
+  background-color: var(--sivia-carte);
+  border: 1.5px solid rgba(63, 44, 26, 0.1);
+  border-radius: var(--sivia-radius);
   box-shadow: var(--shadow-card);
 }
 
 /* Variante « carte secondaire » : fond sauge pour aérer sans multiplier le bleu */
 @utility card-surface-sauge {
-  background-color: rgba(138, 155, 110, 0.12);
-  border: 1.5px solid rgba(138, 155, 110, 0.35);
-  border-radius: 1.25rem;
+  background-color: var(--sivia-vert-clair);
+  border: 1.5px solid rgba(46, 89, 57, 0.3);
+  border-radius: var(--sivia-radius);
   box-shadow: var(--shadow-card);
 }
 
@@ -120,13 +150,16 @@ h3 {
   font-size: 0.75rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--color-terra);
+  color: var(--sivia-vert);
   font-weight: 800;
 }
 
-/* Anecdote : fond papier âgé #f3ead9, bord inférieur ondulé (clip-path) */
+/* M4 — Vichy torchon : liseré des anecdotes uniquement (§5.1) */
 @utility paper-aged {
-  background-color: #f3ead9;
+  background:
+    repeating-linear-gradient(0deg, rgba(201, 58, 43, 0.16) 0 7px, transparent 7px 14px),
+    repeating-linear-gradient(90deg, rgba(201, 58, 43, 0.16) 0 7px, transparent 7px 14px),
+    #ffffff;
   clip-path: polygon(
     0 0, 100% 0, 100% calc(100% - 8px),
     96% 100%, 90% calc(100% - 6px), 84% 100%, 78% calc(100% - 7px),
@@ -150,11 +183,11 @@ h3 {
    augment\u00e9s ; l'\u00e9tape du mode cuisson passe \u00e0 2.3 rem.
    ============================================================ */
 html.reading-lg {
-  font-size: 19px;
+  font-size: 20px;
 }
 
 html.reading-xl {
-  font-size: 21px;
+  font-size: 22px;
 }
 
 /* Cibles tactiles 52 px en grande lecture (WCAG 2.5.5, confort aîn\u00e9s) */
@@ -341,8 +374,10 @@ html.reading-xl .card-pad {
 
 /* Squelette papier en chargement : fond lin + pulsation d'opacité */
 @utility skeleton-paper {
-  background-color: var(--color-lin);
-  border-radius: 0.75rem;
+  background-color: var(--sivia-vert-clair);
+  border-radius: 12px;
+  background-image: radial-gradient(rgba(46, 89, 57, 0.16) 1.6px, transparent 1.6px);
+  background-size: 16px 16px;
   animation: skeleton-pulse 1.2s ease-in-out infinite;
 }
 
@@ -471,4 +506,201 @@ html.reading-xl .card-pad {
 }
 ::-webkit-scrollbar-track {
   background: transparent;
+}
+
+/* ============================================================
+   Farine & Blé — bibliothèque de motifs (§5) & structures du
+   livre de cuisine (§7). Toujours sous le contenu :
+   pointer-events none et dosage ≤ 2 familles par écran.
+   ============================================================ */
+
+/* M3 — Farine tamisée : fonds de cartes anecdote, états vides,
+   zones d'attente (photo, skeletons) */
+.motif-tamis {
+  background-image: radial-gradient(rgba(46, 89, 57, 0.16) 1.6px, transparent 1.6px);
+  background-size: 16px 16px;
+}
+
+/* M4 — Vichy torchon : liseré des anecdotes uniquement */
+.motif-vichy {
+  background:
+    repeating-linear-gradient(0deg, rgba(201, 58, 43, 0.16) 0 7px, transparent 7px 14px),
+    repeating-linear-gradient(90deg, rgba(201, 58, 43, 0.16) 0 7px, transparent 7px 14px),
+    #fff;
+}
+
+/* M6 — Cadre couture : anecdotes uniquement */
+.cadre-couture {
+  border: 2px dashed rgba(138, 100, 19, 0.55);
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+}
+
+/* Trace sauce — pages recette « Plat » */
+.trace-sauce {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath d='M100 18c28-6 52 10 58 34 5 20-6 34-2 50 5 20-16 48-52 48-34 0-58-24-54-48 3-18-10-26-6-44C41 34 70 24 100 18z' fill='%23C93A2B' fill-opacity='0.12'/%3E%3Ccircle cx='168' cy='52' r='7' fill='%23C93A2B' fill-opacity='0.12'/%3E%3Ccircle cx='30' cy='150' r='5' fill='%23C93A2B' fill-opacity='0.12'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: 300px;
+  background-position: left -60px bottom -60px;
+}
+
+/* Trace caramel — pages recette « Dessert » */
+.trace-caramel {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 90'%3E%3Cg fill='%23E4A93C' fill-opacity='0.38'%3E%3Crect width='130' height='6'/%3E%3Cpath d='M16 0v34a7 7 0 0 1-14 0V0z'/%3E%3Cpath d='M46 0v14a6 6 0 0 1-12 0V0z'/%3E%3Cpath d='M76 0v48a7 7 0 0 1-14 0V0z'/%3E%3Cpath d='M104 0v24a6 6 0 0 1-12 0V0z'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 130px 90px;
+  background-position: top center;
+}
+
+/* Corde à linge — polaroïds (§5.1) */
+.polaroid {
+  background: #ffffff;
+  padding: 8px 8px 22px;
+  border-radius: 3px;
+  box-shadow: var(--sivia-ombre);
+  transform: rotate(var(--r, -2deg));
+  transform-origin: 50% -12px;
+  animation: balance 5.5s ease-in-out infinite;
+}
+
+.epingle {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 13px;
+  height: 21px;
+  background: var(--sivia-bois);
+  border-radius: 3px 3px 2px 2px;
+  transform: translateX(-50%);
+}
+
+@keyframes balance {
+  0%,
+  100% {
+    transform: rotate(var(--r, -2deg));
+  }
+  50% {
+    transform: rotate(calc(var(--r, -2deg) + 1.8deg));
+  }
+}
+
+/* M2 — Étoile de scintillement : feedback & succès */
+@utility scintille {
+  animation: scintillement 3.5s ease-in-out infinite;
+}
+
+@keyframes scintillement {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* M1 — Pluie de farine : accueil uniquement (header d'accueil) */
+.pluie-farine {
+  position: absolute;
+  top: -12px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(228, 169, 60, 0.45);
+  pointer-events: none;
+  animation: pluie-farine 9s linear infinite;
+}
+
+@keyframes pluie-farine {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  12% {
+    opacity: 0.16;
+  }
+  88% {
+    opacity: 0.12;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(78vh);
+  }
+}
+
+/* ============================================================
+   Structures du livre de cuisine (§7)
+   ============================================================ */
+
+/* Onglet de chapitre — l'actif se fond dans la page blanche */
+.onglet {
+  border-radius: 12px 12px 0 0;
+  font-weight: 800;
+  font-size: 12px;
+  padding: 9px 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.onglet-actif {
+  background: #ffffff;
+  color: #2a211b;
+}
+
+/* Folio — « Recette n° X », incrémenté à la création */
+.folio {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 12px;
+  color: #6b5d4f;
+  text-align: center;
+}
+
+/* Estampille « Testée & approuvée » — dès 2 favoris familiaux */
+.estampille {
+  border: 2.5px solid #c93a2b;
+  border-radius: 10px;
+  color: #c93a2b;
+  transform: rotate(-7deg);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  font-size: 11px;
+  font-weight: 800;
+  display: inline-block;
+}
+
+/* Filet double entre sections */
+.filet-double {
+  border: none;
+  border-top: 3px double rgba(42, 33, 27, 0.4);
+  margin: 14px 0;
+}
+
+/* Marginalia : 1 note max par page, astuces transmises uniquement */
+.marge-note {
+  font-family: var(--sivia-font-display);
+  font-style: italic;
+  color: #6b5d4f;
+  transform: rotate(-2deg);
+  border-left: 2px dotted rgba(107, 93, 79, 0.5);
+  padding-left: 10px;
+  font-size: 14.5px;
+}
+
+/* Accessibilité (§9) : prefers-reduced-motion coupe les
+   animations d'ambiance — les motifs restent, le mouvement disparaît. */
+@media (prefers-reduced-motion: reduce) {
+  .polaroid {
+    animation: none;
+  }
+
+  .scintille {
+    animation: none;
+    opacity: 0.6;
+  }
+
+  .pluie-farine {
+    animation: none;
+    opacity: 0.12;
+  }
 }

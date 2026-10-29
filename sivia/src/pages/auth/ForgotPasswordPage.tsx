@@ -32,11 +32,11 @@ export function ForgotPasswordPage() {
           <p className="text-lg mb-2">
             C’est envoyé !
           </p>
-          <p className="text-encre-soft mb-6">
+          <p className="text-encre-doux mb-6">
             Regarde ta boîte mail à l’adresse <strong>{email}</strong> et suis le lien pour choisir
             un nouveau mot de passe.
           </p>
-          <Link to="/connexion" className="text-terra-dark font-bold hover:underline">
+          <Link to="/connexion" className="text-tomate font-bold hover:underline">
             Retour à la connexion
           </Link>
         </div>
@@ -54,7 +54,7 @@ export function ForgotPasswordPage() {
             hint="On t’envoie un lien pour choisir un nouveau mot de passe."
           />
           {error && (
-            <p className="text-carmine font-bold mb-4" role="alert">
+            <p className="text-tomate font-bold mb-4" role="alert">
               {error}
             </p>
           )}
@@ -64,7 +64,7 @@ export function ForgotPasswordPage() {
         </form>
       )}
       <p className="mt-6 text-center">
-        <Link to="/connexion" className="text-bleu-dark font-bold hover:underline">
+        <Link to="/connexion" className="text-vert font-bold hover:underline">
           Retour à la connexion
         </Link>
       </p>

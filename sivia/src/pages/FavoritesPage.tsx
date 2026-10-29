@@ -18,7 +18,7 @@ export function FavoritesPage() {
       <div>
         <p className="kicker">À garder sous le coude</p>
         <h1 className="text-3xl font-bold mt-1 flex items-center gap-3">
-          <Heart className="text-carmine fill-carmine" size={30} aria-hidden="true" />
+          <Heart className="text-tomate fill-tomate" size={30} aria-hidden="true" />
           Mes favoris
         </h1>
       </div>

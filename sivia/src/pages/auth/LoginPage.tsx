@@ -57,7 +57,7 @@ export function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
         />
         {error && (
-          <p className="text-carmine font-bold mb-4" role="alert">
+          <p className="text-tomate font-bold mb-4" role="alert">
             {error}
           </p>
         )}
@@ -67,13 +67,13 @@ export function LoginPage() {
       </form>
       <div className="mt-6 text-center space-y-2">
         <p>
-          <Link to="/mot-de-passe-oublie" className="text-bleu-dark font-bold hover:underline">
+          <Link to="/mot-de-passe-oublie" className="text-vert font-bold hover:underline">
             Mot de passe oublié ?
           </Link>
         </p>
-        <p className="text-encre-soft">
+        <p className="text-encre-doux">
           Pas encore de compte ?{' '}
-          <Link to="/inscription" className="text-terra-dark font-bold hover:underline">
+          <Link to="/inscription" className="text-tomate font-bold hover:underline">
             S’inscrire
           </Link>
         </p>

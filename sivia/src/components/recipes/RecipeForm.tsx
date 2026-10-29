@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ImagePlus, Minus, Plus, Trash2 } from 'lucide-react'
+import { Camera, ImagePlus, Minus, Plus, Trash2 } from 'lucide-react'
 import { CATEGORIES } from '@/lib/constants'
 import type { Recipe, RecipeCategory, RecipeFormValues } from '@/lib/types'
 import { photoPublicUrl } from '@/services/recipes'
@@ -96,7 +96,7 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
   }
 
   const inputClasses =
-    'w-full min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-4 py-2.5 focus:border-terra focus:outline-none'
+    'w-full min-h-11 rounded-xl border-2 border-encre/20 bg-carte px-4 py-2.5 focus:border-tomate focus:outline-none'
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-6">
@@ -131,7 +131,7 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
               type="button"
               onClick={() => update('servings', Math.max(1, values.servings - 1))}
               aria-label="Une portion de moins"
-              className="touch-target-lg min-h-11 min-w-11 rounded-full border-2 border-encre/20 bg-creme hover:border-terra-dark hover:text-terra-dark inline-flex items-center justify-center"
+              className="touch-target-lg min-h-11 min-w-11 rounded-full border-2 border-encre/20 bg-carte hover:border-tomate hover:text-tomate inline-flex items-center justify-center"
             >
               <Minus size={18} aria-hidden="true" />
             </button>
@@ -142,7 +142,7 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
               type="button"
               onClick={() => update('servings', values.servings + 1)}
               aria-label="Une portion de plus"
-              className="touch-target-lg min-h-11 min-w-11 rounded-full border-2 border-encre/20 bg-creme hover:border-terra-dark hover:text-terra-dark inline-flex items-center justify-center"
+              className="touch-target-lg min-h-11 min-w-11 rounded-full border-2 border-encre/20 bg-carte hover:border-tomate hover:text-tomate inline-flex items-center justify-center"
             >
               <Plus size={18} aria-hidden="true" />
             </button>
@@ -173,41 +173,60 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
         />
       </div>
 
-      {/* Photo */}
+      {/* Photo : cadre polaroïd + épingle en prévisualisation (§6.3),
+          trame tamisée dans le cadre tant qu'aucune photo n'est chargée */}
       <div>
-        <span className="block font-bold text-encre mb-1.5">La photo du plat</span>
-        <div className="flex flex-wrap items-center gap-4">
+        <span className="block font-bold text-[15px] text-encre mb-1.5">La photo du plat</span>
+        <div className="flex flex-wrap items-center gap-6">
           <label
             htmlFor="photo"
             className={cn(
-              'cursor-pointer inline-flex items-center gap-2 min-h-11 px-5 rounded-2xl border-2 font-bold transition-colors',
-              'border-encre/25 bg-creme hover:border-terra-dark hover:text-terra',
+              'cursor-pointer inline-flex items-center gap-2 min-h-12 px-5 rounded-full border-2 font-extrabold transition-colors',
+              'border-encre-doux/25 bg-carte hover:border-vert hover:text-vert',
             )}
           >
             <ImagePlus size={20} aria-hidden="true" />
             {photoPreview ? 'Changer la photo' : 'Ajouter une photo'}
           </label>
           <input id="photo" type="file" accept="image/*" className="sr-only" onChange={handlePhoto} />
-          {photoPreview && !removePhoto && (
-            <span className="relative inline-block">
+          {photoPreview && !removePhoto ? (
+            <figure className="polaroid relative w-[180px] rotate-[-3deg]">
+              <span className="epingle" aria-hidden="true" />
               <img
                 src={photoPreview}
                 alt="Aperçu de la photo"
-                className="w-24 h-24 object-cover rounded-xl border-2 border-encre/10"
+                className="w-full aspect-[4/3] object-cover rounded-sm"
               />
-              <button
-                type="button"
-                onClick={() => {
-                  setRemovePhoto(true)
-                  update('photoFile', null)
-                  setPhotoPreview(null)
-                }}
-                aria-label="Retirer la photo"
-                className="absolute -top-2 -right-2 touch-target-lg min-h-11 min-w-11 rounded-full bg-carmine text-creme flex items-center justify-center"
-              >
-                <Trash2 size={14} aria-hidden="true" />
-              </button>
-            </span>
+              <figcaption className="font-serif italic text-[11.5px] text-cannelle text-center pt-1.5">
+                La photo du plat
+              </figcaption>
+            </figure>
+          ) : (
+            !removePhoto && (
+              <figure className="polaroid relative w-[180px] rotate-[-3deg]" aria-hidden="true">
+                <span className="epingle" />
+                <div className="motif-tamis w-full aspect-[4/3] rounded-sm flex items-center justify-center">
+                  <Camera size={26} className="text-encre-doux" aria-hidden="true" />
+                </div>
+                <figcaption className="font-serif italic text-[11.5px] text-cannelle text-center pt-1.5">
+                  En attente d'une photo
+                </figcaption>
+              </figure>
+            )
+          )}
+          {photoPreview && !removePhoto && (
+            <button
+              type="button"
+              onClick={() => {
+                setRemovePhoto(true)
+                update('photoFile', null)
+                setPhotoPreview(null)
+              }}
+              aria-label="Retirer la photo"
+              className="relative touch-target-lg min-h-11 min-w-11 rounded-full bg-tomate text-white flex items-center justify-center"
+            >
+              <Trash2 size={16} aria-hidden="true" />
+            </button>
           )}
         </div>
       </div>
@@ -215,7 +234,7 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
       {/* Ingrédients */}
       <fieldset>
         <legend className="block font-bold text-encre mb-1.5">
-          Ce qu’il faut <span className="text-encre-soft font-normal">(et ce qu’on oublie jamais)</span>
+          Ce qu’il faut <span className="text-encre-doux font-normal">(et ce qu’on oublie jamais)</span>
         </legend>
         <div className="space-y-2">
           {values.ingredients.map((line, i) => (
@@ -231,7 +250,7 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
                 type="button"
                 onClick={() => removeListItem('ingredients', i)}
                 aria-label={`Retirer l’ingrédient ${i + 1}`}
-                className="touch-target-lg min-h-11 min-w-11 shrink-0 rounded-xl text-encre-soft hover:text-carmine inline-flex items-center justify-center"
+                className="touch-target-lg min-h-11 min-w-11 shrink-0 rounded-xl text-encre-doux hover:text-tomate inline-flex items-center justify-center"
               >
                 <Trash2 size={18} aria-hidden="true" />
               </button>
@@ -250,7 +269,7 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
           {values.steps.map((step, i) => (
             <div key={i} className="flex items-start gap-2">
               <span
-                className="touch-target-lg min-h-11 min-w-11 mt-1 rounded-full bg-terra-dark text-creme font-serif font-bold flex items-center justify-center shrink-0"
+                className="touch-target-lg min-h-11 min-w-11 mt-1 rounded-full bg-tomate text-white font-serif font-bold flex items-center justify-center shrink-0"
                 aria-hidden="true"
               >
                 {i + 1}
@@ -267,7 +286,7 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
                 type="button"
                 onClick={() => removeListItem('steps', i)}
                 aria-label={`Retirer l’étape ${i + 1}`}
-                className="touch-target-lg min-h-11 min-w-11 shrink-0 rounded-xl text-encre-soft hover:text-carmine inline-flex items-center justify-center"
+                className="touch-target-lg min-h-11 min-w-11 shrink-0 rounded-xl text-encre-doux hover:text-tomate inline-flex items-center justify-center"
               >
                 <Trash2 size={18} aria-hidden="true" />
               </button>
@@ -299,7 +318,7 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
       />
 
       {error && (
-        <p className="text-carmine font-bold" role="alert">
+        <p className="text-tomate font-bold" role="alert">
           {error}
         </p>
       )}

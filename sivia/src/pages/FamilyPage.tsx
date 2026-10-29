@@ -51,6 +51,12 @@ export function FamilyPage() {
   const [bookBusy, setBookBusy] = useState(false)
   const [bookDone, setBookDone] = useState(false)
   const [bookError, setBookError] = useState<string | null>(null)
+  // Recettes transmises par profil : les fruits de l'arbre (§5.5)
+  const recipeCountByMember = useMemo(() => {
+    const counts: Record<string, number> = {}
+    for (const r of recipes) counts[r.author_id] = (counts[r.author_id] ?? 0) + 1
+    return counts
+  }, [recipes])
   const [bookPreviewOpen, setBookPreviewOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [lastLink, setLastLink] = useState<string | null>(null)
@@ -165,7 +171,7 @@ export function FamilyPage() {
               value={familyName}
               onChange={(e) => setFamilyName(e.target.value)}
               aria-label="Nouveau nom de la famille"
-              className="min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-4 py-2 text-2xl font-bold focus:border-terra focus:outline-none"
+              className="min-h-11 rounded-xl border-2 border-encre/20 bg-carte px-4 py-2 text-2xl font-bold focus:border-tomate focus:outline-none"
             />
             <Button type="submit" size="md" disabled={renaming || !familyName.trim()}>
               {renaming ? 'On écrit…' : 'Renommer'}
@@ -185,18 +191,18 @@ export function FamilyPage() {
                 setEditingName(true)
               }}
               aria-label="Renommer la famille"
-              className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra-dark inline-flex items-center justify-center"
+              className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-doux hover:text-tomate inline-flex items-center justify-center"
             >
               <Pencil size={20} aria-hidden="true" />
             </button>
           </h1>
         )}
         {renameError && (
-          <p className="text-carmine font-bold mt-1" role="alert">
+          <p className="text-tomate font-bold mt-1" role="alert">
             {renameError}
           </p>
         )}
-        <p className="text-hand text-bleu-dark text-2xl mt-1">
+        <p className="font-serif italic text-encre-doux text-2xl mt-1">
           {members.length} membre{members.length > 1 ? 's' : ''} en cuisine
         </p>
       </div>
@@ -213,14 +219,14 @@ export function FamilyPage() {
                   <p className="font-serif text-xl font-semibold truncate">
                     {member.display_name}
                     {member.id === profile?.id && (
-                      <span className="text-sm text-terra-dark font-sans font-bold"> · toi</span>
+                      <span className="text-sm text-tomate font-sans font-bold"> · toi</span>
                     )}
                   </p>
                   {member.family_role && (
-                    <p className="text-hand text-bleu-dark text-2xl">{member.family_role}</p>
+                    <p className="font-serif italic text-encre-doux text-2xl">{member.family_role}</p>
                   )}
-                  {member.bio && <p className="text-sm text-encre-soft truncate">{member.bio}</p>}
-                  <p className="text-sm text-encre-soft">En cuisine depuis {formatDate(member.created_at)}</p>
+                  {member.bio && <p className="text-sm text-encre-doux truncate">{member.bio}</p>}
+                  <p className="text-sm text-encre-doux">En cuisine depuis {formatDate(member.created_at)}</p>
                 </div>
               </Card>
             </li>
@@ -234,16 +240,17 @@ export function FamilyPage() {
           kicker="L'arbre généalogique"
           title="La famille, fil par fil"
         />
-        <p className="text-sm text-encre-soft mb-4">
-          Un membre <span className="inline-flex items-center gap-1 font-bold text-bleu-dark"><UserCheck size={14} aria-hidden="true" /> connecté</span> a
+        <p className="text-sm text-encre-doux mb-4">
+          Un membre <span className="inline-flex items-center gap-1 font-bold text-vert"><UserCheck size={14} aria-hidden="true" /> connecté</span> a
           un compte Savia. Un membre ajouté « de l'arbre » n'en a pas — mamie Jeanne, par exemple —
           mais elle peut être citée comme origine d'une recette. L'arbre grandit avec les « + » :
           en dessous d'une personne pour un enfant, sur le scotch « + » du côté pour un partenaire
           (à côté, même génération), et le « + » carmine en haut pour un aîné au-dessus. Le lien
           s'écrit librement sur la carte.
         </p>
-        <div className="card-surface card-pad p-5 bg-sauge/5">
+        <div className="card-surface card-pad p-5 bg-vert/5">
           <FamilyTree
+          recipeCountByMember={recipeCountByMember}
             members={treeMembers}
             generations={generations}
             connectedProfileIds={connectedProfileIds}
@@ -258,15 +265,15 @@ export function FamilyPage() {
       <section aria-labelledby="book-title">
         <Card>
           <CardHeader kicker="Le livre" title={`Télécharger le carnet de ${family?.name ?? 'ta famille'}`} />
-          <p className="text-encre-soft mb-4">
+          <p className="text-encre-doux mb-4">
             Toutes les recettes de la famille réunies en un livre A5 : couverture, sommaire,
             recettes scellées d'abord, index par auteur. {recipes.length} recette{recipes.length > 1 ? 's' : ''} au compteur.
           </p>
           {bookError && (
-            <p className="text-carmine font-bold mb-3" role="alert">{bookError}</p>
+            <p className="text-tomate font-bold mb-3" role="alert">{bookError}</p>
           )}
           {bookDone && (
-            <p className="text-sauge-ink font-bold mb-3" role="status">
+            <p className="text-vert font-bold mb-3" role="status">
               Le carnet est dans vos téléchargements. {profile?.display_name} a téléchargé le carnet — la famille le sait.
             </p>
           )}
@@ -308,21 +315,21 @@ export function FamilyPage() {
               placeholder="mamie@famille.fr"
               hint="On génère un lien d’invitation sécurisé — à lui de l’accepter."
             />
-            {error && <p className="text-carmine font-bold" role="alert">{error}</p>}
+            {error && <p className="text-tomate font-bold" role="alert">{error}</p>}
             <Button type="submit" disabled={submitting || !email.trim()}>
               <Mail size={18} aria-hidden="true" />
               {submitting ? 'On prépare le lien…' : 'Créer le lien d’invitation'}
             </Button>
           </form>
           {lastLink && (
-            <div className="mt-4 rounded-2xl bg-sauge/15 p-4">
+            <div className="mt-4 rounded-2xl bg-vert/15 p-4">
               <p className="font-bold mb-2">Lien d’invitation tout frais :</p>
               <div className="flex gap-2">
                 <input
                   readOnly
                   value={lastLink}
                   aria-label="Lien d’invitation"
-                  className="flex-1 min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-3 text-sm"
+                  className="flex-1 min-h-11 rounded-xl border-2 border-encre/20 bg-carte px-3 text-sm"
                   onFocus={(e) => e.target.select()}
                 />
                 <Button
@@ -337,7 +344,7 @@ export function FamilyPage() {
                   {copiedId === 'last' ? <Check size={18} aria-hidden="true" /> : <Copy size={18} aria-hidden="true" />}
                 </Button>
               </div>
-              <p className="text-sm text-encre-soft mt-2">
+              <p className="text-sm text-encre-doux mt-2">
                 Envoie-le par SMS ou mail. Ton invité n’aura qu’à le suivre pour rejoindre la famille.
               </p>
             </div>
@@ -355,7 +362,7 @@ export function FamilyPage() {
                 <Card className="flex flex-wrap items-center gap-3">
                   <div className="flex-1 min-w-0">
                     <p className="font-bold truncate">{invitation.email}</p>
-                    <p className="text-sm text-encre-soft">Invité le {formatDate(invitation.created_at)}</p>
+                    <p className="text-sm text-encre-doux">Invité le {formatDate(invitation.created_at)}</p>
                   </div>
                   <Button variant="outline" onClick={() => copyLink(invitation)} aria-label={`Copier le lien pour ${invitation.email}`}>
                     {copiedId === invitation.id ? (
@@ -366,7 +373,7 @@ export function FamilyPage() {
                   </Button>
                   <Button
                     variant="ghost"
-                    className="text-carmine"
+                    className="text-tomate"
                     onClick={() => cancelInvitation(invitation)}
                     aria-label={`Retirer l’invitation de ${invitation.email}`}
                   >
@@ -379,8 +386,8 @@ export function FamilyPage() {
         </section>
       )}
 
-      <p className="text-center text-encre-soft">
-        <Link to="/profil" className="text-terra-dark font-bold hover:underline">
+      <p className="text-center text-encre-doux">
+        <Link to="/profil" className="text-tomate font-bold hover:underline">
           Gérer mon profil
         </Link>
       </p>
@@ -403,23 +410,23 @@ export function FamilyPage() {
             {/* Mini couverture — aperçu visuel du carnet A5 */}
             <div
               aria-hidden="true"
-              className="mb-5 rounded-2xl bg-moutarde-soft px-6 py-8 text-center shadow-soft"
+              className="mb-5 rounded-2xl bg-ble-clair px-6 py-8 text-center shadow-soft"
             >
               <p className="kicker">Savia</p>
               <p className="font-serif text-2xl font-bold text-encre mt-2 leading-tight">
                 Le carnet de<br />{family?.name ?? 'ta famille'}
               </p>
-              <p className="text-hand text-terra-dark text-2xl mt-1">Le savoir qui se transmet à table.</p>
-              <span className="inline-block mt-3 h-8 w-8 rounded-full border-2 border-carmine/70" aria-hidden="true" />
-              <p className="text-sm text-encre-soft mt-3">
+              <p className="font-serif italic text-encre-doux text-2xl mt-1">Le savoir qui se transmet à table.</p>
+              <span className="inline-block mt-3 h-8 w-8 rounded-full border-2 border-tomate/70" aria-hidden="true" />
+              <p className="text-sm text-encre-doux mt-3">
                 {recipes.length} recette{recipes.length > 1 ? 's' : ''} · {estimateBookPageCount(recipes.length).label}
               </p>
             </div>
             <h2 id="book-preview-title" className="sr-only">
               Aperçu du carnet de {family?.name ?? 'ta famille'}
             </h2>
-            <p className="text-encre-soft mb-1">Pour qui ? Toute la famille, de génération en génération.</p>
-            <p className="text-encre-soft mb-4">
+            <p className="text-encre-doux mb-1">Pour qui ? Toute la famille, de génération en génération.</p>
+            <p className="text-encre-doux mb-4">
               Couverture, sommaire, recettes scellées d'abord, index par auteur.
             </p>
             <div className="flex flex-col gap-3">

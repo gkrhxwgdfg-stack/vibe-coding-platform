@@ -15,25 +15,21 @@ interface PolaroidProps {
 export function Polaroid({ src, caption, tilt = -2, className, overlay }: PolaroidProps) {
   return (
     <figure
-      className={cn(
-        'bg-white p-2.5 pb-3 rounded-md shadow-card inline-block w-[200px] shrink-0',
-        'border-b-4 border-brun',
-        className,
-      )}
-      style={{ transform: `rotate(${tilt}deg)` }}
+      className={cn('polaroid relative inline-block w-[200px] shrink-0', className)}
+      style={{ ['--r' as string]: `${tilt}deg` }}
     >
-      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-lin">
+      <span className="epingle" aria-hidden="true" />
+      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-vert-clair">
         {src ? (
           <img src={src} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
         ) : (
           <div
             className="absolute inset-0"
             style={{
-              backgroundColor: '#fbf6ec',
-              backgroundImage: [
-                'repeating-linear-gradient(0deg, transparent, transparent 22px, rgba(91, 122, 158, 0.3) 22px, rgba(91, 122, 158, 0.3) 25px)',
-                'repeating-linear-gradient(90deg, transparent, transparent 22px, rgba(91, 122, 158, 0.3) 22px, rgba(91, 122, 158, 0.3) 25px)',
-              ].join(', '),
+              backgroundColor: '#ffffff',
+              backgroundImage:
+                'radial-gradient(rgba(46, 89, 57, 0.16) 1.6px, transparent 1.6px)',
+              backgroundSize: '16px 16px',
             }}
             role="img"
             aria-label="Pas de photo"
@@ -41,7 +37,7 @@ export function Polaroid({ src, caption, tilt = -2, className, overlay }: Polaro
         )}
         {overlay}
       </div>
-      <figcaption className="text-hand text-brun text-2xl text-center pt-2 leading-tight max-h-[7.5rem] overflow-hidden">
+      <figcaption className="font-serif italic text-cannelle text-[11.5px] text-center pt-2 leading-snug max-h-[7.5rem] overflow-hidden">
         {caption}
       </figcaption>
     </figure>

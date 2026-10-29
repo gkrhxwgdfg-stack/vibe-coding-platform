@@ -16,7 +16,9 @@ import { ExpandableText } from '@/components/ui/ExpandableText'
 import { photoPublicUrl } from '@/services/recipes'
 import { COPY } from '@/lib/copy'
 import { MOTION, pickDaily, stableTilt } from '@/lib/motion'
-import { Twine } from '@/components/ui/Twine'
+import { CordeALinge } from '@/components/motifs/CordeALinge'
+import { PluieFarine } from '@/components/motifs/PluieFarine'
+import { Sparkle } from '@/components/motifs/Sparkle'
 import { DailyRecipeCard } from '@/components/recipes/DailyRecipeCard'
 import type { RecipeComment } from '@/lib/types'
 
@@ -64,13 +66,17 @@ export function HomePage() {
 
   return (
     <div className="space-y-6">
-      {/* Hero doux */}
-      <section aria-labelledby="home-title">
-        <p className="kicker">Le carnet de {family?.name ?? 'ta famille'}</p>
-        <h1 id="home-title" className="text-4xl font-bold mt-1">
+      {/* Hero : pluie de farine sur le header d'accueil uniquement (§8) */}
+      <section aria-labelledby="home-title" className="relative overflow-hidden">
+        <PluieFarine />
+        <p className="kicker relative">Le carnet de {family?.name ?? 'ta famille'}</p>
+        <h1 id="home-title" className="relative font-serif text-4xl font-semibold mt-1">
           Bonjour, {profile?.display_name}
         </h1>
-        <p className="text-hand text-bleu-dark text-2xl mt-1">Qu’est-ce qu’on cuisine aujourd’hui ?</p>
+        <p className="relative font-serif italic text-encre-doux text-2xl mt-1">
+          Qu’est-ce qu’on cuisine aujourd’hui ?
+          <Sparkle className="inline-block ml-2 align-middle" />
+        </p>
       </section>
 
       {/* Le plat du dimanche : choix stable pour la journée (graine AAAAMMJJ) */}
@@ -99,19 +105,18 @@ export function HomePage() {
             </Button>
           </EmptyState>
         ) : (
-          <div className="flex flex-wrap gap-4 justify-center">
+          <CordeALinge>
             {recentPhotos.map((recipe, i) => (
               <Link
                 key={recipe.id}
                 to={`/recettes/${recipe.id}`}
-                className="relative block anim-pop hover:-translate-y-[3px] transition-transform"
+                className="relative block anim-pop"
                 style={{
                   animationDelay: `${i * MOTION.staggerPlanche}ms`,
                   transitionDuration: '250ms',
                   transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
                 }}
               >
-                <Twine corner={i % 2 === 0 ? 'top-left' : 'top-right'} />
                 <Polaroid
                   src={photoPublicUrl(recipe.photo_url)}
                   caption={`${recipe.title} — ${recipe.author?.display_name ?? ''}`}
@@ -123,14 +128,13 @@ export function HomePage() {
               <Link
                 key={comment.id}
                 to={`/recettes/${comment.recipe_id}`}
-                className="relative block anim-pop hover:-translate-y-[3px] transition-transform"
+                className="relative block anim-pop"
                 style={{
                   animationDelay: `${(recentPhotos.length + i) * MOTION.staggerPlanche}ms`,
                   transitionDuration: '250ms',
                   transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
                 }}
               >
-                <Twine corner={i % 2 === 0 ? 'top-right' : 'top-left'} />
                 <Polaroid
                   src={photoPublicUrl(comment.photo_url)}
                   caption={
@@ -156,7 +160,6 @@ export function HomePage() {
                 className="relative inline-block anim-pop"
                 style={{ animationDelay: `${(recentPhotos.length + photoComments.length + i) * MOTION.staggerPlanche}ms` }}
               >
-                <Twine corner={i % 2 === 0 ? 'top-left' : 'top-right'} />
                 <Polaroid
                   src={photoPublicUrl(comment.photo_url)}
                   caption={
@@ -173,7 +176,7 @@ export function HomePage() {
                 />
               </div>
             ))}
-          </div>
+          </CordeALinge>
         )}
       </section>
 

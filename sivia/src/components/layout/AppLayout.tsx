@@ -1,13 +1,15 @@
 import type { ReactNode } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
-import { BookOpen, Heart, Home, Users, UserRound } from 'lucide-react'
+import { BookOpen, Heart, Users, UserRound } from 'lucide-react'
+import { WheatIcon } from '@/components/motifs/WheatIcon'
 import { Logo } from '@/components/ui/Logo'
 import { AddButtonHost } from '@/components/layout/AddButtonHost'
 import { useAuth } from '@/context/AuthContext'
 import { cn } from '@/lib/utils'
 
 const navItems = [
-  { to: '/', label: 'Accueil', icon: Home, end: true },
+  // Accueil : l'épi de blé — le seul symbole patrimonial devenu icône (§4)
+  { to: '/', label: 'Accueil', icon: WheatIcon, end: true },
   { to: '/recettes', label: 'Recettes', icon: BookOpen, end: false },
   { to: '/favoris', label: 'Favoris', icon: Heart, end: true },
   { to: '/famille', label: 'Famille', icon: Users, end: true },
@@ -23,7 +25,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
 
   return (
     <div className="min-h-dvh flex flex-col pb-24">
-      <header className="sticky top-0 z-40 bg-lin/90 backdrop-blur border-b border-encre/10">
+      <header className="sticky top-0 z-40 bg-papier/95 backdrop-blur border-b border-encre/10">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <Logo />
           <div className="text-right min-w-0">
@@ -31,7 +33,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
               <p className="font-serif font-semibold text-encre truncate">{family.name}</p>
             )}
             {profile && (
-              <p className="text-sm text-encre-soft truncate">Bonjour, {profile.display_name}</p>
+              <p className="text-sm text-encre-doux truncate">Bonjour, {profile.display_name}</p>
             )}
           </div>
         </div>
@@ -47,7 +49,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
 
       <nav
         aria-label="Navigation principale"
-        className="fixed bottom-0 inset-x-0 z-40 bg-creme/95 backdrop-blur border-t border-encre/10 safe-area-pb"
+        className="fixed bottom-0 inset-x-0 z-40 bg-carte/95 backdrop-blur border-t border-encre/10 safe-area-pb"
       >
         <ul className="max-w-3xl mx-auto flex items-stretch justify-around px-2">
           {navItems.map(({ to, label, icon: Icon, end }) => (
@@ -58,7 +60,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
                 className={({ isActive }) =>
                   cn(
                     'flex flex-col items-center justify-center gap-0.5 min-h-16 py-1.5 text-xs font-bold transition-colors',
-                    isActive ? 'text-terra' : 'text-encre-soft hover:text-encre',
+                    isActive ? 'text-vert' : 'text-encre-doux hover:text-encre',
                   )
                 }
               >

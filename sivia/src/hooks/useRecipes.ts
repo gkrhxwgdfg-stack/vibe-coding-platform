@@ -137,7 +137,18 @@ export function useRecipe(recipeId: string | undefined) {
       .eq('recipe_id', recipeId)
       .maybeSingle()
 
-    setRecipe({ ...row, author: row.author ?? undefined, is_favorite: !!fav })
+    // Estampille « Testée & approuvée » : dès 2 favoris dans la famille (§7)
+    const { count: familyFavCount } = await supabase
+      .from('favorites')
+      .select('id', { count: 'exact', head: true })
+      .eq('recipe_id', recipeId)
+
+    setRecipe({
+      ...row,
+      author: row.author ?? undefined,
+      is_favorite: !!fav,
+      family_favorites: familyFavCount ?? 0,
+    })
     setLoading(false)
   }, [recipeId, user])
 

@@ -26,7 +26,7 @@ export function DailyRecipeCard({ recipe }: DailyRecipeCardProps) {
       className="group relative block card-surface overflow-visible p-0 anim-pop hover:-translate-y-[3px] transition-transform"
     >
       <Twine corner="top-left" />
-      <div className="relative aspect-[16/10] bg-lin overflow-hidden rounded-t-[1.25rem]">
+      <div className="relative aspect-[16/10] bg-papier overflow-hidden rounded-t-[1.25rem]">
         {photo ? (
           <img
             src={photo}
@@ -38,15 +38,15 @@ export function DailyRecipeCard({ recipe }: DailyRecipeCardProps) {
         ) : (
           <Torchon label={meta.label} />
         )}
-        <span className="absolute top-3 left-3 bg-creme/95 rounded-full px-3 py-1 text-sm font-bold text-terra-dark inline-flex items-center gap-1.5">
+        <span className="absolute top-3 left-3 bg-carte/95 rounded-full px-3 py-1 text-sm font-bold text-vert inline-flex items-center gap-1.5">
           <Sun size={14} aria-hidden="true" /> Le plat du dimanche
         </span>
       </div>
       <div className="p-4">
-        <h2 className="font-serif font-semibold text-2xl leading-snug group-hover:text-terra-dark transition-colors">
+        <h2 className="font-serif font-semibold text-2xl leading-snug group-hover:text-vert transition-colors">
           {recipe.title}
         </h2>
-        <p className="text-hand text-bleu-dark text-2xl mt-0.5 leading-tight">
+        <p className="text-[13.5px] font-bold text-encre-doux mt-0.5 leading-tight">
           transmise par {recipe.author?.display_name ?? '…'}
         </p>
       </div>

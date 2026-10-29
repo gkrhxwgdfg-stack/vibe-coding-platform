@@ -11,12 +11,12 @@ export function AuthShell({ title, handNote, children }: { title: string; handNo
           <div className="inline-block mb-3">
             <Logo link={false} />
           </div>
-          <p className="text-hand text-bleu-dark text-2xl">Le savoir qui se transmet en cuisine.</p>
+          <p className="font-serif italic text-encre-doux text-2xl">Le savoir qui se transmet en cuisine.</p>
           <span aria-hidden="true" className="sr-only">{APP_BUILD_MARKER}</span>
         </div>
-        <div className="card-surface card-pad p-6 sm:p-8">
-          <h1 className="text-3xl font-semibold mb-1">{title}</h1>
-          {handNote && <p className="text-hand text-bleu-dark text-xl mb-5">{handNote}</p>}
+        <div className="card-surface card-pad p-6 sm:p-8 motif-tamis">
+          <h1 className="font-serif text-3xl font-semibold mb-1">{title}</h1>
+          {handNote && <p className="font-serif italic text-encre-doux text-xl mb-5">{handNote}</p>}
           {children}
         </div>
       </div>

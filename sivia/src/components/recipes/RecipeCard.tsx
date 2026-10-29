@@ -22,7 +22,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
       className="group block card-surface overflow-hidden p-0 hover:shadow-soft hover:-translate-y-[3px] transition-all"
       style={{ transitionDuration: '250ms', transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)' }}
     >
-      <div className="relative aspect-[16/10] bg-lin overflow-hidden">
+      <div className="relative aspect-[16/10] bg-papier overflow-hidden">
         {photo ? (
           <img
             src={photo}
@@ -34,23 +34,23 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         ) : (
           <Torchon label={meta.label} />
         )}
-        <span className="absolute top-3 left-3 bg-creme/95 rounded-full px-3 py-1 text-sm font-bold text-terra-dark">
+        <span className="absolute top-3 left-3 bg-carte/95 rounded-full px-3 py-1 text-[12.5px] font-extrabold uppercase tracking-[0.12em] text-tomate">
           {meta.label}
         </span>
         {recipe.is_sealed && (
-          <span className="absolute top-3 right-3 bg-creme/95 rounded-full px-3 py-1 text-sm font-bold text-carmine flex items-center gap-1">
+          <span className="absolute top-3 right-3 bg-carte/95 rounded-full px-3 py-1 text-sm font-bold text-tomate flex items-center gap-1">
             <Lock size={13} aria-hidden="true" /> Scellée
           </span>
         )}
       </div>
       <div className="p-4">
-        <h3 className="font-serif font-semibold text-xl leading-snug group-hover:text-terra-dark transition-colors">
+        <h3 className="font-serif font-semibold text-[21px] leading-snug group-hover:text-vert transition-colors">
           {recipe.title}
         </h3>
-        <p className="text-hand text-bleu-dark text-2xl mt-0.5 leading-tight">
-          créée par {recipe.author?.display_name ?? '…'}
+        <p className="text-[13.5px] font-bold text-encre-doux mt-0.5 leading-tight">
+          transmise par {recipe.author?.display_name ?? '…'}
         </p>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-brun-soft">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-encre-doux">
           <span className="inline-flex items-center gap-1">
             <Users size={15} aria-hidden="true" /> {recipe.servings} parts
           </span>
@@ -60,13 +60,13 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
             </span>
           )}
           {recipe.is_favorite && (
-            <span className="inline-flex items-center gap-1 text-carmine">
-              <Heart size={15} aria-hidden="true" className="fill-carmine" />
+            <span className="inline-flex items-center gap-1 text-tomate">
+              <Heart size={19} aria-hidden="true" className="fill-tomate" />
               Favori
             </span>
           )}
         </div>
-        <p className="text-sm text-brun-soft mt-2">Créée le {formatDate(recipe.created_at)}</p>
+        <p className="text-sm text-encre-doux mt-2">Créée le {formatDate(recipe.created_at)}</p>
       </div>
     </Link>
   )

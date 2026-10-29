@@ -43,10 +43,11 @@ export function FamilyMemberCard({
   return (
     <div className="shrink-0 w-44 snap-start">
       <figure
-        className={cn('bg-white p-2.5 pb-3 rounded-md shadow-card w-full border-b-4 border-brun')}
-        style={{ transform: `rotate(${tilt}deg)` }}
+        className={cn('polaroid relative w-full')}
+        style={{ ['--r' as string]: `${tilt}deg` }}
       >
-        <div className="relative aspect-square w-full overflow-hidden rounded-sm bg-lin">
+        <span className="epingle" aria-hidden="true" />
+        <div className="relative aspect-square w-full overflow-hidden rounded-sm bg-vert-clair">
           {photo ? (
             <img
               src={photo}
@@ -56,7 +57,7 @@ export function FamilyMemberCard({
             />
           ) : (
             <div
-              className="absolute inset-0 flex items-center justify-center font-serif font-bold text-3xl text-bleu-dark"
+              className="absolute inset-0 flex items-center justify-center font-serif font-bold text-3xl text-vert"
               role="img"
               aria-label={`Pas de photo pour ${member.first_name}`}
             >
@@ -65,7 +66,7 @@ export function FamilyMemberCard({
           )}
           {isConnected && (
             <span
-              className="absolute top-1.5 right-1.5 inline-flex items-center gap-1 bg-creme/95 rounded-full px-2 py-1 text-xs font-extrabold text-bleu-dark"
+              className="absolute top-1.5 right-1.5 inline-flex items-center gap-1 bg-carte/95 rounded-full px-2 py-1 text-xs font-extrabold text-vert"
               title="Membre connecté à Savia"
             >
               <UserCheck size={13} aria-hidden="true" /> Connecté
@@ -78,10 +79,10 @@ export function FamilyMemberCard({
             {member.last_name ? ` ${member.last_name}` : ''}
           </p>
           {member.family_role && (
-            <p className="text-hand text-bleu-dark text-2xl leading-tight">{member.family_role}</p>
+            <p className="font-serif italic text-encre-doux text-2xl leading-tight">{member.family_role}</p>
           )}
           {parent && relationLabel && (
-            <p className="text-sm text-brun-soft font-bold mt-0.5">
+            <p className="text-sm text-encre-doux font-bold mt-0.5">
               {relationLabel} {parent.first_name}
               {parent2 ? ` et ${parent2.first_name}` : ''}
             </p>
@@ -95,7 +96,7 @@ export function FamilyMemberCard({
               type="button"
               onClick={() => onEdit(member)}
               aria-label={`Modifier ${member.first_name}`}
-              className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra-dark inline-flex items-center justify-center"
+              className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-doux hover:text-vert inline-flex items-center justify-center"
             >
               <Pencil size={17} aria-hidden="true" />
             </button>
@@ -105,7 +106,7 @@ export function FamilyMemberCard({
               type="button"
               onClick={() => setConfirming(true)}
               aria-label={`Retirer ${member.first_name} de l'arbre`}
-              className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-soft hover:text-carmine inline-flex items-center justify-center"
+              className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-doux hover:text-tomate inline-flex items-center justify-center"
             >
               <Trash2 size={17} aria-hidden="true" />
             </button>
@@ -115,7 +116,7 @@ export function FamilyMemberCard({
               type="button"
               onClick={() => onRemove(member)}
               aria-label={`Confirmer : retirer ${member.first_name} de l'arbre`}
-              className="min-h-11 px-3 rounded-full text-sm font-bold bg-carmine text-creme inline-flex items-center justify-center"
+              className="min-h-11 px-3 rounded-full text-sm font-bold bg-tomate text-white inline-flex items-center justify-center"
             >
               Retirer de l'arbre ?
             </button>

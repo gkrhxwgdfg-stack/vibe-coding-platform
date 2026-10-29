@@ -24,7 +24,7 @@ export function ReadingSizePicker({ label = 'Taille du texte', hint }: ReadingSi
   return (
     <fieldset role="radiogroup" aria-label={label}>
       <legend className="block font-bold text-encre mb-1.5">{label}</legend>
-      {hint && <p className="text-sm text-encre-soft mb-2">{hint}</p>}
+      {hint && <p className="text-sm text-encre-doux mb-2">{hint}</p>}
       <div className="grid grid-cols-3 gap-2">
         {READING_SIZES.map((option: ReadingSize) => {
           const selected = size === option
@@ -34,8 +34,8 @@ export function ReadingSizePicker({ label = 'Taille du texte', hint }: ReadingSi
               className={cn(
                 'touch-target-lg flex min-h-12 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 px-2 py-2 text-center transition-colors',
                 selected
-                  ? 'border-terra-dark bg-terra-dark text-creme'
-                  : 'border-encre/25 bg-creme text-encre hover:border-terra',
+                  ? 'border-tomate bg-tomate text-white'
+                  : 'border-encre/25 bg-carte text-encre hover:border-tomate',
               )}
             >
               <input

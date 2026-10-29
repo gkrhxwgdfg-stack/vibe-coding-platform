@@ -102,7 +102,7 @@ export function AddPhotoModal({ open, onClose, onPublished }: AddPhotoModalProps
             type="button"
             onClick={onClose}
             aria-label="Ranger"
-            className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra-dark inline-flex items-center justify-center"
+            className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-doux hover:text-tomate inline-flex items-center justify-center"
           >
             <X size={22} aria-hidden="true" />
           </button>
@@ -115,8 +115,8 @@ export function AddPhotoModal({ open, onClose, onPublished }: AddPhotoModalProps
               className={cn(
                 'cursor-pointer w-full min-h-11 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 font-bold transition-colors',
                 photoFile
-                  ? 'border-sauge bg-sauge/10 text-encre'
-                  : 'border-encre/25 bg-creme hover:border-terra-dark hover:text-terra',
+                  ? 'border-vert bg-vert/10 text-encre'
+                  : 'border-encre/25 bg-carte hover:border-tomate hover:text-tomate',
               )}
             >
               <ImagePlus size={20} aria-hidden="true" />
@@ -137,7 +137,7 @@ export function AddPhotoModal({ open, onClose, onPublished }: AddPhotoModalProps
                     setPhotoPreview(null)
                   }}
                   aria-label="Retirer la photo"
-                  className="absolute top-2 right-2 touch-target-lg min-h-11 min-w-11 rounded-full bg-carmine text-creme flex items-center justify-center"
+                  className="absolute top-2 right-2 touch-target-lg min-h-11 min-w-11 rounded-full bg-tomate text-white flex items-center justify-center"
                 >
                   <Trash2 size={18} aria-hidden="true" />
                 </button>
@@ -147,7 +147,7 @@ export function AddPhotoModal({ open, onClose, onPublished }: AddPhotoModalProps
 
           <div>
             <label htmlFor="planche-comment" className="block font-bold text-encre mb-1.5">
-              Un mot sur ce moment <span className="text-encre-soft font-normal">(facultatif)</span>
+              Un mot sur ce moment <span className="text-encre-doux font-normal">(facultatif)</span>
             </label>
             <textarea
               id="planche-comment"
@@ -155,12 +155,12 @@ export function AddPhotoModal({ open, onClose, onPublished }: AddPhotoModalProps
               value={body}
               onChange={(e) => setBody(e.target.value)}
               placeholder="Dimanche chez mamie, la tarte était encore tiède…"
-              className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-4 py-2.5 text-encre placeholder:text-encre-soft/60 focus:border-terra focus:outline-none"
+              className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-carte px-4 py-2.5 text-encre placeholder:text-encre-doux/60 focus:border-tomate focus:outline-none"
             />
           </div>
 
           {error && (
-            <p className="text-carmine font-bold" role="alert">
+            <p className="text-tomate font-bold" role="alert">
               {error}
             </p>
           )}

@@ -107,7 +107,7 @@ export function CookingTimerV2({ timer, onChange }: CookingTimerV2Props) {
           onClick={() => setMuted((m) => !m)}
           aria-label={muted ? 'Activer le son à la fin du minuteur' : 'Couper le son du minuteur'}
           aria-pressed={!muted}
-          className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra-dark inline-flex items-center justify-center"
+          className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-doux hover:text-tomate inline-flex items-center justify-center"
         >
           {muted ? <VolumeX size={20} aria-hidden="true" /> : <Volume2 size={20} aria-hidden="true" />}
         </button>
@@ -124,7 +124,7 @@ export function CookingTimerV2({ timer, onChange }: CookingTimerV2Props) {
           <circle
             cx="100" cy="100" r={RADIUS}
             fill="none" strokeWidth="6" strokeLinecap="round"
-            className={done ? 'stroke-carmine/40' : 'stroke-terra/40'}
+            className={done ? 'stroke-tomate/40' : 'stroke-tomate/40'}
           />
           {/* Progression : anneau plein terracotta */}
           {elapsedFraction > 0 && (
@@ -132,13 +132,13 @@ export function CookingTimerV2({ timer, onChange }: CookingTimerV2Props) {
               cx="100" cy="100" r={RADIUS}
               fill="none" strokeWidth="6" strokeLinecap="round"
               strokeDasharray={progressDash}
-              className={done ? 'stroke-carmine' : 'stroke-terra'}
+              className={done ? 'stroke-tomate' : 'stroke-tomate'}
             />
           )}
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           {done ? (
-            <p className="text-hand text-3xl text-carmine">C'est prêt&nbsp;!</p>
+            <p className="font-serif italic text-3xl text-tomate">C'est prêt&nbsp;!</p>
           ) : (
             <p className="font-serif text-5xl font-bold text-encre tabular-nums">
               {formatCountdown(remaining)}

@@ -54,7 +54,7 @@ export function RecipesPage() {
       <div className="relative">
         <Search
           size={20}
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-brun-soft pointer-events-none"
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-encre-doux pointer-events-none"
           aria-hidden="true"
         />
         <input
@@ -63,14 +63,14 @@ export function RecipesPage() {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Farfouiller : un mot, un ingrédient, une histoire…"
           aria-label="Rechercher une recette"
-          className="w-full min-h-12 rounded-2xl border-2 border-encre/20 bg-creme pl-12 pr-12 text-lg focus:border-terra focus:outline-none"
+          className="w-full min-h-13 rounded-[14px] border-[1.5px] border-encre-doux/28 bg-carte pl-12 pr-12 text-lg focus:border-vert focus:ring-3 focus:ring-vert-clair focus:outline-none"
         />
         {query && (
           <button
             type="button"
             onClick={() => setQuery('')}
             aria-label="Effacer la recherche"
-            className="absolute right-3 top-1/2 -translate-y-1/2 touch-target-lg min-h-11 min-w-11 flex items-center justify-center text-brun-soft hover:text-encre"
+            className="absolute right-3 top-1/2 -translate-y-1/2 touch-target-lg min-h-11 min-w-11 flex items-center justify-center text-encre-doux hover:text-encre"
           >
             <X size={20} aria-hidden="true" />
           </button>
@@ -88,8 +88,8 @@ export function RecipesPage() {
             className={cn(
               'chip-underline anim-enter min-h-11 px-4 rounded-full border-2 font-bold transition-colors',
               category === c.value
-                ? 'bg-terra-dark text-creme border-terra-dark'
-                : 'bg-creme text-encre border-encre/20 hover:border-terra-dark hover:text-terra',
+                ? 'bg-vert text-white border-vert'
+                : 'bg-carte text-encre border-encre-doux/20 hover:border-vert hover:text-vert',
             )}
             style={{ animationDelay: `${i * MOTION.stagger}ms` }}
           >
@@ -101,7 +101,7 @@ export function RecipesPage() {
       {/* Filtre par membre */}
       {members.length > 1 && (
         <div role="group" aria-label="Filtrer par membre" className="flex flex-wrap gap-2 items-center">
-          <span className="text-sm font-bold text-brun-soft">Par membre :</span>
+          <span className="text-sm font-bold text-encre-doux">Par membre :</span>
           {[{ id: 'tous', name: 'Tous' }, ...members.map((m) => ({ id: m.id, name: m.display_name }))].map(
             (m) => (
               <button
@@ -112,8 +112,8 @@ export function RecipesPage() {
                 className={cn(
                   'min-h-11 px-4 rounded-full border-2 font-bold transition-colors',
                   authorId === m.id
-                    ? 'bg-bleu-dark text-creme border-bleu-dark'
-                    : 'bg-creme text-encre border-encre/20 hover:border-bleu-dark hover:text-bleu',
+                    ? 'bg-vert text-white border-vert'
+                    : 'bg-carte text-encre border-encre-doux/20 hover:border-vert hover:text-vert',
                 )}
               >
                 {m.name}
@@ -124,7 +124,7 @@ export function RecipesPage() {
       )}
 
       {hasActiveFilters && (
-        <button type="button" onClick={resetFilters} className="text-carmine font-bold min-h-11 hover:underline">
+        <button type="button" onClick={resetFilters} className="text-tomate font-bold min-h-11 hover:underline">
           {COPY.actions.remuer}
         </button>
       )}
@@ -152,7 +152,7 @@ export function RecipesPage() {
         )
       ) : (
         <>
-          <p className="text-brun-soft" aria-live="polite">
+          <p className="text-encre-doux" aria-live="polite">
             {recipes.length} recette{recipes.length > 1 ? 's' : ''} dans le carnet
           </p>
           <div className="grid gap-5 sm:grid-cols-2">

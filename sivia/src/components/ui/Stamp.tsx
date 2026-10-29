@@ -17,7 +17,7 @@ export function Stamp({ name, className, rotate = -8 }: StampProps) {
     <span
       className={cn(
         'inline-flex flex-col items-center justify-center text-center select-none',
-        'w-24 h-24 rounded-full border-[3px] border-dashed border-carmine text-carmine',
+        'w-24 h-24 rounded-full border-[3px] border-dashed border-tomate text-tomate',
         'font-serif font-bold uppercase leading-tight px-2',
         className,
       )}

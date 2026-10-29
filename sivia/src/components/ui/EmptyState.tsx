@@ -15,10 +15,10 @@ interface EmptyStateProps {
  */
 export function EmptyState({ handText, title = 'Le carnet est vide', children }: EmptyStateProps) {
   return (
-    <Card className="text-center py-10 bg-sauge/10 border-sauge/30 anim-enter">
+    <Card className="text-center py-10 motif-tamis anim-enter">
       <svg
         viewBox="0 0 120 80"
-        className="mx-auto mb-4 h-20 w-30 text-[#6b4a32]"
+        className="mx-auto mb-4 h-20 w-30 text-cannelle"
         fill="none"
         stroke="currentColor"
         strokeWidth={2.5}
@@ -37,7 +37,7 @@ export function EmptyState({ handText, title = 'Le carnet est vide', children }:
         <path d="M78 38 C78 34, 72 33, 72 38 C72 33, 66 34, 66 38 C66 43, 72 47, 72 47 C72 47, 78 43, 78 38 Z" />
       </svg>
       <h2 className="font-serif text-2xl font-semibold mb-2">{title}</h2>
-      <p className="text-hand text-bleu-dark text-3xl mb-5">{handText}</p>
+      <p className="font-serif italic text-encre-doux text-2xl mb-5">{handText}</p>
       {children}
     </Card>
   )

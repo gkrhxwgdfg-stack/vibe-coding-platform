@@ -17,8 +17,8 @@ interface ErrorStateProps {
  */
 export function ErrorState({ message, onRetry, retryLabel = COPY.errors.reessayer }: ErrorStateProps) {
   return (
-    <Card className="text-center py-8 border-carmine/30 bg-carmine/5 anim-enter" role="alert">
-      <p className="text-hand text-carmine text-3xl mb-4">{message}</p>
+    <Card className="text-center py-8 border-tomate/30 bg-tomate/5 anim-enter" role="alert">
+      <p className="font-serif italic text-tomate text-3xl mb-4">{message}</p>
       {onRetry && (
         <Button variant="outline" onClick={onRetry}>
           <RotateCcw size={18} aria-hidden="true" />

@@ -44,53 +44,53 @@ export function buildRecipePrintHtml(recipe: RecipeWithMeta, familyName: string)
 <title>${escapeHtml(recipe.title)} — Savia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Nunito+Sans:wght@400;600;700;800&family=Caveat:wght@500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Nunito+Sans:wght@400;600;700;800&family=Fraunces:wght@500;700&display=swap" rel="stylesheet" />
 <style>
   * { box-sizing: border-box; }
   body {
-    margin: 0; padding: 24px; color: #4a3728;
-    font-family: "Nunito Sans", system-ui, sans-serif; font-size: 16px; line-height: 1.6;
-    background: #fbf6ec;
+    margin: 0; padding: 24px; color: #2a211b;
+    font-family: "Nunito", system-ui, sans-serif; font-size: 16px; line-height: 1.6;
+    background: #fdfbf7;
   }
-  .page { max-width: 720px; margin: 0 auto; background: #fffdf8; padding: 40px;
+  .page { max-width: 720px; margin: 0 auto; background: #ffffff; padding: 40px;
           border-radius: 16px; box-shadow: 0 6px 18px -10px rgba(74,55,40,.28); }
   h1 { font-family: "Fraunces", Georgia, serif; font-size: 34px; margin: 0 0 4px; line-height: 1.2; }
   h2 { font-family: "Fraunces", Georgia, serif; font-size: 22px; margin: 32px 0 12px;
-       border-bottom: 2px dashed #d9a441; padding-bottom: 6px; }
+       border-bottom: 2px dashed #e4a93c; padding-bottom: 6px; }
   .kicker { font-size: 12px; letter-spacing: .18em; text-transform: uppercase;
-            color: #c4643a; font-weight: 800; margin: 0 0 6px; }
-  .byline { font-family: "Caveat", cursive; font-size: 24px; color: #46617f; margin: 4px 0 0; }
-  .meta { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 16px 0 0; color: #6b4a32; font-weight: 700; }
-  .badge { display: inline-block; background: #fbf6ec; border: 2px solid #c4643a; color: #c4643a;
+            color: #2e5939; font-weight: 800; margin: 0 0 6px; }
+  .byline { font-family: "Fraunces", cursive; font-size: 24px; color: #2a211b; margin: 4px 0 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 16px 0 0; color: #6b5d4f; font-weight: 700; }
+  .badge { display: inline-block; background: #fdfbf7; border: 2px solid #2e5939; color: #2e5939;
            border-radius: 999px; padding: 4px 14px; font-weight: 800; font-size: 14px; }
   .polaroid { background: #fff; padding: 12px 12px 14px; border-radius: 4px; width: 280px;
               margin: 24px auto; transform: rotate(-2deg);
               box-shadow: 0 10px 24px -14px rgba(74,55,40,.35); }
   .polaroid img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 2px; display: block; }
-  .polaroid figcaption { font-family: "Caveat", cursive; font-size: 20px; color: #6b4a32;
+  .polaroid figcaption { font-family: "Fraunces", cursive; font-size: 20px; color: #6b5d4f;
                           text-align: center; padding-top: 10px; }
   ul.ingredients { list-style: none; padding: 0; margin: 0; }
   ul.ingredients li { padding: 6px 0 6px 24px; position: relative; }
   ul.ingredients li::before { content: ""; position: absolute; left: 4px; top: 14px;
-                               width: 8px; height: 8px; border-radius: 50%; background: #c4643a; }
+                               width: 8px; height: 8px; border-radius: 50%; background: #2e5939; }
   ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: step; }
   ol.steps li { display: flex; gap: 12px; padding: 10px 0; align-items: flex-start; }
-  ol.steps li .num { flex: none; width: 34px; height: 34px; border-radius: 50%; background: #c4643a;
-                     color: #fbf6ec; font-family: "Fraunces", Georgia, serif; font-weight: 700;
+  ol.steps li .num { flex: none; width: 34px; height: 34px; border-radius: 50%; background: #2e5939;
+                     color: #fdfbf7; font-family: "Fraunces", Georgia, serif; font-weight: 700;
                      display: inline-flex; align-items: center; justify-content: center; }
-  .anecdote { background: #f3ecdf; border: 2px dashed #d9a441; border-radius: 16px; padding: 20px 24px; }
-  .anecdote blockquote { font-family: "Caveat", cursive; font-size: 28px; color: #46617f;
+  .anecdote { background: #ffffff; border: 2px dashed rgba(138,90,43,.55); border-radius: 16px; padding: 20px 24px; }
+  .anecdote blockquote { font-family: "Fraunces", cursive; font-size: 28px; color: #2a211b;
                           margin: 0; line-height: 1.4; }
-  .origin { background: #eef1e6; border: 2px dashed #8a9b6e; border-radius: 16px; padding: 16px 20px; }
-  .origin p { font-family: "Caveat", cursive; font-size: 24px; color: #46617f; margin: 4px 0 0; }
+  .origin { background: #f9efdb; border: 2px dashed rgba(138,90,43,.55); border-radius: 16px; padding: 16px 20px; }
+  .origin p { font-family: "Fraunces", cursive; font-size: 24px; color: #2a211b; margin: 4px 0 0; }
   .footer { display: flex; align-items: center; justify-content: space-between; gap: 16px;
              margin-top: 36px; padding-top: 20px; border-top: 1.5px solid rgba(74,55,40,.15);
-             color: #6b4a32; font-size: 14px; flex-wrap: wrap; }
-  .stamp { flex: none; width: 110px; height: 110px; border-radius: 50%; border: 3px dashed #b33b3b;
-           color: #b33b3b; display: inline-flex; flex-direction: column; align-items: center;
+             color: #6b5d4f; font-size: 14px; flex-wrap: wrap; }
+  .stamp { flex: none; width: 110px; height: 110px; border-radius: 50%; border: 3px dashed #c93a2b;
+           color: #c93a2b; display: inline-flex; flex-direction: column; align-items: center;
            justify-content: center; text-align: center; transform: rotate(-8deg);
            font-family: "Fraunces", Georgia, serif; font-weight: 700; text-transform: uppercase; }
-  .stamp small { font-family: "Nunito Sans", sans-serif; font-size: 9px; letter-spacing: .12em; }
+  .stamp small { font-family: "Nunito", sans-serif; font-size: 9px; letter-spacing: .12em; }
   .stamp span { font-size: 17px; text-transform: none; padding: 0 8px; line-height: 1.15; }
   @media print {
     body { background: #fff; padding: 0; }
@@ -134,7 +134,7 @@ ${steps}
         ? `<h2>Le secret — celui qu'on ne dit qu'à la famille</h2>
     <div class="anecdote">
       <blockquote>« ${escapeHtml(recipe.anecdote)} »</blockquote>
-      <p style="margin:10px 0 0;color:#6b4a32;font-weight:700">— ${escapeHtml(author)}</p>
+      <p style="margin:10px 0 0;color:#6b5d4f;font-weight:700">— ${escapeHtml(author)}</p>
     </div>`
         : ''
     }
@@ -152,7 +152,7 @@ ${steps}
       <div>
         <p style="margin:0;font-weight:800">Transmise par ${escapeHtml(author)}${escapeHtml(authorRole)}</p>
         <p style="margin:2px 0 0">Dans le carnet depuis le ${escapeHtml(formatDate(recipe.created_at))}</p>
-        <p style="margin:8px 0 0;font-family:'Caveat',cursive;font-size:20px;color:#c4643a">
+        <p style="margin:8px 0 0;font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:17px;color:#6b5d4f">
           Savia — le carnet de la famille ${escapeHtml(familyName)}
         </p>
       </div>
