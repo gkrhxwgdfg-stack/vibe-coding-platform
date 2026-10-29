@@ -124,7 +124,7 @@ export function CookingTimerV2({ timer, onChange }: CookingTimerV2Props) {
           <circle
             cx="100" cy="100" r={RADIUS}
             fill="none" strokeWidth="6" strokeLinecap="round"
-            className={done ? 'stroke-tomate/40' : 'stroke-tomate/40'}
+            className="stroke-tomate/40"
           />
           {/* Progression : anneau plein terracotta */}
           {elapsedFraction > 0 && (
@@ -132,7 +132,7 @@ export function CookingTimerV2({ timer, onChange }: CookingTimerV2Props) {
               cx="100" cy="100" r={RADIUS}
               fill="none" strokeWidth="6" strokeLinecap="round"
               strokeDasharray={progressDash}
-              className={done ? 'stroke-tomate' : 'stroke-tomate'}
+              className="stroke-tomate"
             />
           )}
         </svg>
