@@ -37,8 +37,10 @@ export const COLORS = {
 } as const
 
 const ENCRE_SOFT = COLORS.ENCRE_SOFT
-const CREME = COLORS.CREME
 const CARMINE = COLORS.CARMINE
+
+/** Zone de sécurité en bas de page : le pied de page reste net du cadre couture */
+export const FOOTER_SAFE = 7
 
 type RGB = { r: number; g: number; b: number }
 
@@ -132,9 +134,11 @@ export interface JsPdfLike {
 export class Cursor {
   y = MARGIN
   constructor(private doc: JsPdfLike) {}
-  /** Avance le curseur, déclenche une nouvelle page si besoin. Retourne true si nouvelle page. */
+  /** Avance le curseur, déclenche une nouvelle page si besoin. Retourne true si nouvelle page.
+   *  Réserve FOOTER_SAFE mm en bas de page : les pieds de page ne chevauchent
+   *  jamais le cadre couture (5 mm) ni le contenu. */
   advance(needed: number): boolean {
-    if (this.y + needed > PAGE_H - MARGIN) {
+    if (this.y + needed > PAGE_H - MARGIN - FOOTER_SAFE) {
       this.doc.addPage()
       this.footer()
       this.y = MARGIN
@@ -151,7 +155,7 @@ export class Cursor {
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(8)
     doc.setTextColor(ENCRE_SOFT.r, ENCRE_SOFT.g, ENCRE_SOFT.b)
-    doc.text('Savia — le carnet de recettes de famille', MARGIN, PAGE_H - 8)
+    doc.text('Savia — le carnet de recettes de famille', MARGIN, PAGE_H - 12)
   }
 }
 
@@ -253,10 +257,11 @@ export function drawDashedRect(
   drawDashedLine(x + w, y, x + w, y + h)
   drawDashedLine(x + w, y + h, x, y + h)
   drawDashedLine(x, y + h, x, y)
-  // Coins arrondis visuels : petits cercles crème aux coins
-  doc.setFillColor(CREME.r, CREME.g, CREME.b)
+  // Coins « couture » : petit point de couleur aux 4 angles — la couture
+  // reste intacte (plus de cercle crème qui coupait le filet).
+  doc.setFillColor(color.r, color.g, color.b)
   for (const [cx, cy] of [[x, y], [x + w, y], [x, y + h], [x + w, y + h]]) {
-    doc.circle(cx, cy, 1.2, 'F')
+    doc.circle(cx, cy, 0.6, 'F')
   }
 }
 
@@ -467,13 +472,24 @@ export async function drawRecipeOnPdf(
     cursor.space(blockH + 2)
   }
 
-  // Tampon + pied de page famille (compact)
-  cursor.advance(8)
-  drawStamp(doc, author, PAGE_W - MARGIN - 14, cursor.y + 8)
+  // Tampon + pied de page famille : zone réservée, jamais superposée au texte
+  // Le tampon (rayon 16) a besoin de 34 mm de hauteur ; on garantit la place
+  // sur la page courante avant de le dessiner, et le pied de gauche est limité
+  // en largeur pour ne jamais toucher le tampon.
+  const STAMP_R = 16
+  const stampZoneH = STAMP_R * 2 + 4
+  cursor.advance(stampZoneH + 2)
+  const stampCy = cursor.y + STAMP_R
+  drawStamp(doc, author, PAGE_W - MARGIN - STAMP_R, stampCy)
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(7)
   doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
-  doc.text(`Savia — le carnet de la famille ${familyName}`, MARGIN, cursor.y + 5)
+  const familyLine = `Savia — le carnet de la famille ${familyName}`
+  const familyLines = doc.splitTextToSize(familyLine, CONTENT_W - stampZoneH)
+  familyLines.forEach((line, i) => {
+    doc.text(line, MARGIN, cursor.y + 4 + i * 3.5)
+  })
+  cursor.space(stampZoneH + 2)
 
   // Pied de page num\u00e9rot\u00e9
   const pageNumber = doc.internal.getCurrentPageInfo().pageNumber
@@ -481,5 +497,5 @@ export async function drawRecipeOnPdf(
   doc.setFontSize(7)
   doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
   const label = pageLabel ? pageLabel(pageNumber) : `Savia — le carnet de recettes de famille · page ${pageNumber}`
-  doc.text(label, MARGIN, PAGE_H - 7)
+  doc.text(label, MARGIN, PAGE_H - 12)
 }

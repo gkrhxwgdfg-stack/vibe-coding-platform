@@ -11,33 +11,34 @@ interface TransmissionBannerProps {
 }
 
 /**
- * Bandeau « transmission » de la fiche recette : point de couture terracotta
- * (dashed 1.5 px, radius 12 px). « Transmise par {auteur} · dans le carnet
+ * Bandeau « transmission » de la fiche recette : carte pleine sans bordure
+ * (fond papier-âgé, radius 12 px). « Transmise par {auteur} · dans le carnet
  * depuis {date} · cuisinée {n} fois ».
  */
 export function TransmissionBanner({ author, recipeCreatedAt, cookedCount }: TransmissionBannerProps) {
   return (
-    <div className="stitch-border bg-creme px-4 py-3 flex items-center gap-3 anim-enter">
+    <div className="rounded-xl bg-moutarde-soft px-4 py-3 flex items-center gap-3 anim-enter">
       {author && <Avatar name={author.display_name} src={author.avatar_url} size="md" />}
-      <p className="text-encre-soft">
-        Transmise par{' '}
-        <strong className="text-encre font-serif text-lg">
-          {author?.display_name ?? '…'}
+      <div className="min-w-0">
+        <p className="text-encre leading-snug">
+          Transmise par{' '}
+          <strong className="font-serif text-xl">{author?.display_name ?? '…'}</strong>
           {author?.family_role && (
-            <span className="text-encre-soft font-sans text-sm font-normal"> ({author.family_role})</span>
+            <span className="text-encre-soft"> · {author.family_role}</span>
           )}
-        </strong>
-        {' · '}
-        dans le carnet depuis {formatDate(recipeCreatedAt)} ({formatRelative(recipeCreatedAt)})
-        {' · '}
-        {cookedCount > 0 ? (
-          <>
-            cuisinée <strong className="text-terra-dark">{cookedCount} fois</strong>
-          </>
-        ) : (
-          'pas encore sortie du four'
-        )}
-      </p>
+        </p>
+        <p className="text-encre-soft mt-0.5">
+          Dans le carnet depuis {formatDate(recipeCreatedAt)} ({formatRelative(recipeCreatedAt)})
+          {' · '}
+          {cookedCount > 0 ? (
+            <>
+              cuisinée <strong className="text-terra-dark">{cookedCount} fois</strong>
+            </>
+          ) : (
+            'pas encore sortie du four'
+          )}
+        </p>
+      </div>
     </div>
   )
 }

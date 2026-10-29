@@ -47,7 +47,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         <h3 className="font-serif font-semibold text-xl leading-snug group-hover:text-terra-dark transition-colors">
           {recipe.title}
         </h3>
-        <p className="text-hand text-bleu-dark text-lg mt-0.5">
+        <p className="text-hand text-bleu-dark text-2xl mt-0.5 leading-tight">
           créée par {recipe.author?.display_name ?? '…'}
         </p>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-brun-soft">

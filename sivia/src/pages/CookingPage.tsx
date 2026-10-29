@@ -27,14 +27,11 @@ import { cn } from '@/lib/utils'
 
 type Phase = 'mise-en-place' | 'cooking' | 'done'
 
-/** Clé sessionStorage : le message « Écran maintenu allumé » n'est affiché qu'une fois */
-const WAKE_LOCK_SHOWN_KEY = 'savia-wake-lock-shown'
-
 /**
  * Mode cuisson v2 : plein écran, une étape à la fois, façon diaporama.
  * - Écran « La mise en place » avant le plein écran (checklist + portions)
  * - Transition d'entrée : fiche repliée (scale 0.96 + fondu 400 ms)
- * - Étapes 1.9 rem, barre couture de progression « 3/8 », flèches 64 px, swipe, clavier
+ * - Étapes 1.9 rem, barre de progression pleine « 3/8 », flèches 64 px, swipe, clavier
  * - Ingrédients de l'étape surlignés moutarde-soft, déjà-utilisés atténués
  * - Minuteurs libellés, cercle couture, pré-alerte, fin carmine + vibration
  * - Écran final « C'est prêt ! » : polaroïd + confettis papier 1.8 s (une fois)
@@ -51,7 +48,6 @@ export function CookingPage() {
   const [servings, setServings] = useState<number | null>(null)
   const [checked, setChecked] = useState<ReadonlySet<number>>(new Set())
   const [timers, setTimers] = useState<TimerState[]>([])
-  const [wakeLockShown, setWakeLockShown] = useState(false)
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const [publishing, setPublishing] = useState(false)
@@ -93,17 +89,6 @@ export function CookingPage() {
       })
     return () => sentinel?.release()
   }, [phase])
-
-  // Message « Écran maintenu allumé » : une seule fois
-  useEffect(() => {
-    if (phase !== 'cooking' || wakeLockShown) return
-    if (typeof sessionStorage !== 'undefined' && !sessionStorage.getItem(WAKE_LOCK_SHOWN_KEY)) {
-      sessionStorage.setItem(WAKE_LOCK_SHOWN_KEY, '1')
-      setWakeLockShown(true)
-      const timeout = setTimeout(() => setWakeLockShown(false), 4000)
-      return () => clearTimeout(timeout)
-    }
-  }, [phase, wakeLockShown])
 
   const effectiveServings = servings ?? recipe?.servings ?? 4
 
@@ -324,7 +309,7 @@ export function CookingPage() {
           <div className="w-full">
             <label
               htmlFor="cooked-photo"
-              className="cursor-pointer w-full min-h-12 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 border-dashed border-encre/25 bg-creme font-bold hover:border-terra-dark hover:text-terra-dark transition-colors"
+              className="cursor-pointer w-full min-h-12 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 border-encre/25 bg-creme font-bold hover:border-terra-dark hover:text-terra-dark transition-colors"
             >
               <ImagePlus size={20} aria-hidden="true" />
               {photoFile ? 'Changer la photo' : 'Ajouter une photo du plat'}
@@ -408,21 +393,23 @@ export function CookingPage() {
         </span>
       </header>
 
-      {/* Message « Écran maintenu allumé », une seule fois */}
-      {wakeLockShown && (
-        <p className="text-center text-sm text-encre-soft px-4 anim-enter" role="status">
-          Écran maintenu allumé
-        </p>
-      )}
-
-      {/* Barre couture de progression */}
-      <div className="max-w-3xl w-full mx-auto px-4" aria-hidden="true">
-        <div className="h-1.5 rounded-full border border-dashed border-terra/60 flex">
+      {/* Barre de progression pleine (sans texte au-dessus, sans pointillés) */}
+      <div
+        className="max-w-3xl w-full mx-auto px-4 mt-3"
+        role="progressbar"
+        aria-label={`Étape ${index + 1} sur ${recipe.steps.length}`}
+        aria-valuenow={index + 1}
+        aria-valuemin={1}
+        aria-valuemax={recipe.steps.length}
+      >
+        <div className="h-2 rounded-full bg-encre/10 flex gap-1 overflow-hidden">
           {recipe.steps.map((_, i) => (
             <span
               key={i}
-              className={cn('flex-1', i > 0 && 'border-l border-dashed border-terra/60')}
-              style={{ backgroundColor: i <= index ? 'rgba(196, 100, 58, 0.35)' : 'transparent' }}
+              className={cn(
+                'h-full flex-1 rounded-full transition-colors',
+                i <= index ? 'bg-terra-dark' : 'bg-encre/10',
+              )}
             />
           ))}
         </div>

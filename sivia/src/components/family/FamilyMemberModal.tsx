@@ -250,7 +250,7 @@ export function FamilyMemberModal({
           />
 
           {/* ---------- Relié à … (type de lien + une ou deux personnes) ---------- */}
-          <div className="rounded-2xl border-2 border-dashed border-terra/40 bg-creme p-4 space-y-4">
+          <div className="rounded-2xl bg-sauge/15 p-4 space-y-4">
             <p className="font-bold text-encre">Relié à …</p>
             <div>
               <label htmlFor="member-parent" className="block font-bold text-encre mb-1.5">
@@ -398,7 +398,7 @@ export function FamilyMemberModal({
             <label
               htmlFor="member-photo"
               className={cn(
-                'cursor-pointer w-full min-h-11 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 border-dashed font-bold transition-colors',
+                'cursor-pointer w-full min-h-11 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 font-bold transition-colors',
                 photoFile
                   ? 'border-sauge bg-sauge/10 text-encre'
                   : 'border-encre/25 bg-creme hover:border-terra-dark hover:text-terra',

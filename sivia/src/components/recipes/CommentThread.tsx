@@ -192,7 +192,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
           <label
             htmlFor="comment-photo"
             className={cn(
-              'cursor-pointer inline-flex items-center gap-2 min-h-11 px-5 rounded-2xl border-2 border-dashed font-bold transition-colors',
+              'cursor-pointer inline-flex items-center gap-2 min-h-11 px-5 rounded-2xl border-2 font-bold transition-colors',
               'border-encre/25 bg-creme hover:border-terra-dark hover:text-terra',
             )}
           >

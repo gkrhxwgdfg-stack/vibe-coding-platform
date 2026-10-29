@@ -217,7 +217,7 @@ export function FamilyPage() {
                     )}
                   </p>
                   {member.family_role && (
-                    <p className="text-hand text-bleu-dark text-xl">{member.family_role}</p>
+                    <p className="text-hand text-bleu-dark text-2xl">{member.family_role}</p>
                   )}
                   {member.bio && <p className="text-sm text-encre-soft truncate">{member.bio}</p>}
                   <p className="text-sm text-encre-soft">En cuisine depuis {formatDate(member.created_at)}</p>
@@ -315,7 +315,7 @@ export function FamilyPage() {
             </Button>
           </form>
           {lastLink && (
-            <div className="mt-4 rounded-2xl border-2 border-dashed border-sauge bg-sauge/10 p-4">
+            <div className="mt-4 rounded-2xl bg-sauge/15 p-4">
               <p className="font-bold mb-2">Lien d’invitation tout frais :</p>
               <div className="flex gap-2">
                 <input
@@ -403,7 +403,7 @@ export function FamilyPage() {
             {/* Mini couverture — aperçu visuel du carnet A5 */}
             <div
               aria-hidden="true"
-              className="mb-5 rounded-2xl border-[3px] border-dashed border-terra/60 bg-creme px-6 py-8 text-center shadow-soft"
+              className="mb-5 rounded-2xl bg-moutarde-soft px-6 py-8 text-center shadow-soft"
             >
               <p className="kicker">Savia</p>
               <p className="font-serif text-2xl font-bold text-encre mt-2 leading-tight">

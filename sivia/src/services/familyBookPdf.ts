@@ -238,7 +238,7 @@ export async function generateFamilyBookPdf(input: FamilyBookInput): Promise<{ p
   doc.setFontSize(8)
   doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
   const couvFooter = `Carnet ${familyName}`
-  doc.text(couvFooter, centeredX(doc, couvFooter), PAGE_H - 10)
+  doc.text(couvFooter, centeredX(doc, couvFooter), PAGE_H - 13)
 
   // ---------- Sommaire ----------
   doc.addPage()
@@ -278,7 +278,7 @@ export async function generateFamilyBookPdf(input: FamilyBookInput): Promise<{ p
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(8)
   doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
-  doc.text(label(2), MARGIN, PAGE_H - 8)
+  doc.text(label(2), MARGIN, PAGE_H - 13)
 
   // ---------- Recettes ----------
   for (const recipe of sorted) {
