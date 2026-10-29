@@ -15,6 +15,7 @@ import { Card, CardHeader } from '@/components/ui/Card'
 import { TextInput } from '@/components/ui/FormFields'
 import { Spinner } from '@/components/ui/Spinner'
 import { FamilyTree } from '@/components/family/FamilyTree'
+import { TreeLegend } from '@/components/family/TreeLegend'
 import { FamilyEvents } from '@/components/family/FamilyEvents'
 import { formatDate } from '@/lib/format'
 import { COPY } from '@/lib/copy'
@@ -248,6 +249,7 @@ export function FamilyPage() {
           (à côté, même génération), et le « + » carmine en haut pour un aîné au-dessus. Le lien
           s'écrit librement sur la carte.
         </p>
+        <TreeLegend className="mb-4" />
         <div className="card-surface card-pad p-5 bg-vert/5">
           <FamilyTree
           recipeCountByMember={recipeCountByMember}

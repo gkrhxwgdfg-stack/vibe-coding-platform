@@ -19,6 +19,8 @@ export interface CookingSessionState {
   stepIndex: number
   /** Étape atteinte (pour la barre de progression « 3/8 ») */
   timers: TimerState[]
+  /** Indices des étapes déjà rayées (checklist du mode cuisson) */
+  doneSteps?: number[]
   updatedAt: number
 }
 

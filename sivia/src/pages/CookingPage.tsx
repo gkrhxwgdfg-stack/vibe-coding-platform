@@ -47,6 +47,8 @@ export function CookingPage() {
   const [index, setIndex] = useState(0)
   const [servings, setServings] = useState<number | null>(null)
   const [checked, setChecked] = useState<ReadonlySet<number>>(new Set())
+  // Étapes déjà rayées en mode cuisson (checklist), persistées avec la session
+  const [doneSteps, setDoneSteps] = useState<ReadonlySet<number>>(new Set())
   const [timers, setTimers] = useState<TimerState[]>([])
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
@@ -62,6 +64,7 @@ export function CookingPage() {
     if (saved && saved.stepIndex < recipe.steps.length) {
       setIndex(saved.stepIndex)
       setTimers(saved.timers)
+      setDoneSteps(new Set(saved.doneSteps ?? []))
       setPhase('cooking')
     }
   }, [recipe])
@@ -69,8 +72,23 @@ export function CookingPage() {
   // Persistance à chaque changement (étape + minuteurs)
   useEffect(() => {
     if (!recipe || phase !== 'cooking') return
-    saveCookingSession({ recipeId: recipe.id, stepIndex: index, timers, updatedAt: Date.now() })
-  }, [recipe, phase, index, timers])
+    saveCookingSession({
+      recipeId: recipe.id,
+      stepIndex: index,
+      timers,
+      doneSteps: [...doneSteps],
+      updatedAt: Date.now(),
+    })
+  }, [recipe, phase, index, timers, doneSteps])
+
+  function toggleDoneStep(i: number) {
+    setDoneSteps((prev) => {
+      const next = new Set(prev)
+      if (next.has(i)) next.delete(i)
+      else next.add(i)
+      return next
+    })
+  }
 
   // Wake Lock : l'écran reste allumé pendant la cuisson (si l'API est dispo)
   useEffect(() => {
@@ -97,6 +115,8 @@ export function CookingPage() {
     const clamped = Math.min(index, recipe.steps.length - 1)
     return cookingStep(recipe, clamped)
   }, [recipe, index])
+
+  const clampedIndex = Math.min(index, (recipe?.steps.length ?? 1) - 1)
 
   const scaledIngredients = useMemo(() => {
     if (!recipe) return []
@@ -407,8 +427,12 @@ export function CookingPage() {
             <span
               key={i}
               className={cn(
-                'h-full flex-1 rounded-full transition-colors',
-                i <= index ? 'bg-tomate' : 'bg-encre/10',
+                'h-full flex-1 rounded-full transition-colors duration-200 ease-out',
+                doneSteps.has(i)
+                  ? 'bg-tomate'
+                  : i <= index
+                    ? 'bg-vert'
+                    : 'bg-encre/10',
               )}
             />
           ))}
@@ -423,10 +447,40 @@ export function CookingPage() {
         >
           {index + 1}
         </span>
-        {/* Étape : 1.9 rem (2.3 rem si .reading-lg — chantier 8) */}
-        <p className="cooking-step text-[1.9rem] leading-relaxed font-medium text-encre max-w-xl">
-          {stepData.step}
-        </p>
+        {/* Étape cochable : tap pour rayer (comme les ingrédients), 1.9 rem */}
+        <button
+          type="button"
+          onClick={() => toggleDoneStep(clampedIndex)}
+          aria-pressed={doneSteps.has(clampedIndex)}
+          aria-label={
+            doneSteps.has(clampedIndex)
+              ? `Étape ${index + 1} faite — appuyer pour décocher`
+              : `Marquer l'étape ${index + 1} comme faite`
+          }
+          className="group inline-flex flex-col items-center gap-3 max-w-xl touch-target-lg py-2 rounded-2xl"
+        >
+          <span className="inline-flex items-start gap-3 text-left">
+            <span
+              className={cn(
+                'mt-2 w-7 h-7 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors duration-200 ease-out',
+                doneSteps.has(clampedIndex)
+                  ? 'bg-vert border-vert text-white'
+                  : 'border-vert/50 text-transparent group-hover:border-vert',
+              )}
+              aria-hidden="true"
+            >
+              <Check size={16} strokeWidth={3} />
+            </span>
+            <span
+              className={cn(
+                'cooking-step text-[1.9rem] leading-relaxed font-medium text-encre transition-colors duration-200 ease-out',
+                doneSteps.has(clampedIndex) && 'line-through text-encre-doux/60',
+              )}
+            >
+              {stepData.step}
+            </span>
+          </span>
+        </button>
 
         {/* Minuteurs libellés de l'étape */}
         {stepData.minutes != null && (
