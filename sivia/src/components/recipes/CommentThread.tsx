@@ -67,11 +67,11 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
   return (
     <section aria-labelledby="comments-title" className="card-surface p-5">
       <div className="flex items-center gap-2 mb-4">
-        <MessageCircle size={22} className="text-terra-dark" aria-hidden="true" />
+        <MessageCircle size={22} className="text-tomate" aria-hidden="true" />
         <h2 id="comments-title" className="text-2xl font-semibold">
           La recette vit ici
         </h2>
-        <span className="text-sm text-encre-soft font-bold">
+        <span className="text-sm text-encre-doux font-bold">
           {comments.length === 0 ? 'Aucun message' : `${comments.length} message${comments.length > 1 ? 's' : ''}`}
         </span>
       </div>
@@ -81,7 +81,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
       ) : (
         <ul className="space-y-4 mb-6">
           {comments.length === 0 && (
-            <li className="text-encre-soft">
+            <li className="text-encre-doux">
               Personne n'a encore raconté cette recette. Sois le premier — la famille
               suivra.
             </li>
@@ -96,11 +96,11 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                   <Avatar name={comment.author.display_name} src={comment.author.avatar_url} size="md" />
                 )}
                 <div className="min-w-0 flex-1">
-                  <div className="rounded-2xl bg-lin px-4 py-3">
+                  <div className="rounded-2xl bg-papier px-4 py-3">
                     <p className="font-bold">
                       {comment.author?.display_name ?? '…'}
                       {comment.author?.family_role && (
-                        <span className="text-encre-soft font-normal"> · {comment.author.family_role}</span>
+                        <span className="text-encre-doux font-normal"> · {comment.author.family_role}</span>
                       )}
                     </p>
                     {isEditing ? (
@@ -109,14 +109,14 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                           rows={2}
                           value={editBody}
                           onChange={(e) => setEditBody(e.target.value)}
-                          className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-3 py-2 text-encre placeholder:text-encre-soft/60 focus:border-terra focus:outline-none"
+                          className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-carte px-3 py-2 text-encre placeholder:text-encre-doux/60 focus:border-tomate focus:outline-none"
                           aria-label="Modifier mon message"
                         />
                         <div className="flex gap-2">
                           <button
                             type="button"
                             onClick={() => saveEdit(comment.id)}
-                            className="inline-flex items-center gap-1 min-h-11 px-4 rounded-xl bg-terra-dark text-creme font-bold"
+                            className="inline-flex items-center gap-1 min-h-11 px-4 rounded-xl bg-tomate text-white font-bold"
                           >
                             <Check size={16} aria-hidden="true" /> Enregistrer
                           </button>
@@ -146,7 +146,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                       </>
                     )}
                   </div>
-                  <p className="text-sm text-encre-soft mt-1 px-1">
+                  <p className="text-sm text-encre-doux mt-1 px-1">
                     {formatRelative(comment.created_at)}
                   </p>
                 </div>
@@ -156,7 +156,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                       type="button"
                       onClick={() => startEdit(comment)}
                       aria-label="Modifier mon message"
-                      className="touch-target-lg min-h-11 min-w-11 rounded-xl text-encre-soft hover:text-terra-dark inline-flex items-center justify-center"
+                      className="touch-target-lg min-h-11 min-w-11 rounded-xl text-encre-doux hover:text-tomate inline-flex items-center justify-center"
                     >
                       <Pencil size={18} aria-hidden="true" />
                     </button>
@@ -164,7 +164,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                       type="button"
                       onClick={() => remove(comment.id)}
                       aria-label="Retirer mon message"
-                      className="touch-target-lg min-h-11 min-w-11 rounded-xl text-encre-soft hover:text-carmine inline-flex items-center justify-center"
+                      className="touch-target-lg min-h-11 min-w-11 rounded-xl text-encre-doux hover:text-tomate inline-flex items-center justify-center"
                     >
                       <Trash2 size={18} aria-hidden="true" />
                     </button>
@@ -186,14 +186,14 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
           value={body}
           onChange={(e) => setBody(e.target.value)}
           placeholder="Celle de dimanche, avec une touche de thym en plus…"
-          className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-creme px-4 py-2.5 text-encre placeholder:text-encre-soft/60 focus:border-terra focus:outline-none"
+          className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-carte px-4 py-2.5 text-encre placeholder:text-encre-doux/60 focus:border-tomate focus:outline-none"
         />
         <div className="flex flex-wrap items-center gap-3">
           <label
             htmlFor="comment-photo"
             className={cn(
               'cursor-pointer inline-flex items-center gap-2 min-h-11 px-5 rounded-2xl border-2 font-bold transition-colors',
-              'border-encre/25 bg-creme hover:border-terra-dark hover:text-terra',
+              'border-encre/25 bg-carte hover:border-tomate hover:text-tomate',
             )}
           >
             <ImagePlus size={20} aria-hidden="true" />
@@ -214,7 +214,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                   setPhotoPreview(null)
                 }}
                 aria-label="Retirer la photo"
-                className="absolute -top-2 -right-2 touch-target-lg min-h-11 min-w-11 rounded-full bg-carmine text-creme flex items-center justify-center"
+                className="absolute -top-2 -right-2 touch-target-lg min-h-11 min-w-11 rounded-full bg-tomate text-white flex items-center justify-center"
               >
                 <Trash2 size={14} aria-hidden="true" />
               </button>
@@ -226,7 +226,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
           </Button>
         </div>
         {error && (
-          <p className="text-carmine font-bold" role="alert">
+          <p className="text-tomate font-bold" role="alert">
             {error}
           </p>
         )}

@@ -56,12 +56,12 @@ export function FamilyEvents() {
           </Button>
         </EmptyState>
       ) : (
-        <ol className="relative space-y-8 before:absolute before:left-[7px] before:top-2 before:bottom-2 before:w-0.5 before:bg-terra/40">
+        <ol className="relative space-y-8 before:absolute before:left-[7px] before:top-2 before:bottom-2 before:w-0.5 before:bg-tomate/40">
           {years.map((year) => (
             <li key={year} className="relative pl-8">
               {/* Nœud de l'année sur le fil */}
               <span
-                className="absolute left-0 top-1 w-4 h-4 rounded-full bg-terra border-2 border-creme shadow-card"
+                className="absolute left-0 top-1 w-4 h-4 rounded-full bg-tomate border-2 border-carte shadow-card"
                 aria-hidden="true"
               />
               <h3 className="font-serif text-2xl font-bold text-encre mb-3">{year}</h3>
@@ -70,7 +70,7 @@ export function FamilyEvents() {
                   const photo = familyPhotoUrl(event.photo_url)
                   return (
                     <li key={event.id}>
-                      <Card className="bg-sauge/10 border-sauge/30">
+                      <Card className="bg-vert/10 border-vert/30">
                         <div className="flex flex-wrap items-start gap-4">
                           {photo && (
                             <img
@@ -84,7 +84,7 @@ export function FamilyEvents() {
                             <p className="kicker">{formatDate(event.event_date)}</p>
                             <p className="font-serif text-xl font-semibold leading-tight">{event.title}</p>
                             {event.note && (
-                              <p className="text-encre-soft mt-1 whitespace-pre-line">{event.note}</p>
+                              <p className="text-encre-doux mt-1 whitespace-pre-line">{event.note}</p>
                             )}
                             {event.recipes && event.recipes.length > 0 && (
                               <ul className="flex flex-wrap gap-2 mt-2">
@@ -92,7 +92,7 @@ export function FamilyEvents() {
                                   <li key={recipe.id}>
                                     <Link
                                       to={`/recettes/${recipe.id}`}
-                                      className="inline-block bg-creme border-2 border-encre/15 rounded-full px-3 py-1 text-sm font-bold text-encre hover:border-terra-dark hover:text-terra-dark"
+                                      className="inline-block bg-carte border-2 border-encre/15 rounded-full px-3 py-1 text-sm font-bold text-encre hover:border-tomate hover:text-tomate"
                                     >
                                       {recipe.title}
                                     </Link>
@@ -105,7 +105,7 @@ export function FamilyEvents() {
                             type="button"
                             onClick={() => remove(event.id)}
                             aria-label={`Retirer le souvenir ${event.title}`}
-                            className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-soft hover:text-carmine inline-flex items-center justify-center shrink-0"
+                            className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-doux hover:text-tomate inline-flex items-center justify-center shrink-0"
                           >
                             <Trash2 size={18} aria-hidden="true" />
                           </button>
@@ -212,7 +212,7 @@ function AddEventModal({ recipes, onClose, onCreated, add }: AddEventModalProps)
             type="button"
             onClick={onClose}
             aria-label="Ranger"
-            className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-soft hover:text-terra-dark inline-flex items-center justify-center"
+            className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-doux hover:text-tomate inline-flex items-center justify-center"
           >
             <X size={22} aria-hidden="true" />
           </button>
@@ -259,8 +259,8 @@ function AddEventModal({ recipes, onClose, onCreated, add }: AddEventModalProps)
                       className={cn(
                         'min-h-11 px-4 rounded-full border-2 font-bold transition-colors',
                         selected
-                          ? 'bg-terra-dark text-creme border-terra'
-                          : 'bg-creme text-encre border-encre/20 hover:border-terra-dark hover:text-terra',
+                          ? 'bg-tomate text-white border-tomate'
+                          : 'bg-carte text-encre border-encre/20 hover:border-tomate hover:text-tomate',
                       )}
                     >
                       {recipe.title}
@@ -278,8 +278,8 @@ function AddEventModal({ recipes, onClose, onCreated, add }: AddEventModalProps)
               className={cn(
                 'cursor-pointer w-full min-h-11 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 font-bold transition-colors',
                 photoFile
-                  ? 'border-sauge bg-sauge/10 text-encre'
-                  : 'border-encre/25 bg-creme hover:border-terra-dark hover:text-terra',
+                  ? 'border-vert bg-vert/10 text-encre'
+                  : 'border-encre/25 bg-carte hover:border-tomate hover:text-tomate',
               )}
             >
               <ImagePlus size={20} aria-hidden="true" />
@@ -300,7 +300,7 @@ function AddEventModal({ recipes, onClose, onCreated, add }: AddEventModalProps)
                     setPhotoPreview(null)
                   }}
                   aria-label="Retirer la photo"
-                  className="absolute top-2 right-2 touch-target-lg min-h-11 min-w-11 rounded-full bg-carmine text-creme flex items-center justify-center"
+                  className="absolute top-2 right-2 touch-target-lg min-h-11 min-w-11 rounded-full bg-tomate text-white flex items-center justify-center"
                 >
                   <Trash2 size={18} aria-hidden="true" />
                 </button>
@@ -309,7 +309,7 @@ function AddEventModal({ recipes, onClose, onCreated, add }: AddEventModalProps)
           </div>
 
           {error && (
-            <p className="text-carmine font-bold" role="alert">
+            <p className="text-tomate font-bold" role="alert">
               {error}
             </p>
           )}

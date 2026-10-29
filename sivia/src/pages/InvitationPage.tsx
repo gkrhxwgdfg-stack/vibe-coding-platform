@@ -51,7 +51,7 @@ export function InvitationPage() {
       <AuthShell title="Invitation" handNote="Ratée, la page a débordé. On essuie et on recommence ?">
         <Card className="text-center">
           <p className="text-lg mb-2">{error ?? 'Ce lien d’invitation n’est plus valide.'}</p>
-          <p className="text-encre-soft mb-5">
+          <p className="text-encre-doux mb-5">
             Demande un nouveau lien à ta famille, ou connecte-toi si tu as déjà un compte.
           </p>
           <div className="flex flex-col gap-3">
@@ -73,11 +73,11 @@ export function InvitationPage() {
         <p className="text-lg mb-1">
           Rejoins la famille <strong className="font-serif">{invitation.family?.name}</strong>
         </p>
-        <p className="text-encre-soft mb-6">
+        <p className="text-encre-doux mb-6">
           Tu verras ses recettes, tu pourras en ajouter, et garder le secret de la sauce au chaud.
         </p>
         {joinError && (
-          <p className="text-carmine font-bold mb-4" role="alert">
+          <p className="text-tomate font-bold mb-4" role="alert">
             {joinError}
           </p>
         )}

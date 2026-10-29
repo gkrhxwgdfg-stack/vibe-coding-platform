@@ -134,7 +134,7 @@ export function DiagnosticPage() {
   return (
     <AuthShell title="Diagnostic Savia" handNote="On vérifie que tout est bien branché.">
       <Card className="anim-enter">
-        <p className="text-sm text-encre-soft mb-4">
+        <p className="text-sm text-encre-doux mb-4">
           Bac à sable motion (chantier 1) — les cartes ci-dessous rejouent leur
           entrée à chaque clic. Avec « mouvement réduit » demandé, seul un fondu
           simple reste.
@@ -164,23 +164,23 @@ export function DiagnosticPage() {
             <Play size={18} aria-hidden="true" />
             Rejouer l’entrée
           </Button>
-          <span className="text-sm text-encre-soft">
+          <span className="text-sm text-encre-doux">
             prefers-reduced-motion : {reducedMotion ? 'activé' : 'désactivé'}
           </span>
-          <span className="text-sm text-encre-soft inline-flex items-center gap-1">
+          <span className="text-sm text-encre-doux inline-flex items-center gap-1">
             <Square size={14} aria-hidden="true" /> animation active
           </span>
         </div>
         <ul className="space-y-3">
           {checks.map((check) => (
             <li key={check.name} className="flex items-start gap-3">
-              {check.status === 'pending' && <Loader2 size={20} className="text-encre-soft animate-spin shrink-0 mt-0.5" aria-hidden="true" />}
-              {check.status === 'ok' && <Check size={20} className="text-sauge-ink shrink-0 mt-0.5" aria-hidden="true" />}
-              {check.status === 'error' && <X size={20} className="text-carmine shrink-0 mt-0.5" aria-hidden="true" />}
+              {check.status === 'pending' && <Loader2 size={20} className="text-encre-doux animate-spin shrink-0 mt-0.5" aria-hidden="true" />}
+              {check.status === 'ok' && <Check size={20} className="text-vert shrink-0 mt-0.5" aria-hidden="true" />}
+              {check.status === 'error' && <X size={20} className="text-tomate shrink-0 mt-0.5" aria-hidden="true" />}
               <div className="min-w-0">
-                <p className={`font-semibold ${check.status === 'error' ? 'text-carmine' : ''}`}>{check.name}</p>
+                <p className={`font-semibold ${check.status === 'error' ? 'text-tomate' : ''}`}>{check.name}</p>
                 {check.detail && (
-                  <p className="text-sm text-encre-soft break-all">{check.detail}</p>
+                  <p className="text-sm text-encre-doux break-all">{check.detail}</p>
                 )}
               </div>
             </li>
@@ -188,9 +188,9 @@ export function DiagnosticPage() {
         </ul>
 
         <div className="mt-6 pt-4 border-t border-encre/10">
-          {allOk && <p className="text-sauge-ink font-bold text-center">Tout fonctionne ! L’application est prête.</p>}
-          {anyError && <p className="text-carmine font-bold text-center">Des problèmes ont été détectés. Voir les détails ci-dessus.</p>}
-          {!allOk && !anyError && <p className="text-encre-soft text-center">Vérification en cours…</p>}
+          {allOk && <p className="text-vert font-bold text-center">Tout fonctionne ! L’application est prête.</p>}
+          {anyError && <p className="text-tomate font-bold text-center">Des problèmes ont été détectés. Voir les détails ci-dessus.</p>}
+          {!allOk && !anyError && <p className="text-encre-doux text-center">Vérification en cours…</p>}
         </div>
       </Card>
     </AuthShell>

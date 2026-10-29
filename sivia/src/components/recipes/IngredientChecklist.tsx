@@ -9,7 +9,7 @@ interface IngredientChecklistProps {
 
 /**
  * Cases à cocher des ingrédients de la fiche recette : cases 24 px, cochée =
- * barre sur le texte (scaleX, 150 ms), ligne en encre-soft.
+ * barre sur le texte (scaleX, 150 ms), ligne en encre-doux.
  * L'état est local à la visite (pas persisté — la liste de courses reste
  * sur papier, comme à la maison).
  */
@@ -41,7 +41,7 @@ export function IngredientChecklist({ lines }: IngredientChecklistProps) {
                 aria-hidden="true"
                 className={cn(
                   'mt-1.5 w-6 h-6 rounded-md border-2 shrink-0 inline-flex items-center justify-center transition-colors',
-                  isChecked ? 'bg-terra-dark border-terra-dark text-creme' : 'border-encre/30 bg-creme',
+                  isChecked ? 'bg-tomate border-tomate text-white' : 'border-encre/30 bg-carte',
                 )}
               >
                 {isChecked && <Check size={16} strokeWidth={3} aria-hidden="true" />}
@@ -50,7 +50,7 @@ export function IngredientChecklist({ lines }: IngredientChecklistProps) {
                 <span
                   className={cn(
                     'inline-block transition-colors',
-                    isChecked ? 'text-encre-soft' : 'text-encre',
+                    isChecked ? 'text-encre-doux' : 'text-encre',
                   )}
                 >
                   {line}
@@ -59,7 +59,7 @@ export function IngredientChecklist({ lines }: IngredientChecklistProps) {
                 <span
                   aria-hidden="true"
                   className={cn(
-                    'absolute left-0 top-1/2 h-[2px] w-full bg-encre-soft rounded-full origin-left transition-transform',
+                    'absolute left-0 top-1/2 h-[2px] w-full bg-encre-doux rounded-full origin-left transition-transform',
                     isChecked ? 'scale-x-100' : 'scale-x-0',
                   )}
                   style={{ transitionDuration: '150ms', transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)' }}

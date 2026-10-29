@@ -1,7 +1,7 @@
 import { forwardRef, type ButtonHTMLAttributes } from 'react'
 import { cn } from '@/lib/utils'
 
-type ButtonVariant = 'primary' | 'ghost' | 'outline' | 'danger'
+type ButtonVariant = 'primary' | 'secondary' | 'soft' | 'ghost' | 'outline' | 'danger'
 type ButtonSize = 'md' | 'lg'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -10,15 +10,21 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants: Record<ButtonVariant, string> = {
-  // Bouton « cuisson » : arrondi généreux, ombre douce — on clique comme on goûte
+  // Primaire : tomate, pill 999 px, min-height 52 px (§6.1) — zéro ornement
   primary:
-    'bg-terra-dark text-creme hover:bg-[#8f4525] shadow-soft border-transparent',
+    'bg-tomate text-white hover:bg-[#a72f23] shadow-[0_8px_20px_rgba(201,58,43,0.30)] border-transparent rounded-full min-h-13',
+  // Secondaire : transparent, bordure 2 px vert, texte vert (§6.1)
+  secondary:
+    'bg-transparent text-vert border-vert hover:bg-vert-clair',
+  // Soft : fond vert-clair, texte vert (§6.1)
+  soft:
+    'bg-vert-clair text-vert border-transparent hover:brightness-95',
   ghost:
-    'bg-transparent text-encre hover:bg-creme border-transparent',
+    'bg-transparent text-encre hover:bg-vert-clair border-transparent',
   outline:
-    'bg-creme text-encre border-encre/25 hover:border-terra-dark hover:text-terra',
+    'bg-carte text-encre border-encre-doux/20 hover:border-vert hover:text-vert',
   danger:
-    'bg-carmine text-creme hover:bg-[#9a3232] shadow-soft border-transparent',
+    'bg-tomate text-white hover:bg-[#a72f23] shadow-[0_8px_20px_rgba(201,58,43,0.30)] border-transparent',
 }
 
 const sizes: Record<ButtonSize, string> = {
@@ -32,8 +38,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       ref={ref}
       type={type}
       className={cn(
-        'inline-flex items-center justify-center gap-2 font-bold border-2 transition-colors',
-        'disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]',
+        'inline-flex items-center justify-center gap-2 font-extrabold border-2 transition-[filter,colors] duration-200 ease-out',
+        'disabled:opacity-45 disabled:cursor-not-allowed active:scale-[0.98]',
         variants[variant],
         sizes[size],
         className,

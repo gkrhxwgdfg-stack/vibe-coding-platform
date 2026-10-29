@@ -143,14 +143,14 @@ export function OnboardingPage() {
             placeholder="maman, papi, cousin…"
             hint="Comment les tiens t’appellent en cuisine ? Les autres pourront le préciser dans leur profil."
           />
-          {error && <p className="text-carmine font-bold mb-4" role="alert">{error}</p>}
+          {error && <p className="text-tomate font-bold mb-4" role="alert">{error}</p>}
           <Button type="submit" size="lg" className="w-full" disabled={submitting || !familyName.trim()}>
             {submitting ? 'On installe la cuisine…' : 'Créer ma famille'}
           </Button>
           <button
             type="button"
             onClick={() => setMode('choix')}
-            className="mt-4 w-full text-bleu-dark font-bold hover:underline min-h-11"
+            className="mt-4 w-full text-vert font-bold hover:underline min-h-11"
           >
             Retour
           </button>
@@ -171,14 +171,14 @@ export function OnboardingPage() {
             onChange={(e) => setInviteCode(e.target.value)}
             placeholder="https://…/invitation?token=…"
           />
-          {error && <p className="text-carmine font-bold mb-4" role="alert">{error}</p>}
+          {error && <p className="text-tomate font-bold mb-4" role="alert">{error}</p>}
           <Button type="submit" size="lg" className="w-full" disabled={submitting || !inviteCode.trim()}>
             {submitting ? 'On vérifie le lien…' : 'Rejoindre la famille'}
           </Button>
           <button
             type="button"
             onClick={() => setMode('choix')}
-            className="mt-4 w-full text-bleu-dark font-bold hover:underline min-h-11"
+            className="mt-4 w-full text-vert font-bold hover:underline min-h-11"
           >
             Retour
           </button>
@@ -191,7 +191,7 @@ export function OnboardingPage() {
     return (
       <AuthShell title="Ta famille est prête !" handNote="Passe la recette — comme une assiette, tendue.">
         <Card className="text-center">
-          <Users size={40} className="mx-auto text-terra-dark mb-3" aria-hidden="true" />
+          <Users size={40} className="mx-auto text-tomate mb-3" aria-hidden="true" />
           <p className="mb-4">
             Voici le <strong>lien d’invitation</strong> de ta famille. Envoie-le à ceux que tu
             veux réunir en cuisine — grands-parents, cousins, enfants.
@@ -201,14 +201,14 @@ export function OnboardingPage() {
               readOnly
               value={inviteLink}
               aria-label="Lien d’invitation"
-              className="flex-1 min-h-11 rounded-xl border-2 border-encre/20 bg-lin px-3 text-sm"
+              className="flex-1 min-h-11 rounded-xl border-2 border-encre/20 bg-papier px-3 text-sm"
               onFocus={(e) => e.target.select()}
             />
             <Button onClick={copyLink} variant="outline" aria-label="Copier le lien">
               {copied ? <Check size={18} aria-hidden="true" /> : <Copy size={18} aria-hidden="true" />}
             </Button>
           </div>
-          <p className="text-sm text-encre-soft mb-5">
+          <p className="text-sm text-encre-doux mb-5">
             Tu retrouveras ce lien plus tard, dans l’onglet <strong>Famille</strong>.
           </p>
           <Button size="lg" className="w-full" onClick={() => navigate('/', { replace: true })}>
@@ -232,7 +232,7 @@ export function OnboardingPage() {
           className="card-surface card-pad p-5 text-left hover:shadow-soft transition-shadow w-full"
         >
           <span className="font-serif font-semibold text-xl block">Créer ma famille</span>
-          <span className="text-encre-soft">J’aménage la cuisine et j’invite les miens.</span>
+          <span className="text-encre-doux">J’aménage la cuisine et j’invite les miens.</span>
         </button>
         <button
           type="button"
@@ -240,7 +240,7 @@ export function OnboardingPage() {
           className="card-surface card-pad p-5 text-left hover:shadow-soft transition-shadow w-full"
         >
           <span className="font-serif font-semibold text-xl block">Rejoindre ma famille</span>
-          <span className="text-encre-soft">J’ai reçu un lien d’invitation.</span>
+          <span className="text-encre-doux">J’ai reçu un lien d’invitation.</span>
         </button>
       </div>
     </AuthShell>

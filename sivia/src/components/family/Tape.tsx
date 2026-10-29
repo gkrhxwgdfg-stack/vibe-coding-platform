@@ -35,7 +35,7 @@ export function Tape({ x, y, width, className }: TapeProps) {
         className="block w-full h-1.5 rounded-full"
         style={{
           background:
-            'repeating-linear-gradient(90deg, var(--color-terra) 0px, var(--color-terra) 5px, var(--color-ficelle) 5px, var(--color-ficelle) 10px)',
+            'repeating-linear-gradient(90deg, var(--color-cannelle) 0px, var(--color-cannelle) 5px, var(--color-cannelle) 5px, var(--color-cannelle) 10px)',
           boxShadow: '0 1px 2px rgba(74, 55, 40, 0.3)',
         }}
       />
@@ -63,11 +63,11 @@ export function TapeAddButton({ memberName, onClick }: TapeAddButtonProps) {
       )}
       style={{
         background:
-          'radial-gradient(circle at 35% 30%, var(--color-terra-dark) 0%, var(--color-ficelle) 100%)',
+          'radial-gradient(circle at 35% 30%, var(--color-cannelle) 0%, var(--color-cannelle) 100%)',
         border: '2px solid rgba(251, 246, 236, 0.85)',
       }}
     >
-      <Plus size={18} strokeWidth={3} className="text-creme drop-shadow" aria-hidden="true" />
+      <Plus size={18} strokeWidth={3} className="text-white drop-shadow" aria-hidden="true" />
     </button>
   )
 }

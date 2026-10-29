@@ -22,7 +22,7 @@ export function ExpandableText({ text, maxLength = 120, className = '' }: Expand
           e.stopPropagation()
           setExpanded(!expanded)
         }}
-        className="ml-1 font-bold text-terra-dark hover:underline whitespace-nowrap"
+        className="ml-1 font-bold text-tomate hover:underline whitespace-nowrap"
       >
         {expanded ? 'Voir moins' : 'Voir la suite'}
       </button>

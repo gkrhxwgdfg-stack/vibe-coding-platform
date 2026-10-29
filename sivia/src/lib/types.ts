@@ -83,6 +83,8 @@ export interface Recipe {
 export interface RecipeWithMeta extends Recipe {
   author?: Profile
   is_favorite?: boolean
+  /** Nombre de favoris de la famille — estampille dès 2 (§7) */
+  family_favorites?: number
 }
 
 export interface RecipeFilters {

@@ -10,6 +10,8 @@ import { cn } from '@/lib/utils'
 interface FamilyTreeProps {
   members: FamilyMember[]
   generations: FamilyGeneration[]
+  /** Recettes transmises par membre (id -> nombre) — fruits de l'arbre (§5.5) */
+  recipeCountByMember?: Record<string, number>
   /** ids des profils connectés de la famille (badge « membre connecté ») */
   connectedProfileIds: Set<string>
   onRemoveMember?: (member: FamilyMember) => void
@@ -61,6 +63,7 @@ interface FamilyTreeProps {
 export function FamilyTree({
   members,
   generations,
+  recipeCountByMember,
   connectedProfileIds,
   onRemoveMember,
   onCreateMember,
@@ -113,7 +116,11 @@ export function FamilyTree({
       aria-label="Arbre généalogique de la famille"
     >
       <div className="relative mx-auto" style={{ width, height }}>
-        {/* ---------- Corde (SVG derrière les cartes) ---------- */}
+        {/* ---------- L'arbre line-art (SVG derrière les cartes) ----------
+            Branches courbes cannelle trait 5 px, feuillages en ellipses
+            vertes semi-transparentes, membres = feuilles (les polaroïds),
+            recettes transmises = fruits (§5.5). Jamais de diagramme
+            à cases reliées par des lignes droites (§10). */}
         <svg
           className="absolute inset-0 pointer-events-none"
           width={width}
@@ -121,29 +128,63 @@ export function FamilyTree({
           viewBox={`0 0 ${width} ${height}`}
           aria-hidden="true"
         >
-          <defs>
-            <filter id="corde-relief" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="1.5" stdDeviation="1" floodColor="#4a3728" floodOpacity="0.35" />
-            </filter>
-          </defs>
           {segments
-            .filter((seg) => seg.kind !== 'couple') // la ficelle couple est en HTML (Tape)
+            .filter((seg) => seg.kind !== 'couple')
             .map((seg, i) => {
-            return (
-              <line
-                key={i}
-                x1={seg.x1}
-                y1={seg.y1}
-                x2={seg.x2}
-                y2={seg.y2}
-                stroke="#c4643a"
-                strokeWidth={seg.kind === 'horizontal' ? 3 : 2.5}
-                strokeLinecap="round"
-                filter="url(#corde-relief)"
-                opacity={0.85}
-              />
-            )
+              // Branche organique : courbe de Bézier avec léger balancement
+              const mx = (seg.x1 + seg.x2) / 2
+              const my = (seg.y1 + seg.y2) / 2
+              const sway = (i % 2 === 0 ? 1 : -1) * (seg.kind === 'vertical' ? 14 : 10)
+              const sag = seg.kind === 'horizontal' ? 12 : 0
+              return (
+                <path
+                  key={i}
+                  d={`M ${seg.x1} ${seg.y1} Q ${mx + sway} ${my + sag} ${seg.x2} ${seg.y2}`}
+                  stroke="#8a5a2b"
+                  strokeWidth={seg.kind === 'horizontal' ? 5 : 4.5}
+                  strokeLinecap="round"
+                  fill="none"
+                  opacity={0.9}
+                />
+              )
             })}
+          {/* Feuillage derrière chaque membre-feuille */}
+          {nodes.map((node, i) => (
+            <g key={`feuille-${node.member.id}`}>
+              <ellipse
+                cx={node.x + CARD_W / 2}
+                cy={node.y + 110}
+                rx={CARD_W / 2 + 14}
+                ry={78}
+                fill="#2e5939"
+                fillOpacity={0.14}
+              />
+              {i % 2 === 0 && (
+                <ellipse
+                  cx={node.x + CARD_W / 2 + (i % 3 === 0 ? 26 : -26)}
+                  cy={node.y + 86}
+                  rx={30}
+                  ry={22}
+                  fill="#52755a"
+                  fillOpacity={0.22}
+                />
+              )}
+            </g>
+          ))}
+          {/* Fruits : recettes transmises par chaque membre */}
+          {nodes.flatMap((node) => {
+            const count = Math.min(recipeCountByMember?.[node.member.id] ?? 0, 3)
+            return Array.from({ length: count }).map((_, j) => (
+              <circle
+                key={`fruit-${node.member.id}-${j}`}
+                cx={node.x + CARD_W - 6 + j * 9}
+                cy={node.y + 58 + (j % 2) * 12}
+                r={7}
+                fill={j % 2 === 0 ? '#c93a2b' : '#e4a93c'}
+                fillOpacity={0.85}
+              />
+            ))
+          })}
         </svg>
 
         {/* ---------- « + » carmine du haut : ajouter un aîné au-dessus ---------- */}
@@ -155,8 +196,8 @@ export function FamilyTree({
               aria-label="Ajouter une personne au-dessus — nouvelle base de l'arbre"
               title="Ajouter une base au-dessus (l'arbre descend)"
               className={cn(
-                'touch-target-lg min-h-11 min-w-11 rounded-full bg-creme border-2 border-carmine text-carmine',
-                'inline-flex items-center justify-center hover:bg-carmine hover:text-creme transition-colors shadow-card',
+                'touch-target-lg min-h-11 min-w-11 rounded-full bg-carte border-2 border-tomate text-tomate',
+                'inline-flex items-center justify-center hover:bg-tomate hover:text-white transition-colors shadow-card',
               )}
             >
               <Plus size={20} strokeWidth={2.5} aria-hidden="true" />
@@ -211,8 +252,8 @@ export function FamilyTree({
                   aria-label={`Ajouter une personne reliée à ${member.first_name}`}
                   title={`Ajouter une personne reliée à ${member.first_name}`}
                   className={cn(
-                    'touch-target-lg min-h-11 min-w-11 rounded-full bg-creme border-2 border-terra text-terra',
-                    'inline-flex items-center justify-center hover:bg-terra-dark hover:text-creme transition-colors shadow-card',
+                    'touch-target-lg min-h-11 min-w-11 rounded-full bg-carte border-2 border-vert text-vert',
+                    'inline-flex items-center justify-center hover:bg-vert hover:text-white transition-colors shadow-card',
                   )}
                 >
                   <Plus size={20} strokeWidth={2.5} aria-hidden="true" />
@@ -228,7 +269,7 @@ export function FamilyTree({
             <button
               type="button"
               onClick={() => openAdd(null)}
-              className="touch-target-lg min-h-13 px-6 py-3 rounded-full bg-terra-dark text-creme font-bold inline-flex items-center gap-2 shadow-soft hover:bg-[#8f4525]"
+              className="touch-target-lg min-h-13 px-6 py-3 rounded-full bg-tomate text-white font-bold inline-flex items-center gap-2 shadow-[0_8px_20px_rgba(201,58,43,0.30)] hover:bg-[#a72f23]"
             >
               <Plus size={22} aria-hidden="true" /> Créer la base de l'arbre
             </button>
@@ -237,7 +278,7 @@ export function FamilyTree({
       </div>
 
       {/* Légende */}
-      <p className="text-sm text-brun-soft text-center mt-2">
+      <p className="text-sm text-encre-doux text-center mt-2">
         « + » sous une personne : ajouter un enfant en dessous · scotch « + » sur le côté : ajouter un
         partenaire à côté · « + » carmine en haut : ajouter un aîné au-dessus
       </p>

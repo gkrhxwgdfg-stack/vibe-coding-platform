@@ -36,6 +36,7 @@ import { Torchon } from '@/components/ui/Torchon'
 import { useCookedCount } from '@/hooks/useCookedCount'
 import { cn } from '@/lib/utils'
 import { COPY } from '@/lib/copy'
+import { CategoryTrace } from '@/components/motifs/CategoryTrace'
 
 export function RecipeDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -129,24 +130,26 @@ export function RecipeDetailPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <Link to="/recettes" className="inline-flex items-center gap-1 text-bleu-dark font-bold min-h-11 hover:underline">
+    <div className="relative space-y-6">
+      {/* Trace d'ingrédient de la catégorie : une seule, sous le contenu (§8) */}
+      <CategoryTrace category={current.category} />
+      <Link to="/recettes" className="relative inline-flex items-center gap-1 text-vert font-bold min-h-11 hover:underline">
         <ArrowLeft size={18} aria-hidden="true" /> Retour au carnet
       </Link>
 
       {/* En-tête : photo + titre + tampon */}
       <Card className="p-0 overflow-hidden">
-        <div className="relative aspect-[16/10] bg-lin">
+        <div className="relative aspect-[16/10] bg-papier">
           {photo ? (
             <img src={photo} alt={recipe.title} className="absolute inset-0 w-full h-full object-cover" />
           ) : (
             <Torchon label={meta.label} className="[&>span]:w-24 [&>span]:h-24 [&>span]:text-5xl" />
           )}
-          <span className="absolute top-4 left-4 bg-creme/95 rounded-full px-4 py-1.5 font-bold text-terra-dark">
+          <span className="absolute top-4 left-4 bg-carte/95 rounded-full px-4 py-1.5 font-extrabold text-xs uppercase tracking-[0.12em] text-tomate">
             {meta.label}
           </span>
           {recipe.is_sealed && (
-            <span className="absolute top-4 right-4 bg-creme/95 rounded-full px-4 py-1.5 font-bold text-carmine inline-flex items-center gap-1.5">
+            <span className="absolute top-4 right-4 bg-carte/95 rounded-full px-4 py-1.5 font-bold text-tomate inline-flex items-center gap-1.5">
               <Lock size={15} aria-hidden="true" /> Recette scellée
             </span>
           )}
@@ -154,17 +157,23 @@ export function RecipeDetailPage() {
         <div className="p-5 sm:p-7">
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div className="flex-1 min-w-0">
-              <h1 className="text-3xl sm:text-4xl font-bold">{recipe.title}</h1>
+              <p className="folio mb-1 !text-left">Recette n° {recipe.id.slice(0, 8)}</p>
+              <h1 className="font-serif text-3xl sm:text-4xl font-semibold">{recipe.title}</h1>
               {/* Origine : par qui, depuis quand */}
-              <p className="text-hand text-bleu-dark text-2xl mt-1">
-                créée par {recipe.author?.display_name ?? '…'}
+              <p className="font-serif italic text-encre-doux text-lg mt-1">
+                transmise par {recipe.author?.display_name ?? '…'}
                 {recipe.author?.family_role && (
-                  <span className="text-encre-soft text-lg"> ({recipe.author.family_role})</span>
+                  <span className="text-encre-doux text-lg"> ({recipe.author.family_role})</span>
                 )}
               </p>
-              <p className="text-sm text-encre-soft mt-1">
+              <p className="text-sm font-bold text-encre-doux mt-1">
                 dans le carnet depuis {formatDate(recipe.created_at)} · {formatRelative(recipe.created_at)}
               </p>
+              {(recipe.family_favorites ?? 0) >= 2 && (
+                <span className="estampille mt-3" role="img" aria-label="Testée et approuvée par la famille">
+                  Testée &amp; approuvée
+                </span>
+              )}
             </div>
             {recipe.author && (
               <span className="stamp-in inline-block">
@@ -183,7 +192,7 @@ export function RecipeDetailPage() {
           </div>
 
           {/* Meta : portions, temps */}
-          <div className="flex flex-wrap items-center gap-4 mt-4 text-encre-soft">
+          <div className="flex flex-wrap items-center gap-4 mt-4 text-encre-doux">
             <span className="inline-flex items-center gap-1.5 font-bold text-encre">
               <Users size={18} aria-hidden="true" />
               <span aria-live="polite">{effectiveServings} part{effectiveServings > 1 ? 's' : ''}</span>
@@ -192,7 +201,7 @@ export function RecipeDetailPage() {
                   type="button"
                   onClick={() => setServings(Math.max(1, effectiveServings - 1))}
                   aria-label="Une part de moins"
-                  className="touch-target-lg min-h-12 min-w-12 rounded-l-full border-2 border-encre/20 bg-creme hover:border-terra-dark hover:text-terra-dark inline-flex items-center justify-center"
+                  className="touch-target-lg min-h-12 min-w-12 rounded-l-full border-2 border-encre/20 bg-carte hover:border-vert hover:text-vert inline-flex items-center justify-center"
                 >
                   <Minus size={18} aria-hidden="true" />
                 </button>
@@ -200,7 +209,7 @@ export function RecipeDetailPage() {
                   type="button"
                   onClick={() => setServings(effectiveServings + 1)}
                   aria-label="Une part de plus"
-                  className="touch-target-lg min-h-12 min-w-12 rounded-r-full border-2 border-l-0 border-encre/20 bg-creme hover:border-terra-dark hover:text-terra-dark inline-flex items-center justify-center"
+                  className="touch-target-lg min-h-12 min-w-12 rounded-r-full border-2 border-l-0 border-encre/20 bg-carte hover:border-vert hover:text-vert inline-flex items-center justify-center"
                 >
                   <Plus size={18} aria-hidden="true" />
                 </button>
@@ -220,9 +229,9 @@ export function RecipeDetailPage() {
 
           {/* Origine du plat (authenticité) */}
           {recipe.origin_story && (
-            <div className="mt-4 rounded-2xl bg-moutarde-soft p-4">
+            <div className="mt-4 rounded-2xl bg-ble-clair p-4">
               <p className="kicker">L’origine du plat</p>
-              <p className="text-hand text-2xl text-bleu-dark">{recipe.origin_story}</p>
+              <p className="font-serif italic text-lg text-encre">{recipe.origin_story}</p>
             </div>
           )}
 
@@ -246,7 +255,7 @@ export function RecipeDetailPage() {
               {exported ? 'Prêt — choisis « Enregistrer en PDF »' : 'Imprimer'}
             </Button>
             {pdfError && (
-              <p className="text-sm text-carmine font-bold" role="alert">{pdfError}</p>
+              <p className="text-sm text-tomate font-bold" role="alert">{pdfError}</p>
             )}
             <Button
               variant={recipe.is_favorite ? 'primary' : 'outline'}
@@ -254,7 +263,7 @@ export function RecipeDetailPage() {
               disabled={favBusy}
               aria-pressed={recipe.is_favorite}
             >
-              <Heart size={18} aria-hidden="true" className={cn(recipe.is_favorite && 'fill-creme')} />
+              <Heart size={18} aria-hidden="true" className={cn(recipe.is_favorite && 'fill-white')} />
               {recipe.is_favorite ? 'Dans mes favoris' : 'Ajouter aux favoris'}
             </Button>
             {canEdit && (
@@ -276,14 +285,14 @@ export function RecipeDetailPage() {
                   <Trash2 size={18} aria-hidden="true" /> Oui, retirer du carnet
                 </Button>
               ) : (
-                <Button variant="ghost" className="text-carmine" onClick={() => setConfirmDelete(true)}>
+                <Button variant="ghost" className="text-tomate" onClick={() => setConfirmDelete(true)}>
                   <Trash2 size={18} aria-hidden="true" /> {COPY.actions.retirer}
                 </Button>
               )
             )}
           </div>
           {isAuthor && !confirmDelete && (
-            <p className="text-sm text-encre-soft mt-2">
+            <p className="text-sm text-encre-doux mt-2">
               {recipe.is_sealed
                 ? 'Recette scellée : tu es le seul à pouvoir modifier l’original.'
                 : 'Sceller une recette la rend non modifiable — sauf par toi, son créateur.'}
@@ -291,7 +300,7 @@ export function RecipeDetailPage() {
             </p>
           )}
           {isAuthor && confirmDelete && (
-            <p className="text-sm text-carmine font-bold mt-2">
+            <p className="text-sm text-tomate font-bold mt-2">
               Effacer une recette, c’est perdre un peu de quelqu’un. Tu confirmes ?
             </p>
           )}
@@ -299,28 +308,30 @@ export function RecipeDetailPage() {
       </Card>
 
       {/* Ingrédients */}
-      <Card>
+      <hr className="filet-double" />
+      <Card className="relative">
         <p className="kicker">Ce qu’il faut</p>
         <h2 className="text-2xl font-semibold mb-4">(et ce qu’on n’oublie jamais)</h2>
         {ingredients.length === 0 ? (
-          <p className="text-encre-soft">Pas encore d’ingrédients notés.</p>
+          <p className="text-encre-doux">Pas encore d’ingrédients notés.</p>
         ) : (
           <IngredientChecklist lines={ingredients} />
         )}
       </Card>
 
       {/* Étapes */}
-      <Card>
+      <hr className="filet-double" />
+      <Card className="relative">
         <p className="kicker">La recette, étape par étape</p>
         <h2 className="text-2xl font-semibold mb-4">À ton tour de cuisiner</h2>
         {recipe.steps.length === 0 ? (
-          <p className="text-encre-soft">Pas encore d’étapes notées.</p>
+          <p className="text-encre-doux">Pas encore d’étapes notées.</p>
         ) : (
           <ol className="space-y-4">
             {recipe.steps.map((step, i) => (
               <li key={i} className="flex items-start gap-4">
                 <span
-                  className="touch-target-lg min-h-11 min-w-11 rounded-full bg-terra-dark text-creme font-serif font-bold flex items-center justify-center shrink-0"
+                  className="touch-target-lg min-h-11 min-w-11 rounded-full bg-tomate text-white font-serif font-bold flex items-center justify-center shrink-0"
                   aria-hidden="true"
                 >
                   {i + 1}
@@ -334,13 +345,14 @@ export function RecipeDetailPage() {
 
       {/* Anecdote — mise en valeur : papier âgé, bord ondulé, en exergue */}
       {recipe.anecdote && (
-        <Card className="paper-aged border-transparent shadow-soft px-6 pt-5 pb-7 anim-enter">
+        <Card className="paper-aged cadre-couture motif-tamis border-transparent shadow-soft px-6 pt-5 pb-7 anim-enter">
           <p className="kicker">Le secret</p>
-          <h2 className="text-2xl font-semibold mb-3">— celui qu’on ne dit qu’à la famille</h2>
-          <blockquote className="text-hand text-[#5b4632] text-3xl leading-relaxed">
+          <h2 className="font-serif text-2xl font-semibold mb-3">— celui qu’on ne dit qu’à la famille</h2>
+          <blockquote className="font-serif italic text-encre text-2xl leading-relaxed">
             « {recipe.anecdote} »
           </blockquote>
-          <p className="mt-3 flex items-center gap-2 text-encre-soft">
+          <hr className="filet-double" />
+          <p className="mt-3 flex items-center gap-2 text-encre-doux font-bold">
             {recipe.author && <Avatar name={recipe.author.display_name} src={recipe.author.avatar_url} size="sm" />}
             <span>— {recipe.author?.display_name}</span>
           </p>
@@ -361,8 +373,8 @@ export function RecipeDetailPage() {
         </div>
       )}
 
-      <p className="text-center text-sm text-encre-soft mt-2">
-        <Link to="/recettes/nouvelle" className="text-terra-dark font-bold hover:underline">
+      <p className="text-center text-sm text-encre-doux mt-2">
+        <Link to="/recettes/nouvelle" className="text-vert font-bold hover:underline">
           Écrire une autre recette de la famille
         </Link>
       </p>

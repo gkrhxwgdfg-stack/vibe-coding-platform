@@ -83,7 +83,7 @@ export function SignupPage() {
           onChange={(e) => setConfirm(e.target.value)}
         />
         {error && (
-          <p className="text-carmine font-bold mb-4" role="alert">
+          <p className="text-tomate font-bold mb-4" role="alert">
             {error}
           </p>
         )}
@@ -91,9 +91,9 @@ export function SignupPage() {
           {submitting ? 'On écrit ton nom…' : "S’inscrire"}
         </Button>
       </form>
-      <p className="mt-6 text-center text-encre-soft">
+      <p className="mt-6 text-center text-encre-doux">
         Déjà un compte ?{' '}
-        <Link to="/connexion" className="text-terra-dark font-bold hover:underline">
+        <Link to="/connexion" className="text-tomate font-bold hover:underline">
           Se connecter
         </Link>
       </p>
