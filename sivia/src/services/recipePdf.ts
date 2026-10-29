@@ -188,12 +188,17 @@ export function drawStamp(doc: JsPdfLike, name: string, cx: number, cy: number) 
   doc.setTextColor(CARMINE.r, CARMINE.g, CARMINE.b)
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(6)
-  const small = rotate(cx, cy - 5)
-  doc.text('DE LA PART DE', small.x, small.y, { angle: -4 })
+  // Texte centré : jsPDF aligne à gauche par défaut, on décale de la moitié
+  // de la largeur mesurée avant d'appliquer la rotation du tampon.
+  const label = 'DE LA PART DE'
+  const labelX = cx - doc.getTextWidth(label) / 2
+  const lp = rotate(labelX, cy - 5)
+  doc.text(label, lp.x, lp.y, { angle: -4 })
   doc.setFontSize(10)
   const lines = doc.splitTextToSize(name, 26)
   lines.slice(0, 2).forEach((line, i) => {
-    const p = rotate(cx, cy + 2 + i * 4)
+    const lineX = cx - doc.getTextWidth(line) / 2
+    const p = rotate(lineX, cy + 3 + i * 5)
     doc.text(line, p.x, p.y, { angle: -4 })
   })
 }
