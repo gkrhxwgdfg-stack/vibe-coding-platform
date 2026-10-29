@@ -220,7 +220,7 @@ export function RecipeDetailPage() {
 
           {/* Origine du plat (authenticité) */}
           {recipe.origin_story && (
-            <div className="mt-4 rounded-2xl border-2 border-dashed border-moutarde bg-moutarde/10 p-4">
+            <div className="mt-4 rounded-2xl bg-moutarde-soft p-4">
               <p className="kicker">L’origine du plat</p>
               <p className="text-hand text-2xl text-bleu-dark">{recipe.origin_story}</p>
             </div>

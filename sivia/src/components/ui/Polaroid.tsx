@@ -41,7 +41,7 @@ export function Polaroid({ src, caption, tilt = -2, className, overlay }: Polaro
         )}
         {overlay}
       </div>
-      <figcaption className="text-hand text-brun text-lg text-center pt-2 leading-tight max-h-[7.5rem] overflow-hidden">
+      <figcaption className="text-hand text-brun text-2xl text-center pt-2 leading-tight max-h-[7.5rem] overflow-hidden">
         {caption}
       </figcaption>
     </figure>

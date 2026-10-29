@@ -11,7 +11,12 @@ name: Déployer Sivia sur Vercel
 
 on:
   push:
-    branches: [main, vibe/sivia-mvp-28288f]
+    branches: [main]
+    paths:
+      - 'sivia/**'
+      - '.github/workflows/deploy-sivia-vercel.yml'
+  pull_request:
+    branches: [main]
     paths:
       - 'sivia/**'
       - '.github/workflows/deploy-sivia-vercel.yml'
@@ -27,6 +32,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
     steps:
       - name: Checkout
         uses: actions/checkout@v4

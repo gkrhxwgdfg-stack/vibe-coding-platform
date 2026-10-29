@@ -46,7 +46,7 @@ export function DailyRecipeCard({ recipe }: DailyRecipeCardProps) {
         <h2 className="font-serif font-semibold text-2xl leading-snug group-hover:text-terra-dark transition-colors">
           {recipe.title}
         </h2>
-        <p className="text-hand text-bleu-dark text-lg mt-0.5">
+        <p className="text-hand text-bleu-dark text-2xl mt-0.5 leading-tight">
           transmise par {recipe.author?.display_name ?? '…'}
         </p>
       </div>

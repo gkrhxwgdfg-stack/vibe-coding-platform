@@ -78,7 +78,7 @@ export function FamilyMemberCard({
             {member.last_name ? ` ${member.last_name}` : ''}
           </p>
           {member.family_role && (
-            <p className="text-hand text-bleu-dark text-lg leading-tight">{member.family_role}</p>
+            <p className="text-hand text-bleu-dark text-2xl leading-tight">{member.family_role}</p>
           )}
           {parent && relationLabel && (
             <p className="text-sm text-brun-soft font-bold mt-0.5">

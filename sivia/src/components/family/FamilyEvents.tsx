@@ -56,7 +56,7 @@ export function FamilyEvents() {
           </Button>
         </EmptyState>
       ) : (
-        <ol className="relative space-y-8 before:absolute before:left-[7px] before:top-2 before:bottom-2 before:w-0.5 before:border-l-2 before:border-dashed before:border-terra/50">
+        <ol className="relative space-y-8 before:absolute before:left-[7px] before:top-2 before:bottom-2 before:w-0.5 before:bg-terra/40">
           {years.map((year) => (
             <li key={year} className="relative pl-8">
               {/* Nœud de l'année sur le fil */}
@@ -276,7 +276,7 @@ function AddEventModal({ recipes, onClose, onCreated, add }: AddEventModalProps)
             <label
               htmlFor="event-photo"
               className={cn(
-                'cursor-pointer w-full min-h-11 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 border-dashed font-bold transition-colors',
+                'cursor-pointer w-full min-h-11 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 font-bold transition-colors',
                 photoFile
                   ? 'border-sauge bg-sauge/10 text-encre'
                   : 'border-encre/25 bg-creme hover:border-terra-dark hover:text-terra',

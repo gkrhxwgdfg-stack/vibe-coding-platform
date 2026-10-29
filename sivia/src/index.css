@@ -121,12 +121,6 @@ h3 {
   font-weight: 800;
 }
 
-/* Bandeau « transmission » : bord pointillé terracotta façon couture */
-@utility stitch-border {
-  border: 1.5px dashed var(--color-terra);
-  border-radius: 12px;
-}
-
 /* Anecdote : fond papier âgé #f3ead9, bord inférieur ondulé (clip-path) */
 @utility paper-aged {
   background-color: #f3ead9;

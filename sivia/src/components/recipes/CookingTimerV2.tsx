@@ -44,7 +44,7 @@ function playBell() {
 }
 
 /**
- * Minuteur libellé du mode cuisson v2 : cercle couture progressif, pré-alerte
+ * Minuteur libellé du mode cuisson v2 : cercle progressif plein, pré-alerte
  * 1 min avant la fin (halo pulsant), fin carmine + `navigator.vibrate`, son
  * optionnel muet par défaut.
  */
@@ -120,14 +120,13 @@ export function CookingTimerV2({ timer, onChange }: CookingTimerV2Props) {
       >
         <svg viewBox="0 0 200 200" className="w-full h-full -rotate-90">
           <circle cx="100" cy="100" r={RADIUS} className="fill-creme" />
-          {/* Contour pointillé (temps total) */}
+          {/* Contour plein atténué (temps total) */}
           <circle
             cx="100" cy="100" r={RADIUS}
             fill="none" strokeWidth="6" strokeLinecap="round"
-            strokeDasharray="0.5 8"
             className={done ? 'stroke-carmine/40' : 'stroke-terra/40'}
           />
-          {/* Progression : les pointillés se remplissent en terracotta plein */}
+          {/* Progression : anneau plein terracotta */}
           {elapsedFraction > 0 && (
             <circle
               cx="100" cy="100" r={RADIUS}

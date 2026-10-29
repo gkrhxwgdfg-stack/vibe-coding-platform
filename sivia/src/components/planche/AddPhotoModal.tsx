@@ -113,7 +113,7 @@ export function AddPhotoModal({ open, onClose, onPublished }: AddPhotoModalProps
             <label
               htmlFor="planche-photo"
               className={cn(
-                'cursor-pointer w-full min-h-11 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 border-dashed font-bold transition-colors',
+                'cursor-pointer w-full min-h-11 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 font-bold transition-colors',
                 photoFile
                   ? 'border-sauge bg-sauge/10 text-encre'
                   : 'border-encre/25 bg-creme hover:border-terra-dark hover:text-terra',
