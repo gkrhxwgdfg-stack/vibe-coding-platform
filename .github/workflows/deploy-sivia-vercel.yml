@@ -11,7 +11,12 @@ name: Déployer Sivia sur Vercel
 
 on:
   push:
-    branches: [main, vibe/sivia-mvp-28288f]
+    branches: [main]
+    paths:
+      - 'sivia/**'
+      - '.github/workflows/deploy-sivia-vercel.yml'
+  pull_request:
+    branches: [main]
     paths:
       - 'sivia/**'
       - '.github/workflows/deploy-sivia-vercel.yml'
