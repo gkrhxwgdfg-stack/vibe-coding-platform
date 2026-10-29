@@ -110,9 +110,9 @@ function drawGenerationTree(
     const role = list[0]?.family_role
     const line = role ? `${names} — ${role}` : names
     const lines = doc.splitTextToSize(line, CONTENT_W)
-    cursor.advance(lines.length * 5 + 2)
-    lines.forEach((l, i) => doc.text(l, MARGIN, cursor.y + i * 5))
-    cursor.space(lines.length * 5 + 2)
+    cursor.advance(lines.length * 6 + 3)
+    lines.forEach((l, i) => doc.text(l, MARGIN, cursor.y + i * 6))
+    cursor.space(lines.length * 6 + 3)
   }
   void fonts
 }
@@ -127,9 +127,10 @@ function drawAnecdoteDivider(
   if (!recipe.anecdote) return
   const { hand, handStyle } = fonts
   doc.setFont(hand, handStyle)
-  doc.setFontSize(14)
+  doc.setFontSize(15)
+  const DIVIDER_LH = 7
   const lines = doc.splitTextToSize(`« ${recipe.anecdote} »`, CONTENT_W - 12)
-  const blockH = lines.length * 6 + 18
+  const blockH = lines.length * DIVIDER_LH + 22
   cursor.advance(blockH + 6)
   doc.setFillColor(COLORS.PAPIER_AGE.r, COLORS.PAPIER_AGE.g, COLORS.PAPIER_AGE.b)
   doc.roundedRect(MARGIN, cursor.y, CONTENT_W, blockH, 3, 3, 'F')
@@ -138,10 +139,10 @@ function drawAnecdoteDivider(
   doc.setTextColor(COLORS.TERRA.r, COLORS.TERRA.g, COLORS.TERRA.b)
   doc.text('LE SECRET', MARGIN + 6, cursor.y + 7)
   doc.setFont(hand, handStyle)
-  doc.setFontSize(13)
+  doc.setFontSize(15)
   doc.setTextColor(91, 70, 50)
   lines.forEach((line, i) => {
-    doc.text(line, MARGIN + 6, cursor.y + 13 + i * 6)
+    doc.text(line, MARGIN + 6, cursor.y + 14 + i * DIVIDER_LH)
   })
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(8)
