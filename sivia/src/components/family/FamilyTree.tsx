@@ -86,8 +86,6 @@ export function FamilyTree({
   const [prefillLinkKind, setPrefillLinkKind] = useState<'parent' | 'partner' | null>(null)
 
   const { CARD_W, PLUS_H, TOP_PAD } = TREE_GEOMETRY
-  // Hauteur de la capsule « couple » : couvre carte + légende + boutons
-  const COUPLE_FRAME_H = 330
 
   function tiltFor(member: FamilyMember, index: number): number {
     const seed = member.first_name.length + index
@@ -130,10 +128,8 @@ export function FamilyTree({
             - Branches : courbes cubiques CONTINUES du bas d'une carte
               au haut de l'autre (tunnel vertical doux, léger sway) —
               aucune jonction, donc aucun angle droit ni coupure.
-            - Couples : une même « frame » douce (capsule floue vert-clair)
-              relie les deux cartes — le couple appartient à une seule
-              bulle, la ficelle floue cannelle au centre.
-            - Feuillage : une canopée par groupe, pas par carte.
+            - Couples : le lien flou cannelle suffit — aucune
+              capsule colorée derrière les cartes (épure plate).
             - Membres = feuilles, recettes transmises = fruits (§5.5). */}
         <svg
           className="absolute inset-0 pointer-events-none"
@@ -142,21 +138,6 @@ export function FamilyTree({
           viewBox={`0 0 ${width} ${height}`}
           aria-hidden="true"
         >
-          {/* Frames de couple : capsule douce derrière les deux cartes */}
-          {segments
-            .filter((seg) => seg.kind === 'couple')
-            .map((seg, i) => (
-              <rect
-                key={`frame-${i}`}
-                x={seg.x1 - 14}
-                y={seg.y1 - COUPLE_FRAME_H / 2}
-                width={seg.x2 - seg.x1 + 28}
-                height={COUPLE_FRAME_H}
-                rx={26}
-                fill="#2e5939"
-                fillOpacity={0.1}
-              />
-            ))}
           {/* Branches organiques parent → enfant : cubiques continues */}
           {segments
             .filter((seg) => seg.kind !== 'couple')

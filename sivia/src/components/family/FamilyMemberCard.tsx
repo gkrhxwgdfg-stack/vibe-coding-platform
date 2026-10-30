@@ -47,7 +47,7 @@ export function FamilyMemberCard({
         style={{ ['--r' as string]: `${tilt}deg` }}
       >
         <span className="epingle" aria-hidden="true" />
-        <div className="relative aspect-square w-full overflow-hidden rounded-sm bg-vert-clair">
+        <div className="relative aspect-square w-full overflow-hidden rounded-sm bg-papier">
           {photo ? (
             <img
               src={photo}
@@ -57,7 +57,7 @@ export function FamilyMemberCard({
             />
           ) : (
             <div
-              className="absolute inset-0 flex items-center justify-center font-serif font-bold text-3xl text-vert"
+              className="absolute inset-0 flex items-center justify-center font-serif font-bold text-3xl text-encre-doux"
               role="img"
               aria-label={`Pas de photo pour ${member.first_name}`}
             >
