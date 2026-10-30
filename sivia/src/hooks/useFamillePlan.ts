@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/context/AuthContext'
-import { planActif, type PlanInfo } from '@/lib/monetisation'
+import { planActif, simulationPlan, type PlanInfo } from '@/lib/monetisation'
 
 /**
  * Plan « Sivia Famille » du groupe : gratuit / essai / actif / expire.
@@ -44,9 +44,21 @@ export function useFamillePlan() {
     return { error: null }
   }, [family?.id, refetch])
 
+  // Mode aperçu (réglé dans le Profil) : force l'affichage d'une version,
+  // sans toucher à l'abonnement réel. Recalculé à chaque rendu, donc un
+  // changement pris dans le Profil s'applique dès la navigation suivante.
+  const simulation = simulationPlan()
+  const premiumReel = planActif(info)
+
   return {
     info,
-    premium: planActif(info),
+    /** Accès aux fonctions de conservation (aperçu OU abonnement réel) */
+    premium:
+      simulation === 'premium' ? true : simulation === 'gratuit' ? false : premiumReel,
+    /** État réel, sans l'aperçu — pour l'affichage dans le Profil */
+    premiumReel,
+    /** Réglage d'aperçu actif ('gratuit' | 'premium' | null) */
+    simulation,
     /** Essai déjà utilisé par la famille (actif, expiré ou « expire ») — pas de second essai */
     dejaEssai: info?.plan === 'essai' || info?.plan === 'expire' || info?.plan === 'actif',
     loading,

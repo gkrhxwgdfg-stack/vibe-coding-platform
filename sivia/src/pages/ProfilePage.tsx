@@ -1,8 +1,9 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { BookOpen, Heart, LogOut } from 'lucide-react'
+import { BookOpen, Eye, Heart, LogOut, Sparkles } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { useRecipes } from '@/hooks/useRecipes'
+import { useFamillePlan } from '@/hooks/useFamillePlan'
 import { supabase } from '@/lib/supabase'
 import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
@@ -12,6 +13,13 @@ import { TextInput, TextArea } from '@/components/ui/FormFields'
 import { ReadingSizePicker } from '@/components/ui/ReadingSizePicker'
 import { formatDate } from '@/lib/format'
 import { Sparkle } from '@/components/motifs/Sparkle'
+import { cn } from '@/lib/utils'
+import {
+  planJusqua,
+  setSimulationPlan,
+  simulationPlan,
+  type SimulationPlan,
+} from '@/lib/monetisation'
 
 const NO_FILTERS = { query: '', category: 'toutes' as const, authorId: 'tous' as const }
 
@@ -27,6 +35,15 @@ export function ProfilePage() {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Sivia Famille : état réel du groupe + réglage du mode aperçu
+  const { info, premiumReel } = useFamillePlan()
+  const [apercu, setApercu] = useState<SimulationPlan | null>(() => simulationPlan())
+
+  function choisirApercu(plan: SimulationPlan | null) {
+    setSimulationPlan(plan)
+    setApercu(plan)
+  }
 
   if (!profile) return null
   const profileId = profile.id
@@ -141,6 +158,83 @@ export function ProfilePage() {
               {saving ? 'On enregistre…' : 'Enfourner mon profil'}
             </Button>
           </form>
+        </Card>
+      </section>
+
+      {/* Sivia Famille — mode aperçu : comparer les deux versions */}
+      <section aria-labelledby="apercu-plan-title">
+        <Card>
+          <CardHeader kicker="Sivia Famille" title="Voir l’app comme gratuite ou abonnée" />
+          <p className="text-encre-doux mb-4 text-sm">
+            Pour comparer les deux versions pendant tes tests. Ce choix ne change pas
+            l’abonnement réel de la famille — il reste sur ton appareil, uniquement.
+          </p>
+          <p className="text-sm mb-4">
+            <span className="font-bold text-encre">Abonnement réel de la famille : </span>
+            {premiumReel
+              ? `actif jusqu’au ${planJusqua(info) ?? '—'}`
+              : info?.plan === 'essai' || info?.plan === 'expire'
+                ? 'essai déjà utilisé'
+                : 'gratuit'}
+          </p>
+          <div className="space-y-3" role="radiogroup" aria-label="Version affichée de l’application">
+            <button
+              type="button"
+              role="radio"
+              aria-checked={apercu === null}
+              onClick={() => choisirApercu(null)}
+              className={cn(
+                'w-full text-left rounded-2xl border-2 p-4 transition-colors',
+                apercu === null
+                  ? 'border-vert bg-vert-clair/60'
+                  : 'border-encre-doux/20 bg-papier hover:border-vert/60',
+              )}
+            >
+              <span className="font-extrabold text-encre">Suivre l’abonnement réel</span>
+              <p className="text-sm text-encre-doux mt-0.5">
+                Ce que paie la famille — l’affichage habituel pour tout le monde
+              </p>
+            </button>
+            <button
+              type="button"
+              role="radio"
+              aria-checked={apercu === 'gratuit'}
+              onClick={() => choisirApercu('gratuit')}
+              className={cn(
+                'w-full text-left rounded-2xl border-2 p-4 transition-colors',
+                apercu === 'gratuit'
+                  ? 'border-vert bg-vert-clair/60'
+                  : 'border-encre-doux/20 bg-papier hover:border-vert/60',
+              )}
+            >
+              <span className="font-extrabold text-encre inline-flex items-center gap-2">
+                <Eye size={16} aria-hidden="true" /> Forcer la version gratuite
+              </span>
+              <p className="text-sm text-encre-doux mt-0.5">
+                Boutons verrouillés, aperçus filigranés — pour voir ce que vit une famille
+                non abonnée
+              </p>
+            </button>
+            <button
+              type="button"
+              role="radio"
+              aria-checked={apercu === 'premium'}
+              onClick={() => choisirApercu('premium')}
+              className={cn(
+                'w-full text-left rounded-2xl border-2 p-4 transition-colors',
+                apercu === 'premium'
+                  ? 'border-vert bg-vert-clair/60'
+                  : 'border-encre-doux/20 bg-papier hover:border-vert/60',
+              )}
+            >
+              <span className="font-extrabold text-encre inline-flex items-center gap-2">
+                <Sparkles size={16} aria-hidden="true" /> Forcer Sivia Famille
+              </span>
+              <p className="text-sm text-encre-doux mt-0.5">
+                Tout déverrouillé : impression, PDF, livre complet sans filigrane
+              </p>
+            </button>
+          </div>
         </Card>
       </section>
 

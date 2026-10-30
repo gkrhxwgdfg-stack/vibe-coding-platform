@@ -10,6 +10,8 @@ import {
   marquerPaywallVu,
   prixParPersonne,
   rappelerDans6Mois,
+  setSimulationPlan,
+  simulationPlan,
 } from '@/lib/monetisation'
 
 type PaywallVue = 'choix' | 'essai-ok' | 'attente-ok'
@@ -70,8 +72,20 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai 
 
   if (!open) return null
 
+  // Mode aperçu (réglé dans le Profil) : la fenêtre démontre le parcours
+  // sans rien écrire dans la base
+  const simulation = simulationPlan()
+
   async function ouvrirEssai() {
     if (!family || busy) return
+    // Mode aperçu (réglé dans le Profil) : on bascule la simulation,
+    // rien n'est écrit dans la base
+    if (simulationPlan()) {
+      setSimulationPlan('premium')
+      setVue('essai-ok')
+      onEssaiActif?.()
+      return
+    }
     setBusy(true)
     setErreur(null)
     // Essai d'un mois, sans carte — le serveur fixe les dates (guard SQL)
@@ -87,6 +101,11 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai 
 
   async function rejoindreListe() {
     if (!family || !profile || busy) return
+    // Mode aperçu : confirmation simulée, aucune écriture
+    if (simulationPlan()) {
+      setVue('attente-ok')
+      return
+    }
     setBusy(true)
     setErreur(null)
     // Une seule ligne par famille (contrainte unique) : on tente l'insertion ;
@@ -175,6 +194,11 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai 
             </div>
 
             <div className="p-5 sm:p-6 space-y-5">
+              {simulation && (
+                <p className="rounded-xl bg-vert-clair/60 text-vert text-sm font-bold px-4 py-2.5">
+                  Mode aperçu : cette fenêtre montre le parcours, sans rien changer pour de vrai.
+                </p>
+              )}
               {/* Un seul plan, deux durées */}
               <div className="space-y-3" role="radiogroup" aria-label="Durée de l’abonnement familial">
                 <button
@@ -253,7 +277,7 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai 
 
               {/* Appels à l’action */}
               <div className="space-y-2">
-                {!dejaEssai ? (
+                {!dejaEssai || simulation ? (
                   <Button size="lg" className="w-full" onClick={ouvrirEssai} disabled={busy}>
                     {busy ? 'Un instant…' : 'Essayer 1 mois — sans carte'}
                   </Button>

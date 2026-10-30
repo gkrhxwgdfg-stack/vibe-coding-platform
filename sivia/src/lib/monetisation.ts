@@ -112,3 +112,34 @@ export function pauseActivee(): boolean {
     return false
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Mode aperçu (Profil) : forcer l'affichage « gratuit » ou « Sivia    */
+/* Famille » pour comparer les deux versions — sans toucher à         */
+/* l'abonnement réel de la famille (le guard SQL l'interdit de toute  */
+/* façon). C'est un réglage personnel, stocké sur l'appareil.          */
+/* ------------------------------------------------------------------ */
+
+export type SimulationPlan = 'gratuit' | 'premium'
+
+const LS_SIMULATION = 'sivia.plan.simulation'
+
+/** Réglage d'aperçu courant, ou null pour suivre l'abonnement réel. */
+export function simulationPlan(): SimulationPlan | null {
+  try {
+    const v = localStorage.getItem(LS_SIMULATION)
+    return v === 'gratuit' || v === 'premium' ? v : null
+  } catch {
+    return null
+  }
+}
+
+/** Force l'affichage d'une version ('gratuit' | 'premium') — null = réel. */
+export function setSimulationPlan(plan: SimulationPlan | null): void {
+  try {
+    if (plan) localStorage.setItem(LS_SIMULATION, plan)
+    else localStorage.removeItem(LS_SIMULATION)
+  } catch {
+    /* rien */
+  }
+}
