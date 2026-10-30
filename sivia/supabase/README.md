@@ -62,6 +62,11 @@ les policies RLS et le bucket `recipe-photos` ne sont **pas encore créés** sur
    trigger `families_plan_guard` — seul le service (webhook Stripe) peut activer
    un plan payé, les membres peuvent uniquement ouvrir l'essai d'un mois sans
    carte, dates fixées par le serveur — et table `family_waitlist` avec RLS)
+12. **New query** → collez le **contenu** de
+   [`migrations/0013_family_waitlist_update_delete.sql`](./migrations/0013_family_waitlist_update_delete.sql) → **Run**
+   (policies UPDATE et DELETE sur `family_waitlist` : un membre peut corriger ou
+   retirer l'inscription de sa famille ; sans policy UPDATE, l'inscription
+   échoue avec une erreur RLS — constat du test bout-en-bout)
 
 > Erreur fréquente : coller le chemin `sivia/supabase/migrations/...` au lieu
 > du contenu SQL → `ERROR: 42601: syntax error`. Le SQL Editor attend du **code SQL**.

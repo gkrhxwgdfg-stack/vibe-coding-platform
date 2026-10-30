@@ -89,14 +89,17 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai 
     if (!family || !profile || busy) return
     setBusy(true)
     setErreur(null)
+    // Une seule ligne par famille (contrainte unique) : on tente l'insertion ;
+    // si la famille est déjà inscrite (doublon 23505), c'est un succès aussi.
+    // On n'utilise PAS upsert/onConflict : sous RLS, l'upsert exige une policy
+    // UPDATE sur family_waitlist et échoue sinon (42501).
     const { error } = await supabase
       .from('family_waitlist')
-      .upsert(
-        { family_id: family.id, created_by: profile.id, note: contexte ?? null },
-        { onConflict: 'family_id' },
-      )
+      .insert({ family_id: family.id, created_by: profile.id, note: contexte ?? null })
     setBusy(false)
-    if (error) {
+    const dejaInscrit =
+      !!error && (error.code === '23505' || error.message.includes('duplicate key'))
+    if (error && !dejaInscrit) {
       setErreur('On n’a pas pu t’inscrire. Réessaie dans un instant.')
       return
     }
