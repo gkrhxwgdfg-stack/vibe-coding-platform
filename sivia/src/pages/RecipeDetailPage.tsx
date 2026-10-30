@@ -129,25 +129,11 @@ export function RecipeDetailPage() {
     if (!deleteError) navigate('/recettes', { replace: true })
   }
 
-  // Onglet de chapitre : couleur de la catégorie (§7 — Entrées vert, Plats
-  // tomate, Desserts blé, Fêtes cannelle ; texte encre sur le blé, contraste)
-  const CHAPTER_TAB: Record<string, string> = {
-    entree: 'bg-vert text-white',
-    plat: 'bg-tomate text-white',
-    dessert: 'bg-ble text-encre',
-    fete: 'bg-cannelle text-white',
-  }
-
   return (
     <div className="relative space-y-6">
-      {/* Trace d'ingrédient de la catégorie : une seule, sous le contenu (§8) */}
+      {/* Trace d'ingrédient de la catégorie : une seule, sous le contenu (§8) —
+          la texture parle d'elle-même, sans dénomination à côté */}
       <CategoryTrace category={current.category} />
-      {/* Onglet de chapitre : marqueur de carnet débordant du haut de la fiche */}
-      <div className="flex" aria-hidden="true">
-        <span className={cn('-mb-2 rounded-t-xl px-5 py-1.5 font-extrabold text-sm uppercase tracking-[0.12em] shadow-card', CHAPTER_TAB[current.category] ?? 'bg-carte text-encre')}>
-          {meta.label}
-        </span>
-      </div>
       <Link to="/recettes" className="relative inline-flex items-center gap-1 text-vert font-bold min-h-11 hover:underline">
         <ArrowLeft size={18} aria-hidden="true" /> Retour au carnet
       </Link>

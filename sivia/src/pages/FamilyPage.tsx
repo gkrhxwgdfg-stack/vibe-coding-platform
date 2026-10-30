@@ -1,13 +1,13 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { Check, Copy, Download, Eye, Mail, Pencil, Trash2, UserCheck } from 'lucide-react'
+import { Check, Copy, Download, Mail, Pencil, Trash2, UserCheck } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { useCreateInvitation, useFamilyMembers, useInvitations } from '@/hooks/useFamily'
 import { useFamilyGenerations, useFamilyTree } from '@/hooks/useFamilyTree'
 import { useRecipes } from '@/hooks/useRecipes'
 import { supabase } from '@/lib/supabase'
 import { addComment } from '@/services/comments'
-import { estimateBookPageCount, generateFamilyBookPdf } from '@/services/familyBookPdf'
+import { generateFamilyBookPdf } from '@/services/familyBookPdf'
 import { invitationLink } from '@/lib/paths'
 import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
@@ -58,7 +58,6 @@ export function FamilyPage() {
     for (const r of recipes) counts[r.author_id] = (counts[r.author_id] ?? 0) + 1
     return counts
   }, [recipes])
-  const [bookPreviewOpen, setBookPreviewOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [lastLink, setLastLink] = useState<string | null>(null)
   const [copiedId, setCopiedId] = useState<string | null>(null)
@@ -154,7 +153,6 @@ export function FamilyPage() {
       setBookError('Le carnet n\'a pas pu être téléchargé. La sauce a raté. On recommence ?')
     } finally {
       setBookBusy(false)
-      setBookPreviewOpen(false)
     }
   }
 
@@ -281,14 +279,6 @@ export function FamilyPage() {
           )}
           <div className="flex flex-wrap gap-3">
             <Button
-              variant="outline"
-              onClick={() => setBookPreviewOpen(true)}
-              disabled={recipesLoading || recipes.length === 0}
-            >
-              <Eye size={18} aria-hidden="true" />
-              Aperçu
-            </Button>
-            <Button
               onClick={handleDownloadBook}
               disabled={bookBusy || recipesLoading || recipes.length === 0}
             >
@@ -394,55 +384,6 @@ export function FamilyPage() {
         </Link>
       </p>
 
-      {/* Aperçu avant génération du livre — mini couverture stylisée */}
-      {bookPreviewOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-encre/40 backdrop-blur-sm p-4"
-          role="presentation"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setBookPreviewOpen(false)
-          }}
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="book-preview-title"
-            className="card-surface w-full max-w-md p-6"
-          >
-            {/* Mini couverture — aperçu visuel du carnet A5 */}
-            <div
-              aria-hidden="true"
-              className="mb-5 rounded-2xl bg-ble-clair px-6 py-8 text-center shadow-soft"
-            >
-              <p className="kicker">Savia</p>
-              <p className="font-serif text-2xl font-bold text-encre mt-2 leading-tight">
-                Le carnet de<br />{family?.name ?? 'ta famille'}
-              </p>
-              <p className="font-serif italic text-encre-doux text-2xl mt-1">Le savoir qui se transmet à table.</p>
-              <span className="inline-block mt-3 h-8 w-8 rounded-full border-2 border-tomate/70" aria-hidden="true" />
-              <p className="text-sm text-encre-doux mt-3">
-                {recipes.length} recette{recipes.length > 1 ? 's' : ''} · {estimateBookPageCount(recipes.length).label}
-              </p>
-            </div>
-            <h2 id="book-preview-title" className="sr-only">
-              Aperçu du carnet de {family?.name ?? 'ta famille'}
-            </h2>
-            <p className="text-encre-doux mb-1">Pour qui ? Toute la famille, de génération en génération.</p>
-            <p className="text-encre-doux mb-4">
-              Couverture, sommaire, recettes scellées d'abord, index par auteur.
-            </p>
-            <div className="flex flex-col gap-3">
-              <Button size="lg" onClick={handleDownloadBook} disabled={bookBusy}>
-                <Download size={18} aria-hidden="true" />
-                {bookBusy ? 'On relie le carnet…' : 'Télécharger le carnet'}
-              </Button>
-              <Button size="lg" variant="ghost" onClick={() => setBookPreviewOpen(false)}>
-                Ranger
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
 
     </div>
   )
