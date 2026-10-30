@@ -12,9 +12,10 @@
 
 ## 2. Appliquer le schéma
 
-**À faire impérativement avant le premier lancement** : les 10 tables
+**À faire impérativement avant le premier lancement** : les 11 tables
 (`families`, `profiles`, `invitations`, `recipes`, `favorites`, `recipe_comments`,
-`family_members`, `family_generations`, `family_events`, `event_recipes`),
+`family_members`, `family_generations`, `family_events`, `event_recipes`,
+`family_waitlist`),
 les policies RLS et le bucket `recipe-photos` ne sont **pas encore créés** sur le projet.
 
 **Via le dashboard (sans CLI)** — onglet **SQL Editor**, exécutez **dans l'ordre** :
@@ -54,6 +55,13 @@ les policies RLS et le bucket `recipe-photos` ne sont **pas encore créés** sur
 10. **New query** → collez le **contenu** de
    [`migrations/0011_family_members_parent2.sql`](./migrations/0011_family_members_parent2.sql) → **Run**
    (arbre simplifié : `family_members.parent2_id` pour « relié à une ou deux personnes »)
+11. **New query** → collez le **contenu** de
+   [`migrations/0012_famille_plan.sql`](./migrations/0012_famille_plan.sql) → **Run**
+   (**Phase 1 monétisation « Sivia Famille »** : colonnes `plan`, `plan_started_at`,
+   `plan_expires_at`, `plan_source` sur `families` (gratuit / essai / actif / expire),
+   trigger `families_plan_guard` — seul le service (webhook Stripe) peut activer
+   un plan payé, les membres peuvent uniquement ouvrir l'essai d'un mois sans
+   carte, dates fixées par le serveur — et table `family_waitlist` avec RLS)
 
 > Erreur fréquente : coller le chemin `sivia/supabase/migrations/...` au lieu
 > du contenu SQL → `ERROR: 42601: syntax error`. Le SQL Editor attend du **code SQL**.

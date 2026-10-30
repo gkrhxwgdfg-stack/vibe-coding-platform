@@ -12,18 +12,30 @@ export interface Database {
           name: string
           created_by: string
           created_at: string
+          plan: 'gratuit' | 'essai' | 'actif' | 'expire'
+          plan_started_at: string | null
+          plan_expires_at: string | null
+          plan_source: 'essai' | 'paiement' | 'cadeau' | null
         }
         Insert: {
           id?: string
           name: string
           created_by: string
           created_at?: string
+          plan?: 'gratuit' | 'essai' | 'actif' | 'expire'
+          plan_started_at?: string | null
+          plan_expires_at?: string | null
+          plan_source?: 'essai' | 'paiement' | 'cadeau' | null
         }
         Update: {
           id?: string
           name?: string
           created_by?: string
           created_at?: string
+          plan?: 'gratuit' | 'essai' | 'actif' | 'expire'
+          plan_started_at?: string | null
+          plan_expires_at?: string | null
+          plan_source?: 'essai' | 'paiement' | 'cadeau' | null
         }
         Relationships: []
       }
@@ -469,6 +481,45 @@ export interface Database {
             columns: ['recipe_id']
             isOneToOne: false
             referencedRelation: 'recipes'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      family_waitlist: {
+        Row: {
+          id: string
+          family_id: string
+          created_by: string
+          note: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          family_id: string
+          created_by: string
+          note?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          family_id?: string
+          created_by?: string
+          note?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'family_waitlist_family_id_fkey'
+            columns: ['family_id']
+            isOneToOne: true
+            referencedRelation: 'families'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'family_waitlist_created_by_fkey'
+            columns: ['created_by']
+            isOneToOne: false
+            referencedRelation: 'profiles'
             referencedColumns: ['id']
           },
         ]

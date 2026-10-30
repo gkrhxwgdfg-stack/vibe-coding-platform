@@ -43,6 +43,11 @@ export interface Family {
   name: string
   created_by: string
   created_at: string
+  /** Plan « Sivia Famille » — s'attache au groupe, pas à la personne */
+  plan?: 'gratuit' | 'essai' | 'actif' | 'expire'
+  plan_started_at?: string | null
+  plan_expires_at?: string | null
+  plan_source?: 'essai' | 'paiement' | 'cadeau' | null
 }
 
 export interface Invitation {

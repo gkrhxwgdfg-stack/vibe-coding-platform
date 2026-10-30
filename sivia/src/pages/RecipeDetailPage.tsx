@@ -34,6 +34,8 @@ import { IngredientChecklist } from '@/components/recipes/IngredientChecklist'
 import { TransmissionBanner } from '@/components/recipes/TransmissionBanner'
 import { Torchon } from '@/components/ui/Torchon'
 import { useCookedCount } from '@/hooks/useCookedCount'
+import { useFamillePlan } from '@/hooks/useFamillePlan'
+import { PaywallModal } from '@/components/monetisation/PaywallModal'
 import { cn } from '@/lib/utils'
 import { COPY } from '@/lib/copy'
 import { CategoryTrace } from '@/components/motifs/CategoryTrace'
@@ -63,6 +65,10 @@ export function RecipeDetailPage() {
   const [pdfBusy, setPdfBusy] = useState(false)
   const [pdfError, setPdfError] = useState<string | null>(null)
   const [pdfDone, setPdfDone] = useState(false)
+  // Sivia Famille : la conservation (PDF, impression) est le cœur du plan —
+  // consulter et contribuer restent toujours gratuits
+  const { premium, dejaEssai, refetch: refetchPlan } = useFamillePlan()
+  const [paywallOpen, setPaywallOpen] = useState(false)
 
   const effectiveServings = servings ?? recipe?.servings ?? 4
 
@@ -87,6 +93,10 @@ export function RecipeDetailPage() {
   const meta = categoryMeta(current.category)
 
   function handleExport() {
+    if (!premium) {
+      setPaywallOpen(true)
+      return
+    }
     const opened = printRecipe(current, family?.name ?? 'notre famille')
     if (opened) {
       setExported(true)
@@ -96,6 +106,10 @@ export function RecipeDetailPage() {
 
   /** Export PDF direct (jsPDF, import dynamique au clic) */
   async function handlePdfExport() {
+    if (!premium) {
+      setPaywallOpen(true)
+      return
+    }
     setPdfBusy(true)
     setPdfError(null)
     try {
@@ -250,10 +264,12 @@ export function RecipeDetailPage() {
             <Button variant="outline" onClick={handlePdfExport} disabled={pdfBusy}>
               {pdfDone ? <Check size={18} aria-hidden="true" /> : <Download size={18} aria-hidden="true" />}
               {pdfBusy ? 'On prépare le PDF…' : pdfDone ? 'La recette est dans vos téléchargements.' : 'Télécharger (PDF)'}
+              {!premium && <Lock size={14} aria-hidden="true" aria-label="Sivia Famille" />}
             </Button>
             <Button variant="ghost" onClick={handleExport}>
               {exported ? <Check size={18} aria-hidden="true" /> : <Printer size={18} aria-hidden="true" />}
               {exported ? 'Prêt — choisis « Enregistrer en PDF »' : 'Imprimer'}
+              {!premium && <Lock size={14} aria-hidden="true" aria-label="Sivia Famille" />}
             </Button>
             {pdfError && (
               <p className="text-sm text-tomate font-bold" role="alert">{pdfError}</p>
@@ -377,6 +393,15 @@ export function RecipeDetailPage() {
           Écrire une autre recette de la famille
         </Link>
       </p>
+
+      {/* Sivia Famille : ouvert au moment de fierté (imprimer / conserver) */}
+      <PaywallModal
+        open={paywallOpen}
+        onClose={() => setPaywallOpen(false)}
+        contexte={`Imprimer « ${recipe.title} » et l’offrir, sans filigrane`}
+        onEssaiActif={refetchPlan}
+        dejaEssai={dejaEssai}
+      />
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { Check, Copy, Download, Mail, Pencil, Trash2, UserCheck } from 'lucide-react'
+import { Check, Copy, Download, Eye, Lock, Mail, Pencil, Trash2, UserCheck } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { useCreateInvitation, useFamilyMembers, useInvitations } from '@/hooks/useFamily'
 import { useFamilyGenerations, useFamilyTree } from '@/hooks/useFamilyTree'
@@ -20,6 +20,9 @@ import { FamilyEvents } from '@/components/family/FamilyEvents'
 import { formatDate } from '@/lib/format'
 import { COPY } from '@/lib/copy'
 import type { FamilyMember, Invitation } from '@/lib/types'
+import { useFamillePlan } from '@/hooks/useFamillePlan'
+import { PaywallModal } from '@/components/monetisation/PaywallModal'
+import { ApercuLivreModal } from '@/components/monetisation/ApercuLivreModal'
 
 export function FamilyPage() {
   const { profile, family, refreshProfile } = useAuth()
@@ -52,6 +55,11 @@ export function FamilyPage() {
   const [bookBusy, setBookBusy] = useState(false)
   const [bookDone, setBookDone] = useState(false)
   const [bookError, setBookError] = useState<string | null>(null)
+  // Sivia Famille : le livre complet (sans filigrane) est le cœur du plan ;
+  // l'aperçu filigrané reste gratuit, pour toujours
+  const { premium, dejaEssai, refetch: refetchPlan } = useFamillePlan()
+  const [paywallOpen, setPaywallOpen] = useState(false)
+  const [apercuOpen, setApercuOpen] = useState(false)
   // Recettes transmises par profil : les fruits de l'arbre (§5.5)
   const recipeCountByMember = useMemo(() => {
     const counts: Record<string, number> = {}
@@ -130,6 +138,10 @@ export function FamilyPage() {
   /** Télécharge le livre A5 du carnet familial + notification dans le fil de vie */
   async function handleDownloadBook() {
     if (!family || !profile) return
+    if (!premium) {
+      setPaywallOpen(true)
+      return
+    }
     setBookBusy(true)
     setBookError(null)
     try {
@@ -278,12 +290,22 @@ export function FamilyPage() {
             </p>
           )}
           <div className="flex flex-wrap gap-3">
+            {/* Aperçu filigrané : toujours gratuit, pour se projeter */}
+            <Button
+              variant="outline"
+              onClick={() => setApercuOpen(true)}
+              disabled={recipesLoading || recipes.length === 0}
+            >
+              <Eye size={18} aria-hidden="true" />
+              Voir l’aperçu du livre
+            </Button>
             <Button
               onClick={handleDownloadBook}
               disabled={bookBusy || recipesLoading || recipes.length === 0}
             >
               <Download size={18} aria-hidden="true" />
               {bookBusy ? 'On relie le carnet…' : 'Télécharger le carnet'}
+              {!premium && <Lock size={14} aria-hidden="true" aria-label="Sivia Famille" />}
             </Button>
           </div>
         </Card>
@@ -384,7 +406,25 @@ export function FamilyPage() {
         </Link>
       </p>
 
+      {/* Aperçu filigrané du livre — gratuit, sans compte ni carte */}
+      <ApercuLivreModal
+        open={apercuOpen}
+        onClose={() => setApercuOpen(false)}
+        familyName={family?.name ?? 'notre famille'}
+        recipes={recipes}
+        premium={premium}
+        onSubscribe={() => setPaywallOpen(true)}
+        onDownload={handleDownloadBook}
+      />
 
+      {/* Sivia Famille : ouvert au moment de fierté (le livre de la famille) */}
+      <PaywallModal
+        open={paywallOpen}
+        onClose={() => setPaywallOpen(false)}
+        contexte={`Le livre de ${family?.name ?? 'votre famille'}, à garder et à offrir`}
+        onEssaiActif={refetchPlan}
+        dejaEssai={dejaEssai}
+      />
     </div>
   )
 }
