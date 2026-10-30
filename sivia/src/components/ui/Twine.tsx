@@ -30,7 +30,6 @@ export function Twine({ corner = 'top-left', className }: TwineProps) {
         style={{
           background:
             'repeating-linear-gradient(180deg, var(--color-cannelle) 0px, var(--color-cannelle) 3px, var(--color-cannelle) 3px, var(--color-cannelle) 6px)',
-          boxShadow: '0 1px 2px rgba(74, 55, 40, 0.35)',
         }}
       />
       {/* Nœud de la ficelle */}
@@ -38,7 +37,6 @@ export function Twine({ corner = 'top-left', className }: TwineProps) {
         className="absolute left-1/2 -translate-x-1/2 top-5 w-3 h-3 rounded-full"
         style={{
           background: 'var(--color-cannelle)',
-          boxShadow: 'inset 0 -1px 1px rgba(255,255,255,0.25), 0 1px 2px rgba(74,55,40,0.35)',
         }}
       />
       {/* Les deux brins qui retombent */}

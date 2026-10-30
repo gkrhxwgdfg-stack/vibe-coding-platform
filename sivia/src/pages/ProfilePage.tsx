@@ -83,12 +83,12 @@ export function ProfilePage() {
       {/* Mes recettes / favoris */}
       <section aria-label="Mes recettes et favoris">
         <div className="grid grid-cols-2 gap-4">
-          <Link to="/recettes" className="card-surface card-pad p-5 text-center hover:shadow-soft transition-shadow">
+          <Link to="/recettes" className="card-surface card-pad p-5 text-center hover:border-vert/40">
             <BookOpen size={28} className="mx-auto text-vert mb-2" aria-hidden="true" />
             <span className="font-serif text-3xl font-bold block">{myRecipes.length}</span>
             <span className="text-encre-doux">recette{myRecipes.length > 1 ? 's' : ''} écrites</span>
           </Link>
-          <Link to="/favoris" className="card-surface card-pad p-5 text-center hover:shadow-soft transition-shadow">
+          <Link to="/favoris" className="card-surface card-pad p-5 text-center hover:border-vert/40">
             <Heart size={28} className="mx-auto text-tomate mb-2" aria-hidden="true" />
             <span className="font-serif text-3xl font-bold block">{myFavorites.length}</span>
             <span className="text-encre-doux">favori{myFavorites.length > 1 ? 's' : ''}</span>

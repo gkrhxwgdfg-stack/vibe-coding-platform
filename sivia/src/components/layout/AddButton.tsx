@@ -37,7 +37,7 @@ export function AddButton({ action, className }: AddButtonProps) {
       onClick={handleClick}
       aria-label={labels[current.kind]}
       className={cn(
-        'touch-target-lg fixed bottom-24 right-5 z-40 min-h-14 min-w-14 rounded-full bg-tomate text-white shadow-[0_8px_20px_rgba(201,58,43,0.30)]',
+        'touch-target-lg fixed bottom-24 right-5 z-40 min-h-14 min-w-14 rounded-full bg-tomate text-white',
         'flex items-center justify-center hover:bg-[#a72f23] active:scale-95 transition-colors',
         className,
       )}

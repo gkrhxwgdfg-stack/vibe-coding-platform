@@ -63,7 +63,7 @@ export function TapeAddButton({ memberName, onClick }: TapeAddButtonProps) {
       title={`Ajouter un partenaire à côté de ${memberName} (même génération)`}
       className={cn(
         'absolute -right-3.5 top-24 z-10 inline-flex items-center justify-center',
-        'w-11 h-11 rounded-full bg-carte border-2 border-vert text-vert shadow-card',
+        'w-11 h-11 rounded-full bg-carte border-2 border-vert text-vert',
         'transition-transform hover:scale-110 hover:bg-vert-clair active:scale-95',
       )}
     >

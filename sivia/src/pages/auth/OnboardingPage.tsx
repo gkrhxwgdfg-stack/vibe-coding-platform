@@ -229,7 +229,7 @@ export function OnboardingPage() {
         <button
           type="button"
           onClick={() => setMode('creer')}
-          className="card-surface card-pad p-5 text-left hover:shadow-soft transition-shadow w-full"
+          className="card-surface card-pad p-5 text-left hover:border-vert/40 w-full"
         >
           <span className="font-serif font-semibold text-xl block">Créer ma famille</span>
           <span className="text-encre-doux">J’aménage la cuisine et j’invite les miens.</span>
@@ -237,7 +237,7 @@ export function OnboardingPage() {
         <button
           type="button"
           onClick={() => setMode('rejoindre')}
-          className="card-surface card-pad p-5 text-left hover:shadow-soft transition-shadow w-full"
+          className="card-surface card-pad p-5 text-left hover:border-vert/40 w-full"
         >
           <span className="font-serif font-semibold text-xl block">Rejoindre ma famille</span>
           <span className="text-encre-doux">J’ai reçu un lien d’invitation.</span>

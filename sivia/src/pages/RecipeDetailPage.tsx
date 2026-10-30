@@ -365,7 +365,7 @@ export function RecipeDetailPage() {
       {recipe.steps.length > 0 && (
         <div className="sticky bottom-20 z-30 flex justify-center pointer-events-none">
           <Link to={'/recettes/' + recipe.id + '/cuisson'} className="pointer-events-auto">
-            <Button size="lg" className={cn('shadow-soft', cookPulse && 'pulse-once')}>
+            <Button size="lg" className={cn(cookPulse && 'pulse-once')}>
               <Play size={20} aria-hidden="true" /> Cuisiner
             </Button>
           </Link>

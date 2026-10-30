@@ -550,7 +550,7 @@ export function CookingPage() {
               type="button"
               onClick={goNext}
               aria-label="Étape suivante"
-              className="touch-target-lg min-h-16 min-w-16 rounded-full bg-tomate text-white inline-flex items-center justify-center shadow-soft hover:bg-[#a72f23]"
+              className="touch-target-lg min-h-16 min-w-16 rounded-full bg-tomate text-white inline-flex items-center justify-center hover:bg-[#a72f23]"
             >
               <ChevronRight size={28} aria-hidden="true" />
             </button>

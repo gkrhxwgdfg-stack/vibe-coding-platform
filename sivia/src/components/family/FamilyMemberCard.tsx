@@ -43,7 +43,7 @@ export function FamilyMemberCard({
   return (
     <div className="shrink-0 w-44 snap-start">
       <figure
-        className={cn('polaroid polaroid-sans-ombre relative w-full')}
+        className={cn('polaroid relative w-full')}
         style={{ ['--r' as string]: `${tilt}deg` }}
       >
         <span className="epingle" aria-hidden="true" />

@@ -135,7 +135,7 @@ h3 {
   background-color: var(--sivia-carte);
   border: 1.5px solid rgba(63, 44, 26, 0.1);
   border-radius: var(--sivia-radius);
-  box-shadow: var(--shadow-card);
+  box-shadow: none;
 }
 
 /* Variante « carte secondaire » : fond sauge pour aérer sans multiplier le bleu */
@@ -143,7 +143,7 @@ h3 {
   background-color: var(--sivia-vert-clair);
   border: 1.5px solid rgba(46, 89, 57, 0.3);
   border-radius: var(--sivia-radius);
-  box-shadow: var(--shadow-card);
+  box-shadow: none;
 }
 
 @utility kicker {
@@ -551,12 +551,13 @@ html.reading-xl .card-pad {
   background-position: top center;
 }
 
-/* Corde à linge — polaroïds (§5.1) */
+/* Corde à linge — polaroïds (§5.1) : plats, aucune ombre portée
+   (direction épurée : la couleur et la balance font le charme) */
 .polaroid {
   background: #ffffff;
   padding: 8px 8px 22px;
   border-radius: 3px;
-  box-shadow: var(--sivia-ombre);
+  box-shadow: none;
   transform: rotate(var(--r, -2deg));
   transform-origin: 50% -12px;
   animation: balance 5.5s ease-in-out infinite;

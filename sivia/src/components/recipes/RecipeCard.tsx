@@ -19,7 +19,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
   return (
     <Link
       to={`/recettes/${recipe.id}`}
-      className="group block card-surface overflow-hidden p-0 hover:shadow-soft hover:-translate-y-[3px] transition-all"
+      className="group block card-surface overflow-hidden p-0 hover:border-vert/40 hover:-translate-y-[3px] transition-all"
       style={{ transitionDuration: '250ms', transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)' }}
     >
       <div className="relative aspect-[16/10] bg-papier overflow-hidden">

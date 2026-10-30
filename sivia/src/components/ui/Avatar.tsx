@@ -19,7 +19,7 @@ export function Avatar({ name, src, size = 'md', className }: AvatarProps) {
     <span
       className={cn(
         'inline-flex items-center justify-center rounded-full shrink-0 overflow-hidden',
-        'bg-vert text-white font-serif font-bold border-2 border-carte shadow-card',
+        'bg-vert text-white font-serif font-bold border-2 border-carte',
         sizes[size],
         className,
       )}

@@ -53,7 +53,7 @@ export function buildRecipePrintHtml(recipe: RecipeWithMeta, familyName: string)
     background: #fdfbf7;
   }
   .page { max-width: 720px; margin: 0 auto; background: #ffffff; padding: 40px;
-          border-radius: 16px; box-shadow: 0 6px 18px -10px rgba(74,55,40,.28); }
+          border-radius: 16px; }
   h1 { font-family: "Fraunces", Georgia, serif; font-size: 34px; margin: 0 0 4px; line-height: 1.2; }
   h2 { font-family: "Fraunces", Georgia, serif; font-size: 22px; margin: 32px 0 12px;
        border-bottom: 2px dashed #e4a93c; padding-bottom: 6px; }
@@ -65,7 +65,7 @@ export function buildRecipePrintHtml(recipe: RecipeWithMeta, familyName: string)
            border-radius: 999px; padding: 4px 14px; font-weight: 800; font-size: 14px; }
   .polaroid { background: #fff; padding: 12px 12px 14px; border-radius: 4px; width: 280px;
               margin: 24px auto; transform: rotate(-2deg);
-              box-shadow: 0 10px 24px -14px rgba(74,55,40,.35); }
+              }
   .polaroid img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 2px; display: block; }
   .polaroid figcaption { font-family: "Fraunces", cursive; font-size: 20px; color: #6b5d4f;
                           text-align: center; padding-top: 10px; }

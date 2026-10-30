@@ -179,18 +179,6 @@ export function FamilyTree({
                 />
               )
             })}
-          {/* Canopée : une nappe de feuillage par carte, douce et large */}
-          {nodes.map((node, i) => (
-            <ellipse
-              key={`feuille-${node.member.id}`}
-              cx={node.x + CARD_W / 2}
-              cy={node.y + 104}
-              rx={CARD_W / 2 + 12}
-              ry={82}
-              fill={i % 2 === 0 ? '#2e5939' : '#52755a'}
-              fillOpacity={0.13}
-            />
-          ))}
           {/* Fruits : recettes transmises par chaque membre */}
           {nodes.flatMap((node) => {
             const count = Math.min(recipeCountByMember?.[node.member.id] ?? 0, 3)
@@ -217,7 +205,7 @@ export function FamilyTree({
               title="Ajouter une base au-dessus (l'arbre descend)"
               className={cn(
                 'touch-target-lg min-h-11 min-w-11 rounded-full bg-carte border-2 border-tomate text-tomate',
-                'inline-flex items-center justify-center hover:bg-tomate hover:text-white transition-colors shadow-card',
+                'inline-flex items-center justify-center hover:bg-tomate hover:text-white transition-colors',
               )}
             >
               <Plus size={20} strokeWidth={2.5} aria-hidden="true" />
@@ -273,7 +261,7 @@ export function FamilyTree({
                   title={`Ajouter une personne reliée à ${member.first_name}`}
                   className={cn(
                     'touch-target-lg min-h-11 min-w-11 rounded-full bg-carte border-2 border-vert text-vert',
-                    'inline-flex items-center justify-center hover:bg-vert hover:text-white transition-colors shadow-card',
+                    'inline-flex items-center justify-center hover:bg-vert hover:text-white transition-colors',
                   )}
                 >
                   <Plus size={20} strokeWidth={2.5} aria-hidden="true" />
@@ -289,7 +277,7 @@ export function FamilyTree({
             <button
               type="button"
               onClick={() => openAdd(null)}
-              className="touch-target-lg min-h-13 px-6 py-3 rounded-full bg-tomate text-white font-bold inline-flex items-center gap-2 shadow-[0_8px_20px_rgba(201,58,43,0.30)] hover:bg-[#a72f23]"
+              className="touch-target-lg min-h-13 px-6 py-3 rounded-full bg-tomate text-white font-bold inline-flex items-center gap-2 hover:bg-[#a72f23]"
             >
               <Plus size={22} aria-hidden="true" /> Créer la base de l'arbre
             </button>

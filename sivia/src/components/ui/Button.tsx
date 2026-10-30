@@ -12,7 +12,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const variants: Record<ButtonVariant, string> = {
   // Primaire : tomate, pill 999 px, min-height 52 px (§6.1) — zéro ornement
   primary:
-    'bg-tomate text-white hover:bg-[#a72f23] shadow-[0_8px_20px_rgba(201,58,43,0.30)] border-transparent rounded-full min-h-13',
+    'bg-tomate text-white hover:bg-[#a72f23] border-transparent rounded-full min-h-13',
   // Secondaire : transparent, bordure 2 px vert, texte vert (§6.1)
   secondary:
     'bg-transparent text-vert border-vert hover:bg-vert-clair',
@@ -24,7 +24,7 @@ const variants: Record<ButtonVariant, string> = {
   outline:
     'bg-carte text-encre border-encre-doux/20 hover:border-vert hover:text-vert',
   danger:
-    'bg-tomate text-white hover:bg-[#a72f23] shadow-[0_8px_20px_rgba(201,58,43,0.30)] border-transparent',
+    'bg-tomate text-white hover:bg-[#a72f23] border-transparent',
 }
 
 const sizes: Record<ButtonSize, string> = {

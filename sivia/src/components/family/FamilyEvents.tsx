@@ -61,7 +61,7 @@ export function FamilyEvents() {
             <li key={year} className="relative pl-8">
               {/* Nœud de l'année sur le fil */}
               <span
-                className="absolute left-0 top-1 w-4 h-4 rounded-full bg-tomate border-2 border-carte shadow-card"
+                className="absolute left-0 top-1 w-4 h-4 rounded-full bg-tomate border-2 border-carte"
                 aria-hidden="true"
               />
               <h3 className="font-serif text-2xl font-bold text-encre mb-3">{year}</h3>
