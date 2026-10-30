@@ -49,8 +49,8 @@ export const TREE_GEOMETRY = {
   GAP_X: 36,
   /** Hauteur de l'attache de scotch dans la carte (centre de la photo) */
   COUPLE_Y: 96,
-  /** La barre de fratrie flotte 24 px au-dessus de la génération suivante */
-  BAR_GAP: 24,
+  /** Marge vertuelle entre le bas d'une carte et le haut de la suivante */
+  BRANCH_PAD: 24,
   /** Espace en haut du canevas (bouton « + » carmine « ajouter un aîné ») */
   TOP_PAD: 64,
   /** Marge latérale du canevas */
@@ -67,7 +67,6 @@ const {
   PITCH_Y,
   GAP_X,
   COUPLE_Y,
-  BAR_GAP,
   TOP_PAD,
   SIDE_PAD,
   BOTTOM_PAD,
@@ -84,7 +83,12 @@ export interface TreeNode {
 }
 
 export interface TreeSegment {
-  kind: 'vertical' | 'horizontal' | 'couple'
+  /**
+   * 'branch' : branche organique parent → enfant (courbe continue,
+   * aucune jonction intermédiaire — plus de barre ni d'angle droit).
+   * 'couple' : lien entre les deux cartes d'un couple (rendu en frame douce).
+   */
+  kind: 'branch' | 'couple'
   x1: number
   y1: number
   x2: number
@@ -387,60 +391,36 @@ export function buildFamilyTreeLayout(members: FamilyMember[]): FamilyTreeLayout
       personNodes.push(addNode(byId.get(ids[0])!, center - CARD_W / 2, y))
     }
 
-    // 5. Corde : barre commune au-dessus de la fratrie (quand il y a plusieurs
-    //    enfants ou des centres différents), puis descente depuis le bas de
-    //    chaque carte de référent et vers le haut de chaque carte d'enfant.
+    // 5. Branches organiques : une courbe DIRECTE du bas de chaque carte
+    //    référente vers le haut de chaque carte enfant. Aucune barre
+    //    intermédiaire, aucun angle droit, aucune coupure — la branche
+    //    part du parent et arrive sur l'enfant, comme un vrai arbre.
     if (subtrees.length > 0) {
-      const childYs = subtrees.map((st) => st.node.y)
-      const minChildY = Math.min(...childYs)
-      const barY = minChildY - BAR_GAP
-      const barXs = [
-        ...personNodes.map((pn) => pn.x + CARD_W / 2),
-        ...subtrees.map((st) => st.node.x + CARD_W / 2),
-      ]
-      // Seconds référents « relié aux deux » hors du groupe
-      const extraRefs = new Map<string, TreeNode>()
       for (const st of subtrees) {
+        const childCx = st.node.x + CARD_W / 2
+        for (const pn of personNodes) {
+          segments.push({
+            kind: 'branch',
+            x1: pn.x + CARD_W / 2,
+            y1: pn.y + CARD_H,
+            x2: childCx,
+            y2: st.node.y,
+          })
+        }
+        // Second référent « relié aux deux » hors du groupe
         const p2 = st.node.member.parent2_id
         if (p2 && !ids.includes(p2)) {
           const refNode = nodeById.get(p2)
           if (refNode) {
-            extraRefs.set(p2, refNode)
-            barXs.push(refNode.x + CARD_W / 2)
+            segments.push({
+              kind: 'branch',
+              x1: refNode.x + CARD_W / 2,
+              y1: refNode.y + CARD_H,
+              x2: childCx,
+              y2: st.node.y,
+            })
           }
         }
-      }
-      const barX1 = Math.min(...barXs)
-      const barX2 = Math.max(...barXs)
-      if (barX2 - barX1 > 0.5) {
-        segments.push({ kind: 'horizontal', x1: barX1, y1: barY, x2: barX2, y2: barY })
-      }
-      for (const pn of personNodes) {
-        segments.push({
-          kind: 'vertical',
-          x1: pn.x + CARD_W / 2,
-          y1: pn.y + CARD_H,
-          x2: pn.x + CARD_W / 2,
-          y2: barY,
-        })
-      }
-      for (const refNode of extraRefs.values()) {
-        segments.push({
-          kind: 'vertical',
-          x1: refNode.x + CARD_W / 2,
-          y1: refNode.y + CARD_H,
-          x2: refNode.x + CARD_W / 2,
-          y2: barY,
-        })
-      }
-      for (const st of subtrees) {
-        segments.push({
-          kind: 'vertical',
-          x1: st.node.x + CARD_W / 2,
-          y1: barY,
-          x2: st.node.x + CARD_W / 2,
-          y2: st.node.y,
-        })
       }
     }
 

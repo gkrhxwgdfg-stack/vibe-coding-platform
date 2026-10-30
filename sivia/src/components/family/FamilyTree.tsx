@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Plus } from 'lucide-react'
 import { buildFamilyTreeLayout, TREE_GEOMETRY, type TreeNode } from '@/lib/familyTreeLayout'
 import { FamilyMemberCard } from '@/components/family/FamilyMemberCard'
@@ -73,12 +73,21 @@ export function FamilyTree({
   const { nodes, segments, width, height } = layout
 
   const [modalOpen, setModalOpen] = useState(false)
+  // Centrage automatique du canevas : quand l'arbre grandit (ajout d'une
+  // personne hors couple), la vue reste centrée sur l'arbre, pas à gauche.
+  const canvasRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    const el = canvasRef.current?.parentElement
+    if (el) el.scrollLeft = Math.max(0, (el.scrollWidth - el.clientWidth) / 2)
+  }, [width, height])
   const [editingMember, setEditingMember] = useState<FamilyMember | null>(null)
   const [prefillParentId, setPrefillParentId] = useState<string | null>(null)
   const [prefillParent2Id, setPrefillParent2Id] = useState<string | null>(null)
   const [prefillLinkKind, setPrefillLinkKind] = useState<'parent' | 'partner' | null>(null)
 
   const { CARD_W, PLUS_H, TOP_PAD } = TREE_GEOMETRY
+  // Hauteur de la capsule « couple » : couvre carte + légende + boutons
+  const COUPLE_FRAME_H = 330
 
   function tiltFor(member: FamilyMember, index: number): number {
     const seed = member.first_name.length + index
@@ -115,12 +124,17 @@ export function FamilyTree({
       role="group"
       aria-label="Arbre généalogique de la famille"
     >
-      <div className="relative mx-auto" style={{ width, height }}>
+      <div className="relative mx-auto" style={{ width, height }} ref={canvasRef}>
         {/* ---------- L'arbre line-art (SVG derrière les cartes) ----------
-            Branches courbes cannelle trait 5 px, feuillages en ellipses
-            vertes semi-transparentes, membres = feuilles (les polaroïds),
-            recettes transmises = fruits (§5.5). Jamais de diagramme
-            à cases reliées par des lignes droites (§10). */}
+            Refonte visuelle : plus aucune barre orthogonale.
+            - Branches : courbes cubiques CONTINUES du bas d'une carte
+              au haut de l'autre (tunnel vertical doux, léger sway) —
+              aucune jonction, donc aucun angle droit ni coupure.
+            - Couples : une même « frame » douce (capsule floue vert-clair)
+              relie les deux cartes — le couple appartient à une seule
+              bulle, la ficelle floue cannelle au centre.
+            - Feuillage : une canopée par groupe, pas par carte.
+            - Membres = feuilles, recettes transmises = fruits (§5.5). */}
         <svg
           className="absolute inset-0 pointer-events-none"
           width={width}
@@ -128,48 +142,54 @@ export function FamilyTree({
           viewBox={`0 0 ${width} ${height}`}
           aria-hidden="true"
         >
+          {/* Frames de couple : capsule douce derrière les deux cartes */}
+          {segments
+            .filter((seg) => seg.kind === 'couple')
+            .map((seg, i) => (
+              <rect
+                key={`frame-${i}`}
+                x={seg.x1 - 14}
+                y={seg.y1 - COUPLE_FRAME_H / 2}
+                width={seg.x2 - seg.x1 + 28}
+                height={COUPLE_FRAME_H}
+                rx={26}
+                fill="#2e5939"
+                fillOpacity={0.1}
+              />
+            ))}
+          {/* Branches organiques parent → enfant : cubiques continues */}
           {segments
             .filter((seg) => seg.kind !== 'couple')
             .map((seg, i) => {
-              // Branche organique : courbe de Bézier avec léger balancement
-              const mx = (seg.x1 + seg.x2) / 2
-              const my = (seg.y1 + seg.y2) / 2
-              const sway = (i % 2 === 0 ? 1 : -1) * (seg.kind === 'vertical' ? 14 : 10)
-              const sag = seg.kind === 'horizontal' ? 12 : 0
+              const dy = seg.y2 - seg.y1
+              const sway = (i % 2 === 0 ? 1 : -1) * 6
+              const c1x = seg.x1 + sway
+              const c1y = seg.y1 + dy * 0.45
+              const c2x = seg.x2 + sway
+              const c2y = seg.y2 - dy * 0.45
               return (
                 <path
-                  key={i}
-                  d={`M ${seg.x1} ${seg.y1} Q ${mx + sway} ${my + sag} ${seg.x2} ${seg.y2}`}
+                  key={`branche-${i}`}
+                  d={`M ${seg.x1} ${seg.y1} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${seg.x2} ${seg.y2}`}
                   stroke="#8a5a2b"
-                  strokeWidth={seg.kind === 'horizontal' ? 5 : 4.5}
+                  strokeWidth={4.5}
                   strokeLinecap="round"
                   fill="none"
-                  opacity={0.9}
+                  opacity={0.85}
                 />
               )
             })}
-          {/* Feuillage derrière chaque membre-feuille */}
+          {/* Canopée : une nappe de feuillage par carte, douce et large */}
           {nodes.map((node, i) => (
-            <g key={`feuille-${node.member.id}`}>
-              <ellipse
-                cx={node.x + CARD_W / 2}
-                cy={node.y + 110}
-                rx={CARD_W / 2 + 14}
-                ry={78}
-                fill="#2e5939"
-                fillOpacity={0.14}
-              />
-              {i % 2 === 0 && (
-                <ellipse
-                  cx={node.x + CARD_W / 2 + (i % 3 === 0 ? 26 : -26)}
-                  cy={node.y + 86}
-                  rx={30}
-                  ry={22}
-                  fill="#52755a"
-                  fillOpacity={0.22}
-                />
-              )}
-            </g>
+            <ellipse
+              key={`feuille-${node.member.id}`}
+              cx={node.x + CARD_W / 2}
+              cy={node.y + 104}
+              rx={CARD_W / 2 + 12}
+              ry={82}
+              fill={i % 2 === 0 ? '#2e5939' : '#52755a'}
+              fillOpacity={0.13}
+            />
           ))}
           {/* Fruits : recettes transmises par chaque membre */}
           {nodes.flatMap((node) => {
@@ -177,8 +197,8 @@ export function FamilyTree({
             return Array.from({ length: count }).map((_, j) => (
               <circle
                 key={`fruit-${node.member.id}-${j}`}
-                cx={node.x + CARD_W - 6 + j * 9}
-                cy={node.y + 58 + (j % 2) * 12}
+                cx={node.x + CARD_W - 8 + j * 10}
+                cy={node.y + 56 + (j % 2) * 12}
                 r={7}
                 fill={j % 2 === 0 ? '#c93a2b' : '#e4a93c'}
                 fillOpacity={0.85}
