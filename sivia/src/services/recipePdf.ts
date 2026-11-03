@@ -197,17 +197,36 @@ export function drawStamp(doc: JsPdfLike, name: string, cx: number, cy: number) 
   doc.setTextColor(CARMINE.r, CARMINE.g, CARMINE.b)
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(6)
+  // Le nom s'adapte au tampon : on cherche la plus grande taille qui tient
+  // sur une ligne (28 mm de corde utile à cette hauteur), sinon deux lignes
+  // plus petites (26 mm). Un nom long ne doit jamais sembler cassé.
+  let nameLines: string[] = []
+  for (const size of [10, 8.5, 7]) {
+    doc.setFontSize(size)
+    if (doc.getTextWidth(name) <= 28) {
+      nameLines = [name]
+      break
+    }
+  }
+  if (nameLines.length === 0) {
+    doc.setFontSize(7)
+    nameLines = doc.splitTextToSize(name, 26).slice(0, 2)
+  }
   // Texte centré : jsPDF aligne à gauche par défaut, on décale de la moitié
   // de la largeur mesurée avant d'appliquer la rotation du tampon.
+  // Centrage vertical du bloc label + nom : le milieu du bloc tombe sur cy,
+  // quelle que soit la longueur du nom.
+  const labelGap = 7.2
+  const nameLH = 4.6
+  const labelY = nameLines.length === 1 ? cy - 4.2 : cy - 6.4
+  doc.setFontSize(6)
   const label = 'DE LA PART DE'
   const labelX = cx - doc.getTextWidth(label) / 2
-  const lp = rotate(labelX, cy - 5)
+  const lp = rotate(labelX, labelY)
   doc.text(label, lp.x, lp.y, { angle: -4 })
-  doc.setFontSize(10)
-  const lines = doc.splitTextToSize(name, 26)
-  lines.slice(0, 2).forEach((line, i) => {
+  nameLines.forEach((line, i) => {
     const lineX = cx - doc.getTextWidth(line) / 2
-    const p = rotate(lineX, cy + 3 + i * 5)
+    const p = rotate(lineX, labelY + labelGap + i * nameLH)
     doc.text(line, p.x, p.y, { angle: -4 })
   })
 }
@@ -451,7 +470,9 @@ export async function drawRecipeOnPdf(
     doc.setTextColor(COLORS.CREME.r, COLORS.CREME.g, COLORS.CREME.b)
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(8)
-    doc.text(String(i + 1), MARGIN + 3.5, cursor.y + 3.5)
+    // Numéro centré dans sa pastille (jsPDF aligne à gauche par défaut)
+    const num = String(i + 1)
+    doc.text(num, MARGIN + 3.5 - doc.getTextWidth(num) / 2, cursor.y + 3.5)
     doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(9.5)

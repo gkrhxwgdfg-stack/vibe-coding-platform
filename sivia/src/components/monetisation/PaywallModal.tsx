@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react'
 import { Check, Gift, Lock, ShieldCheck, Sparkles, X } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
@@ -194,12 +195,61 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai 
             </div>
 
             <div className="p-5 sm:p-6 space-y-5">
+              <p className="text-encre-doux text-sm leading-relaxed">
+                Transmettre est <strong className="text-encre">gratuit pour toujours</strong>.
+                Conserver le carnet complet de la famille, c’est Sivia Famille.
+              </p>
               {simulation && (
                 <p className="rounded-xl bg-vert-clair/60 text-vert text-sm font-bold px-4 py-2.5">
                   Mode aperçu : cette fenêtre montre le parcours, sans rien changer pour de vrai.
                 </p>
               )}
-              {/* Un seul plan, deux durées */}
+              {/* L'offre en deux colonnes : l'essentiel reste gratuit pour
+                toujours, Sivia Famille apporte le carnet complet et conservé */}
+            <div className="grid grid-cols-2 gap-2.5">
+              <div className="rounded-2xl border-2 border-encre-doux/20 bg-papier p-3.5">
+                <p className="font-extrabold text-encre text-sm">Gratuit</p>
+                <p className="text-encre-doux text-xs font-bold mt-0.5 mb-2">
+                  L’essentiel, pour toujours
+                </p>
+                <ul className="space-y-1.5 text-xs text-encre-doux leading-snug">
+                  <li className="flex items-start gap-1.5">
+                    <Check size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
+                    Toutes les recettes, photos et anecdotes
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <Check size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
+                    Recherche, filtres et favoris
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <Check size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
+                    Arbre, fil de vie et mode cuisson
+                  </li>
+                </ul>
+              </div>
+              <div className="rounded-2xl border-2 border-vert bg-vert-clair/40 p-3.5">
+                <p className="font-extrabold text-vert text-sm">Sivia Famille</p>
+                <p className="text-encre-doux text-xs font-bold mt-0.5 mb-2">
+                  Le carnet complet, conservé
+                </p>
+                <ul className="space-y-1.5 text-xs text-encre leading-snug">
+                  <li className="flex items-start gap-1.5">
+                    <Sparkles size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
+                    PDF sans filigrane et impression
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <Sparkles size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
+                    Le livre de famille A5 complet
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <Gift size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
+                    Chèque-livre de {eur(PRIX.chequeLivre)} dans l’annuel
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Un seul plan, deux durées */}
               <div className="space-y-3" role="radiogroup" aria-label="Durée de l’abonnement familial">
                 <button
                   type="button"
