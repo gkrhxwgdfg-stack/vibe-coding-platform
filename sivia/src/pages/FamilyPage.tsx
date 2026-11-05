@@ -22,6 +22,7 @@ import { COPY } from '@/lib/copy'
 import type { FamilyMember, Invitation } from '@/lib/types'
 import { useFamillePlan } from '@/hooks/useFamillePlan'
 import { PaywallModal } from '@/components/monetisation/PaywallModal'
+import { PremiumGate } from '@/components/monetisation/PremiumGate'
 import { ApercuLivreModal } from '@/components/monetisation/ApercuLivreModal'
 
 export function FamilyPage() {
@@ -259,18 +260,39 @@ export function FamilyPage() {
           (à côté, même génération), et le « + » carmine en haut pour un aîné au-dessus. Le lien
           s'écrit librement sur la carte.
         </p>
-        <TreeLegend className="mb-4" />
-        <div className="card-surface card-pad p-5 bg-vert/5">
-          <FamilyTree
-          recipeCountByMember={recipeCountByMember}
-            members={treeMembers}
-            generations={generations}
-            connectedProfileIds={connectedProfileIds}
-            onRemoveMember={handleRemoveTreeMember}
-            onCreateMember={addTreeMember}
-            onUpdateMember={editTreeMember}
-          />
-        </div>
+        {premium ? (
+          <>
+            <TreeLegend className="mb-4" />
+            <div className="card-surface card-pad p-5 bg-vert/5">
+              <FamilyTree
+                recipeCountByMember={recipeCountByMember}
+                members={treeMembers}
+                generations={generations}
+                connectedProfileIds={connectedProfileIds}
+                onRemoveMember={handleRemoveTreeMember}
+                onCreateMember={addTreeMember}
+                onUpdateMember={editTreeMember}
+              />
+            </div>
+          </>
+        ) : (
+          <PremiumGate
+            title="L’arbre généalogique vivant"
+            description="Chaque personne reliée aux autres, avec les recettes qu’elle a transmises — l’histoire gustative de la famille, d’un seul regard."
+            openPaywall={() => setPaywallOpen(true)}
+          >
+            <div className="card-surface card-pad p-5 bg-vert/5">
+              <FamilyTree
+                recipeCountByMember={recipeCountByMember}
+                members={treeMembers}
+                generations={generations}
+                connectedProfileIds={connectedProfileIds}
+                onCreateMember={addTreeMember}
+                onUpdateMember={editTreeMember}
+              />
+            </div>
+          </PremiumGate>
+        )}
       </section>
 
       {/* Le carnet familial : le livre (chantier 7) */}
@@ -312,7 +334,17 @@ export function FamilyPage() {
       </section>
 
       {/* Événements & souvenirs : la chronologie des repas de famille */}
-      <FamilyEvents />
+      {premium ? (
+        <FamilyEvents />
+      ) : (
+        <PremiumGate
+          title="Les événements de la famille"
+          description="Noëls, anniversaires, repas du dimanche : la chronologie des moments où la famille cuisine ensemble."
+          openPaywall={() => setPaywallOpen(true)}
+        >
+          <FamilyEvents />
+        </PremiumGate>
+      )}
 
       {/* Inviter */}
       <section aria-labelledby="invite-title">

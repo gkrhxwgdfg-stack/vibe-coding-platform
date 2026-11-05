@@ -26,10 +26,8 @@ export interface PlanInfo {
 export const PRIX = {
   /** Mensuel sans engagement */
   mensuel: 2.99,
-  /** Annuel pré-coché (≈ 2,08 €/mois, −30 %) */
+  /** Annuel pré-coché (≈ 2,08 €/mois, −30 % + 13ᵉ mois offert) */
   annuel: 24.99,
-  /** Chèque-livre inclus dans l'annuel (crédit sur le livre imprimé) */
-  chequeLivre: 15,
   /** Prix public du livre imprimé (impression à la demande) */
   livreImprime: 39,
 } as const

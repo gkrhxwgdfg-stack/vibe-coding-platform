@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Pencil, Trash2, UserCheck } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { BookOpen, Pencil, Trash2, UserCheck } from 'lucide-react'
 import { familyPhotoUrl } from '@/services/familyTree'
 import { type FamilyMember } from '@/lib/types'
 import { cn } from '@/lib/utils'
@@ -14,6 +15,10 @@ interface FamilyMemberCardProps {
   connectedProfileIds: Set<string>
   /** Rotation du polaroïd, calculée par l'appelant */
   tilt: number
+  /** Recettes transmises par cette personne (via son profil connecté) */
+  recipeCount?: number
+  /** Lien vers les recettes de la personne (filtre auteur de la page Recettes) */
+  recipesHref?: string
   onEdit?: (member: FamilyMember) => void
   onRemove?: (member: FamilyMember) => void
 }
@@ -30,6 +35,8 @@ export function FamilyMemberCard({
   parent2,
   connectedProfileIds,
   tilt,
+  recipeCount,
+  recipesHref,
   onEdit,
   onRemove,
 }: FamilyMemberCardProps) {
@@ -86,6 +93,17 @@ export function FamilyMemberCard({
               {relationLabel} {parent.first_name}
               {parent2 ? ` et ${parent2.first_name}` : ''}
             </p>
+          )}
+          {/* Vraie information de transmission : ce que cette personne a
+              donné au carnet, et le chemin vers ses recettes */}
+          {!!recipeCount && recipeCount > 0 && recipesHref && (
+            <Link
+              to={recipesHref}
+              className="inline-flex items-center gap-1.5 mt-1.5 text-sm font-extrabold text-vert hover:underline underline-offset-4"
+            >
+              <BookOpen size={14} aria-hidden="true" />
+              {recipeCount} recette{recipeCount > 1 ? 's' : ''} transmise{recipeCount > 1 ? 's' : ''}
+            </Link>
           )}
         </figcaption>
       </figure>

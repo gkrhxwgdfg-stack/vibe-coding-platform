@@ -36,6 +36,7 @@ import { Torchon } from '@/components/ui/Torchon'
 import { useCookedCount } from '@/hooks/useCookedCount'
 import { useFamillePlan } from '@/hooks/useFamillePlan'
 import { PaywallModal } from '@/components/monetisation/PaywallModal'
+import { PremiumGate } from '@/components/monetisation/PremiumGate'
 import { cn } from '@/lib/utils'
 import { COPY } from '@/lib/copy'
 import { CategoryTrace } from '@/components/motifs/CategoryTrace'
@@ -374,8 +375,18 @@ export function RecipeDetailPage() {
         </aside>
       )}
 
-      {/* Fil de vie : commentaires et photos de la famille */}
-      <CommentThread recipeId={recipe.id} familyId={recipe.family_id} />
+      {/* Fil de vie : commentaires et photos de la famille (Sivia Famille) */}
+      {premium ? (
+        <CommentThread recipeId={recipe.id} familyId={recipe.family_id} />
+      ) : (
+        <PremiumGate
+          title="Le fil de vie de cette recette"
+          description="Qui l’a cuisinée, quand, avec quels mots et quelles photos : les souvenirs de la famille se collectionnent ici, recette après recette."
+          openPaywall={() => setPaywallOpen(true)}
+        >
+          <CommentThread recipeId={recipe.id} familyId={recipe.family_id} />
+        </PremiumGate>
+      )}
 
       {/* Bouton « Cuisiner » sticky en bas de fiche (au-dessus de la nav fixe) */}
       {recipe.steps.length > 0 && (

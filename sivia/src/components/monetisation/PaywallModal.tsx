@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react'
-import { Check, Gift, Lock, ShieldCheck, Sparkles, X } from 'lucide-react'
+import { Check, Lock, ShieldCheck, Sparkles, X } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/Button'
@@ -204,50 +204,50 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai 
                   Mode aperçu : cette fenêtre montre le parcours, sans rien changer pour de vrai.
                 </p>
               )}
-              {/* L'offre en deux colonnes : l'essentiel reste gratuit pour
-                toujours, Sivia Famille apporte le carnet complet et conservé */}
-            <div className="grid grid-cols-2 gap-2.5">
-              <div className="rounded-2xl border-2 border-encre-doux/20 bg-papier p-3.5">
-                <p className="font-extrabold text-encre text-sm">Gratuit</p>
-                <p className="text-encre-doux text-xs font-bold mt-0.5 mb-2">
-                  L’essentiel, pour toujours
-                </p>
-                <ul className="space-y-1.5 text-xs text-encre-doux leading-snug">
-                  <li className="flex items-start gap-1.5">
-                    <Check size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
-                    Toutes les recettes, photos et anecdotes
-                  </li>
-                  <li className="flex items-start gap-1.5">
-                    <Check size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
-                    Recherche, filtres et favoris
-                  </li>
-                  <li className="flex items-start gap-1.5">
-                    <Check size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
-                    Arbre, fil de vie et mode cuisson
-                  </li>
-                </ul>
+              {/* L'offre en deux colonnes : l'essentiel est gratuit pour
+                  toujours, Sivia Famille ouvre le plein potentiel de l'app */}
+              <div className="grid grid-cols-2 gap-2.5">
+                <div className="rounded-2xl border-2 border-encre-doux/20 bg-papier p-3.5">
+                  <p className="font-extrabold text-encre text-sm">Gratuit</p>
+                  <p className="text-encre-doux text-xs font-bold mt-0.5 mb-2">
+                    L’essentiel, pour toujours
+                  </p>
+                  <ul className="space-y-1.5 text-xs text-encre-doux leading-snug">
+                    <li className="flex items-start gap-1.5">
+                      <Check size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
+                      Consulter, créer et partager toutes les recettes
+                    </li>
+                    <li className="flex items-start gap-1.5">
+                      <Check size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
+                      Photos, anecdotes, recherche et favoris
+                    </li>
+                    <li className="flex items-start gap-1.5">
+                      <Check size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
+                      Inviter toute la famille
+                    </li>
+                  </ul>
+                </div>
+                <div className="rounded-2xl border-2 border-vert bg-vert-clair/40 p-3.5">
+                  <p className="font-extrabold text-vert text-sm">Sivia Famille</p>
+                  <p className="text-encre-doux text-xs font-bold mt-0.5 mb-2">
+                    Le plein potentiel du carnet
+                  </p>
+                  <ul className="space-y-1.5 text-xs text-encre leading-snug">
+                    <li className="flex items-start gap-1.5">
+                      <Sparkles size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
+                      L’arbre vivant, la planche photos et le fil de vie
+                    </li>
+                    <li className="flex items-start gap-1.5">
+                      <Sparkles size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
+                      PDF sans filigrane, impression et livre A5
+                    </li>
+                    <li className="flex items-start gap-1.5">
+                      <Sparkles size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
+                      13ᵉ mois offert dans l’annuel
+                    </li>
+                  </ul>
+                </div>
               </div>
-              <div className="rounded-2xl border-2 border-vert bg-vert-clair/40 p-3.5">
-                <p className="font-extrabold text-vert text-sm">Sivia Famille</p>
-                <p className="text-encre-doux text-xs font-bold mt-0.5 mb-2">
-                  Le carnet complet, conservé
-                </p>
-                <ul className="space-y-1.5 text-xs text-encre leading-snug">
-                  <li className="flex items-start gap-1.5">
-                    <Sparkles size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
-                    PDF sans filigrane et impression
-                  </li>
-                  <li className="flex items-start gap-1.5">
-                    <Sparkles size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
-                    Le livre de famille A5 complet
-                  </li>
-                  <li className="flex items-start gap-1.5">
-                    <Gift size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
-                    Chèque-livre de {eur(PRIX.chequeLivre)} dans l’annuel
-                  </li>
-                </ul>
-              </div>
-            </div>
 
             {/* Un seul plan, deux durées */}
               <div className="space-y-3" role="radiogroup" aria-label="Durée de l’abonnement familial">
@@ -275,8 +275,8 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai 
                   </div>
                   <p className="text-sm text-encre-doux mt-1">
                     ≈ {eur(PRIX.annuel / 12)} par mois ·{' '}
-                    <Gift size={13} className="inline align-[-2px]" aria-hidden="true" />{' '}
-                    chèque-livre de {eur(PRIX.chequeLivre)} offert
+                    <Sparkles size={13} className="inline align-[-2px]" aria-hidden="true" />{' '}
+                    13ᵉ mois offert, et l’édition familiale enrichie du livre
                   </p>
                 </button>
 

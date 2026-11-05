@@ -229,6 +229,16 @@ export function FamilyTree({
                 parent2={parent2}
                 connectedProfileIds={connectedProfileIds}
                 tilt={tiltFor(member, index)}
+                recipeCount={
+                  member.linked_profile_id
+                    ? (recipeCountByMember?.[member.linked_profile_id] ?? 0)
+                    : undefined
+                }
+                recipesHref={
+                  member.linked_profile_id
+                    ? `/recettes?auteur=${member.linked_profile_id}`
+                    : undefined
+                }
                 onEdit={() => openEdit(member)}
                 onRemove={onRemoveMember ? () => onRemoveMember(member) : undefined}
               />

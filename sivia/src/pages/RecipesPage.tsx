@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { Plus, Search, X } from 'lucide-react'
 import { useRecipes } from '@/hooks/useRecipes'
 import { useFamilyMembers } from '@/hooks/useFamily'
@@ -17,9 +17,11 @@ import { cn } from '@/lib/utils'
 type CategoryFilter = RecipeCategory | 'toutes'
 
 export function RecipesPage() {
+  const [searchParams] = useSearchParams()
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState<CategoryFilter>('toutes')
-  const [authorId, setAuthorId] = useState<string>('tous')
+  // Lien depuis l'arbre généalogique : pré-sélectionne l'auteur (?auteur=id)
+  const [authorId, setAuthorId] = useState<string>(() => searchParams.get('auteur') ?? 'tous')
 
   const filters: RecipeFilters = useMemo(
     () => ({ query, category, authorId }),
