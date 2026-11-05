@@ -148,31 +148,74 @@ export function FamilyTree({
               const c1y = seg.y1 + dy * 0.45
               const c2x = seg.x2 + sway
               const c2y = seg.y2 - dy * 0.45
+              const d = `M ${seg.x1} ${seg.y1} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${seg.x2} ${seg.y2}`
+              // Point sur la branche (Bézier cubique) : les feuilles s'y accrochent
+              const bez = (t: number) => {
+                const mt = 1 - t
+                return {
+                  x: mt * mt * mt * seg.x1 + 3 * mt * mt * t * c1x + 3 * mt * t * t * c2x + t * t * t * seg.x2,
+                  y: mt * mt * mt * seg.y1 + 3 * mt * mt * t * c1y + 3 * mt * t * t * c2y + t * t * t * seg.y2,
+                }
+              }
               return (
-                <path
-                  key={`branche-${i}`}
-                  d={`M ${seg.x1} ${seg.y1} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${seg.x2} ${seg.y2}`}
-                  stroke="#8a5a2b"
-                  strokeWidth={4.5}
-                  strokeLinecap="round"
-                  fill="none"
-                  opacity={0.85}
-                />
+                <g key={`branche-${i}`}>
+                  {/* Branche organique : trait brun épais + liseré clair, elle vit */}
+                  <path d={d} stroke="#8a5a2b" strokeWidth={4.5} strokeLinecap="round" fill="none" opacity={0.85} />
+                  <path d={d} stroke="#a9744a" strokeWidth={1.5} strokeLinecap="round" fill="none" opacity={0.9} />
+                  {/* Feuilles vert cuisine le long de la branche, alternées */}
+                  {[0.35, 0.55, 0.75].map((t, j) => {
+                    const pt = bez(t)
+                    const flip = (i + j) % 2 === 0 ? 1 : -1
+                    return (
+                      <ellipse
+                        key={`feuille-${i}-${j}`}
+                        cx={pt.x + flip * 2}
+                        cy={pt.y}
+                        rx={4.5}
+                        ry={1.9}
+                        fill="#2E5939"
+                        fillOpacity={0.8}
+                        transform={`rotate(${flip * 22} ${pt.x} ${pt.y})`}
+                      />
+                    )
+                  })}
+                </g>
               )
             })}
           {/* Fruits : recettes transmises par chaque membre */}
           {nodes.flatMap((node) => {
-            const count = Math.min(recipeCountByMember?.[node.member.id] ?? 0, 3)
-            return Array.from({ length: count }).map((_, j) => (
-              <circle
-                key={`fruit-${node.member.id}-${j}`}
-                cx={node.x + CARD_W - 8 + j * 10}
-                cy={node.y + 56 + (j % 2) * 12}
-                r={7}
-                fill={j % 2 === 0 ? '#c93a2b' : '#e4a93c'}
-                fillOpacity={0.85}
-              />
-            ))
+            // Les recettes se comptent via le profil connecté du membre
+            // (author_id des recettes), pas via l'id du membre de l'arbre.
+            const pid = node.member.linked_profile_id
+            const count = Math.min((pid ? (recipeCountByMember?.[pid] ?? 0) : 0), 3)
+            return Array.from({ length: count }).map((_, j) => {
+              const fx = node.x + CARD_W - 10 + j * 11
+              const fy = node.y + 54 + (j % 2) * 12
+              return (
+                <g key={`fruit-${node.member.id}-${j}`}>
+                  {/* Tige : le fruit pend de la branche, il est suspendu */}
+                  <line
+                    x1={node.x + CARD_W - 4}
+                    y1={node.y + 47}
+                    x2={fx}
+                    y2={fy}
+                    stroke="#8a5a2b"
+                    strokeWidth={1.4}
+                    strokeLinecap="round"
+                    opacity={0.8}
+                  />
+                  <circle
+                    cx={fx}
+                    cy={fy}
+                    r={j % 2 === 0 ? 6.5 : 5.5}
+                    fill={j % 2 === 0 ? '#c93a2b' : '#e4a93c'}
+                    fillOpacity={0.9}
+                  />
+                  {/* Brillance : le fruit est mûr */}
+                  <circle cx={fx - 2} cy={fy - 2} r={1.4} fill="#fdfbf7" fillOpacity={0.7} />
+                </g>
+              )
+            })
           })}
         </svg>
 

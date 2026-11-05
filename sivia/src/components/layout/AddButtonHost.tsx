@@ -3,6 +3,7 @@ import { AddButton } from '@/components/layout/AddButton'
 import { useAddAction } from '@/hooks/useAddAction'
 import { AddPhotoModal } from '@/components/planche/AddPhotoModal'
 import { useRecentComments } from '@/hooks/useComments'
+import { useFamillePlan } from '@/hooks/useFamillePlan'
 
 /**
  * Hôte du bouton « + » contextuel : monte le bouton dans la coque de
@@ -12,10 +13,12 @@ import { useRecentComments } from '@/hooks/useComments'
 export function AddButtonHost() {
   const [plancheOpen, setPlancheOpen] = useState(false)
   const { refetch } = useRecentComments(5)
+  const { premium } = useFamillePlan()
 
   const action = useAddAction(() => setPlancheOpen(true))
 
-  if (!action) return null
+  // Sans Sivia Famille, l'accueil n'offre plus de « + » : la planche est un extra
+  if (!action || (action.kind === 'planche-photo' && !premium)) return null
 
   return (
     <>

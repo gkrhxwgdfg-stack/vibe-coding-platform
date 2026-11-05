@@ -7,6 +7,9 @@ import { useRecentComments } from '@/hooks/useComments'
 import { useAuth } from '@/context/AuthContext'
 import { fetchPlancheComments } from '@/services/comments'
 import { AddPhotoModal } from '@/components/planche/AddPhotoModal'
+import { PaywallModal } from '@/components/monetisation/PaywallModal'
+import { PremiumGate } from '@/components/monetisation/PremiumGate'
+import { useFamillePlan } from '@/hooks/useFamillePlan'
 import { CardHeader } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -49,6 +52,9 @@ export function HomePage() {
     refetchPlanche()
   }, [refetchPlanche])
 
+  // Sivia Famille : la planche est un extra — vitrine floutée sans le plan
+  const { premium } = useFamillePlan()
+  const [paywallOpen, setPaywallOpen] = useState(false)
   // Planche familiale personnalisable : les photos publiées par toute la famille,
   // les moments sans recette, et les derniers contenus (photos, anecdotes)
   // partagés en commentaires de recettes.
@@ -91,99 +97,121 @@ export function HomePage() {
       <section aria-labelledby="planche-title">
         <div className="flex items-center justify-between mb-3">
           <CardHeader kicker="Planche familiale" title="Moments de cuisine partagés" />
-          {/* Le « + » de la planche ouvre le modal photo — jamais le formulaire de recette */}
-          <Button onClick={() => setPhotoModalOpen(true)} aria-label="Ajouter une photo à la planche familiale">
-            <Plus size={20} aria-hidden="true" /> Ajouter
-          </Button>
-        </div>
-        {isLoading ? (
-          <Spinner label={COPY.loading.planche} />
-        ) : plancheEmpty ? (
-          <EmptyState title="La planche est vide" handText={COPY.empty.planche}>
-            <Button size="lg" onClick={() => setPhotoModalOpen(true)}>
-              <Plus size={20} aria-hidden="true" /> Accrocher la première photo
+          {/* Le « + » de la planche ouvre le modal photo — jamais le formulaire de recette.
+              Extra Sivia Famille : le bouton n'existe pas sans le plan. */}
+          {premium && (
+            <Button onClick={() => setPhotoModalOpen(true)} aria-label="Ajouter une photo à la planche familiale">
+              <Plus size={20} aria-hidden="true" /> Ajouter
             </Button>
-          </EmptyState>
-        ) : (
-          <CordeALinge>
-            {recentPhotos.map((recipe, i) => (
-              <Link
-                key={recipe.id}
-                to={`/recettes/${recipe.id}`}
-                className="relative block anim-pop"
-                style={{
-                  animationDelay: `${i * MOTION.staggerPlanche}ms`,
-                  transitionDuration: '250ms',
-                  transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
-                }}
-              >
-                <Polaroid
-                  src={photoPublicUrl(recipe.photo_url)}
-                  caption={`${recipe.title} — ${recipe.author?.display_name ?? ''}`}
-                  tilt={stableTilt(recipe.id)}
-                />
-              </Link>
-            ))}
-            {photoComments.map((comment, i) => (
-              <Link
-                key={comment.id}
-                to={`/recettes/${comment.recipe_id}`}
-                className="relative block anim-pop"
-                style={{
-                  animationDelay: `${(recentPhotos.length + i) * MOTION.staggerPlanche}ms`,
-                  transitionDuration: '250ms',
-                  transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
-                }}
-              >
-                <Polaroid
-                  src={photoPublicUrl(comment.photo_url)}
-                  caption={
-                    <span className="block">
-                      {comment.body ? (
-                        <span className="block text-encre text-base leading-snug mb-0.5">
-                          « <ExpandableText text={comment.body} maxLength={70} /> »
-                        </span>
-                      ) : null}
-                      <span className="block">
-                        {comment.author?.display_name ?? ''}
-                        {comment.recipeTitle ? ` · ${comment.recipeTitle}` : ''}
-                      </span>
-                    </span>
-                  }
-                  tilt={stableTilt(comment.id)}
-                />
-              </Link>
-            ))}
-            {moments.map((comment, i) => (
-              <div
-                key={comment.id}
-                className="relative inline-block anim-pop"
-                style={{ animationDelay: `${(recentPhotos.length + photoComments.length + i) * MOTION.staggerPlanche}ms` }}
-              >
-                <Polaroid
-                  src={photoPublicUrl(comment.photo_url)}
-                  caption={
-                    <span className="block">
-                      {comment.body ? (
-                        <span className="block text-encre text-base leading-snug mb-0.5">
-                          « <ExpandableText text={comment.body} maxLength={70} /> »
-                        </span>
-                      ) : null}
-                      <span className="block">{comment.author?.display_name ?? ''}</span>
-                    </span>
-                  }
-                  tilt={stableTilt(comment.id)}
-                />
-              </div>
-            ))}
-          </CordeALinge>
-        )}
+          )}
+        </div>
+        {(() => {
+          const plancheBody = (
+                    {isLoading ? (
+                      <Spinner label={COPY.loading.planche} />
+                    ) : plancheEmpty ? (
+                      <EmptyState title="La planche est vide" handText={COPY.empty.planche}>
+                        <Button size="lg" onClick={() => setPhotoModalOpen(true)}>
+                          <Plus size={20} aria-hidden="true" /> Accrocher la première photo
+                        </Button>
+                      </EmptyState>
+                    ) : (
+                      <CordeALinge>
+                        {recentPhotos.map((recipe, i) => (
+                          <Link
+                            key={recipe.id}
+                            to={`/recettes/${recipe.id}`}
+                            className="relative block anim-pop"
+                            style={{
+                              animationDelay: `${i * MOTION.staggerPlanche}ms`,
+                              transitionDuration: '250ms',
+                              transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
+                            }}
+                          >
+                            <Polaroid
+                              src={photoPublicUrl(recipe.photo_url)}
+                              caption={`${recipe.title} — ${recipe.author?.display_name ?? ''}`}
+                              tilt={stableTilt(recipe.id)}
+                            />
+                          </Link>
+                        ))}
+                        {photoComments.map((comment, i) => (
+                          <Link
+                            key={comment.id}
+                            to={`/recettes/${comment.recipe_id}`}
+                            className="relative block anim-pop"
+                            style={{
+                              animationDelay: `${(recentPhotos.length + i) * MOTION.staggerPlanche}ms`,
+                              transitionDuration: '250ms',
+                              transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
+                            }}
+                          >
+                            <Polaroid
+                              src={photoPublicUrl(comment.photo_url)}
+                              caption={
+                                <span className="block">
+                                  {comment.body ? (
+                                    <span className="block text-encre text-base leading-snug mb-0.5">
+                                      « <ExpandableText text={comment.body} maxLength={70} /> »
+                                    </span>
+                                  ) : null}
+                                  <span className="block">
+                                    {comment.author?.display_name ?? ''}
+                                    {comment.recipeTitle ? ` · ${comment.recipeTitle}` : ''}
+                                  </span>
+                                </span>
+                              }
+                              tilt={stableTilt(comment.id)}
+                            />
+                          </Link>
+                        ))}
+                        {moments.map((comment, i) => (
+                          <div
+                            key={comment.id}
+                            className="relative inline-block anim-pop"
+                            style={{ animationDelay: `${(recentPhotos.length + photoComments.length + i) * MOTION.staggerPlanche}ms` }}
+                          >
+                            <Polaroid
+                              src={photoPublicUrl(comment.photo_url)}
+                              caption={
+                                <span className="block">
+                                  {comment.body ? (
+                                    <span className="block text-encre text-base leading-snug mb-0.5">
+                                      « <ExpandableText text={comment.body} maxLength={70} /> »
+                                    </span>
+                                  ) : null}
+                                  <span className="block">{comment.author?.display_name ?? ''}</span>
+                                </span>
+                              }
+                              tilt={stableTilt(comment.id)}
+                            />
+                          </div>
+                        ))}
+                      </CordeALinge>
+                    )}
+          )
+          return premium ? (
+            plancheBody
+          ) : (
+            <PremiumGate
+              title="La planche photos de la famille"
+              description="Les photos de cuisine accrochées par toute la famille, jour après jour — le frigo de la maison, version Savia."
+              openPaywall={() => setPaywallOpen(true)}
+            >
+              {plancheBody}
+            </PremiumGate>
+          )
+        })()}
       </section>
 
       <AddPhotoModal
         open={photoModalOpen}
         onClose={() => setPhotoModalOpen(false)}
         onPublished={refetchPlanche}
+      />
+      <PaywallModal
+        open={paywallOpen}
+        onClose={() => setPaywallOpen(false)}
       />
     </div>
   )

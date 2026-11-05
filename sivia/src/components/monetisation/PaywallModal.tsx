@@ -206,7 +206,7 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai 
               )}
               {/* L'offre en deux colonnes : l'essentiel est gratuit pour
                   toujours, Sivia Famille ouvre le plein potentiel de l'app */}
-              <div className="grid grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div className="rounded-2xl border-2 border-encre-doux/20 bg-papier p-3.5">
                   <p className="font-extrabold text-encre text-sm">Gratuit</p>
                   <p className="text-encre-doux text-xs font-bold mt-0.5 mb-2">
