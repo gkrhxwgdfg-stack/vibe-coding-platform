@@ -106,8 +106,9 @@ export function HomePage() {
           )}
         </div>
         {(() => {
-          const plancheBody = (
-                    {isLoading ? (
+          // Corps unique de la planche : affiché tel quel avec le plan,
+          // en vitrine floutée sous le voile premium sans le plan.
+          const plancheBody = isLoading ? (
                       <Spinner label={COPY.loading.planche} />
                     ) : plancheEmpty ? (
                       <EmptyState title="La planche est vide" handText={COPY.empty.planche}>
@@ -188,8 +189,7 @@ export function HomePage() {
                           </div>
                         ))}
                       </CordeALinge>
-                    )}
-          )
+                    )
           return premium ? (
             plancheBody
           ) : (
