@@ -4,9 +4,9 @@ import { Check, Lock, ShieldCheck, Sparkles, X } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/Button'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { cn } from '@/lib/utils'
 import {
-import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
   PRIX,
   eur,
   marquerPaywallVu,
