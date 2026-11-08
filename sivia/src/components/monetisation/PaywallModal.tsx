@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import {
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
   PRIX,
   eur,
   marquerPaywallVu,
@@ -71,6 +72,7 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai 
       .then(({ count }) => setMembres(count ?? 1))
   }, [open, family?.id])
 
+  useBodyScrollLock(open)
   if (!open) return null
 
   // Mode aperçu (réglé dans le Profil) : la fenêtre démontre le parcours

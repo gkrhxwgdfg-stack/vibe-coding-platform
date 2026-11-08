@@ -12,6 +12,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { Spinner } from '@/components/ui/Spinner'
 import { TextInput, TextArea } from '@/components/ui/FormFields'
 import { cn } from '@/lib/utils'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 
 const NO_FILTERS = { query: '', category: 'toutes' as const, authorId: 'tous' as const }
 
@@ -24,6 +25,7 @@ export function FamilyEvents() {
   const { recipes } = useRecipes(NO_FILTERS)
 
   const [open, setOpen] = useState(false)
+  useBodyScrollLock(open)
 
   // Regroupe les événements par année, du plus récent au plus ancien
   const byYear = new Map<string, typeof events>()

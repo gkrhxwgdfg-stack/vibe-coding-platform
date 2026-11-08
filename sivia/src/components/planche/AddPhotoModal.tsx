@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext'
 import { addComment } from '@/services/comments'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 
 interface AddPhotoModalProps {
   open: boolean
@@ -46,6 +47,7 @@ export function AddPhotoModal({ open, onClose, onPublished }: AddPhotoModalProps
     return () => window.removeEventListener('keydown', onKey)
   }, [open, onClose])
 
+  useBodyScrollLock(open)
   if (!open) return null
 
   function handlePhoto(e: React.ChangeEvent<HTMLInputElement>) {

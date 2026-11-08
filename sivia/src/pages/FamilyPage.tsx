@@ -133,11 +133,18 @@ export function FamilyPage() {
     if (removeError) setError(removeError)
   }
 
+  /** Ouvre le paywall depuis la section du livre : celle-ci se place en
+   * haut de l'écran, la vitrine se relit ensuite de haut en bas. */
+  function openPaywallFromBook() {
+    bookSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    setPaywallOpen(true)
+  }
+
   /** Télécharge le livre A5 du carnet familial + notification dans le fil de vie */
   async function handleDownloadBook() {
     if (!family || !profile) return
     if (!premium) {
-      setPaywallOpen(true)
+      openPaywallFromBook()
       return
     }
     setBookBusy(true)
@@ -458,7 +465,7 @@ export function FamilyPage() {
         familyName={family?.name ?? 'notre famille'}
         recipes={recipes}
         premium={premium}
-        onSubscribe={() => setPaywallOpen(true)}
+        onSubscribe={openPaywallFromBook}
         onDownload={handleDownloadBook}
       />
 

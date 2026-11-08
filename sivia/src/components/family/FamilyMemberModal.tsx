@@ -6,6 +6,7 @@ import { useFamilyMembers } from '@/hooks/useFamily'
 import { Button } from '@/components/ui/Button'
 import { TextInput } from '@/components/ui/FormFields'
 import { cn } from '@/lib/utils'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 
 interface FamilyMemberModalProps {
   open: boolean
@@ -124,6 +125,7 @@ export function FamilyMemberModal({
     return () => window.removeEventListener('keydown', onKey)
   }, [open, onClose])
 
+  useBodyScrollLock(open)
   if (!open) return null
 
   const existingPhoto = member ? familyPhotoUrl(member.photo_url) : null

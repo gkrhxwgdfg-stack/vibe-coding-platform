@@ -3,6 +3,7 @@ import { BookOpen, Download, Lock, X } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { PRIX, eur } from '@/lib/monetisation'
 import type { RecipeWithMeta } from '@/lib/types'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 
 interface ApercuLivreModalProps {
   open: boolean
@@ -60,6 +61,7 @@ export function ApercuLivreModal({
     return () => window.removeEventListener('keydown', onKey)
   }, [open, onClose])
 
+  useBodyScrollLock(open)
   if (!open) return null
 
   const apercu = recipes.slice(0, 2)
