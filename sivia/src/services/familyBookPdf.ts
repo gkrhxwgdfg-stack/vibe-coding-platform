@@ -68,7 +68,7 @@ function centeredX(doc: JsPdfLike, text: string): number {
 
 /** Fond crème pleine page */
 function paintPageBackground(doc: JsPdfLike) {
-  doc.setFillColor(COLORS.CREME.r, COLORS.CREME.g, COLORS.CREME.b)
+  doc.setFillColor(COLORS.PAPIER.r, COLORS.PAPIER.g, COLORS.PAPIER.b)
   doc.rect(0, 0, PAGE_W, PAGE_H, 'F')
 }
 

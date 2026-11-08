@@ -12,8 +12,8 @@
      Rôles non échangeables : vert = structure · tomate = action et
      émotion · blé = lumière et décor (jamais du texte).
      ============================================================ */
-  --color-papier: #fdfbf7;
-  --color-carte: #ffffff;
+  --color-papier: #faf5ea;
+  --color-carte: #fffdf8;
   --color-encre: #2a211b;
   --color-encre-doux: #6b5d4f;
   --color-vert: #2e5939;
@@ -33,7 +33,7 @@
   --color-moutarde-soft: #f4efe7;
   --color-bleu: #2e5939;
   --color-bleu-dark: #2e5939;
-  --color-lin: #fdfbf7;
+  --color-lin: #faf5ea;
   --color-creme: #ffffff;
   --color-encre-soft: #6b5d4f;
   --color-sauge: #2e5939;
@@ -59,8 +59,8 @@
 /* Variables canoniques du d
 ossier d'int\u00e9gration (\u00a72.1) */
 :root {
-  --sivia-papier: #fdfbf7;
-  --sivia-carte: #ffffff;
+  --sivia-papier: #faf5ea;
+  --sivia-carte: #fffdf8;
   --sivia-encre: #2a211b;
   --sivia-encre-doux: #6b5d4f;
   --sivia-vert: #2e5939;
@@ -88,7 +88,12 @@ body {
   font-family: var(--font-sans);
   color: var(--color-encre);
   line-height: 1.6;
-  background: var(--sivia-papier);
+  /* Papier légèrement vieilli : taches d'âge (foxing) cannelle très subtiles */
+  background:
+    radial-gradient(58% 42% at 8% 12%, rgba(138, 90, 42, 0.05) 0%, transparent 60%),
+    radial-gradient(42% 34% at 92% 78%, rgba(138, 90, 42, 0.045) 0%, transparent 55%),
+    radial-gradient(30% 26% at 75% 22%, rgba(42, 33, 27, 0.03) 0%, transparent 50%),
+    var(--sivia-papier);
   min-height: 100dvh;
 }
 

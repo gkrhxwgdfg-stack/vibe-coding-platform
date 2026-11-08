@@ -51,9 +51,9 @@ sheet" />
   body {
     margin: 0; padding: 24px; color: #2a211b;
     font-family: "Nunito", system-ui, sans-serif; font-size: 16px; line-height: 1.6;
-    background: #fdfbf7;
+    background: #faf5ea;
   }
-  .page { max-width: 720px; margin: 0 auto; background: #ffffff; padding: 40px;
+  .page { max-width: 720px; margin: 0 auto; background: #fffdf8; padding: 40px;
           border-radius: 16px; }
   h1 { font-family: "Fraunces", Georgia, serif; font-size: 34px; margin: 0 0 4px; line-height: 1.2; }
   h2 { font-family: "Fraunces", Georgia, serif; font-size: 22px; margin: 32px 0 12px;
@@ -62,7 +62,7 @@ sheet" />
             color: #2e5939; font-weight: 800; margin: 0 0 6px; }
   .byline { font-family: "Fraunces", cursive; font-size: 24px; color: #2a211b; margin: 4px 0 0; }
   .meta { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 16px 0 0; color: #6b5d4f; font-weight: 700; }
-  .badge { display: inline-block; background: #fdfbf7; border: 2px solid #2e5939; color: #2e5939;
+  .badge { display: inline-block; background: #faf5ea; border: 2px solid #2e5939; color: #2e5939;
            border-radius: 999px; padding: 4px 14px; font-weight: 800; font-size: 14px; }
   .polaroid { background: #fff; padding: 12px 12px 14px; border-radius: 4px; width: 280px;
               margin: 24px auto; transform: rotate(-2deg);
@@ -78,9 +78,9 @@ sheet" />
   ol.steps li { display: flex; gap: 12px; padding: 
 10px 0; align-items: flex-start; }
   ol.steps li .num { flex: none; width: 34px; height: 34px; border-radius: 50%; background: #2e5939;
-                     color: #fdfbf7; font-family: "Fraunces", Georgia, serif; font-weight: 700;
+                     color: #faf5ea; font-family: "Fraunces", Georgia, serif; font-weight: 700;
                      display: inline-flex; align-items: center; justify-content: center; }
-  .anecdote { background: #ffffff; border: 2px dashed rgba(138,90,43,.55); border-radius: 16px; padding: 20px 24px; }
+  .anecdote { background: #fffdf8; border: 2px dashed rgba(138,90,43,.55); border-radius: 16px; padding: 20px 24px; }
   .anecdote blockquote { font-family: "Fraunces", cursive; font-size: 28px; color: #2a211b;
                           margin: 0; line-height: 1.4; }
   .origin { background: #f4efe7; border: 2px dashed rgba(138,90,43,.55); border-radius: 16px; padding: 16px 20px; }

@@ -33,7 +33,7 @@ export const COLORS = {
   CANNELLE: { r: 138, g: 90, b: 43 },   // line-arts patrimoniaux
   ENCRE: { r: 42, g: 33, b: 27 },
   ENCRE_SOFT: { r: 107, g: 93, b: 79 },
-  PAPIER: { r: 253, g: 251, b: 247 },
+  PAPIER: { r: 250, g: 245, b: 234 },
   BLANC: { r: 255, g: 255, b: 255 },
   /* Alias hérités (familyBookPdf, tampon, etc.) → rôles Farine & Blé */
   TERRA: { r: 201, g: 58, b: 43 },
@@ -41,7 +41,7 @@ export const COLORS = {
   MOUTARDE: { r: 138, g: 90, b: 42 },
   MOUTARDE_SOFT: { r: 244, g: 239, b: 231 },
   SAUGE: { r: 46, g: 89, b: 57 },
-  PAPIER_AGE: { r: 231, g: 239, b: 227 },
+  PAPIER_AGE: { r: 244, g: 239, b: 231 },
   CREME: { r: 255, g: 255, b: 255 },
 } as const
 
@@ -346,7 +346,7 @@ ilyName: string,
   const cook = formatDuration(recipe.cook_time)
 
   // Fond cr\u00e8me de la page
-  doc.setFillColor(COLORS.CREME.r, COLORS.CREME.g, COLORS.CREME.b)
+  doc.setFillColor(COLORS.PAPIER.r, COLORS.PAPIER.g, COLORS.PAPIER.b)
   doc.rect(0, 0, PAGE_W, PAGE_H, 'F')
 
   // Cadre pointill\u00e9 sauge (point de couture) sur toute la page \u2014 style carnet
@@ -537,6 +537,15 @@ or(200, 190, 175)
   familyLines.forEach((line, i) => {
     doc.text(line, MARGIN, cursor.y + 4 + i * 3.5)
   })
+  // Estampille « Testée & approuvée » dès 2 favoris de la famille
+  const nFav = recipe.family_favorites ?? 0
+  if (nFav >= 2) {
+    doc.setFont('helvetica', 'bold')
+    doc.setTextColor(COLORS.TERRA.r, COLORS.TERRA.g, COLORS.TERRA.b)
+    const testee = `Testée & approuvée par ${nFav} ${nFav > 1 ? 'personnes' : 'personne'} de la famille`
+    doc.text(testee, MARGIN, cursor.y + 4 + familyLines.length * 3.5 + 3)
+    doc.setFont('helvetica', 'normal')
+  }
   cursor.space(stampZoneH + 2)
 
   // Pied de page num\u00e9rot\u00e9
