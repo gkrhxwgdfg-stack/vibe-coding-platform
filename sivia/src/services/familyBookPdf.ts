@@ -49,9 +49,9 @@ function slugify(value: string): string {
     .slice(0, 60)
 }
 
-/** Nom de fichier : savia—carnet—{famille}.pdf */
+/** Nom de fichier : savia-carnet-{famille}.pdf */
 export function familyBookFileName(familyName: string): string {
-  return `savia—carnet—${slugify(familyName)}.pdf`
+  return `savia-carnet-${slugify(familyName)}.pdf`
 }
 
 /** Pied de page numéroté du carnet */
@@ -175,11 +175,13 @@ export async function generateFamilyBookPdf(input: FamilyBookInput): Promise<{ p
   })
 
   // ---------- Couverture (style carnet manuscrit : cadre couture, titre serif, tampon, arbre) ----------
-  paintPageBackground(doc)
+  const coverDecor = () => {
+    paintPageBackground(doc)
+    drawDashedRect(doc, 6, 6, PAGE_W - 12, PAGE_H - 12, COLORS.TERRA, 1.5)
+  }
+  coverDecor()
   let cursor = new Cursor(doc)
-
-  // Cadre pointillé terracotta (point de couture) sur toute la page, marge intérieure 6mm
-  drawDashedRect(doc, 6, 6, PAGE_W - 12, PAGE_H - 12, COLORS.TERRA, 1.5)
+  cursor.pageDecor = coverDecor
 
   // Kicker "SAVIA" en haut, centré
   cursor.y = 22
@@ -243,8 +245,9 @@ export async function generateFamilyBookPdf(input: FamilyBookInput): Promise<{ p
 
   // ---------- Sommaire ----------
   doc.addPage()
-  paintPageBackground(doc)
   cursor = new Cursor(doc)
+  cursor.pageDecor = () => paintPageBackground(doc)
+  paintPageBackground(doc)
   doc.setFont(fonts.serif, fonts.serifStyle)
   doc.setFontSize(20)
   doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
@@ -275,11 +278,12 @@ export async function generateFamilyBookPdf(input: FamilyBookInput): Promise<{ p
     const authorWidth = doc.getTextWidth(author)
     doc.text(author, PAGE_W - MARGIN - authorWidth, cursor.y + 4)
   }
-  // Pied de page du sommaire
+  // Pied de page du sommaire : numéro réel (le sommaire peut déborder sur
+  // plusieurs pages — le numéro suit la page courante, pas un 2 figé)
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(8)
   doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
-  doc.text(label(2), MARGIN, PAGE_H - 13)
+  doc.text(label(doc.internal.getCurrentPageInfo().pageNumber), MARGIN, PAGE_H - 13)
 
   // ---------- Recettes ----------
   for (const recipe of sorted) {
@@ -300,6 +304,7 @@ export async function generateFamilyBookPdf(input: FamilyBookInput): Promise<{ p
   doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
   doc.text('Index par auteur', MARGIN, cursor.y + 6)
   cursor.space(12)
+  cursor.pageDecor = () => paintPageBackground(doc)
 
   // Regroupe les recettes par auteur
   const byAuthor = new Map<string, RecipeWithMeta[]>()
@@ -327,6 +332,12 @@ export async function generateFamilyBookPdf(input: FamilyBookInput): Promise<{ p
       doc.text(`· ${recipe.title}`, MARGIN + 4, cursor.y + 3)
     }
   }
+
+  // Pied de page de l'index (cohérent avec le sommaire)
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(8)
+  doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
+  doc.text(label(doc.internal.getCurrentPageInfo().pageNumber), MARGIN, PAGE_H - 13)
 
   const pageCount = doc.internal.getCurrentPageInfo().pageNumber
   doc.save(familyBookFileName(familyName))

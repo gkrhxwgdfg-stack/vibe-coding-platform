@@ -156,9 +156,16 @@ ${steps}
           Savia — le carnet de la famille ${escapeHtml(familyName)}
         </p>
       </div>
-      <div class="stamp" role="img" aria-label="Tampon : recette de la part de ${escapeHtml(author)}">
-        <small>De la part de</small>
-        <span>${escapeHtml(author)}</span>
+      <div>
+        <div class="stamp" role="img" aria-label="Tampon : recette de la part de ${escapeHtml(author)}">
+          <small>De la part de</small>
+          <span>${escapeHtml(author)}</span>
+        </div>
+        ${
+          (recipe.family_favorites ?? 0) >= 2
+            ? `<p style="margin:14px 0 0;font-weight:800;font-size:13px;color:#c93a2b;text-align:center">Testée &amp; approuvée par ${recipe.family_favorites} ${recipe.family_favorites! > 1 ? 'personnes' : 'personne'} de la famille</p>`
+            : ''
+        }
       </div>
     </div>
   </main>

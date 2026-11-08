@@ -13,7 +13,7 @@ import { photoPublicUrl } from '@/services/recipes'
  * sur fond papier-âgé, tampon (cercles + rotation −4°) et pied de page famille.
  * Multi-pages propres si la recette dépasse une page.
  *
- * Nom de fichier : `savia—{titre}—{famille}.pdf` (tirets sûrs, pas d'accents).
+ * Nom de fichier : `savia-{titre}-{famille}.pdf` (tirets sûrs, pas d'accents).
  */
 
 // ---------- Constantes A5 (mm) ----------
@@ -65,7 +65,7 @@ function slugify(value: string): string {
 
 /** Nom de fichier sûr : savia—{titre}—{famille}.pdf */
 export function recipePdfFileName(recipe: RecipeWithMeta, familyName: string): string {
-  return `savia—${slugify(recipe.title)}—${slugify(familyName)}.pdf`
+  return `savia-${slugify(recipe.title)}-${slugify(familyName)}.pdf`
 }
 
 // ---------- Polices embarquées (préchargées au premier export) ----------
@@ -81,14 +81,39 @@ export async function ensureFonts(doc: JsPdfLike): Promise<boolean> {
   if (fontsReady) return fontsReady
   fontsReady = (async () => {
     try {
+      // Un vrai fichier TTF commence par l'empreinte `00 01 00 00`
+      // (TrueType) ou `OTTO` (OpenType). Si le serveur renvoie du HTML
+      // (page 404 « soft » d'un SPA), on jette : fallback Helvetica.
+      const isTtf = (buf: ArrayBuffer) => {
+        const b = new Uint8Array(buf.slice(0, 4))
+        return (
+          (b[0] === 0 && b[1] === 1 && b[2] === 0 && b[3] === 0) ||
+          (b[0] === 79 && b[1] === 84 && b[2] === 84 && b[3] === 79)
+        )
+      }
       const load = async (name: string) => {
         const res = await fetch(`/fonts/${name}`)
         if (!res.ok) throw new Error('font not found')
-        return await res.arrayBuffer()
+        const buf = await res.arrayBuffer()
+        if (!isTtf(buf)) throw new Error('not a ttf')
+        return buf
       }
+      const loadUrl = async (url: string) => {
+        const res = await fetch(url)
+        if (!res.ok) throw new Error('font cdn error')
+        const buf = await res.arrayBuffer()
+        if (!isTtf(buf)) throw new Error('not a ttf')
+        return buf
+      }
+      // Les TTF ne sont pas versionnés (lourds) : on retombe sur les
+      // fichiers statiques de Google Fonts, servis avec CORS ouvert.
+      const CDN_FRAUNCES =
+        'https://fonts.gstatic.com/s/fraunces/v38/6NUh8FyLNQOQZAnv9bYEvDiIdE9Ea92uemAk_WBq8U_9v0c2Wa0K7iN7hzFUPJH58nib1603gg7S2nfgRYIctxujDg.ttf'
+      const CDN_CAVEAT =
+        'https://fonts.gstatic.com/s/caveat/v23/WnznHAc5bAfYB2QRah7pcpNvOx-pjfJ9SII.ttf'
       const [fraunces, caveat] = await Promise.all([
-        load('Fraunces-Regular.ttf'),
-        load('Caveat-Regular.ttf'),
+        load('Fraunces-Regular.ttf').catch(() => loadUrl(CDN_FRAUNCES)),
+        load('Caveat-Regular.ttf').catch(() => loadUrl(CDN_CAVEAT)),
       ])
       doc.addFileToVFS('Fraunces-Regular.ttf', arrayBufferToBase64(fraunces))
       doc.addFont('Fraunces-Regular.ttf', 'Fraunces', 'normal')
@@ -142,6 +167,9 @@ export interface JsPdfLike {
 
 export class Cursor {
   y = MARGIN
+  /** Décor à repeindre sur chaque nouvelle page (fond papier, cadre couture).
+   *  Sans lui, les pages 2+ sortaient blanches et sans cadre. */
+  pageDecor?: () => void
   constructor(private doc: JsPdfLike) {}
   /** Avance le curseur, déclenche une nouvelle page si besoin. Retourne true si nouvelle page.
    *  Réserve FOOTER_SAFE mm en bas de page : les pieds de page ne chevauchent
@@ -149,6 +177,7 @@ export class Cursor {
   advance(needed: number): boolean {
     if (this.y + needed > PAGE_H - MARGIN - FOOTER_SAFE) {
       this.doc.addPage()
+      this.pageDecor?.()
       this.footer()
       this.y = MARGIN
       return true
@@ -248,6 +277,14 @@ export async function loadPhotoAsJpeg(url: string): Promise<string | null> {
   }
 }
 
+/** Format jsPDF d'un data-URL d'image (JPEG/PNG/WEBP) — les photos
+ *  Supabase ne sont pas toujours en JPEG. */
+export function imageDataFormat(dataUrl: string): string {
+  const m = /^data:image\/(\w+)/.exec(dataUrl)
+  const f = m?.[1]?.toUpperCase()
+  return f === 'PNG' || f === 'WEBP' ? f : 'JPEG'
+}
+
 // ---------- Génération du PDF ----------
 
 /**
@@ -339,12 +376,15 @@ export async function drawRecipeOnPdf(
   const prep = formatDuration(recipe.prep_time)
   const cook = formatDuration(recipe.cook_time)
 
-  // Fond cr\u00e8me de la page
-  doc.setFillColor(COLORS.PAPIER.r, COLORS.PAPIER.g, COLORS.PAPIER.b)
-  doc.rect(0, 0, PAGE_W, PAGE_H, 'F')
-
-  // Cadre pointill\u00e9 sauge (point de couture) sur toute la page \u2014 style carnet
-  drawDashedRect(doc, 5, 5, PAGE_W - 10, PAGE_H - 10, COLORS.SAUGE, 1.2)
+  // Décor de page (fond papier + cadre couture), répété sur chaque page
+  // nouvelle : une recette qui déborde garde exactement le même habillage.
+  const pageDecor = () => {
+    doc.setFillColor(COLORS.PAPIER.r, COLORS.PAPIER.g, COLORS.PAPIER.b)
+    doc.rect(0, 0, PAGE_W, PAGE_H, 'F')
+    drawDashedRect(doc, 5, 5, PAGE_W - 10, PAGE_H - 10, COLORS.SAUGE, 1.2)
+  }
+  pageDecor()
+  cursor.pageDecor = pageDecor
 
   // Kicker
   doc.setFont('helvetica', 'bold')
@@ -381,7 +421,7 @@ export async function drawRecipeOnPdf(
     doc.setLineWidth(0.3)
     doc.roundedRect(px - 2, headerY - 2, photoW + 4, photoH + captionH + 4, 1, 1, 'FD')
     try {
-      doc.addImage(photoJpeg, 'JPEG', px, headerY, photoW, photoH)
+      doc.addImage(photoJpeg, imageDataFormat(photoJpeg), px, headerY, photoW, photoH)
     } catch {
       // image illisible : cadre vide
     }
