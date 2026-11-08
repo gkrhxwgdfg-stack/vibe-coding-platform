@@ -20,7 +20,8 @@ import { Card } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Spinner } from '@/components/ui/Spinner'
 import { CookingTimerV2 } from '@/components/recipes/CookingTimerV2'
-import { ConfettiPaper } from '@/components/recipes/ConfettiPaper'
+import { VapeurCuisine } from '@/components/recipes/VapeurCuisine'
+import { Sparkle } from '@/components/motifs/Sparkle'
 import { Polaroid } from '@/components/ui/Polaroid'
 import { COPY } from '@/lib/copy'
 import { cn } from '@/lib/utils'
@@ -34,7 +35,7 @@ type Phase = 'mise-en-place' | 'cooking' | 'done'
  * - Étapes 1.9 rem, barre de progression pleine « 3/8 », flèches 64 px, swipe, clavier
  * - Ingrédients de l'étape surlignés moutarde-soft, déjà-utilisés atténués
  * - Minuteurs libellés, cercle couture, pré-alerte, fin carmine + vibration
- * - Écran final « C'est prêt ! » : polaroïd + confettis papier 1.8 s (une fois)
+ * - Écran final « C'est prêt ! » : polaroïd + vapeur du plat (fumée douce en boucle)
  * - Persistance localStorage (étape + minuteurs), reprise après verrouillage
  */
 export function CookingPage() {
@@ -312,7 +313,7 @@ export function CookingPage() {
   if (phase === 'done') {
     return (
       <div className="relative min-h-[100dvh] bg-papier flex flex-col items-center justify-center px-4 py-10 overflow-hidden anim-fold-in">
-        <ConfettiPaper />
+        <VapeurCuisine />
         <div className="relative z-10 flex flex-col items-center gap-6 text-center max-w-md">
           <h1 className="font-serif text-4xl font-bold text-tomate">C'est prêt !</h1>
           {photo && (
@@ -323,7 +324,10 @@ export function CookingPage() {
               className="w-[220px]"
             />
           )}
-          <p className="font-serif italic text-encre-doux text-2xl">Bonne dégustation, la famille !</p>
+          <p className="font-serif italic text-encre-doux text-2xl">
+            Bonne dégustation, la famille !
+            <Sparkle className="inline-block ml-2 align-middle" />
+          </p>
 
           {/* Ajouter une photo du plat */}
           <div className="w-full">

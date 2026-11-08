@@ -71,9 +71,21 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
         <h2 id="comments-title" className="text-2xl font-semibold">
           La recette vit ici
         </h2>
-        <span className="text-sm text-encre-doux font-bold">
-          {comments.length === 0 ? 'Aucun message' : `${comments.length} message${comments.length > 1 ? 's' : ''}`}
-        </span>
+        {comments.length === 0 ? (
+          <span className="text-sm text-encre-doux font-bold">Aucun message</span>
+        ) : (
+          <button
+            type="button"
+            onClick={() => {
+              const field = document.getElementById('comment-body')
+              field?.scrollIntoView({ block: 'center' })
+              field?.focus()
+            }}
+            className="text-sm text-encre-doux font-bold rounded-lg hover:text-vert transition-colors"
+          >
+            {comments.length} message{comments.length > 1 ? 's' : ''}
+          </button>
+        )}
       </div>
 
       {loading ? (

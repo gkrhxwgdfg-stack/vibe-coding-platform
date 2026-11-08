@@ -427,6 +427,11 @@ html.reading-xl .card-pad {
     opacity: 0;
   }
 
+  .vapeur {
+    animation: none;
+    opacity: 0;
+  }
+
   .timer-prealert {
     animation: none;
   }
@@ -630,6 +635,34 @@ html.reading-xl .card-pad {
   100% {
     opacity: 0;
     transform: translateY(78vh);
+  }
+}
+
+/* M7 — Vapeur du plat : écran « C'est prêt ! » du mode cuisson.
+   La fumée douce d'un plat chaud monte, vacille et se dissipe. */
+.vapeur {
+  position: absolute;
+  width: 9px;
+  border-radius: 999px;
+  background: rgba(107, 93, 79, 0.18);
+  filter: blur(6px);
+  animation: vapeur-monte 4.5s ease-in-out infinite;
+}
+
+@keyframes vapeur-monte {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) translateX(0) scaleY(0.7);
+  }
+  25% {
+    opacity: 0.9;
+  }
+  60% {
+    transform: translateY(-46px) translateX(6px) scaleY(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-112px) translateX(-5px) scaleY(1.3);
   }
 }
 
