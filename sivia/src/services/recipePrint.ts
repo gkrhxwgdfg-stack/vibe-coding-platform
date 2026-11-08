@@ -44,8 +44,7 @@ export function buildRecipePrintHtml(recipe: RecipeWithMeta, familyName: string)
 <title>${escapeHtml(recipe.title)} — Savia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Nunito+Sans:wght@400;600;700;800&family=Fraunces:wght@500;700&display=swap" rel="style
-sheet" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Nunito+Sans:wght@400;600;700;800&family=Fraunces:wght@500;700&display=swap" rel="stylesheet" />
 <style>
   * { box-sizing: border-box; }
   body {
@@ -75,8 +74,7 @@ sheet" />
   ul.ingredients li::before { content: ""; position: absolute; left: 4px; top: 14px;
                                width: 8px; height: 8px; border-radius: 50%; background: #2e5939; }
   ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: step; }
-  ol.steps li { display: flex; gap: 12px; padding: 
-10px 0; align-items: flex-start; }
+  ol.steps li { display: flex; gap: 12px; padding: 10px 0; align-items: flex-start; }
   ol.steps li .num { flex: none; width: 34px; height: 34px; border-radius: 50%; background: #2e5939;
                      color: #faf5ea; font-family: "Fraunces", Georgia, serif; font-weight: 700;
                      display: inline-flex; align-items: center; justify-content: center; }
@@ -106,7 +104,6 @@ sheet" />
     <h1>${escapeHtml(recipe.title)}</h1>
     <p class="byline">créée par ${escapeHtml(author)}${escapeHtml(authorRole)}</p>
     <div class="meta">
-
       <span class="badge">${escapeHtml(meta.label)}</span>
       <span>${recipe.servings} part${recipe.servings > 1 ? 's' : ''}</span>
       ${prep ? `<span>Prépa ${escapeHtml(prep)}</span>` : ''}
@@ -171,8 +168,7 @@ ${steps}
 
 /**
  * Ouvre la fenêtre d'impression « carnet familial » de la recette.
- * L'utilisateur choisit « Enregistrer en PDF » dans la boîte de dia
-logue
+ * L'utilisateur choisit « Enregistrer en PDF » dans la boîte de dialogue
  * du navigateur (aucun téléchargement forcé, compatible mobile).
  */
 export function printRecipe(recipe: RecipeWithMeta, familyName: string): boolean {

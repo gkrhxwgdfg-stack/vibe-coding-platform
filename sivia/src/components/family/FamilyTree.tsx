@@ -51,8 +51,7 @@ interface FamilyTreeProps {
  * - L'arbre DESCEND de génération en génération : les aînés (la base) sont
  *   en haut, les jeunes en dessous. La génération de chacun est calculée
  *   UNIQUEMENT à partir des liens (jamais d'une génération nommée).
- * - « 
-+ » sous une carte : ajouter un ENFANT en dessous.
+ * - « + » sous une carte : ajouter un ENFANT en dessous.
  * - Scotch « + » sur le bord droit d'une carte sans partenaire : ajouter un
  *   PARTENAIRE à côté (même génération — conjoint·e, copine, pacsé·e…).
  *   Les couples sont reliés par une ficelle de cuisine (Tape).
@@ -91,8 +90,7 @@ export function FamilyTree({
   const [editingMember, setEditingMember] = useState<FamilyMember | null>(null)
   const [prefillParentId, setPrefillParentId] = useState<string | null>(null)
   const [prefillParent2Id, setPrefillParent2Id] = useState<string | null>(null)
-  const [prefillLin
-kKind, setPrefillLinkKind] = useState<'parent' | 'partner' | null>(null)
+  const [prefillLinkKind, setPrefillLinkKind] = useState<'parent' | 'partner' | null>(null)
 
   const { CARD_W, PLUS_H, TOP_PAD } = TREE_GEOMETRY
 
@@ -147,8 +145,7 @@ kKind, setPrefillLinkKind] = useState<'parent' | 'partner' | null>(null)
           aria-hidden="true"
         >
           {/* Fruits : recettes transmises par chaque membre — suspendus à la carte */}
-          {n
-odes.flatMap((node) => {
+          {nodes.flatMap((node) => {
             // Les recettes se comptent via le profil connecté du membre
             // (author_id des recettes), pas via l'id du membre de l'arbre.
             const pid = node.member.linked_profile_id
@@ -193,8 +190,7 @@ odes.flatMap((node) => {
               aria-label="Ajouter une personne au-dessus — nouvelle base de l'arbre"
               title="Ajouter une base au-dessus (l'arbre descend)"
               className={cn(
-                'touch-target-lg min-h-11 min-w-11 rounded-full bg
--carte border-2 border-tomate text-tomate',
+                'touch-target-lg min-h-11 min-w-11 rounded-full bg-carte border-2 border-tomate text-tomate',
                 'inline-flex items-center justify-center hover:bg-tomate hover:text-white transition-colors',
               )}
             >
@@ -245,8 +241,7 @@ odes.flatMap((node) => {
                 }
                 recipesHref={
                   member.linked_profile_id
-                    ? '/recettes?auteur=' + memb
-er.linked_profile_id
+                    ? '/recettes?auteur=' + member.linked_profile_id
                     : undefined
                 }
                 onEdit={() => openEdit(member)}
@@ -290,8 +285,7 @@ er.linked_profile_id
       <p className="text-sm text-encre-doux text-center mt-2">
         L'arbre se lit par l'alignement : chaque personne est posée sous ses parents · « + » sous une
         personne : ajouter un enfant en dessous · scotch « + » sur le côté : ajouter un partenaire à
-       
- côté · « + » carmine en haut : ajouter un aîné au-dessus
+        côté · « + » carmine en haut : ajouter un aîné au-dessus
       </p>
 
       {/* Modal interne : création via « + » (pré-rempli) ou édition */}
