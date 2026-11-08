@@ -1,6 +1,6 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { Check, Copy, Download, Eye, Lock, Mail, Pencil, Trash2, UserCheck } from 'lucide-react'
+import { Check, Copy, Download, Eye, Lock, Mail, Pencil, Share2, Trash2, UserCheck } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { useCreateInvitation, useFamilyMembers, useInvitations } from '@/hooks/useFamily'
 import { useFamilyGenerations, useFamilyTree } from '@/hooks/useFamilyTree'
@@ -388,6 +388,23 @@ export function FamilyPage() {
                   }}
                 >
                   {copiedId === 'last' ? <Check size={18} aria-hidden="true" /> : <Copy size={18} aria-hidden="true" />}
+                </Button>
+                <Button
+                  variant="outline"
+                  aria-label="Partager le lien"
+                  onClick={() => {
+                    if (lastLink) {
+                      navigator
+                        .share({
+                          title: 'Rejoins notre cuisine sur Savia',
+                          text: 'Voici le lien pour rejoindre la famille sur Savia — notre carnet de recettes.',
+                          url: lastLink,
+                        })
+                        .catch(() => {})
+                    }
+                  }}
+                >
+                  <Share2 size={18} aria-hidden="true" />
                 </Button>
               </div>
               <p className="text-sm text-encre-doux mt-2">
