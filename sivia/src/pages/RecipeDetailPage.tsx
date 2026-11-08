@@ -212,12 +212,12 @@ export function RecipeDetailPage() {
             <span className="inline-flex items-center gap-1.5 font-bold text-encre">
               <Users size={18} aria-hidden="true" />
               <span aria-live="polite">{effectiveServings} part{effectiveServings > 1 ? 's' : ''}</span>
-              <span className="inline-flex">
+              <span className="inline-flex shrink-0 rounded-full border-2 border-encre/20 bg-carte hover:border-vert">
                 <button
                   type="button"
                   onClick={() => setServings(Math.max(1, effectiveServings - 1))}
                   aria-label="Une part de moins"
-                  className="touch-target-lg min-h-12 min-w-12 rounded-l-full border-2 border-encre/20 bg-carte hover:border-vert hover:text-vert inline-flex items-center justify-center"
+                  className="touch-target-lg min-h-12 min-w-12 hover:text-vert inline-flex items-center justify-center"
                 >
                   <Minus size={18} aria-hidden="true" />
                 </button>
@@ -225,7 +225,7 @@ export function RecipeDetailPage() {
                   type="button"
                   onClick={() => setServings(effectiveServings + 1)}
                   aria-label="Une part de plus"
-                  className="touch-target-lg min-h-12 min-w-12 rounded-r-full border-2 border-l-0 border-encre/20 bg-carte hover:border-vert hover:text-vert inline-flex items-center justify-center"
+                  className="touch-target-lg min-h-12 min-w-12 hover:text-vert inline-flex items-center justify-center"
                 >
                   <Plus size={18} aria-hidden="true" />
                 </button>

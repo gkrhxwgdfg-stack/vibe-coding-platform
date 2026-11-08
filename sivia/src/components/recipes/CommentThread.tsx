@@ -96,7 +96,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                   <Avatar name={comment.author.display_name} src={comment.author.avatar_url} size="md" />
                 )}
                 <div className="min-w-0 flex-1">
-                  <div className="rounded-2xl bg-papier px-4 py-3">
+                  <div className="rounded-2xl bg-ble-clair px-4 py-3">
                     <p className="font-bold">
                       {comment.author?.display_name ?? '…'}
                       {comment.author?.family_role && (
