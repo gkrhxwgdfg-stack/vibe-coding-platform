@@ -67,6 +67,10 @@ les policies RLS et le bucket `recipe-photos` ne sont **pas encore créés** sur
    (policies UPDATE et DELETE sur `family_waitlist` : un membre peut corriger ou
    retirer l'inscription de sa famille ; sans policy UPDATE, l'inscription
    échoue avec une erreur RLS — constat du test bout-en-bout)
+13. **New query** → collez le **contenu** de
+   [`migrations/0014_invitation_email_optionnelle.sql`](./migrations/0014_invitation_email_optionnelle.sql) → **Run**
+   (`invitations.email` devient optionnel : on génère un lien d'invitation sans
+   adresse mail — le mail n'était de toute façon jamais envoyé, le lien fait foi)
 
 > Erreur fréquente : coller le chemin `sivia/supabase/migrations/...` au lieu
 > du contenu SQL → `ERROR: 42601: syntax error`. Le SQL Editor attend du **code SQL**.

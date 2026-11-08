@@ -66,11 +66,11 @@ export function useInvitations() {
 export function useCreateInvitation() {
   const { profile } = useAuth()
   return useCallback(
-    async (email: string) => {
+    async (email?: string | null) => {
       if (!profile?.family_id) return { error: COPY.errors.generique, invitation: null as Invitation | null }
       const { data, error } = await supabase
         .from('invitations')
-        .insert({ family_id: profile.family_id, email, invited_by: profile.id })
+        .insert({ family_id: profile.family_id, email: email ?? null, invited_by: profile.id })
         .select()
         .single()
       if (error || !data) return { error: error ? friendlyError(error.message) : COPY.errors.generique, invitation: null }

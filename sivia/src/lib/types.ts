@@ -53,7 +53,7 @@ export interface Family {
 export interface Invitation {
   id: string
   family_id: string
-  email: string
+  email: string | null
   token: string
   status: InvitationStatus
   invited_by: string | null

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { BookOpen, Heart, Users, UserRound } from 'lucide-react'
 import { WheatIcon } from '@/components/motifs/WheatIcon'
 import { Logo } from '@/components/ui/Logo'
@@ -22,6 +22,9 @@ const navItems = [
  */
 export function AppLayout({ children }: { children?: ReactNode }) {
   const { family, profile } = useAuth()
+  // Transition de page : la clé force le remontage du contenu à chaque navigation,
+  // qui rejoue le fondu-essor (anim-enter). Coupé si prefers-reduced-motion.
+  const location = useLocation()
 
   return (
     <div className="min-h-dvh flex flex-col pb-24">
@@ -39,7 +42,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
         </div>
       </header>
 
-      <main className="flex-1 w-full max-w-3xl mx-auto px-4 py-6">
+      <main key={location.pathname} className="anim-enter flex-1 w-full max-w-3xl mx-auto px-4 py-6">
         {children ?? <Outlet />}
       </main>
 

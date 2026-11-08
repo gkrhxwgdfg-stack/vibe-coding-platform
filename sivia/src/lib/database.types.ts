@@ -84,7 +84,7 @@ export interface Database {
         Row: {
           id: string
           family_id: string
-          email: string
+          email: string | null
           token: string
           status: 'pending' | 'accepted' | 'declined'
           invited_by: string | null
@@ -94,7 +94,7 @@ export interface Database {
         Insert: {
           id?: string
           family_id: string
-          email: string
+          email?: string | null
           token?: string
           status?: 'pending' | 'accepted' | 'declined'
           invited_by?: string | null
@@ -104,7 +104,7 @@ export interface Database {
         Update: {
           id?: string
           family_id?: string
-          email?: string
+          email?: string | null
           token?: string
           status?: 'pending' | 'accepted' | 'declined'
           invited_by?: string | null

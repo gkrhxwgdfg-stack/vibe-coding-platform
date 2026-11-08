@@ -1,6 +1,6 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { Check, Copy, Download, Eye, Lock, Mail, Pencil, Share2, Trash2, UserCheck } from 'lucide-react'
+import { Check, Copy, Download, Eye, Link2, Lock, Pencil, Share2, Trash2, UserCheck } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { useCreateInvitation, useFamilyMembers, useInvitations } from '@/hooks/useFamily'
 import { useFamilyGenerations, useFamilyTree } from '@/hooks/useFamilyTree'
@@ -12,7 +12,6 @@ import { invitationLink } from '@/lib/paths'
 import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
 import { Card, CardHeader } from '@/components/ui/Card'
-import { TextInput } from '@/components/ui/FormFields'
 import { Spinner } from '@/components/ui/Spinner'
 import { FamilyTree } from '@/components/family/FamilyTree'
 import { TreeLegend } from '@/components/family/TreeLegend'
@@ -45,7 +44,6 @@ export function FamilyPage() {
   // Profils connectés, pour le badge « membre connecté » de l'arbre
   const connectedProfileIds = useMemo(() => new Set(members.map((m) => m.id)), [members])
 
-  const [email, setEmail] = useState('')
   const [error, setError] = useState<string | null>(null)
   // Génération du livre « carnet familial » (chantier 7)
   const { recipes, loading: recipesLoading } = useRecipes({
@@ -104,17 +102,15 @@ export function FamilyPage() {
 
   const pending = invitations.filter((i) => i.status === 'pending')
 
-  async function handleInvite(e: FormEvent) {
-    e.preventDefault()
+  async function handleInvite() {
     setError(null)
     setSubmitting(true)
-    const { error: inviteError, invitation } = await createInvitation(email.trim())
+    const { error: inviteError, invitation } = await createInvitation()
     setSubmitting(false)
     if (inviteError || !invitation) {
       setError(inviteError ?? COPY.errors.generique)
       return
     }
-    setEmail('')
     setLastLink(invitationLink(invitation.token))
     refetch()
   }
@@ -350,23 +346,17 @@ export function FamilyPage() {
       <section aria-labelledby="invite-title">
         <Card>
           <CardHeader kicker="Inviter" title="Ouvrir la porte à quelqu’un" />
-          <form onSubmit={handleInvite} noValidate className="space-y-4">
-            <TextInput
-              label="L’adresse mail de ton invité"
-              htmlFor="invite-email"
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="mamie@famille.fr"
-              hint="On génère un lien d’invitation sécurisé — à lui de l’accepter."
-            />
+          <div className="space-y-4">
             {error && <p className="text-tomate font-bold" role="alert">{error}</p>}
-            <Button type="submit" disabled={submitting || !email.trim()}>
-              <Mail size={18} aria-hidden="true" />
-              {submitting ? 'On prépare le lien…' : 'Créer le lien d’invitation'}
+            <Button size="lg" className="w-full" onClick={() => void handleInvite()} disabled={submitting}>
+              <Link2 size={18} aria-hidden="true" />
+              {submitting ? 'On prépare le lien…' : 'Générer un lien d’invitation'}
             </Button>
-          </form>
+            <p className="text-sm text-encre-doux text-center">
+              Pas d’adresse à entrer : le lien suffit. Envoie-le par SMS, mail ou
+              WhatsApp — ton invité n’aura qu’à le suivre pour rejoindre la famille.
+            </p>
+          </div>
           {lastLink && (
             <div className="mt-4 rounded-2xl bg-vert/15 p-4">
               <p className="font-bold mb-2">Lien d’invitation tout frais :</p>
@@ -424,10 +414,10 @@ export function FamilyPage() {
               <li key={invitation.id}>
                 <Card className="flex flex-wrap items-center gap-3">
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold truncate">{invitation.email}</p>
+                    <p className="font-bold truncate">{invitation.email ?? 'Invitation ouverte'}</p>
                     <p className="text-sm text-encre-doux">Invité le {formatDate(invitation.created_at)}</p>
                   </div>
-                  <Button variant="outline" onClick={() => copyLink(invitation)} aria-label={`Copier le lien pour ${invitation.email}`}>
+                  <Button variant="outline" onClick={() => copyLink(invitation)} aria-label={`Copier le lien${invitation.email ? ` pour ${invitation.email}` : ''}`}>
                     {copiedId === invitation.id ? (
                       <Check size={18} aria-hidden="true" />
                     ) : (
@@ -438,7 +428,7 @@ export function FamilyPage() {
                     variant="ghost"
                     className="text-tomate"
                     onClick={() => cancelInvitation(invitation)}
-                    aria-label={`Retirer l’invitation de ${invitation.email}`}
+                    aria-label={`Retirer l’invitation${invitation.email ? ` de ${invitation.email}` : ''}`}
                   >
                     <Trash2 size={18} aria-hidden="true" />
                   </Button>
