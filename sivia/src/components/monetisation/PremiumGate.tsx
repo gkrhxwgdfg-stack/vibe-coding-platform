@@ -39,10 +39,10 @@ export function PremiumGate({ title, description, openPaywall, children }: Premi
           <p className="text-sm text-encre-doux leading-relaxed mb-4">{description}</p>
           <Button
             onClick={() => {
-              // On se place au-dessus de la vitrine avant d'ouvrir le paywall :
-              // en le refermant, la section se lit de haut en bas, jamais
-              // depuis le bas de la page.
-              sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+              // On se place au-dessus de la vitrine avant d'ouvrir le paywall,
+              // instantanément : un défilement animé serait interrompu par
+              // l'ouverture de la modale et s'arrêterait en cours de route.
+              sectionRef.current?.scrollIntoView({ block: 'start' })
               openPaywall()
             }}
           >

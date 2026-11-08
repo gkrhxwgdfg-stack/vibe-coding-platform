@@ -133,11 +133,12 @@ export function FamilyPage() {
     if (removeError) setError(removeError)
   }
 
-  /** Ouvre le paywall depuis la section du livre : on remonte tout en haut
-   *  de la page (le plus haut possible), la famille peut ensuite redescendre
-   *  derrière le flou pour ajuster le cadrage. */
+  /** Ouvre le paywall depuis la section du livre : on se place DIRECTEMENT
+   *  en face des informations (la vitrine du livre), sans animation — un
+   *  défilement animé serait interrompu par l'ouverture de la modale et
+   *  la page s'arrêterait en cours de route. */
   function openPaywallFromBook() {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    bookSectionRef.current?.scrollIntoView({ block: 'start' })
     setPaywallOpen(true)
   }
 
@@ -321,9 +322,9 @@ export function FamilyPage() {
             <Button
               variant="outline"
               onClick={() => {
-                // On remonte tout en haut de la page : le plus haut
-                // possible, pour pouvoir redescendre ensuite à sa guise.
-                window.scrollTo({ top: 0, behavior: 'smooth' })
+                // On se place en face de la vitrine du livre, instantanément :
+                // pas d'animation (elle serait coupée par la modale).
+                bookSectionRef.current?.scrollIntoView({ block: 'start' })
                 setApercuOpen(true)
               }}
               disabled={recipesLoading || recipes.length === 0}

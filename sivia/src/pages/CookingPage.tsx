@@ -402,7 +402,9 @@ export function CookingPage() {
               <button
                 type="button"
                 onClick={() => {
-                  nudgeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                  // Instantané : un défilement animé serait interrompu par
+                  // l'ouverture de la modale.
+                  nudgeRef.current?.scrollIntoView({ block: 'start' })
                   setPaywallOpen(true)
                 }}
                 className="mt-2 text-sm font-extrabold text-vert hover:underline"
