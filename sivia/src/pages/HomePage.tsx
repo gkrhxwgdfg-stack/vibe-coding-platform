@@ -37,13 +37,15 @@ export function HomePage() {
   const [plancheLoading, setPlancheLoading] = useState(true)
   const [photoModalOpen, setPhotoModalOpen] = useState(false)
 
-  const refetchPlanche = useCallback(async () => {
+  const refetchPlanche = useCallback(async (silent = false) => {
     if (!profile?.family_id) {
       setPlancheMoments([])
       setPlancheLoading(false)
       return
     }
-    setPlancheLoading(true)
+    // silent : après publication, la planche se met à jour sans spinner —
+    // la page garde sa hauteur et sa position (aucun retour en haut).
+    if (!silent) setPlancheLoading(true)
     setPlancheMoments(await fetchPlancheComments(profile.family_id))
     setPlancheLoading(false)
   }, [profile?.family_id])
@@ -207,7 +209,7 @@ export function HomePage() {
       <AddPhotoModal
         open={photoModalOpen}
         onClose={() => setPhotoModalOpen(false)}
-        onPublished={refetchPlanche}
+        onPublished={() => refetchPlanche(true)}
       />
       <PaywallModal
         open={paywallOpen}

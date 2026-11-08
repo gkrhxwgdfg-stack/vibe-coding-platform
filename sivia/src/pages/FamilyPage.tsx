@@ -114,12 +114,12 @@ export function FamilyPage() {
       return
     }
     setLastLink(invitationLink(invitation.token))
-    refetch()
+    refetch(true)
   }
 
   async function cancelInvitation(invitation: Invitation) {
     await supabase.from('invitations').delete().eq('id', invitation.id)
-    refetch()
+    refetch(true)
   }
 
   async function copyLink(invitation: Invitation) {

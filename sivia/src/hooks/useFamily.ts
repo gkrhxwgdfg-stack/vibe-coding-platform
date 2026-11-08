@@ -4,19 +4,21 @@ import { useAuth } from '@/context/AuthContext'
 import type { Invitation, Profile } from '@/lib/types'
 import { COPY, friendlyError } from '@/lib/copy'
 
-/** Membres de la famille (profils) */
+/** Membres de la famille (profils).
+ * `silent = true` : rafraîchit sans spinner plein écran — la page garde
+ * sa hauteur et sa position de défilement (aucun retour en haut surprise). */
 export function useFamilyMembers() {
   const { profile } = useAuth()
   const [members, setMembers] = useState<Profile[]>([])
   const [loading, setLoading] = useState(true)
 
-  const fetchMembers = useCallback(async () => {
+  const fetchMembers = useCallback(async (silent = false) => {
     if (!profile?.family_id) {
       setMembers([])
       setLoading(false)
       return
     }
-    setLoading(true)
+    if (!silent) setLoading(true)
     const { data } = await supabase
       .from('profiles')
       .select('*')
@@ -39,13 +41,13 @@ export function useInvitations() {
   const [invitations, setInvitations] = useState<Invitation[]>([])
   const [loading, setLoading] = useState(true)
 
-  const fetchInvitations = useCallback(async () => {
+  const fetchInvitations = useCallback(async (silent = false) => {
     if (!profile?.family_id) {
       setInvitations([])
       setLoading(false)
       return
     }
-    setLoading(true)
+    if (!silent) setLoading(true)
     const { data } = await supabase
       .from('invitations')
       .select('*')

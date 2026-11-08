@@ -16,13 +16,15 @@ export function useComments(recipeId: string | undefined, familyId?: string) {
   const [sending, setSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const refetch = useCallback(async () => {
+  /** `silent = true` : rafraîchit sans faire réapparaître le chargement
+   *  (après un envoi : la liste se met à jour sur place, la page ne bouge pas). */
+  const refetch = useCallback(async (silent = false) => {
     if (!recipeId) {
       setComments([])
       setLoading(false)
       return
     }
-    setLoading(true)
+    if (!silent) setLoading(true)
     setComments(await fetchComments(recipeId))
     setLoading(false)
   }, [recipeId])
@@ -44,7 +46,7 @@ export function useComments(recipeId: string | undefined, familyId?: string) {
         setError(sendError)
         return { error: sendError }
       }
-      await refetch()
+      await refetch(true)
       return { error: null }
     },
     [recipeId, profile, familyId, refetch],

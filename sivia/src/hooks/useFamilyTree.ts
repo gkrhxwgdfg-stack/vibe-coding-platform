@@ -16,19 +16,20 @@ import {
 import type { FamilyEvent, FamilyGeneration, FamilyMember } from '@/lib/types'
 import { COPY, friendlyError } from '@/lib/copy'
 
-/** Membres « de l'arbre » de la famille (sans compte, ajoutés à la main) */
+/** Membres « de l'arbre » de la famille (sans compte, ajoutés à la main).
+ * `silent = true` : rafraîchit sans spinner (la page garde sa position). */
 export function useFamilyTree() {
   const { profile } = useAuth()
   const [members, setMembers] = useState<FamilyMember[]>([])
   const [loading, setLoading] = useState(true)
 
-  const refetch = useCallback(async () => {
+  const refetch = useCallback(async (silent = false) => {
     if (!profile?.family_id) {
       setMembers([])
       setLoading(false)
       return
     }
-    setLoading(true)
+    if (!silent) setLoading(true)
     setMembers(await fetchFamilyMembers(profile.family_id))
     setLoading(false)
   }, [profile?.family_id])
@@ -41,7 +42,7 @@ export function useFamilyTree() {
     async (values: FamilyMemberFormValues) => {
       if (!profile?.family_id || !profile.id) return { error: COPY.errors.session, member: null }
       const result = await createFamilyMember(profile.family_id, profile.id, values)
-      if (!result.error) await refetch()
+      if (!result.error) await refetch(true)
       return result
     },
     [profile, refetch],
@@ -51,7 +52,7 @@ export function useFamilyTree() {
     async (memberId: string, values: FamilyMemberFormValues) => {
       if (!profile?.family_id) return { error: COPY.errors.session, member: null }
       const result = await updateFamilyMember(memberId, profile.family_id, values)
-      if (!result.error) await refetch()
+      if (!result.error) await refetch(true)
       return result
     },
     [profile, refetch],
@@ -75,13 +76,13 @@ export function useFamilyGenerations() {
   const [generations, setGenerations] = useState<FamilyGeneration[]>([])
   const [loading, setLoading] = useState(true)
 
-  const refetch = useCallback(async () => {
+  const refetch = useCallback(async (silent = false) => {
     if (!profile?.family_id) {
       setGenerations([])
       setLoading(false)
       return
     }
-    setLoading(true)
+    if (!silent) setLoading(true)
     setGenerations(await fetchFamilyGenerations(profile.family_id))
     setLoading(false)
   }, [profile?.family_id])
@@ -94,7 +95,7 @@ export function useFamilyGenerations() {
     async (name: string) => {
       if (!profile?.family_id || !profile.id) return { error: COPY.errors.session, generation: null }
       const result = await createFamilyGeneration(profile.family_id, profile.id, name)
-      if (!result.error) await refetch()
+      if (!result.error) await refetch(true)
       return result
     },
     [profile, refetch],
@@ -118,13 +119,13 @@ export function useFamilyEvents() {
   const [events, setEvents] = useState<FamilyEvent[]>([])
   const [loading, setLoading] = useState(true)
 
-  const refetch = useCallback(async () => {
+  const refetch = useCallback(async (silent = false) => {
     if (!profile?.family_id) {
       setEvents([])
       setLoading(false)
       return
     }
-    setLoading(true)
+    if (!silent) setLoading(true)
     setEvents(await fetchFamilyEvents(profile.family_id))
     setLoading(false)
   }, [profile?.family_id])
@@ -137,7 +138,7 @@ export function useFamilyEvents() {
     async (values: Parameters<typeof createFamilyEvent>[2]) => {
       if (!profile?.family_id || !profile.id) return { error: COPY.errors.session, event: null }
       const result = await createFamilyEvent(profile.family_id, profile.id, values)
-      if (!result.error) await refetch()
+      if (!result.error) await refetch(true)
       return result
     },
     [profile, refetch],
