@@ -1,6 +1,7 @@
-import { useRef, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { Lock } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { scrollVersMilieu } from '@/lib/scroll'
 
 interface PremiumGateProps {
   /** Titre de la section verrouillée (ex. « L'arbre généalogique vivant ») */
@@ -21,9 +22,8 @@ interface PremiumGateProps {
  * culpabilisation, et l'ouverture du paywall reste à un clic.
  */
 export function PremiumGate({ title, description, openPaywall, children }: PremiumGateProps) {
-  const sectionRef = useRef<HTMLDivElement>(null)
   return (
-    <div ref={sectionRef} className="relative scroll-mt-20">
+    <div className="relative">
       {children && (
         <div className="pointer-events-none select-none blur-[6px] opacity-60 saturate-50" aria-hidden="true">
           {children}
@@ -39,10 +39,10 @@ export function PremiumGate({ title, description, openPaywall, children }: Premi
           <p className="text-sm text-encre-doux leading-relaxed mb-4">{description}</p>
           <Button
             onClick={() => {
-              // On se place au-dessus de la vitrine avant d'ouvrir le paywall,
-              // instantanément : un défilement animé serait interrompu par
-              // l'ouverture de la modale et s'arrêterait en cours de route.
-              sectionRef.current?.scrollIntoView({ block: 'start' })
+              // La page se place au MILIEU avant d'ouvrir le paywall :
+              // les informations restent visibles derrière le flou.
+              // Instantané : une animation serait coupée par la modale.
+              scrollVersMilieu()
               openPaywall()
             }}
           >

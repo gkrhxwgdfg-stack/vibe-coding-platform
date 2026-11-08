@@ -23,6 +23,7 @@ import { generateRecipePdf } from '@/services/recipePdf'
 import { categoryMeta } from '@/lib/constants'
 import { formatDate, formatDuration, formatRelative } from '@/lib/format'
 import { scaleIngredients } from '@/lib/scale'
+import { scrollVersMilieu } from '@/lib/scroll'
 import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
@@ -95,6 +96,7 @@ export function RecipeDetailPage() {
 
   function handleExport() {
     if (!premium) {
+      scrollVersMilieu()
       setPaywallOpen(true)
       return
     }
@@ -108,6 +110,7 @@ export function RecipeDetailPage() {
   /** Export PDF direct (jsPDF, import dynamique au clic) */
   async function handlePdfExport() {
     if (!premium) {
+      scrollVersMilieu()
       setPaywallOpen(true)
       return
     }

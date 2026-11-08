@@ -26,6 +26,7 @@ import { Polaroid } from '@/components/ui/Polaroid'
 import { COPY } from '@/lib/copy'
 import { cn } from '@/lib/utils'
 import { useFamillePlan } from '@/hooks/useFamillePlan'
+import { scrollVersMilieu } from '@/lib/scroll'
 import { PaywallModal } from '@/components/monetisation/PaywallModal'
 
 type Phase = 'mise-en-place' | 'cooking' | 'done'
@@ -402,9 +403,9 @@ export function CookingPage() {
               <button
                 type="button"
                 onClick={() => {
-                  // Instantané : un défilement animé serait interrompu par
-                  // l'ouverture de la modale.
-                  nudgeRef.current?.scrollIntoView({ block: 'start' })
+                  // La page se place au milieu avant d'ouvrir le paywall,
+                  // instantanément (une animation serait coupée par la modale).
+                  scrollVersMilieu()
                   setPaywallOpen(true)
                 }}
                 className="mt-2 text-sm font-extrabold text-vert hover:underline"

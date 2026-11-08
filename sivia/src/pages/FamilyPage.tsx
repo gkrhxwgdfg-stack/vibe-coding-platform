@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
+import { useMemo, useRef, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { Check, Copy, Download, Eye, Link2, Lock, Pencil, Share2, Trash2, UserCheck } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
@@ -20,6 +20,7 @@ import { formatDate } from '@/lib/format'
 import { COPY } from '@/lib/copy'
 import type { FamilyMember, Invitation } from '@/lib/types'
 import { useFamillePlan } from '@/hooks/useFamillePlan'
+import { scrollVersMilieu } from '@/lib/scroll'
 import { PaywallModal } from '@/components/monetisation/PaywallModal'
 import { PremiumGate } from '@/components/monetisation/PremiumGate'
 import { ApercuLivreModal } from '@/components/monetisation/ApercuLivreModal'
@@ -133,24 +134,13 @@ export function FamilyPage() {
     if (removeError) setError(removeError)
   }
 
-  /** Position d'arrivée de la page Famille : le MILIEU. La vitrine et le
-   *  livre se découvrent d'un seul regard, sans traverser le haut de page.
-   *  Instantané : une animation serait coupée par l'ouverture d'une modale. */
+  /** Position d'arrivée des boutons Aperçu / Débloquer : le MILIEU de la
+   *  page — helper partagé (`src/lib/scroll.ts`). Seuls ces boutons se
+   *  placent ainsi : l'arrivée sur la page Famille reste en haut, comme
+   *  partout. */
   function scrollToMiddle() {
-    const doc = document.documentElement
-    const middle = Math.max(0, (doc.scrollHeight - window.innerHeight) / 2)
-    window.scrollTo({ top: middle })
+    scrollVersMilieu()
   }
-
-  // Arrivée sur la page (navigation ou lien direct) : une fois le contenu
-  // prêt, on se place au milieu — une seule fois par visite.
-  const arrivedRef = useRef(false)
-  useEffect(() => {
-    if (arrivedRef.current) return
-    if (membersLoading || invitationsLoading || treeLoading || recipesLoading) return
-    arrivedRef.current = true
-    scrollToMiddle()
-  }, [membersLoading, invitationsLoading, treeLoading, recipesLoading])
 
   /** Ouvre le paywall depuis la section du livre : la page se place au
    *  milieu, les informations restent en face derrière le flou. */
