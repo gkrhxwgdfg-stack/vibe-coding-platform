@@ -57,8 +57,15 @@ interface FamilyTreeProps {
  *   Les couples sont reliés par une ficelle de cuisine (Tape).
  * - « + » carmine en haut : ajouter un aîné au-dessus (les racines existantes
  *   deviennent ses enfants : elle passe au-dessus, l'arbre reste structuré).
- * - Coordonnées en pixels fournies par `buildFamilyTreeLayout` : aucune
+ * - Coordonnées en pixels fournies par 'buildFamilyTreeLayout' : aucune
  *   conversion ici. L'arbre est centré, les branches ne se chevauchent pas.
+ *
+ * Rendu v2.2 « arbre silencieux » : les branches sont INVISIBLES (plus aucun
+ * trait, aucune feuille) mais la géométrie est inchangée — mêmes coordonnées,
+ * mêmes espacements, même fonctionnement. L'arbre se lit par l'alignement :
+ * chaque personne est posée sous ses parents, les couples sont côte à côte.
+ * Seuls les fruits (recettes transmises) restent dessinés, suspendus à la
+ * carte, et les scotchs marquent les couples.
  */
 export function FamilyTree({
   members,
@@ -123,66 +130,21 @@ export function FamilyTree({
       aria-label="Arbre généalogique de la famille"
     >
       <div className="relative mx-auto" style={{ width, height }} ref={canvasRef}>
-        {/* ---------- L'arbre line-art (SVG derrière les cartes) ----------
-            Refonte visuelle : plus aucune barre orthogonale.
-            - Branches : courbes cubiques CONTINUES du bas d'une carte
-              au haut de l'autre (tunnel vertical doux, léger sway) —
-              aucune jonction, donc aucun angle droit ni coupure.
-            - Couples : le lien flou cannelle suffit — aucune
-              capsule colorée derrière les cartes (épure plate).
-            - Membres = feuilles, recettes transmises = fruits (§5.5). */}
+        {/* ---------- L'arbre « silencieux » (SVG derrière les cartes) ----------
+            Les branches sont volontairement INVISIBLES : la géométrie
+            (buildFamilyTreeLayout) est inchangée, seuls les traits ne sont
+            plus dessinés. L'arbre se lit par la structure : chaque personne
+            est alignée sous ses parents, les couples sont côte à côte.
+            - Membres = cartes, recettes transmises = fruits (§5.5),
+              suspendus directement à la carte. */}
         <svg
           className="absolute inset-0 pointer-events-none"
           width={width}
           height={height}
-          viewBox={`0 0 ${width} ${height}`}
+          viewBox={'0 0 ' + width + ' ' + height}
           aria-hidden="true"
         >
-          {/* Branches organiques parent → enfant : cubiques continues */}
-          {segments
-            .filter((seg) => seg.kind !== 'couple')
-            .map((seg, i) => {
-              const dy = seg.y2 - seg.y1
-              const sway = (i % 2 === 0 ? 1 : -1) * 6
-              const c1x = seg.x1 + sway
-              const c1y = seg.y1 + dy * 0.45
-              const c2x = seg.x2 + sway
-              const c2y = seg.y2 - dy * 0.45
-              const d = `M ${seg.x1} ${seg.y1} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${seg.x2} ${seg.y2}`
-              // Point sur la branche (Bézier cubique) : les feuilles s'y accrochent
-              const bez = (t: number) => {
-                const mt = 1 - t
-                return {
-                  x: mt * mt * mt * seg.x1 + 3 * mt * mt * t * c1x + 3 * mt * t * t * c2x + t * t * t * seg.x2,
-                  y: mt * mt * mt * seg.y1 + 3 * mt * mt * t * c1y + 3 * mt * t * t * c2y + t * t * t * seg.y2,
-                }
-              }
-              return (
-                <g key={`branche-${i}`}>
-                  {/* Branche organique : trait brun épais + liseré clair, elle vit */}
-                  <path d={d} stroke="#8a5a2b" strokeWidth={4.5} strokeLinecap="round" fill="none" opacity={0.85} />
-                  <path d={d} stroke="#a9744a" strokeWidth={1.5} strokeLinecap="round" fill="none" opacity={0.9} />
-                  {/* Feuilles vert cuisine le long de la branche, alternées */}
-                  {[0.35, 0.55, 0.75].map((t, j) => {
-                    const pt = bez(t)
-                    const flip = (i + j) % 2 === 0 ? 1 : -1
-                    return (
-                      <ellipse
-                        key={`feuille-${i}-${j}`}
-                        cx={pt.x + flip * 2}
-                        cy={pt.y}
-                        rx={4.5}
-                        ry={1.9}
-                        fill="#2E5939"
-                        fillOpacity={0.8}
-                        transform={`rotate(${flip * 22} ${pt.x} ${pt.y})`}
-                      />
-                    )
-                  })}
-                </g>
-              )
-            })}
-          {/* Fruits : recettes transmises par chaque membre */}
+          {/* Fruits : recettes transmises par chaque membre — suspendus à la carte */}
           {nodes.flatMap((node) => {
             // Les recettes se comptent via le profil connecté du membre
             // (author_id des recettes), pas via l'id du membre de l'arbre.
@@ -192,8 +154,8 @@ export function FamilyTree({
               const fx = node.x + CARD_W - 10 + j * 11
               const fy = node.y + 54 + (j % 2) * 12
               return (
-                <g key={`fruit-${node.member.id}-${j}`}>
-                  {/* Tige : le fruit pend de la branche, il est suspendu */}
+                <g key={'fruit-' + node.member.id + '-' + j}>
+                  {/* Tige : le fruit pend de la carte, il est suspendu */}
                   <line
                     x1={node.x + CARD_W - 4}
                     y1={node.y + 47}
@@ -241,7 +203,7 @@ export function FamilyTree({
         {segments
           .filter((seg) => seg.kind === 'couple')
           .map((seg, i) => (
-            <Tape key={`tape-${i}`} x={seg.x1} y={seg.y1 - 13} width={seg.x2 - seg.x1} />
+            <Tape key={'tape-' + i} x={seg.x1} y={seg.y1 - 13} width={seg.x2 - seg.x1} />
           ))}
 
         {/* ---------- Nœuds + « + » unique sous chaque carte ---------- */}
@@ -279,7 +241,7 @@ export function FamilyTree({
                 }
                 recipesHref={
                   member.linked_profile_id
-                    ? `/recettes?auteur=${member.linked_profile_id}`
+                    ? '/recettes?auteur=' + member.linked_profile_id
                     : undefined
                 }
                 onEdit={() => openEdit(member)}
@@ -291,8 +253,8 @@ export function FamilyTree({
                 <button
                   type="button"
                   onClick={() => openAdd(member.id)}
-                  aria-label={`Ajouter une personne reliée à ${member.first_name}`}
-                  title={`Ajouter une personne reliée à ${member.first_name}`}
+                  aria-label={'Ajouter une personne reliée à ' + member.first_name}
+                  title={'Ajouter une personne reliée à ' + member.first_name}
                   className={cn(
                     'touch-target-lg min-h-11 min-w-11 rounded-full bg-carte border-2 border-vert text-vert',
                     'inline-flex items-center justify-center hover:bg-vert hover:text-white transition-colors',
@@ -321,8 +283,9 @@ export function FamilyTree({
 
       {/* Légende */}
       <p className="text-sm text-encre-doux text-center mt-2">
-        « + » sous une personne : ajouter un enfant en dessous · scotch « + » sur le côté : ajouter un
-        partenaire à côté · « + » carmine en haut : ajouter un aîné au-dessus
+        L'arbre se lit par l'alignement : chaque personne est posée sous ses parents · « + » sous une
+        personne : ajouter un enfant en dessous · scotch « + » sur le côté : ajouter un partenaire à
+        côté · « + » carmine en haut : ajouter un aîné au-dessus
       </p>
 
       {/* Modal interne : création via « + » (pré-rempli) ou édition */}

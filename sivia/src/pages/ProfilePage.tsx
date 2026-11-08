@@ -81,16 +81,14 @@ export function ProfilePage() {
 
   return (
     <div className="space-y-8">
-      {/* Profil : avatar en polaroïd à épingle + tamis léger (§8) */}
+      {/* Profil : avatar circulaire conventionnel (photo ou initiales),
+          simple et immédiatement lisible pour toutes les générations. */}
       <section aria-labelledby="profile-title" className="text-center">
-        <figure className="polaroid relative inline-block w-[150px] [-r:-2deg]">
-          <span className="epingle" aria-hidden="true" />
-          <Avatar name={profile.display_name} src={profile.avatar_url} size="lg" className="mx-auto w-full aspect-square text-4xl" />
-          <figcaption className="font-serif italic text-[11.5px] text-cannelle pt-1.5">
-            {profile.family_role || 'de la famille'}
-          </figcaption>
-        </figure>
+        <Avatar name={profile.display_name} src={profile.avatar_url} size="lg" className="mx-auto" />
         <h1 id="profile-title" className="font-serif text-3xl font-semibold mt-4">{profile.display_name}</h1>
+        {profile.family_role && (
+          <p className="text-sm font-bold text-encre-doux mt-1">{profile.family_role}</p>
+        )}
         <div className="flex justify-center my-3">
           <Stamp name={profile.display_name} />
         </div>
@@ -172,7 +170,7 @@ export function ProfilePage() {
           <p className="text-sm mb-4">
             <span className="font-bold text-encre">Abonnement réel de la famille : </span>
             {premiumReel
-              ? `actif jusqu’au ${planJusqua(info) ?? '—'}`
+              ? 'actif jusqu’au ' + (planJusqua(info) ?? '—')
               : info?.plan === 'essai' || info?.plan === 'expire'
                 ? 'essai déjà utilisé'
                 : 'gratuit'}
