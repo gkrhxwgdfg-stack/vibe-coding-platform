@@ -25,6 +25,8 @@ import { Sparkle } from '@/components/motifs/Sparkle'
 import { Polaroid } from '@/components/ui/Polaroid'
 import { COPY } from '@/lib/copy'
 import { cn } from '@/lib/utils'
+import { useFamillePlan } from '@/hooks/useFamillePlan'
+import { PaywallModal } from '@/components/monetisation/PaywallModal'
 
 type Phase = 'mise-en-place' | 'cooking' | 'done'
 
@@ -43,6 +45,8 @@ export function CookingPage() {
   const { recipe, loading, error } = useRecipe(id)
   const { profile } = useAuth()
   const navigate = useNavigate()
+  const { premium, dejaEssai } = useFamillePlan()
+  const [paywallOpen, setPaywallOpen] = useState(false)
 
   const [phase, setPhase] = useState<Phase>('mise-en-place')
   const [index, setIndex] = useState(0)
@@ -380,6 +384,32 @@ export function CookingPage() {
               Retour au carnet
             </Button>
           </div>
+
+          {/* En gratuit : le moment rejoint le fil de vie (Sivia Famille).
+              On le dit avec fierté — le souvenir existe, la famille le
+              retrouvera ; pas de culpabilisation, une porte discrète. */}
+          {!premium && (
+            <div className="w-full max-w-md rounded-2xl border-2 border-vert/25 bg-carte p-4 text-center">
+              <p className="text-sm text-encre-doux leading-relaxed">
+                Ton moment est accroché au fil de vie de la famille : tous les
+                souvenirs de cuisine, recette après recette, se collectionnent
+                dans Sivia Famille.
+              </p>
+              <button
+                type="button"
+                onClick={() => setPaywallOpen(true)}
+                className="mt-2 text-sm font-extrabold text-vert hover:underline"
+              >
+                Découvrir Sivia Famille
+              </button>
+            </div>
+          )}
+          <PaywallModal
+            open={paywallOpen}
+            onClose={() => setPaywallOpen(false)}
+            contexte="Le moment de cuisine partagé à la famille"
+            dejaEssai={dejaEssai}
+          />
         </div>
       </div>
     )
