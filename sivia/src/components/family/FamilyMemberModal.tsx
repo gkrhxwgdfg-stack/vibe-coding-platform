@@ -208,7 +208,7 @@ export function FamilyMemberModal({
           <p className="text-sm bg-vert/15 border border-vert/40 rounded-xl px-4 py-3 mb-4">
             {prefillLinkKind === 'partner' ? (
               <>
-                À côté de <strong>{prefillParent.first_name}</strong> (partenaire — scotch entre les deux cartes).
+                À côté de <strong>{prefillParent.first_name}</strong> (partenaire — filet entre les deux cartes).
               </>
             ) : (
               <>
@@ -309,7 +309,7 @@ export function FamilyMemberModal({
                 </div>
                 <p className="text-sm text-encre-doux mt-1.5">
                   {linkKind === 'partner'
-                    ? 'Conjoint·e, copine, pacsé·e… : à côté, même génération (scotch entre les deux cartes).'
+                    ? 'Conjoint·e, copine, pacsé·e… : à côté, même génération (filet entre les deux cartes).'
                     : 'Fils, fille, recueilli·e… : en dessous du référent (l’arbre descend).'}
                 </p>
               </div>

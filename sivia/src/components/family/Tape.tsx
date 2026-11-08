@@ -2,13 +2,12 @@ import { Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 /**
- * Lien de couple dans l'arbre — version douce en fond flouté.
+ * Lien de couple dans l'arbre — « filet double » de cuisine.
  *
- * - `Tape` (entre deux cartes d'un couple) : bande horizontale floue
- *   cannelle (dégradé latéral + flou doux), posée en arrière-plan entre
- *   les deux polaroïds. Comme la corde de la planche : décor simple,
- *   lisse, aucune forme à aligner avec l'inclinaison des cartes —
- *   masqué d'elle-même si l'écart est trop court (< 20 px).
+ * - `Tape` (entre deux cartes d'un couple) : deux fils fins et proches
+ *   (le même filet double que la corde de la planche et les séparateurs
+ *   de la page recette), lisses, sans flou ni dégradé — masqué d'office
+ *   si l'écart est trop court (< 20 px).
  * - `TapeAddButton` (sur le bord droit d'une carte sans partenaire) :
  *   contrôle moderne et épuré, aligné sur les autres « + » de l'arbre
  *   (carte blanche, bordure verte) — jamais de cannelle sur un bouton.
@@ -24,7 +23,7 @@ interface TapeProps {
   className?: string
 }
 
-/** Lien flou entre deux cartes d'un couple (décoration, non interactive) */
+/** Lien « filet double » entre deux cartes d'un couple (décoration, non interactive) */
 export function Tape({ x, y, width, className }: TapeProps) {
   const w = Math.max(width, 0)
   if (w < 20) return null // trop court pour lire un lien : on ne l'affiche pas
@@ -34,14 +33,10 @@ export function Tape({ x, y, width, className }: TapeProps) {
       className={cn('absolute pointer-events-none', className)}
       style={{
         left: x,
-        top: y - 3,
+        top: y,
         width: w,
-        height: 8,
+        borderTop: '4px double rgba(107, 93, 79, 0.5)',
         zIndex: 0,
-        background:
-          'linear-gradient(90deg, transparent, rgba(138, 90, 43, 0.45) 30%, rgba(138, 90, 43, 0.45) 70%, transparent)',
-        filter: 'blur(1.5px)',
-        borderRadius: 999,
       }}
     />
   )

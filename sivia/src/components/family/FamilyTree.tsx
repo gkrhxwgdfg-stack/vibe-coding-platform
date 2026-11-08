@@ -46,7 +46,7 @@ interface FamilyTreeProps {
 }
 
 /**
- * Arbre généalogique piloté par des « + » et des scotchs.
+ * Arbre généalogique piloté par des « + » et des filets doubles.
  *
  * - L'arbre DESCEND de génération en génération : les aînés (la base) sont
  *   en haut, les jeunes en dessous. La génération de chacun est calculée
@@ -54,7 +54,7 @@ interface FamilyTreeProps {
  * - « + » sous une carte : ajouter un ENFANT en dessous.
  * - Scotch « + » sur le bord droit d'une carte sans partenaire : ajouter un
  *   PARTENAIRE à côté (même génération — conjoint·e, copine, pacsé·e…).
- *   Les couples sont reliés par une ficelle de cuisine (Tape).
+ *   Les couples sont reliés par un filet double de cuisine (Tape).
  * - « + » carmine en haut : ajouter un aîné au-dessus (les racines existantes
  *   deviennent ses enfants : elle passe au-dessus, l'arbre reste structuré).
  * - Coordonnées en pixels fournies par 'buildFamilyTreeLayout' : aucune
@@ -65,7 +65,7 @@ interface FamilyTreeProps {
  * mêmes espacements, même fonctionnement. L'arbre se lit par l'alignement :
  * chaque personne est posée sous ses parents, les couples sont côte à côte.
  * Seuls les fruits (recettes transmises) restent dessinés, suspendus à la
- * carte, et les scotchs marquent les couples.
+ * carte, et les filets doubles marquent les couples.
  */
 export function FamilyTree({
   members,
@@ -199,7 +199,7 @@ export function FamilyTree({
           </div>
         )}
 
-        {/* ---------- Scotchs entre les cartes des couples ---------- */}
+        {/* ---------- Filets doubles entre les cartes des couples ---------- */}
         {segments
           .filter((seg) => seg.kind === 'couple')
           .map((seg, i) => (
@@ -284,7 +284,7 @@ export function FamilyTree({
       {/* Légende */}
       <p className="text-sm text-encre-doux text-center mt-2">
         L'arbre se lit par l'alignement : chaque personne est posée sous ses parents · « + » sous une
-        personne : ajouter un enfant en dessous · scotch « + » sur le côté : ajouter un partenaire à
+        personne : ajouter un enfant en dessous · filet « + » sur le côté : ajouter un partenaire à
         côté · « + » carmine en haut : ajouter un aîné au-dessus
       </p>
 

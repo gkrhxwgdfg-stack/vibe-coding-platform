@@ -644,7 +644,7 @@ html.reading-xl .card-pad {
   position: absolute;
   width: 9px;
   border-radius: 999px;
-  background: rgba(107, 93, 79, 0.18);
+  background: rgba(107, 93, 79, 0.26);
   filter: blur(6px);
   animation: vapeur-monte 4.5s ease-in-out infinite;
 }
@@ -655,7 +655,7 @@ html.reading-xl .card-pad {
     transform: translateY(18px) translateX(0) scaleY(0.7);
   }
   25% {
-    opacity: 0.9;
+    opacity: 1;
   }
   60% {
     transform: translateY(-46px) translateX(6px) scaleY(1);
