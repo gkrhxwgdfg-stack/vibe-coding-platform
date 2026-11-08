@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { RequireAuth } from '@/components/layout/RequireAuth'
+import { ScrollToTop } from '@/components/layout/ScrollToTop'
 import { Spinner } from '@/components/ui/Spinner'
 
 // Chargement différé par page : le premier écran reste léger (mobile-first)
@@ -29,6 +30,9 @@ function PageLoader() {
 export function App() {
   return (
     <Suspense fallback={<PageLoader />}>
+      {/* Chaque changement de page repart du haut — tous les boutons,
+          tous les chemins (règle d'or de navigation Sivia). */}
+      <ScrollToTop />
       <Routes>
         {/* Zone publique */}
         <Route path="/connexion" element={<LoginPage />} />
