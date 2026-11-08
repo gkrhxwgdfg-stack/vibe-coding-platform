@@ -411,6 +411,7 @@ export function RecipeDetailPage() {
         onClose={() => setPaywallOpen(false)}
         contexte={`Imprimer « ${recipe.title} » et l’offrir, sans filigrane`}
         onEssaiActif={refetchPlan}
+        onRefresh={refetchPlan}
         dejaEssai={dejaEssai}
       />
     </div>

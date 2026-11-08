@@ -1,11 +1,12 @@
 
 import { useEffect, useState } from 'react'
-import { Check, Lock, ShieldCheck, Sparkles, X } from 'lucide-react'
+import { Check, CreditCard, Lock, ShieldCheck, Sparkles, X } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/Button'
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { cn } from '@/lib/utils'
+import { lienPaiement, paiementOuvert } from '@/lib/paiement'
 import {
   PRIX,
   eur,
@@ -16,7 +17,7 @@ import {
   simulationPlan,
 } from '@/lib/monetisation'
 
-type PaywallVue = 'choix' | 'essai-ok' | 'attente-ok'
+type PaywallVue = 'choix' | 'essai-ok' | 'attente-ok' | 'paiement-ok'
 
 interface PaywallModalProps {
   open: boolean
@@ -27,6 +28,8 @@ interface PaywallModalProps {
   onEssaiActif?: () => void
   /** L'essai a déjà été utilisé par la famille : on ne le propose pas deux fois */
   dejaEssai?: boolean
+  /** Rafraîchit l'état réel du plan (après paiement vérifié) */
+  onRefresh?: () => void
 }
 
 /**
@@ -36,7 +39,7 @@ interface PaywallModalProps {
  * Fermeture toujours facile (X, Échap, clic sur le voile) ; aucune
  * sollicitation ne s'ouvre d'elle-même plus d'une fois par semaine.
  */
-export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai }: PaywallModalProps) {
+export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai, onRefresh }: PaywallModalProps) {
   const { family, profile } = useAuth()
   const [vue, setVue] = useState<PaywallVue>('choix')
   const [duree, setDuree] = useState<'annuel' | 'mensuel'>('annuel')
@@ -78,6 +81,16 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai 
   // Mode aperçu (réglé dans le Profil) : la fenêtre démontre le parcours
   // sans rien écrire dans la base
   const simulation = simulationPlan()
+
+  // Stripe : le lien de paiement de la durée choisie (null si non configuré).
+  // La référence transportée est l'id de la famille : c'est elle que le
+  // webhook lit pour ouvrir le coffre après paiement.
+  const lien = lienPaiement(duree, family?.id ?? null, null)
+
+  async function verifierApresPaiement() {
+    await onRefresh?.()
+    onClose()
+  }
 
   async function ouvrirEssai() {
     if (!family || busy) return
@@ -158,6 +171,30 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai 
             <Button size="lg" className="w-full" onClick={onClose}>
               Continuer
             </Button>
+          </div>
+        ) : vue === 'paiement-ok' ? (
+          <div className="p-6 sm:p-8 text-center">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-vert-clair">
+              <CreditCard size={26} className="text-vert" aria-hidden="true" />
+            </div>
+            <h2 id="paywall-title" className="font-serif text-2xl text-encre mb-2">
+              Le paiement s’occupe du reste
+            </h2>
+            <p className="text-encre-doux leading-relaxed mb-6">
+              Dès que Stripe confirme le paiement, le coffre de la famille s’ouvre
+              tout seul — en général en moins d’une minute. Tu peux fermer cette
+              fenêtre, tout le monde en profite.
+            </p>
+            <Button size="lg" className="w-full" onClick={verifierApresPaiement}>
+              J’ai payé — actualiser mon accès
+            </Button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-full text-encre-doux underline decoration-encre-doux/30 underline-offset-4 hover:text-encre text-sm py-2 mt-1 transition-colors"
+            >
+              Plus tard
+            </button>
           </div>
         ) : vue === 'attente-ok' ? (
           <div className="p-6 sm:p-8 text-center">
@@ -329,8 +366,30 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai 
 
               {/* Appels à l’action */}
               <div className="space-y-2">
+                {paiementOuvert(duree) && lien && (
+                  <Button
+                    size="lg"
+                    className="w-full"
+                    onClick={() => {
+                      // Mode aperçu : on montre l'écran de confirmation
+                      // sans ouvrir un vrai paiement.
+                      if (!simulation) window.open(lien, '_blank', 'noopener')
+                      setVue('paiement-ok')
+                    }}
+                  >
+                    <CreditCard size={18} aria-hidden="true" />
+                    Payer en sécurité —{' '}
+                    {duree === 'annuel' ? `${eur(PRIX.annuel)} / an` : `${eur(PRIX.mensuel)} / mois`}
+                  </Button>
+                )}
                 {!dejaEssai || simulation ? (
-                  <Button size="lg" className="w-full" onClick={ouvrirEssai} disabled={busy}>
+                  <Button
+                    size="lg"
+                    variant={paiementOuvert(duree) ? 'outline' : 'primary'}
+                    className="w-full"
+                    onClick={ouvrirEssai}
+                    disabled={busy}
+                  >
                     {busy ? 'Un instant…' : 'Essayer 1 mois — sans carte'}
                   </Button>
                 ) : (
@@ -339,9 +398,11 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai 
                     carnet.
                   </p>
                 )}
-                <Button variant="outline" className="w-full" onClick={rejoindreListe} disabled={busy}>
-                  {busy ? 'Un instant…' : 'Rejoindre la liste d’attente'}
-                </Button>
+                {!paiementOuvert(duree) && (
+                  <Button variant="outline" className="w-full" onClick={rejoindreListe} disabled={busy}>
+                    {busy ? 'Un instant…' : 'Rejoindre la liste d’attente'}
+                  </Button>
+                )}
                 <button
                   type="button"
                   onClick={() => {

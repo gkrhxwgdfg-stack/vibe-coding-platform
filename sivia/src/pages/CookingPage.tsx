@@ -45,7 +45,7 @@ export function CookingPage() {
   const { recipe, loading, error } = useRecipe(id)
   const { profile } = useAuth()
   const navigate = useNavigate()
-  const { premium, dejaEssai } = useFamillePlan()
+  const { premium, dejaEssai, refetch: refetchPlan } = useFamillePlan()
   const [paywallOpen, setPaywallOpen] = useState(false)
   const nudgeRef = useRef<HTMLDivElement>(null)
 
@@ -415,6 +415,7 @@ export function CookingPage() {
             open={paywallOpen}
             onClose={() => setPaywallOpen(false)}
             contexte="Le moment de cuisine partagé à la famille"
+            onRefresh={refetchPlan}
             dejaEssai={dejaEssai}
           />
         </div>

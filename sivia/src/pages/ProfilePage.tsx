@@ -1,10 +1,11 @@
-import { useState, type FormEvent } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { BookOpen, Eye, Heart, LogOut, Sparkles } from 'lucide-react'
+import { BookOpen, Camera, Eye, Heart, LogOut, Sparkles } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { useRecipes } from '@/hooks/useRecipes'
 import { useFamillePlan } from '@/hooks/useFamillePlan'
 import { supabase } from '@/lib/supabase'
+import { uploadAvatar } from '@/services/profile'
 import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
 import { Card, CardHeader } from '@/components/ui/Card'
@@ -35,6 +36,9 @@ export function ProfilePage() {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const photoInputRef = useRef<HTMLInputElement>(null)
+  const [photoBusy, setPhotoBusy] = useState(false)
+  const [photoError, setPhotoError] = useState<string | null>(null)
 
   // Sivia Famille : état réel du groupe + réglage du mode aperçu
   const { info, premiumReel } = useFamillePlan()
@@ -74,6 +78,52 @@ export function ProfilePage() {
     setTimeout(() => setSaved(false), 2500)
   }
 
+  /** Change la photo de profil : recadrée/ compressée côté navigateur
+   *  (512 px, JPEG) puis rangée dans le coffre familial. */
+  async function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0] ?? null
+    e.target.value = ''
+    if (!file) return
+    if (!profile?.family_id || !profile.id) {
+      setPhotoError('Reconnecte-toi pour changer ta photo.')
+      return
+    }
+    if (!file.type.startsWith('image/')) {
+      setPhotoError('Choisis une image (JPEG, PNG, WebP…).')
+      return
+    }
+    setPhotoBusy(true)
+    setPhotoError(null)
+    try {
+      const bitmap = await createImageBitmap(file)
+      const max = 512
+      const scale = Math.min(1, max / Math.max(bitmap.width, bitmap.height))
+      const w = Math.max(1, Math.round(bitmap.width * scale))
+      const h = Math.max(1, Math.round(bitmap.height * scale))
+      const canvas = document.createElement('canvas')
+      canvas.width = w
+      canvas.height = h
+      canvas.getContext('2d')?.drawImage(bitmap, 0, 0, w, h)
+      bitmap.close()
+      const blob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob(resolve, 'image/jpeg', 0.85),
+      )
+      if (!blob) throw new Error('compression')
+      const url = await uploadAvatar(profile.family_id, profile.id, blob)
+      if (!url) throw new Error('upload')
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: url })
+        .eq('id', profile.id)
+      if (updateError) throw new Error('save')
+      await refreshProfile()
+    } catch {
+      setPhotoError('La photo n’a pas pu être enregistrée. Réessaie dans un instant.')
+    } finally {
+      setPhotoBusy(false)
+    }
+  }
+
   async function handleSignOut() {
     await signOut()
     navigate('/connexion', { replace: true })
@@ -84,7 +134,29 @@ export function ProfilePage() {
       {/* Profil : avatar circulaire conventionnel (photo ou initiales),
           simple et immédiatement lisible pour toutes les générations. */}
       <section aria-labelledby="profile-title" className="text-center">
-        <Avatar name={profile.display_name} src={profile.avatar_url} size="lg" className="mx-auto" />
+        <div className="relative inline-block">
+          <Avatar name={profile.display_name} src={profile.avatar_url} size="lg" className="mx-auto" />
+          {/* Photo de profil : le cadran photo familiale, discret et toujours accessible */}
+          <label
+            htmlFor="avatar-input"
+            title="Changer ma photo"
+            className="absolute -bottom-1 -right-1 inline-flex items-center justify-center w-9 h-9 rounded-full bg-carte border-2 border-encre-doux/35 text-encre hover:text-tomate hover:border-tomate/50 cursor-pointer transition-colors shadow-soft"
+          >
+            <Camera size={16} aria-hidden="true" />
+            <span className="sr-only">Changer ma photo de profil</span>
+          </label>
+          <input
+            ref={photoInputRef}
+            id="avatar-input"
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoChange}
+            className="sr-only"
+            disabled={photoBusy}
+          />
+        </div>
+        {photoBusy && <p className="text-sm text-encre-doux mt-2" role="status">On cadre la photo…</p>}
+        {photoError && <p className="text-tomate text-sm mt-2" role="alert">{photoError}</p>}
         <h1 id="profile-title" className="font-serif text-3xl font-semibold mt-4">{profile.display_name}</h1>
         {profile.family_role && (
           <p className="text-sm font-bold text-encre-doux mt-1">{profile.family_role}</p>

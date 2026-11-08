@@ -133,10 +133,11 @@ export function FamilyPage() {
     if (removeError) setError(removeError)
   }
 
-  /** Ouvre le paywall depuis la section du livre : celle-ci se place en
-   * haut de l'écran, la vitrine se relit ensuite de haut en bas. */
+  /** Ouvre le paywall depuis la section du livre : on remonte tout en haut
+   *  de la page (le plus haut possible), la famille peut ensuite redescendre
+   *  derrière le flou pour ajuster le cadrage. */
   function openPaywallFromBook() {
-    bookSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
     setPaywallOpen(true)
   }
 
@@ -320,9 +321,9 @@ export function FamilyPage() {
             <Button
               variant="outline"
               onClick={() => {
-                // L'aperçu s'ouvre depuis le haut de sa section : après le
-                // paywall, on relit le livre de haut en bas.
-                bookSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                // On remonte tout en haut de la page : le plus haut
+                // possible, pour pouvoir redescendre ensuite à sa guise.
+                window.scrollTo({ top: 0, behavior: 'smooth' })
                 setApercuOpen(true)
               }}
               disabled={recipesLoading || recipes.length === 0}
@@ -475,6 +476,7 @@ export function FamilyPage() {
         onClose={() => setPaywallOpen(false)}
         contexte={`Le livre de ${family?.name ?? 'votre famille'}, à garder et à offrir`}
         onEssaiActif={refetchPlan}
+        onRefresh={refetchPlan}
         dejaEssai={dejaEssai}
       />
     </div>

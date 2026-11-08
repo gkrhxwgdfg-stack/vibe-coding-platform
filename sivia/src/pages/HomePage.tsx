@@ -53,7 +53,7 @@ export function HomePage() {
   }, [refetchPlanche])
 
   // Sivia Famille : la planche est un extra — vitrine floutée sans le plan
-  const { premium } = useFamillePlan()
+  const { premium, refetch: refetchPlan } = useFamillePlan()
   const [paywallOpen, setPaywallOpen] = useState(false)
   // Planche familiale personnalisable : les photos publiées par toute la famille,
   // les moments sans recette, et les derniers contenus (photos, anecdotes)
@@ -212,6 +212,7 @@ export function HomePage() {
       <PaywallModal
         open={paywallOpen}
         onClose={() => setPaywallOpen(false)}
+        onRefresh={refetchPlan}
       />
     </div>
   )
