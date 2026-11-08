@@ -1,27 +1,28 @@
 import { useEffect } from 'react'
 
 /**
- * Verrouille le défilement de la page tant qu'une modale est ouverte.
+ * Masque la barre de défilement de la page tant qu'une modale est ouverte,
+ * SANS verrouiller le défilement : la page reste libre derrière le flou,
+ * on peut la faire glisser pour ajuster le cadrage soi-même.
  *
- * Sans verrou, la page derrière continue de scroller : sa barre de
- * défilement affleure au bord de la modale (l'impression d'une « barre qui
- * déborde »), et la position de lecture dérive pendant puis après la
- * modale. Ici : plus de barre au bord, et la page se rouvre exactement où
- * elle était. La largeur de la barre est compensée pour éviter tout
- * saut de mise en page.
+ * La barre de la page n'affleure donc plus au bord de la modale
+ * (le défaut de « barre qui déborde »), et le contenu ne bouge pas :
+ * la largeur de la barre est compensée par un padding. Les modales
+ * gardent leur propre défilement interne (la barre du visuel reste).
  */
 export function useBodyScrollLock(active: boolean) {
   useEffect(() => {
     if (!active) return
-    const previousOverflow = document.body.style.overflow
     const previousPadding = document.body.style.paddingRight
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
     if (scrollbarWidth > 0) {
       document.body.style.paddingRight = `${scrollbarWidth}px`
     }
-    document.body.style.overflow = 'hidden'
+    const style = document.createElement('style')
+    style.textContent = 'html{scrollbar-width:none}html::-webkit-scrollbar{display:none}'
+    document.head.appendChild(style)
     return () => {
-      document.body.style.overflow = previousOverflow
+      style.remove()
       document.body.style.paddingRight = previousPadding
     }
   }, [active])
