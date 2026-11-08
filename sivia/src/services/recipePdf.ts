@@ -28,8 +28,8 @@ export const COLORS = {
   VERT_CLAIR: { r: 231, g: 239, b: 227 },
   TOMATE: { r: 201, g: 58, b: 43 },     // action / émotion
   TOMATE_CLAIR: { r: 250, g: 233, b: 228 },
-  BLE: { r: 228, g: 169, b: 60 },       // motifs uniquement, jamais texte
-  BLE_CLAIR: { r: 249, g: 239, b: 219 },
+  BLE: { r: 138, g: 90, b: 42 },       // motifs uniquement, jamais texte
+  BLE_CLAIR: { r: 244, g: 239, b: 231 },
   CANNELLE: { r: 138, g: 90, b: 43 },   // line-arts patrimoniaux
   ENCRE: { r: 42, g: 33, b: 27 },
   ENCRE_SOFT: { r: 107, g: 93, b: 79 },
@@ -38,8 +38,8 @@ export const COLORS = {
   /* Alias hérités (familyBookPdf, tampon, etc.) → rôles Farine & Blé */
   TERRA: { r: 201, g: 58, b: 43 },
   CARMINE: { r: 201, g: 58, b: 43 },
-  MOUTARDE: { r: 228, g: 169, b: 60 },
-  MOUTARDE_SOFT: { r: 249, g: 239, b: 219 },
+  MOUTARDE: { r: 138, g: 90, b: 42 },
+  MOUTARDE_SOFT: { r: 244, g: 239, b: 231 },
   SAUGE: { r: 46, g: 89, b: 57 },
   PAPIER_AGE: { r: 231, g: 239, b: 227 },
   CREME: { r: 255, g: 255, b: 255 },
@@ -48,7 +48,8 @@ export const COLORS = {
 const ENCRE_SOFT = COLORS.ENCRE_SOFT
 const CARMINE = COLORS.CARMINE
 
-/** Zone de sécurité en bas de page : le pied de page reste net du cadre couture */
+/** Zon
+e de sécurité en bas de page : le pied de page reste net du cadre couture */
 export const FOOTER_SAFE = 7
 
 type RGB = { r: number; g: number; b: number }
@@ -107,7 +108,8 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
   let binary = ''
   const chunk = 0x8000
   for (let i = 0; i < bytes.length; i += chunk) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + chunk))
+    binary += String.fromChar
+Code(...bytes.subarray(i, i + chunk))
   }
   return btoa(binary)
 }
@@ -153,6 +155,7 @@ export class Cursor {
       this.y = MARGIN
       return true
     }
+
     return false
   }
   /** Espace vertical, avec retour à la page suivante si besoin */
@@ -210,7 +213,8 @@ export function drawStamp(doc: JsPdfLike, name: string, cx: number, cy: number) 
   }
   if (nameLines.length === 0) {
     doc.setFontSize(7)
-    nameLines = doc.splitTextToSize(name, 26).slice(0, 2)
+    nameLines = doc.splitTex
+tToSize(name, 26).slice(0, 2)
   }
   // Texte centré : jsPDF aligne à gauche par défaut, on décale de la moitié
   // de la largeur mesurée avant d'appliquer la rotation du tampon.
@@ -264,7 +268,8 @@ export async function generateRecipePdf(recipe: RecipeWithMeta, familyName: stri
 }
 
 /** Rectangle à bord pointillé (point de couture) */
-export function drawDashedRect(
+export fun
+ction drawDashedRect(
   doc: JsPdfLike,
   x: number,
   y: number,
@@ -328,7 +333,8 @@ export async function drawRecipeOnPdf(
   doc: JsPdfLike,
   cursor: Cursor,
   recipe: RecipeWithMeta,
-  familyName: string,
+  fam
+ilyName: string,
   fonts: PdfFonts,
   pageLabel?: (pageNumber: number) => string,
 ): Promise<void> {
@@ -377,7 +383,8 @@ export async function drawRecipeOnPdf(
   if (photoJpeg) {
     const px = PAGE_W - MARGIN - photoW
     doc.setFillColor(COLORS.BLANC.r, COLORS.BLANC.g, COLORS.BLANC.b)
-    doc.setDrawColor(200, 190, 175)
+    doc.setDrawCol
+or(200, 190, 175)
     doc.setLineWidth(0.3)
     doc.roundedRect(px - 2, headerY - 2, photoW + 4, photoH + captionH + 4, 1, 1, 'FD')
     try {
@@ -414,13 +421,14 @@ export async function drawRecipeOnPdf(
   })
   cursor.space(7.5)
 
-  // Ingr\u00e9dients : titre sur bandeau moutarde, puis 2 colonnes compactes
+  // Ingr\u00e9dients : titre sur bandeau cannelle, puis 2 colonnes compactes
   doc.setFillColor(COLORS.MOUTARDE_SOFT.r, COLORS.MOUTARDE_SOFT.g, COLORS.MOUTARDE_SOFT.b)
   doc.roundedRect(MARGIN, cursor.y, CONTENT_W, 6, 1.5, 1.5, 'F')
   doc.setFont(serif, serifStyle)
   doc.setFontSize(10.5)
   doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
-  doc.text("CE QU'IL FAUT", MARGIN + 3, cursor.y + 4.2)
+  doc.text("CE QU'IL
+ FAUT", MARGIN + 3, cursor.y + 4.2)
   cursor.space(8)
 
   if (recipe.ingredients.length > 0) {
@@ -448,7 +456,7 @@ export async function drawRecipeOnPdf(
     cursor.y = startY + rows * rowH + 2
   }
 
-  // \u00c9tapes : titre sur bandeau moutarde, puis \u00e9tapes num\u00e9rot\u00e9es compactes
+  // \u00c9tapes : titre sur bandeau cannelle, puis \u00e9tapes num\u00e9rot\u00e9es compactes
   doc.setFillColor(COLORS.MOUTARDE_SOFT.r, COLORS.MOUTARDE_SOFT.g, COLORS.MOUTARDE_SOFT.b)
   doc.roundedRect(MARGIN, cursor.y, CONTENT_W, 6, 1.5, 1.5, 'F')
   doc.setFont(serif, serifStyle)
@@ -470,7 +478,8 @@ export async function drawRecipeOnPdf(
     doc.setTextColor(COLORS.CREME.r, COLORS.CREME.g, COLORS.CREME.b)
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(8)
-    // Numéro centré dans sa pastille (jsPDF aligne à gauche par défaut)
+    // Numéro centré
+ dans sa pastille (jsPDF aligne à gauche par défaut)
     const num = String(i + 1)
     doc.text(num, MARGIN + 3.5 - doc.getTextWidth(num) / 2, cursor.y + 3.5)
     doc.setTextColor(COLORS.ENCRE.r, COLORS.ENCRE.g, COLORS.ENCRE.b)
@@ -517,7 +526,8 @@ export async function drawRecipeOnPdf(
   const STAMP_R = 16
   const stampZoneH = STAMP_R * 2 + 4
   cursor.advance(stampZoneH + 2)
-  const stampCy = cursor.y + STAMP_R
+  const
+ stampCy = cursor.y + STAMP_R
   drawStamp(doc, author, PAGE_W - MARGIN - STAMP_R, stampCy)
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(7)

@@ -44,7 +44,8 @@ export function buildRecipePrintHtml(recipe: RecipeWithMeta, familyName: string)
 <title>${escapeHtml(recipe.title)} — Savia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Nunito+Sans:wght@400;600;700;800&family=Fraunces:wght@500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Nunito+Sans:wght@400;600;700;800&family=Fraunces:wght@500;700&display=swap" rel="style
+sheet" />
 <style>
   * { box-sizing: border-box; }
   body {
@@ -56,7 +57,7 @@ export function buildRecipePrintHtml(recipe: RecipeWithMeta, familyName: string)
           border-radius: 16px; }
   h1 { font-family: "Fraunces", Georgia, serif; font-size: 34px; margin: 0 0 4px; line-height: 1.2; }
   h2 { font-family: "Fraunces", Georgia, serif; font-size: 22px; margin: 32px 0 12px;
-       border-bottom: 2px dashed #e4a93c; padding-bottom: 6px; }
+       border-bottom: 2px dashed #8a5a2b; padding-bottom: 6px; }
   .kicker { font-size: 12px; letter-spacing: .18em; text-transform: uppercase;
             color: #2e5939; font-weight: 800; margin: 0 0 6px; }
   .byline { font-family: "Fraunces", cursive; font-size: 24px; color: #2a211b; margin: 4px 0 0; }
@@ -74,14 +75,15 @@ export function buildRecipePrintHtml(recipe: RecipeWithMeta, familyName: string)
   ul.ingredients li::before { content: ""; position: absolute; left: 4px; top: 14px;
                                width: 8px; height: 8px; border-radius: 50%; background: #2e5939; }
   ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: step; }
-  ol.steps li { display: flex; gap: 12px; padding: 10px 0; align-items: flex-start; }
+  ol.steps li { display: flex; gap: 12px; padding: 
+10px 0; align-items: flex-start; }
   ol.steps li .num { flex: none; width: 34px; height: 34px; border-radius: 50%; background: #2e5939;
                      color: #fdfbf7; font-family: "Fraunces", Georgia, serif; font-weight: 700;
                      display: inline-flex; align-items: center; justify-content: center; }
   .anecdote { background: #ffffff; border: 2px dashed rgba(138,90,43,.55); border-radius: 16px; padding: 20px 24px; }
   .anecdote blockquote { font-family: "Fraunces", cursive; font-size: 28px; color: #2a211b;
                           margin: 0; line-height: 1.4; }
-  .origin { background: #f9efdb; border: 2px dashed rgba(138,90,43,.55); border-radius: 16px; padding: 16px 20px; }
+  .origin { background: #f4efe7; border: 2px dashed rgba(138,90,43,.55); border-radius: 16px; padding: 16px 20px; }
   .origin p { font-family: "Fraunces", cursive; font-size: 24px; color: #2a211b; margin: 4px 0 0; }
   .footer { display: flex; align-items: center; justify-content: space-between; gap: 16px;
              margin-top: 36px; padding-top: 20px; border-top: 1.5px solid rgba(74,55,40,.15);
@@ -104,6 +106,7 @@ export function buildRecipePrintHtml(recipe: RecipeWithMeta, familyName: string)
     <h1>${escapeHtml(recipe.title)}</h1>
     <p class="byline">créée par ${escapeHtml(author)}${escapeHtml(authorRole)}</p>
     <div class="meta">
+
       <span class="badge">${escapeHtml(meta.label)}</span>
       <span>${recipe.servings} part${recipe.servings > 1 ? 's' : ''}</span>
       ${prep ? `<span>Prépa ${escapeHtml(prep)}</span>` : ''}
@@ -168,7 +171,8 @@ ${steps}
 
 /**
  * Ouvre la fenêtre d'impression « carnet familial » de la recette.
- * L'utilisateur choisit « Enregistrer en PDF » dans la boîte de dialogue
+ * L'utilisateur choisit « Enregistrer en PDF » dans la boîte de dia
+logue
  * du navigateur (aucun téléchargement forcé, compatible mobile).
  */
 export function printRecipe(recipe: RecipeWithMeta, familyName: string): boolean {

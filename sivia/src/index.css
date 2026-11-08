@@ -20,8 +20,8 @@
   --color-vert-clair: #e7efe3;
   --color-tomate: #c93a2b;
   --color-tomate-clair: #fae9e4;
-  --color-ble: #e4a93c;
-  --color-ble-clair: #f9efdb;
+  --color-ble: #8a5a2b;
+  --color-ble-clair: #f4efe7;
   --color-cannelle: #8a5a2b;
   --color-bois: #b08968;
 
@@ -29,8 +29,8 @@
      Aucun beige, aucun orange ne subsiste — les rôles sont respectés. */
   --color-terra: #c93a2b;
   --color-terra-dark: #a72f23;
-  --color-moutarde: #e4a93c;
-  --color-moutarde-soft: #f9efdb;
+  --color-moutarde: #8a5a2b;
+  --color-moutarde-soft: #f4efe7;
   --color-bleu: #2e5939;
   --color-bleu-dark: #2e5939;
   --color-lin: #fdfbf7;
@@ -56,7 +56,8 @@
   --shadow-sivia: 0 10px 30px rgba(63, 44, 26, 0.1);
 }
 
-/* Variables canoniques du dossier d'int\u00e9gration (\u00a72.1) */
+/* Variables canoniques du d
+ossier d'int\u00e9gration (\u00a72.1) */
 :root {
   --sivia-papier: #fdfbf7;
   --sivia-carte: #ffffff;
@@ -66,8 +67,8 @@
   --sivia-vert-clair: #e7efe3;
   --sivia-tomate: #c93a2b;
   --sivia-tomate-clair: #fae9e4;
-  --sivia-ble: #e4a93c;
-  --sivia-ble-clair: #f9efdb;
+  --sivia-ble: #8a5a2b;
+  --sivia-ble-clair: #f4efe7;
   --sivia-cannelle: #8a5a2b;
   --sivia-bois: #b08968;
   --sivia-radius: 20px;
@@ -134,6 +135,7 @@ h3 {
 @utility card-surface {
   background-color: var(--sivia-carte);
   border: 1.5px solid rgba(63, 44, 26, 0.1);
+
   border-radius: var(--sivia-radius);
   box-shadow: none;
 }
@@ -197,7 +199,8 @@ html.reading-xl .touch-target-lg {
   min-width: 52px;
 }
 
-/* \u00c9tape du mode cuisson : 1.9 rem -> 2.3 rem en grande lecture */
+/* \u00c9tape du mode cuisson : 1.9 rem -> 2.3 rem en 
+grande lecture */
 html.reading-lg .cooking-step,
 html.reading-xl .cooking-step {
   font-size: 2.3rem;
@@ -277,7 +280,8 @@ html.reading-xl .card-pad {
 @keyframes anim-fold-in {
   from {
     opacity: 0;
-    transform: scale(0.96);
+    tran
+sform: scale(0.96);
   }
   to {
     opacity: 1;
@@ -374,7 +378,8 @@ html.reading-xl .card-pad {
 
 /* Squelette papier en chargement : fond lin + pulsation d'opacité */
 @utility skeleton-paper {
-  background-color: var(--sivia-vert-clair);
+  background-color: var(--sivia
+-vert-clair);
   border-radius: 12px;
   background-image: radial-gradient(rgba(46, 89, 57, 0.16) 1.6px, transparent 1.6px);
   background-size: 16px 16px;
@@ -487,7 +492,8 @@ html.reading-xl .card-pad {
     -webkit-print-color-adjust: exact;
   }
 
-  /* Une carte ne se coupe pas en deux */
+  /* U
+ne carte ne se coupe pas en deux */
   .card-surface,
   .card-surface-sauge,
   [class*='paper-aged'],
@@ -543,9 +549,10 @@ html.reading-xl .card-pad {
   background-position: left -60px bottom -60px;
 }
 
-/* Trace caramel — pages recette « Dessert » */
+/* Trace caramel — pages recette « 
+Dessert » */
 .trace-caramel {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 90'%3E%3Cg fill='%23E4A93C' fill-opacity='0.38'%3E%3Crect width='130' height='6'/%3E%3Cpath d='M16 0v34a7 7 0 0 1-14 0V0z'/%3E%3Cpath d='M46 0v14a6 6 0 0 1-12 0V0z'/%3E%3Cpath d='M76 0v48a7 7 0 0 1-14 0V0z'/%3E%3Cpath d='M104 0v24a6 6 0 0 1-12 0V0z'/%3E%3C/g%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 90'%3E%3Cg fill='%238A5A2B' fill-opacity='0.38'%3E%3Crect width='130' height='6'/%3E%3Cpath d='M16 0v34a7 7 0 0 1-14 0V0z'/%3E%3Cpath d='M46 0v14a6 6 0 0 1-12 0V0z'/%3E%3Cpath d='M76 0v48a7 7 0 0 1-14 0V0z'/%3E%3Cpath d='M104 0v24a6 6 0 0 1-12 0V0z'/%3E%3C/g%3E%3C/svg%3E");
   background-repeat: repeat-x;
   background-size: 130px 90px;
   background-position: top center;
@@ -629,7 +636,8 @@ html.reading-xl .card-pad {
 }
 
 /* ============================================================
-   Structures du livre de cuisine (§7)
+   Struc
+tures du livre de cuisine (§7)
    ============================================================ */
 
 /* Onglet de chapitre — l'actif se fond dans la page blanche */

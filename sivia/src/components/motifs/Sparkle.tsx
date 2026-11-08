@@ -21,7 +21,7 @@ export function Sparkle({ className, animated = true }: SparkleProps) {
     >
       <path
         d="M12 3C12.6 6.5 14.5 8.4 18 9c-3.5.6-5.4 2.5-6 6-.6-3.5-2.5-5.4-6-6 3.5-.6 5.4-2.5 6-6z"
-        fill="#E4A93C"
+        fill="#8A5A2B"
       />
     </svg>
   )

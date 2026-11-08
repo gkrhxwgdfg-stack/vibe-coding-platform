@@ -9,7 +9,7 @@ export function ConfettiPaper() {
   const reducedMotion = usePrefersReducedMotion()
   if (reducedMotion) return null
 
-  const colors = ['#c93a2b', '#e4a93c', '#2e5939', '#f9efdb', '#8a5a2b']
+  const colors = ['#c93a2b', '#8a5a2b', '#2e5939', '#f4efe7', '#8a5a2b']
   const pieces = Array.from({ length: 24 }, (_, i) => ({
     id: i,
     left: (i * 37) % 100,
