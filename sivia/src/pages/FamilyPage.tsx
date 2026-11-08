@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { Check, Copy, Download, Eye, Link2, Lock, Pencil, Share2, Trash2, UserCheck } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
@@ -133,12 +133,29 @@ export function FamilyPage() {
     if (removeError) setError(removeError)
   }
 
-  /** Ouvre le paywall depuis la section du livre : on se place DIRECTEMENT
-   *  en face des informations (la vitrine du livre), sans animation — un
-   *  défilement animé serait interrompu par l'ouverture de la modale et
-   *  la page s'arrêterait en cours de route. */
+  /** Position d'arrivée de la page Famille : le MILIEU. La vitrine et le
+   *  livre se découvrent d'un seul regard, sans traverser le haut de page.
+   *  Instantané : une animation serait coupée par l'ouverture d'une modale. */
+  function scrollToMiddle() {
+    const doc = document.documentElement
+    const middle = Math.max(0, (doc.scrollHeight - window.innerHeight) / 2)
+    window.scrollTo({ top: middle })
+  }
+
+  // Arrivée sur la page (navigation ou lien direct) : une fois le contenu
+  // prêt, on se place au milieu — une seule fois par visite.
+  const arrivedRef = useRef(false)
+  useEffect(() => {
+    if (arrivedRef.current) return
+    if (membersLoading || invitationsLoading || treeLoading || recipesLoading) return
+    arrivedRef.current = true
+    scrollToMiddle()
+  }, [membersLoading, invitationsLoading, treeLoading, recipesLoading])
+
+  /** Ouvre le paywall depuis la section du livre : la page se place au
+   *  milieu, les informations restent en face derrière le flou. */
   function openPaywallFromBook() {
-    bookSectionRef.current?.scrollIntoView({ block: 'start' })
+    scrollToMiddle()
     setPaywallOpen(true)
   }
 
@@ -322,9 +339,9 @@ export function FamilyPage() {
             <Button
               variant="outline"
               onClick={() => {
-                // On se place en face de la vitrine du livre, instantanément :
-                // pas d'animation (elle serait coupée par la modale).
-                bookSectionRef.current?.scrollIntoView({ block: 'start' })
+                // L'aperçu s'ouvre la page placée au milieu : les
+                // informations restent visibles derrière le flou.
+                scrollToMiddle()
                 setApercuOpen(true)
               }}
               disabled={recipesLoading || recipes.length === 0}

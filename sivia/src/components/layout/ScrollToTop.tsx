@@ -17,6 +17,9 @@ import { useLocation } from 'react-router-dom'
 export function ScrollToTop() {
   const { pathname } = useLocation()
   useEffect(() => {
+    // La page Famille choisit sa propre position d'arrivée : le milieu
+    // (FamilyPage s'en occupe une fois son contenu chargé).
+    if (pathname.startsWith('/famille')) return
     window.scrollTo(0, 0)
   }, [pathname])
   return null
