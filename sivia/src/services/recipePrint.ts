@@ -81,7 +81,7 @@ export function buildRecipePrintHtml(recipe: RecipeWithMeta, familyName: string)
   .anecdote { background: #fffdf8; border: 2px dashed rgba(138,90,43,.55); border-radius: 16px; padding: 20px 24px; }
   .anecdote blockquote { font-family: "Fraunces", cursive; font-size: 28px; color: #2a211b;
                           margin: 0; line-height: 1.4; }
-  .origin { background: #f4efe7; border: 2px dashed rgba(138,90,43,.55); border-radius: 16px; padding: 16px 20px; }
+  .origin { background: #edeae4; border: 2px dashed rgba(138,90,43,.55); border-radius: 16px; padding: 16px 20px; }
   .origin p { font-family: "Fraunces", cursive; font-size: 24px; color: #2a211b; margin: 4px 0 0; }
   .footer { display: flex; align-items: center; justify-content: space-between; gap: 16px;
              margin-top: 36px; padding-top: 20px; border-top: 1.5px solid rgba(74,55,40,.15);
