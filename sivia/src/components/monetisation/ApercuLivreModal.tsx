@@ -105,7 +105,7 @@ export function ApercuLivreModal({
           <>
             <div className="px-5 pb-6 sm:px-6 space-y-4">
               {/* Couverture du carnet */}
-              <div className="relative rounded-2xl border-2 border-encre-doux/15 bg-papier p-6 text-center overflow-hidden">
+              <div className="relative rounded-2xl border-2 border-encre-doux/20 bg-papier p-6 text-center overflow-hidden">
                 <Filigrane />
                 <p className="kicker text-vert mb-2">Recettes, anecdotes & transmissions</p>
                 <p className="font-serif text-3xl text-encre leading-tight">
@@ -123,7 +123,7 @@ export function ApercuLivreModal({
               {apercu.map((recipe) => (
                 <div
                   key={recipe.id}
-                  className="relative rounded-2xl border-2 border-encre-doux/15 bg-white p-5 overflow-hidden"
+                  className="relative rounded-2xl border-2 border-encre-doux/20 bg-white p-5 overflow-hidden"
                 >
                   <Filigrane />
                   <p className="kicker text-tomate mb-1">{recipe.category}</p>
@@ -144,7 +144,7 @@ export function ApercuLivreModal({
 
               {/* Suite floutée : la valeur se montre, ne se donne pas */}
               {restantes > 0 && (
-                <div className="relative rounded-2xl border-2 border-encre-doux/15 bg-vert-clair/40 p-5 text-center">
+                <div className="relative rounded-2xl border-2 border-encre-doux/20 bg-vert-clair/40 p-5 text-center">
                   <div className="flex flex-col items-center gap-2 blur-[3px] select-none" aria-hidden="true">
                     <p className="font-serif text-lg text-encre">Bûche de Noël d’arrière-grand-mère</p>
                     <p className="text-sm text-encre-doux">farine · beurre · sucre glace · œuvre de dix doigts</p>

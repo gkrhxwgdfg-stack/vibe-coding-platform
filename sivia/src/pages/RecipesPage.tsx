@@ -65,7 +65,7 @@ export function RecipesPage() {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Farfouiller : un mot, un ingrédient, une histoire…"
           aria-label="Rechercher une recette"
-          className="w-full min-h-13 rounded-[14px] border-[1.5px] border-encre-doux/28 bg-carte pl-12 pr-12 text-lg focus:border-vert focus:ring-3 focus:ring-vert-clair focus:outline-none"
+          className="w-full min-h-13 rounded-[14px] border-[1.5px] border-encre-doux/35 bg-carte pl-12 pr-12 text-lg focus:border-vert focus:ring-3 focus:ring-vert-clair focus:outline-none"
         />
         {query && (
           <button
@@ -91,7 +91,7 @@ export function RecipesPage() {
               'chip-underline anim-enter min-h-11 px-4 rounded-full border-2 font-bold transition-colors',
               category === c.value
                 ? 'bg-vert text-white border-vert'
-                : 'bg-carte text-encre border-encre-doux/20 hover:border-vert hover:text-vert',
+                : 'bg-carte text-encre border-encre-doux/35 hover:border-vert hover:text-vert',
             )}
             style={{ animationDelay: `${i * MOTION.stagger}ms` }}
           >
@@ -115,7 +115,7 @@ export function RecipesPage() {
                   'min-h-11 px-4 rounded-full border-2 font-bold transition-colors',
                   authorId === m.id
                     ? 'bg-vert text-white border-vert'
-                    : 'bg-carte text-encre border-encre-doux/20 hover:border-vert hover:text-vert',
+                    : 'bg-carte text-encre border-encre-doux/35 hover:border-vert hover:text-vert',
                 )}
               >
                 {m.name}

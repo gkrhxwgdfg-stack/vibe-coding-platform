@@ -47,6 +47,7 @@ export function CookingPage() {
   const navigate = useNavigate()
   const { premium, dejaEssai } = useFamillePlan()
   const [paywallOpen, setPaywallOpen] = useState(false)
+  const nudgeRef = useRef<HTMLDivElement>(null)
 
   const [phase, setPhase] = useState<Phase>('mise-en-place')
   const [index, setIndex] = useState(0)
@@ -224,7 +225,7 @@ export function CookingPage() {
             type="button"
             onClick={quit}
             aria-label="Ranger le mode cuisson"
-            className="touch-target-lg min-h-12 min-w-12 rounded-full bg-carte border-2 border-encre/10 inline-flex items-center justify-center hover:border-vert hover:text-vert"
+            className="touch-target-lg min-h-12 min-w-12 rounded-full bg-carte border-2 border-encre-doux/20 inline-flex items-center justify-center hover:border-vert hover:text-vert"
           >
             <X size={22} aria-hidden="true" />
           </button>
@@ -243,7 +244,7 @@ export function CookingPage() {
                 type="button"
                 onClick={() => setServings(Math.max(1, effectiveServings - 1))}
                 aria-label="Une part de moins"
-                className="touch-target-lg min-h-12 min-w-12 rounded-full border-2 border-encre/20 bg-carte hover:border-vert hover:text-vert inline-flex items-center justify-center"
+                className="touch-target-lg min-h-12 min-w-12 rounded-full border-2 border-encre-doux/35 bg-carte hover:border-vert hover:text-vert inline-flex items-center justify-center"
               >
                 <ChevronLeft size={20} aria-hidden="true" />
               </button>
@@ -254,7 +255,7 @@ export function CookingPage() {
                 type="button"
                 onClick={() => setServings(effectiveServings + 1)}
                 aria-label="Une part de plus"
-                className="touch-target-lg min-h-12 min-w-12 rounded-full border-2 border-encre/20 bg-carte hover:border-vert hover:text-vert inline-flex items-center justify-center"
+                className="touch-target-lg min-h-12 min-w-12 rounded-full border-2 border-encre-doux/35 bg-carte hover:border-vert hover:text-vert inline-flex items-center justify-center"
               >
                 <Plus size={20} aria-hidden="true" />
               </button>
@@ -286,7 +287,7 @@ export function CookingPage() {
                         aria-hidden="true"
                         className={cn(
                           'mt-1.5 w-6 h-6 rounded-md border-2 shrink-0 inline-flex items-center justify-center transition-colors',
-                          isChecked ? 'bg-tomate border-tomate text-white' : 'border-encre/30 bg-carte',
+                          isChecked ? 'bg-tomate border-tomate text-white' : 'border-encre-doux/45 bg-carte',
                         )}
                       >
                         {isChecked && <Check size={16} strokeWidth={3} aria-hidden="true" />}
@@ -337,7 +338,7 @@ export function CookingPage() {
           <div className="w-full">
             <label
               htmlFor="cooked-photo"
-              className="cursor-pointer w-full min-h-12 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 border-encre/25 bg-carte font-bold hover:border-vert hover:text-vert transition-colors"
+              className="cursor-pointer w-full min-h-12 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 border-encre-doux/35 bg-carte font-bold hover:border-vert hover:text-vert transition-colors"
             >
               <ImagePlus size={20} aria-hidden="true" />
               {photoFile ? 'Changer la photo' : 'Ajouter une photo du plat'}
@@ -348,7 +349,7 @@ export function CookingPage() {
                 <img
                   src={photoPreview}
                   alt="Aperçu de la photo du plat"
-                  className="w-24 h-24 object-cover rounded-xl border-2 border-encre/10"
+                  className="w-24 h-24 object-cover rounded-xl border-2 border-encre-doux/20"
                 />
                 <button
                   type="button"
@@ -389,7 +390,10 @@ export function CookingPage() {
               On le dit avec fierté — le souvenir existe, la famille le
               retrouvera ; pas de culpabilisation, une porte discrète. */}
           {!premium && (
-            <div className="w-full max-w-md rounded-2xl border-2 border-vert/25 bg-carte p-4 text-center">
+            <div
+              ref={nudgeRef}
+              className="w-full max-w-md rounded-2xl border-2 border-vert/25 bg-carte p-4 text-center scroll-mt-20"
+            >
               <p className="text-sm text-encre-doux leading-relaxed">
                 Ton moment est accroché au fil de vie de la famille : tous les
                 souvenirs de cuisine, recette après recette, se collectionnent
@@ -397,7 +401,10 @@ export function CookingPage() {
               </p>
               <button
                 type="button"
-                onClick={() => setPaywallOpen(true)}
+                onClick={() => {
+                  nudgeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                  setPaywallOpen(true)
+                }}
                 className="mt-2 text-sm font-extrabold text-vert hover:underline"
               >
                 Découvrir Sivia Famille
@@ -434,7 +441,7 @@ export function CookingPage() {
           type="button"
           onClick={quit}
           aria-label="Ranger le mode cuisson"
-          className="touch-target-lg min-h-12 min-w-12 rounded-full bg-carte border-2 border-encre/10 inline-flex items-center justify-center hover:border-vert hover:text-vert"
+          className="touch-target-lg min-h-12 min-w-12 rounded-full bg-carte border-2 border-encre-doux/20 inline-flex items-center justify-center hover:border-vert hover:text-vert"
         >
           <X size={22} aria-hidden="true" />
         </button>
@@ -570,7 +577,7 @@ export function CookingPage() {
             onClick={goPrev}
             disabled={index === 0}
             aria-label="Étape précédente"
-            className="touch-target-lg min-h-16 min-w-16 rounded-full bg-carte border-2 border-encre/10 inline-flex items-center justify-center hover:border-vert hover:text-vert disabled:opacity-40 disabled:cursor-not-allowed"
+            className="touch-target-lg min-h-16 min-w-16 rounded-full bg-carte border-2 border-encre-doux/20 inline-flex items-center justify-center hover:border-vert hover:text-vert disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <ChevronLeft size={28} aria-hidden="true" />
           </button>

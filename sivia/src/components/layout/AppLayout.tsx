@@ -28,7 +28,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
 
   return (
     <div className="min-h-dvh flex flex-col pb-24">
-      <header className="sticky top-0 z-40 bg-papier/95 backdrop-blur border-b border-encre/10">
+      <header className="sticky top-0 z-40 bg-papier/95 backdrop-blur border-b border-encre-doux/20">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <Logo />
           <div className="text-right min-w-0">
@@ -52,7 +52,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
 
       <nav
         aria-label="Navigation principale"
-        className="fixed bottom-0 inset-x-0 z-40 bg-carte/95 backdrop-blur border-t border-encre/10 safe-area-pb"
+        className="fixed bottom-0 inset-x-0 z-40 bg-carte/95 backdrop-blur border-t border-encre-doux/20 safe-area-pb"
       >
         <ul className="max-w-3xl mx-auto flex items-stretch justify-around px-2">
           {navItems.map(({ to, label, icon: Icon, end }) => (

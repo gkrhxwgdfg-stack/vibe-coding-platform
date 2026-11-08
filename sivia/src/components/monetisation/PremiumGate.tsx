@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useRef, type ReactNode } from 'react'
 import { Lock } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 
@@ -21,8 +21,9 @@ interface PremiumGateProps {
  * culpabilisation, et l'ouverture du paywall reste à un clic.
  */
 export function PremiumGate({ title, description, openPaywall, children }: PremiumGateProps) {
+  const sectionRef = useRef<HTMLDivElement>(null)
   return (
-    <div className="relative">
+    <div ref={sectionRef} className="relative scroll-mt-20">
       {children && (
         <div className="pointer-events-none select-none blur-[6px] opacity-60 saturate-50" aria-hidden="true">
           {children}
@@ -36,7 +37,17 @@ export function PremiumGate({ title, description, openPaywall, children }: Premi
           <p className="kicker text-vert mb-1">Sivia Famille</p>
           <p className="font-serif text-xl text-encre mb-1.5">{title}</p>
           <p className="text-sm text-encre-doux leading-relaxed mb-4">{description}</p>
-          <Button onClick={openPaywall}>Découvrir Sivia Famille</Button>
+          <Button
+            onClick={() => {
+              // On se place au-dessus de la vitrine avant d'ouvrir le paywall :
+              // en le refermant, la section se lit de haut en bas, jamais
+              // depuis le bas de la page.
+              sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+              openPaywall()
+            }}
+          >
+            Découvrir Sivia Famille
+          </Button>
         </div>
       </div>
     </div>

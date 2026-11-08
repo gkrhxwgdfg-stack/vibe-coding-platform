@@ -207,7 +207,7 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai 
               {/* L'offre en deux colonnes : l'essentiel est gratuit pour
                   toujours, Sivia Famille ouvre le plein potentiel de l'app */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                <div className="rounded-2xl border-2 border-encre-doux/20 bg-ble-clair p-3.5">
+                <div className="rounded-2xl border-2 border-encre-doux/35 bg-ble-clair p-3.5">
                   <p className="font-extrabold text-encre text-sm">Gratuit</p>
                   <p className="text-encre-doux text-xs font-bold mt-0.5 mb-2">
                     L’essentiel, pour toujours
@@ -260,7 +260,7 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai 
                     'w-full text-left rounded-2xl border-2 p-4 transition-colors',
                     duree === 'annuel'
                       ? 'border-vert bg-vert-clair/60'
-                      : 'border-encre-doux/20 bg-ble-clair hover:border-vert/60',
+                      : 'border-encre-doux/35 bg-ble-clair hover:border-vert/60',
                   )}
                 >
                   <div className="flex items-center justify-between gap-3">
@@ -289,7 +289,7 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai 
                     'w-full text-left rounded-2xl border-2 p-4 transition-colors',
                     duree === 'mensuel'
                       ? 'border-vert bg-vert-clair/60'
-                      : 'border-encre-doux/20 bg-ble-clair hover:border-vert/60',
+                      : 'border-encre-doux/35 bg-ble-clair hover:border-vert/60',
                   )}
                 >
                   <span className="font-extrabold text-encre">Mois par mois</span>

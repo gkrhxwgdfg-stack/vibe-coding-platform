@@ -35,7 +35,7 @@ export function ReadingSizePicker({ label = 'Taille du texte', hint }: ReadingSi
                 'touch-target-lg flex min-h-12 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 px-2 py-2 text-center transition-colors',
                 selected
                   ? 'border-tomate bg-tomate text-white'
-                  : 'border-encre/25 bg-carte text-encre hover:border-tomate',
+                  : 'border-encre-doux/35 bg-carte text-encre hover:border-tomate',
               )}
             >
               <input

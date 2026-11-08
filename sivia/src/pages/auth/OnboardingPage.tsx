@@ -201,7 +201,7 @@ export function OnboardingPage() {
               readOnly
               value={inviteLink}
               aria-label="Lien d’invitation"
-              className="flex-1 min-h-11 rounded-xl border-2 border-encre/20 bg-carte px-3 text-sm"
+              className="flex-1 min-h-11 rounded-xl border-2 border-encre-doux/35 bg-carte px-3 text-sm"
               onFocus={(e) => e.target.select()}
             />
             <Button onClick={copyLink} variant="outline" aria-label="Copier le lien">

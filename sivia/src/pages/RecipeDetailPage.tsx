@@ -212,7 +212,7 @@ export function RecipeDetailPage() {
             <span className="inline-flex items-center gap-1.5 font-bold text-encre">
               <Users size={18} aria-hidden="true" />
               <span aria-live="polite">{effectiveServings} part{effectiveServings > 1 ? 's' : ''}</span>
-              <span className="inline-flex shrink-0 rounded-full border-2 border-encre/20 bg-carte hover:border-vert">
+              <span className="inline-flex shrink-0 rounded-full border-2 border-encre-doux/35 bg-carte hover:border-vert">
                 <button
                   type="button"
                   onClick={() => setServings(Math.max(1, effectiveServings - 1))}

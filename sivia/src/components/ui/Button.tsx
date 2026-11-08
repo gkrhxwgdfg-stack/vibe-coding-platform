@@ -22,7 +22,7 @@ const variants: Record<ButtonVariant, string> = {
   ghost:
     'bg-transparent text-encre hover:bg-vert-clair border-transparent',
   outline:
-    'bg-carte text-encre border-encre-doux/20 hover:border-vert hover:text-vert',
+    'bg-carte text-encre border-encre-doux/35 hover:border-vert hover:text-vert',
   danger:
     'bg-tomate text-white hover:bg-[#a72f23] border-transparent',
 }

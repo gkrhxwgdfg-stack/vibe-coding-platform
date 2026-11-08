@@ -116,7 +116,7 @@ export function AddPhotoModal({ open, onClose, onPublished }: AddPhotoModalProps
                 'cursor-pointer w-full min-h-11 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 font-bold transition-colors',
                 photoFile
                   ? 'border-vert bg-vert/10 text-encre'
-                  : 'border-encre/25 bg-carte hover:border-tomate hover:text-tomate',
+                  : 'border-encre-doux/35 bg-carte hover:border-tomate hover:text-tomate',
               )}
             >
               <ImagePlus size={20} aria-hidden="true" />
@@ -128,7 +128,7 @@ export function AddPhotoModal({ open, onClose, onPublished }: AddPhotoModalProps
                 <img
                   src={photoPreview}
                   alt="Aperçu de la photo"
-                  className="w-full max-h-64 object-cover rounded-xl border-2 border-encre/10"
+                  className="w-full max-h-64 object-cover rounded-xl border-2 border-encre-doux/20"
                 />
                 <button
                   type="button"
@@ -155,7 +155,7 @@ export function AddPhotoModal({ open, onClose, onPublished }: AddPhotoModalProps
               value={body}
               onChange={(e) => setBody(e.target.value)}
               placeholder="Dimanche chez mamie, la tarte était encore tiède…"
-              className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-carte px-4 py-2.5 text-encre placeholder:text-encre-doux/60 focus:border-tomate focus:outline-none"
+              className="w-full min-h-11 rounded-xl border-2 border-encre-doux/35 bg-carte px-4 py-2.5 text-encre placeholder:text-encre-doux/60 focus:border-tomate focus:outline-none"
             />
           </div>
 

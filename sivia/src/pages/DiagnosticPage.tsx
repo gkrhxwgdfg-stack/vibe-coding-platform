@@ -187,7 +187,7 @@ export function DiagnosticPage() {
           ))}
         </ul>
 
-        <div className="mt-6 pt-4 border-t border-encre/10">
+        <div className="mt-6 pt-4 border-t border-encre-doux/20">
           {allOk && <p className="text-vert font-bold text-center">Tout fonctionne ! L’application est prête.</p>}
           {anyError && <p className="text-tomate font-bold text-center">Des problèmes ont été détectés. Voir les détails ci-dessus.</p>}
           {!allOk && !anyError && <p className="text-encre-doux text-center">Vérification en cours…</p>}

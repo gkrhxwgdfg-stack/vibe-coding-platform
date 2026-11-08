@@ -185,7 +185,7 @@ export function ProfilePage() {
                 'w-full text-left rounded-2xl border-2 p-4 transition-colors',
                 apercu === null
                   ? 'border-vert bg-vert-clair/60'
-                  : 'border-encre-doux/20 bg-ble-clair hover:border-vert/60',
+                  : 'border-encre-doux/35 bg-ble-clair hover:border-vert/60',
               )}
             >
               <span className="font-extrabold text-encre">Suivre l’abonnement réel</span>
@@ -202,7 +202,7 @@ export function ProfilePage() {
                 'w-full text-left rounded-2xl border-2 p-4 transition-colors',
                 apercu === 'gratuit'
                   ? 'border-vert bg-vert-clair/60'
-                  : 'border-encre-doux/20 bg-ble-clair hover:border-vert/60',
+                  : 'border-encre-doux/35 bg-ble-clair hover:border-vert/60',
               )}
             >
               <span className="font-extrabold text-encre inline-flex items-center gap-2">
@@ -222,7 +222,7 @@ export function ProfilePage() {
                 'w-full text-left rounded-2xl border-2 p-4 transition-colors',
                 apercu === 'premium'
                   ? 'border-vert bg-vert-clair/60'
-                  : 'border-encre-doux/20 bg-ble-clair hover:border-vert/60',
+                  : 'border-encre-doux/35 bg-ble-clair hover:border-vert/60',
               )}
             >
               <span className="font-extrabold text-encre inline-flex items-center gap-2">

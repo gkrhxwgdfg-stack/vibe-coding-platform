@@ -28,7 +28,7 @@ function FieldShell({ label, htmlFor, hint, error, children }: FieldProps) {
 
 // Champs 18 px minimum, focus : bordure verte + ring vert-clair (§6.2)
 const inputClasses =
-  'w-full min-h-12 rounded-[14px] border-[1.5px] border-encre-doux/28 bg-carte px-3.5 py-3 text-lg text-encre placeholder:text-encre-doux/60 focus:border-vert focus:ring-3 focus:ring-vert-clair focus:outline-none'
+  'w-full min-h-12 rounded-[14px] border-[1.5px] border-encre-doux/35 bg-carte px-3.5 py-3 text-lg text-encre placeholder:text-encre-doux/60 focus:border-vert focus:ring-3 focus:ring-vert-clair focus:outline-none'
 
 export function TextInput({
   label,

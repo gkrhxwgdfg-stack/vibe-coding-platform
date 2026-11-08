@@ -77,7 +77,7 @@ export function FamilyEvents() {
                               src={photo}
                               alt={`Photo du repas ${event.title}`}
                               loading="lazy"
-                              className="w-28 h-28 sm:w-36 sm:h-36 object-cover rounded-xl border-2 border-encre/10 shrink-0"
+                              className="w-28 h-28 sm:w-36 sm:h-36 object-cover rounded-xl border-2 border-encre-doux/20 shrink-0"
                             />
                           )}
                           <div className="min-w-0 flex-1">
@@ -92,7 +92,7 @@ export function FamilyEvents() {
                                   <li key={recipe.id}>
                                     <Link
                                       to={`/recettes/${recipe.id}`}
-                                      className="inline-block bg-carte border-2 border-encre/15 rounded-full px-3 py-1 text-sm font-bold text-encre hover:border-tomate hover:text-tomate"
+                                      className="inline-block bg-carte border-2 border-encre-doux/20 rounded-full px-3 py-1 text-sm font-bold text-encre hover:border-tomate hover:text-tomate"
                                     >
                                       {recipe.title}
                                     </Link>
@@ -260,7 +260,7 @@ function AddEventModal({ recipes, onClose, onCreated, add }: AddEventModalProps)
                         'min-h-11 px-4 rounded-full border-2 font-bold transition-colors',
                         selected
                           ? 'bg-tomate text-white border-tomate'
-                          : 'bg-carte text-encre border-encre/20 hover:border-tomate hover:text-tomate',
+                          : 'bg-carte text-encre border-encre-doux/35 hover:border-tomate hover:text-tomate',
                       )}
                     >
                       {recipe.title}
@@ -279,7 +279,7 @@ function AddEventModal({ recipes, onClose, onCreated, add }: AddEventModalProps)
                 'cursor-pointer w-full min-h-11 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 font-bold transition-colors',
                 photoFile
                   ? 'border-vert bg-vert/10 text-encre'
-                  : 'border-encre/25 bg-carte hover:border-tomate hover:text-tomate',
+                  : 'border-encre-doux/35 bg-carte hover:border-tomate hover:text-tomate',
               )}
             >
               <ImagePlus size={20} aria-hidden="true" />
@@ -291,7 +291,7 @@ function AddEventModal({ recipes, onClose, onCreated, add }: AddEventModalProps)
                 <img
                   src={photoPreview}
                   alt="Aperçu de la photo"
-                  className="w-full max-h-56 object-cover rounded-xl border-2 border-encre/10"
+                  className="w-full max-h-56 object-cover rounded-xl border-2 border-encre-doux/20"
                 />
                 <button
                   type="button"

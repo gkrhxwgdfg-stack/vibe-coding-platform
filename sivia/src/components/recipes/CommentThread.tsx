@@ -121,7 +121,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                           rows={2}
                           value={editBody}
                           onChange={(e) => setEditBody(e.target.value)}
-                          className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-carte px-3 py-2 text-encre placeholder:text-encre-doux/60 focus:border-tomate focus:outline-none"
+                          className="w-full min-h-11 rounded-xl border-2 border-encre-doux/35 bg-carte px-3 py-2 text-encre placeholder:text-encre-doux/60 focus:border-tomate focus:outline-none"
                           aria-label="Modifier mon message"
                         />
                         <div className="flex gap-2">
@@ -138,7 +138,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                               setEditingId(null)
                               setEditBody('')
                             }}
-                            className="inline-flex items-center gap-1 min-h-11 px-4 rounded-xl border-2 border-encre/25 font-bold hover:border-encre/50"
+                            className="inline-flex items-center gap-1 min-h-11 px-4 rounded-xl border-2 border-encre-doux/35 font-bold hover:border-encre-doux/60"
                           >
                             <X size={16} aria-hidden="true" /> Ranger
                           </button>
@@ -152,7 +152,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                             src={photo}
                             alt={`Photo partagée par ${comment.author?.display_name ?? 'la famille'}`}
                             loading="lazy"
-                            className="mt-2 w-full max-w-xs aspect-[4/3] object-cover rounded-xl border-2 border-encre/10"
+                            className="mt-2 w-full max-w-xs aspect-[4/3] object-cover rounded-xl border-2 border-encre-doux/20"
                           />
                         )}
                       </>
@@ -198,14 +198,14 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
           value={body}
           onChange={(e) => setBody(e.target.value)}
           placeholder="Celle de dimanche, avec une touche de thym en plus…"
-          className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-carte px-4 py-2.5 text-encre placeholder:text-encre-doux/60 focus:border-tomate focus:outline-none"
+          className="w-full min-h-11 rounded-xl border-2 border-encre-doux/35 bg-carte px-4 py-2.5 text-encre placeholder:text-encre-doux/60 focus:border-tomate focus:outline-none"
         />
         <div className="flex flex-wrap items-center gap-3">
           <label
             htmlFor="comment-photo"
             className={cn(
               'cursor-pointer inline-flex items-center gap-2 min-h-11 px-5 rounded-2xl border-2 font-bold transition-colors',
-              'border-encre/25 bg-carte hover:border-tomate hover:text-tomate',
+              'border-encre-doux/35 bg-carte hover:border-tomate hover:text-tomate',
             )}
           >
             <ImagePlus size={20} aria-hidden="true" />
@@ -217,7 +217,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
               <img
                 src={photoPreview}
                 alt="Aperçu de la photo"
-                className="w-20 h-20 object-cover rounded-xl border-2 border-encre/10"
+                className="w-20 h-20 object-cover rounded-xl border-2 border-encre-doux/20"
               />
               <button
                 type="button"

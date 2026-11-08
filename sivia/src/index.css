@@ -547,7 +547,7 @@ html.reading-xl .card-pad {
 
 /* Trace sauce — pages recette « Plat » */
 .trace-sauce {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath d='M100 18c28-6 52 10 58 34 5 20-6 34-2 50 5 20-16 48-52 48-34 0-58-24-54-48 3-18-10-26-6-44C41 34 70 24 100 18z' fill='%23C93A2B' fill-opacity='0.12'/%3E%3Ccircle cx='168' cy='52' r='7' fill='%23C93A2B' fill-opacity='0.12'/%3E%3Ccircle cx='30' cy='150' r='5' fill='%23C93A2B' fill-opacity='0.12'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath d='M100 18c28-6 52 10 58 34 5 20-6 34-2 50 5 20-16 48-52 48-34 0-58-24-54-48 3-18-10-26-6-44C41 34 70 24 100 18z' fill='%238A5A2B' fill-opacity='0.12'/%3E%3Ccircle cx='168' cy='52' r='7' fill='%238A5A2B' fill-opacity='0.12'/%3E%3Ccircle cx='30' cy='150' r='5' fill='%238A5A2B' fill-opacity='0.12'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-size: 300px;
   background-position: left -60px bottom -60px;

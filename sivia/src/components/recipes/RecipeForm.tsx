@@ -96,7 +96,7 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
   }
 
   const inputClasses =
-    'w-full min-h-11 rounded-xl border-2 border-encre/20 bg-carte px-4 py-2.5 focus:border-tomate focus:outline-none'
+    'w-full min-h-11 rounded-xl border-2 border-encre-doux/35 bg-carte px-4 py-2.5 focus:border-tomate focus:outline-none'
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-6">
@@ -131,7 +131,7 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
               type="button"
               onClick={() => update('servings', Math.max(1, values.servings - 1))}
               aria-label="Une portion de moins"
-              className="touch-target-lg min-h-11 min-w-11 rounded-full border-2 border-encre/20 bg-carte hover:border-vert hover:text-vert inline-flex items-center justify-center"
+              className="touch-target-lg min-h-11 min-w-11 rounded-full border-2 border-encre-doux/35 bg-carte hover:border-vert hover:text-vert inline-flex items-center justify-center"
             >
               <Minus size={18} aria-hidden="true" />
             </button>
@@ -142,7 +142,7 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
               type="button"
               onClick={() => update('servings', values.servings + 1)}
               aria-label="Une portion de plus"
-              className="touch-target-lg min-h-11 min-w-11 rounded-full border-2 border-encre/20 bg-carte hover:border-vert hover:text-vert inline-flex items-center justify-center"
+              className="touch-target-lg min-h-11 min-w-11 rounded-full border-2 border-encre-doux/35 bg-carte hover:border-vert hover:text-vert inline-flex items-center justify-center"
             >
               <Plus size={18} aria-hidden="true" />
             </button>
@@ -182,7 +182,7 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
             htmlFor="photo"
             className={cn(
               'cursor-pointer inline-flex items-center gap-2 min-h-12 px-5 rounded-full border-2 font-extrabold transition-colors',
-              'border-encre-doux/25 bg-carte hover:border-vert hover:text-vert',
+              'border-encre-doux/35 bg-carte hover:border-vert hover:text-vert',
             )}
           >
             <ImagePlus size={20} aria-hidden="true" />

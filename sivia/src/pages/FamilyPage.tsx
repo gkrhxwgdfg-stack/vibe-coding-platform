@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from 'react'
+import { useMemo, useRef, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { Check, Copy, Download, Eye, Link2, Lock, Pencil, Share2, Trash2, UserCheck } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
@@ -59,6 +59,7 @@ export function FamilyPage() {
   const { premium, dejaEssai, refetch: refetchPlan } = useFamillePlan()
   const [paywallOpen, setPaywallOpen] = useState(false)
   const [apercuOpen, setApercuOpen] = useState(false)
+  const bookSectionRef = useRef<HTMLElement>(null)
   // Recettes transmises par profil : les fruits de l'arbre (§5.5)
   const recipeCountByMember = useMemo(() => {
     const counts: Record<string, number> = {}
@@ -179,7 +180,7 @@ export function FamilyPage() {
               value={familyName}
               onChange={(e) => setFamilyName(e.target.value)}
               aria-label="Nouveau nom de la famille"
-              className="min-h-11 rounded-xl border-2 border-encre/20 bg-carte px-4 py-2 text-2xl font-bold focus:border-tomate focus:outline-none"
+              className="min-h-11 rounded-xl border-2 border-encre-doux/35 bg-carte px-4 py-2 text-2xl font-bold focus:border-tomate focus:outline-none"
             />
             <Button type="submit" size="md" disabled={renaming || !familyName.trim()}>
               {renaming ? 'On écrit…' : 'Renommer'}
@@ -292,7 +293,7 @@ export function FamilyPage() {
       </section>
 
       {/* Le carnet familial : le livre (chantier 7) */}
-      <section aria-labelledby="book-title">
+      <section ref={bookSectionRef} aria-labelledby="book-title" className="scroll-mt-20">
         <Card>
           <CardHeader kicker="Le livre" title={`Télécharger le carnet de ${family?.name ?? 'ta famille'}`} />
           <p className="text-encre-doux mb-4">
@@ -311,7 +312,12 @@ export function FamilyPage() {
             {/* Aperçu filigrané : toujours gratuit, pour se projeter */}
             <Button
               variant="outline"
-              onClick={() => setApercuOpen(true)}
+              onClick={() => {
+                // L'aperçu s'ouvre depuis le haut de sa section : après le
+                // paywall, on relit le livre de haut en bas.
+                bookSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                setApercuOpen(true)
+              }}
               disabled={recipesLoading || recipes.length === 0}
             >
               <Eye size={18} aria-hidden="true" />
@@ -365,7 +371,7 @@ export function FamilyPage() {
                   readOnly
                   value={lastLink}
                   aria-label="Lien d’invitation"
-                  className="flex-1 min-h-11 rounded-xl border-2 border-encre/20 bg-carte px-3 text-sm"
+                  className="flex-1 min-h-11 rounded-xl border-2 border-encre-doux/35 bg-carte px-3 text-sm"
                   onFocus={(e) => e.target.select()}
                 />
                 <Button

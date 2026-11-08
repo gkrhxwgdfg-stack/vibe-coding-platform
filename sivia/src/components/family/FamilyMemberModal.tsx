@@ -260,7 +260,7 @@ export function FamilyMemberModal({
                 id="member-parent"
                 value={parentId}
                 onChange={(e) => setParentId(e.target.value)}
-                className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-carte px-4 py-2.5 focus:border-tomate focus:outline-none"
+                className="w-full min-h-11 rounded-xl border-2 border-encre-doux/35 bg-carte px-4 py-2.5 focus:border-tomate focus:outline-none"
               >
                 <option value="">— Personne (base de l'arbre) —</option>
                 {possibleParents.map((m) => (
@@ -287,7 +287,7 @@ export function FamilyMemberModal({
                       'min-h-11 rounded-xl border-2 px-3 py-2 text-sm font-bold text-left transition-colors',
                       linkKind === 'parent'
                         ? 'border-tomate bg-tomate/10 text-encre'
-                        : 'border-encre/20 bg-carte text-encre-doux hover:border-tomate/50',
+                        : 'border-encre-doux/35 bg-carte text-encre-doux hover:border-tomate/50',
                     )}
                   >
                     Enfant — en dessous
@@ -301,7 +301,7 @@ export function FamilyMemberModal({
                       'min-h-11 rounded-xl border-2 px-3 py-2 text-sm font-bold text-left transition-colors',
                       linkKind === 'partner'
                         ? 'border-tomate bg-tomate/10 text-encre'
-                        : 'border-encre/20 bg-carte text-encre-doux hover:border-tomate/50',
+                        : 'border-encre-doux/35 bg-carte text-encre-doux hover:border-tomate/50',
                     )}
                   >
                     Partenaire — à côté
@@ -323,7 +323,7 @@ export function FamilyMemberModal({
                   id="member-parent2"
                   value={parent2Id}
                   onChange={(e) => setParent2Id(e.target.value)}
-                  className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-carte px-4 py-2.5 focus:border-tomate focus:outline-none"
+                  className="w-full min-h-11 rounded-xl border-2 border-encre-doux/35 bg-carte px-4 py-2.5 focus:border-tomate focus:outline-none"
                 >
                   <option value="">— Une seule personne —</option>
                   {possibleParents2.map((m) => (
@@ -356,7 +356,7 @@ export function FamilyMemberModal({
                 id="member-generation"
                 value={generationId}
                 onChange={(e) => setGenerationId(e.target.value)}
-                className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-carte px-4 py-2.5 focus:border-tomate focus:outline-none"
+                className="w-full min-h-11 rounded-xl border-2 border-encre-doux/35 bg-carte px-4 py-2.5 focus:border-tomate focus:outline-none"
               >
                 <option value="">— Non classée —</option>
                 {generations.map((g) => (
@@ -377,7 +377,7 @@ export function FamilyMemberModal({
               id="member-profile"
               value={linkedProfileId}
               onChange={(e) => setLinkedProfileId(e.target.value)}
-              className="w-full min-h-11 rounded-xl border-2 border-encre/20 bg-carte px-4 py-2.5 focus:border-tomate focus:outline-none"
+              className="w-full min-h-11 rounded-xl border-2 border-encre-doux/35 bg-carte px-4 py-2.5 focus:border-tomate focus:outline-none"
             >
               <option value="">— Personne sans compte —</option>
               {profiles.map((p) => (
@@ -401,7 +401,7 @@ export function FamilyMemberModal({
                 'cursor-pointer w-full min-h-11 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 font-bold transition-colors',
                 photoFile
                   ? 'border-vert bg-vert/10 text-encre'
-                  : 'border-encre/25 bg-carte hover:border-tomate hover:text-tomate',
+                  : 'border-encre-doux/35 bg-carte hover:border-tomate hover:text-tomate',
               )}
             >
               <ImagePlus size={20} aria-hidden="true" />
@@ -413,7 +413,7 @@ export function FamilyMemberModal({
                 <img
                   src={showPreview}
                   alt="Aperçu de la photo"
-                  className="w-full max-h-56 object-cover rounded-xl border-2 border-encre/10"
+                  className="w-full max-h-56 object-cover rounded-xl border-2 border-encre-doux/20"
                 />
                 <button
                   type="button"
