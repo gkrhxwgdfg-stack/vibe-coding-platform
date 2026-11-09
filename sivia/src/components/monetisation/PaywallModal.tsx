@@ -161,7 +161,7 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai,
               <Sparkles size={26} className="text-vert" aria-hidden="true" />
             </div>
             <h2 id="paywall-title" className="font-serif text-2xl text-encre mb-2">
-              Le coffre est ouvert pour un mois
+              Le coffre est ouvert pour deux semaines
             </h2>
             <p className="text-encre-doux leading-relaxed mb-6">
               Pendant l’essai, toute la famille imprime, télécharge et conserve sans
@@ -284,11 +284,7 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai,
                       <Sparkles size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
                       PDF sans filigrane, impression et livre A5
                     </li>
-                    <li className="flex items-start gap-1.5">
-                      <Sparkles size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
-                      13ᵉ mois offert dans l’annuel
-                    </li>
-                  </ul>
+                                      </ul>
                 </div>
               </div>
 
@@ -319,7 +315,7 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai,
                   <p className="text-sm text-encre-doux mt-1">
                     ≈ {eur(PRIX.annuel / 12)} par mois ·{' '}
                     <Sparkles size={13} className="inline align-[-2px]" aria-hidden="true" />{' '}
-                    13ᵉ mois offert, et l’édition familiale enrichie du livre
+                    L’édition familiale enrichie du livre incluse
                   </p>
                 </button>
 
@@ -394,7 +390,7 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai,
                     onClick={ouvrirEssai}
                     disabled={busy}
                   >
-                    {busy ? 'Un instant…' : 'Essayer 1 mois — sans carte'}
+                    {busy ? 'Un instant…' : 'Essayer 2 semaines — sans carte'}
                   </Button>
                 ) : (
                   <p className="text-center text-encre-doux text-sm">

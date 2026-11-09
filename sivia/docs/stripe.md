@@ -26,8 +26,7 @@ le webhook. Tant que ce n'est pas fait, le paywall garde son parcours actuel
 2. **Créer les deux liens de paiement** (Dashboard > Payment links >
    + New) :
    - **Sivia Plus — année** : produit récurrent 24,99 € / an
-     (12 mois, 13ᵉ offert = 13 mois si tu préfères : mettre 24,99 € / 13 mois
-     n'est pas possible en standard, rester sur /an).
+     (−30 % par rapport au mensuel).
    - **Sivia Plus — mois** : produit récurrent 2,99 € / mois.
    Dans les deux cas : activer « Add subscription data » > **Metadata** >
      `family_id = {family_id}` (permet au webhook de retrouver la famille

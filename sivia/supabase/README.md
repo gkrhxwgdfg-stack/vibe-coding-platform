@@ -60,8 +60,9 @@ les policies RLS et le bucket `recipe-photos` ne sont **pas encore créés** sur
    (**Phase 1 monétisation « Sivia Famille »** : colonnes `plan`, `plan_started_at`,
    `plan_expires_at`, `plan_source` sur `families` (gratuit / essai / actif / expire),
    trigger `families_plan_guard` — seul le service (webhook Stripe) peut activer
-   un plan payé, les membres peuvent uniquement ouvrir l'essai d'un mois sans
-   carte, dates fixées par le serveur — et table `family_waitlist` avec RLS)
+   un plan payé, les membres peuvent uniquement ouvrir l'essai sans
+   carte, dates fixées par le serveur — et table `family_waitlist` avec RLS ;
+   la durée de l'essai est désormais fixée par la migration 0015)
 12. **New query** → collez le **contenu** de
    [`migrations/0013_family_waitlist_update_delete.sql`](./migrations/0013_family_waitlist_update_delete.sql) → **Run**
    (policies UPDATE et DELETE sur `family_waitlist` : un membre peut corriger ou
@@ -71,6 +72,11 @@ les policies RLS et le bucket `recipe-photos` ne sont **pas encore créés** sur
    [`migrations/0014_invitation_email_optionnelle.sql`](./migrations/0014_invitation_email_optionnelle.sql) → **Run**
    (`invitations.email` devient optionnel : on génère un lien d'invitation sans
    adresse mail — le mail n'était de toute façon jamais envoyé, le lien fait foi)
+15. **New query** → collez le **contenu** de
+   [`migrations/0015_essai_14_jours.sql`](./migrations/0015_essai_14_jours.sql) → **Run**
+   (**essai sans carte réduit de 1 mois à 2 semaines** : recrée le garde-fou
+   `guard_family_plan` avec `interval '14 days'` — sans cette migration, les
+   nouveaux essais durent encore 1 mois)
 
 > Erreur fréquente : coller le chemin `sivia/supabase/migrations/...` au lieu
 > du contenu SQL → `ERROR: 42601: syntax error`. Le SQL Editor attend du **code SQL**.
