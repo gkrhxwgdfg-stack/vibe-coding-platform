@@ -253,7 +253,6 @@ export function HomePage() {
                                 <ConfirmDialog
                                   title="Retirer ?"
                                   message="La photo et son mot quitteront la planche familiale."
-                                  confirmLabel="Oui"
                                   onCancel={() => setConfirmRemoveMomentId(null)}
                                   onConfirm={() => {
                                     setConfirmRemoveMomentId(null)

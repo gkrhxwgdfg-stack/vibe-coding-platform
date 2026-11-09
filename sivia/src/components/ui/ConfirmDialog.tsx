@@ -30,7 +30,7 @@ export function ConfirmDialog({
     <span
       role="group"
       aria-label={title}
-      className="inline-flex items-center gap-1 rounded-full bg-carte border border-encre-doux/35 shadow-md pl-3 py-1 shrink-0 anim-enter max-w-full"
+      className="inline-flex items-center gap-1 rounded-full bg-carte border border-encre-doux/35 shadow-md px-3 py-1 shrink-0 anim-enter max-w-full"
     >
       <span className="text-sm font-semibold text-encre break-words min-w-0">{title}</span>
       <button

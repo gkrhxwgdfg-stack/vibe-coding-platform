@@ -120,7 +120,6 @@ export function FamilyEvents() {
                             <ConfirmDialog
                               title="Retirer ?"
                               message="Le repas et sa photo quitteront la chronologie de la famille."
-                              confirmLabel="Oui, retirer"
                               onCancel={() => setConfirmRemoveId(null)}
                               onConfirm={() => {
                                 void remove(event.id)

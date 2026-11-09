@@ -181,7 +181,6 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                       <ConfirmDialog
                         title="Retirer ?"
                         message="Le message et sa photo quitteront le fil de vie de la famille."
-                        confirmLabel="Oui, retirer"
                         onCancel={() => setConfirmRemoveId(null)}
                         onConfirm={() => {
                           void remove(comment.id)

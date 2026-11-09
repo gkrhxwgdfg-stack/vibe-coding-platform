@@ -295,7 +295,6 @@ export function FamilyPage() {
                 <ConfirmDialog
                   title="Retirer ce membre ?"
                   message="Rien d’autre ne sera effacé : ses recettes restent dans le carnet. Tu confirmes ?"
-                  confirmLabel="Oui, retirer"
                   onCancel={() => setConfirmRemoveTreeMember(null)}
                   onConfirm={async () => {
                     const member = confirmRemoveTreeMember
@@ -481,7 +480,6 @@ export function FamilyPage() {
                       <ConfirmDialog
                         title="Retirer le lien ?"
                         message="Le lien ne fonctionnera plus pour ton invité."
-                        confirmLabel="Oui, retirer"
                         onCancel={() => setConfirmCancelId(null)}
                         onConfirm={() => {
                           void cancelInvitation(invitation)
