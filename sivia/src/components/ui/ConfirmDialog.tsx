@@ -12,9 +12,10 @@ interface ConfirmDialogProps {
 }
 
 /**
- * Confirmation compacte avant toute suppression : elle apparaît juste
- * à côté du bouton corbeille, pas au milieu de l'écran. Petite question,
- * Oui, Non — rien de plus. Jamais rien d'effaçable par accident.
+ * Confirmation compacte avant toute suppression : une petite pastille
+ * « question + Oui/Non » posée à côté ou sous le bouton corbeille, jamais
+ * au milieu de l'écran. Elle se glisse dans la largeur disponible : le
+ * texte se replie sur plusieurs lignes plutôt que de déborder d'un cadre.
  */
 export function ConfirmDialog({
   open = true,
@@ -29,20 +30,20 @@ export function ConfirmDialog({
     <span
       role="group"
       aria-label={title}
-      className="inline-flex items-center gap-1 rounded-full bg-carte border border-encre-doux/35 shadow-md pl-3 py-1 shrink-0 anim-enter"
+      className="inline-flex items-center gap-1 rounded-full bg-carte border border-encre-doux/35 shadow-md pl-3 py-1 shrink-0 anim-enter max-w-full"
     >
-      <span className="text-sm font-semibold text-encre whitespace-nowrap">{title}</span>
+      <span className="text-sm font-semibold text-encre break-words min-w-0">{title}</span>
       <button
         type="button"
         onClick={onCancel}
-        className="min-h-9 px-3 rounded-full text-sm text-encre-doux hover:bg-ble-clair"
+        className="shrink-0 min-h-9 px-3 rounded-full text-sm text-encre-doux hover:bg-ble-clair"
       >
         {cancelLabel}
       </button>
       <button
         type="button"
         onClick={onConfirm}
-        className="min-h-9 px-3 rounded-full bg-tomate text-white text-sm font-bold hover:bg-[#a72f23]"
+        className="shrink-0 min-h-9 px-3 rounded-full bg-tomate text-white text-sm font-bold hover:bg-[#a72f23]"
       >
         {confirmLabel}
       </button>

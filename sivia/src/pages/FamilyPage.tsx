@@ -454,7 +454,8 @@ export function FamilyPage() {
           <ul className="space-y-3">
             {pending.map((invitation) => (
               <li key={invitation.id}>
-                <Card className="flex flex-wrap items-center gap-3">
+                <Card>
+                  <div className="flex flex-wrap items-center gap-3">
                   <div className="flex-1 min-w-0">
                     <p className="font-bold truncate">{invitation.email ?? 'Invitation ouverte'}</p>
                     <p className="text-sm text-encre-doux">Invité le {formatDate(invitation.created_at)}</p>
@@ -474,17 +475,20 @@ export function FamilyPage() {
                   >
                     <Trash2 size={18} aria-hidden="true" />
                   </Button>
+                  </div>
                   {confirmCancelId === invitation.id && (
-                    <ConfirmDialog
-                      title="Retirer le lien ?"
-                      message="Le lien ne fonctionnera plus pour ton invité. Tu confirmes ?"
-                      confirmLabel="Oui, retirer"
-                      onCancel={() => setConfirmCancelId(null)}
-                      onConfirm={() => {
-                        void cancelInvitation(invitation)
-                        setConfirmCancelId(null)
-                      }}
-                    />
+                    <div className="mt-2 flex justify-end">
+                      <ConfirmDialog
+                        title="Retirer le lien ?"
+                        message="Le lien ne fonctionnera plus pour ton invité."
+                        confirmLabel="Oui, retirer"
+                        onCancel={() => setConfirmCancelId(null)}
+                        onConfirm={() => {
+                          void cancelInvitation(invitation)
+                          setConfirmCancelId(null)
+                        }}
+                      />
+                    </div>
                   )}
                 </Card>
               </li>

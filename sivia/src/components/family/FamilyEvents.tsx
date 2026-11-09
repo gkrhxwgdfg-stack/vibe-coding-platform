@@ -89,7 +89,7 @@ export function FamilyEvents() {
                             <p className="kicker">{formatDate(event.event_date)}</p>
                             <p className="font-serif text-xl font-semibold leading-tight">{event.title}</p>
                             {event.note && (
-                              <p className="text-encre-doux mt-1 whitespace-pre-line">{event.note}</p>
+                              <p className="text-encre-doux mt-1 whitespace-pre-line break-words">{event.note}</p>
                             )}
                             {event.recipes && event.recipes.length > 0 && (
                               <ul className="flex flex-wrap gap-2 mt-2">
@@ -114,10 +114,12 @@ export function FamilyEvents() {
                           >
                             <Trash2 size={18} aria-hidden="true" />
                           </button>
-                          {confirmRemoveId === event.id && (
+                        </div>
+                        {confirmRemoveId === event.id && (
+                          <div className="mt-2 flex justify-end">
                             <ConfirmDialog
                               title="Retirer ?"
-                              message="Le repas et sa photo quitteront la chronologie de la famille. Tu confirmes ?"
+                              message="Le repas et sa photo quitteront la chronologie de la famille."
                               confirmLabel="Oui, retirer"
                               onCancel={() => setConfirmRemoveId(null)}
                               onConfirm={() => {
@@ -125,8 +127,8 @@ export function FamilyEvents() {
                                 setConfirmRemoveId(null)
                               }}
                             />
-                          )}
-                        </div>
+                          </div>
+                        )}
                       </Card>
                     </li>
                   )

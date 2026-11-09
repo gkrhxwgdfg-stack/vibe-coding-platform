@@ -161,7 +161,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                       </div>
                     ) : (
                       <>
-                        {comment.body && <p className="text-lg whitespace-pre-line mt-0.5">{comment.body}</p>}
+                        {comment.body && <p className="text-lg whitespace-pre-line break-words mt-0.5">{comment.body}</p>}
                         {photo && (
                           <img
                             src={photo}
@@ -176,6 +176,20 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                   <p className="text-sm text-encre-doux mt-1 px-1">
                     {formatRelative(comment.created_at)}
                   </p>
+                  {confirmRemoveId === comment.id && (
+                    <div className="mt-1 flex justify-end">
+                      <ConfirmDialog
+                        title="Retirer ?"
+                        message="Le message et sa photo quitteront le fil de vie de la famille."
+                        confirmLabel="Oui, retirer"
+                        onCancel={() => setConfirmRemoveId(null)}
+                        onConfirm={() => {
+                          void remove(comment.id)
+                          setConfirmRemoveId(null)
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
                 {isMine && !isEditing && (
                   <div className="flex shrink-0 items-center">
@@ -195,18 +209,6 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                     >
                       <Trash2 size={18} aria-hidden="true" />
                     </button>
-                    {confirmRemoveId === comment.id && (
-                      <ConfirmDialog
-                        title="Retirer ?"
-                        message="Le message et sa photo quitteront le fil de vie de la famille."
-                        confirmLabel="Oui, retirer"
-                        onCancel={() => setConfirmRemoveId(null)}
-                        onConfirm={() => {
-                          void remove(comment.id)
-                          setConfirmRemoveId(null)
-                        }}
-                      />
-                    )}
                   </div>
                 )}
               </li>

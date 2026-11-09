@@ -244,25 +244,27 @@ export function HomePage() {
                                     >
                                       <Trash2 size={14} aria-hidden="true" />
                                     </button>
-                                    {confirmRemoveMomentId === comment.id && (
-                                      <ConfirmDialog
-                                        title="Retirer ?"
-                                        message="La photo et son mot quitteront la planche familiale."
-                                        confirmLabel="Oui, retirer"
-                                        onCancel={() => setConfirmRemoveMomentId(null)}
-                                        onConfirm={() => {
-                                          setConfirmRemoveMomentId(null)
-                                          void (async () => {
-                                            await deleteComment(comment.id)
-                                            await refetchPlanche(true)
-                                          })()
-                                        }}
-                                      />
-                                    )}
                                   </span>
                                 ) : undefined
                               }
                             />
+                            {confirmRemoveMomentId === comment.id && (
+                              <div className="absolute top-full right-0 mt-1 z-50 max-w-[200px]">
+                                <ConfirmDialog
+                                  title="Retirer ?"
+                                  message="La photo et son mot quitteront la planche familiale."
+                                  confirmLabel="Oui, retirer"
+                                  onCancel={() => setConfirmRemoveMomentId(null)}
+                                  onConfirm={() => {
+                                    setConfirmRemoveMomentId(null)
+                                    void (async () => {
+                                      await deleteComment(comment.id)
+                                      await refetchPlanche(true)
+                                    })()
+                                  }}
+                                />
+                              </div>
+                            )}
                           </div>
                         ))}
                       </CordeALinge>
