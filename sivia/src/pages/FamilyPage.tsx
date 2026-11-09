@@ -70,6 +70,8 @@ export function FamilyPage() {
   const [submitting, setSubmitting] = useState(false)
   const [lastLink, setLastLink] = useState<string | null>(null)
   const [copiedId, setCopiedId] = useState<string | null>(null)
+  // Confirmation avant annulation d'une invitation
+  const [confirmCancelId, setConfirmCancelId] = useState<string | null>(null)
 
   // Renommage de la famille
   const [editingName, setEditingName] = useState(false)
@@ -129,7 +131,10 @@ export function FamilyPage() {
     setTimeout(() => setCopiedId(null), 2000)
   }
 
+  /** Retrait d'un membre de l'arbre : confirmation obligatoire — la
+   *  suppression ne doit jamais arriver par accident. */
   async function handleRemoveTreeMember(member: FamilyMember) {
+    if (!window.confirm('Retirer ce membre de l’arbre ? Rien d’autre ne sera effacé.')) return
     const { error: removeError } = await removeTreeMember(member.id)
     if (removeError) setError(removeError)
   }
@@ -447,12 +452,20 @@ export function FamilyPage() {
                     )}
                   </Button>
                   <Button
-                    variant="ghost"
-                    className="text-tomate"
-                    onClick={() => cancelInvitation(invitation)}
-                    aria-label={`Retirer l’invitation${invitation.email ? ` de ${invitation.email}` : ''}`}
+                    variant={confirmCancelId === invitation.id ? 'danger' : 'ghost'}
+                    className={confirmCancelId !== invitation.id ? 'text-tomate' : undefined}
+                    onClick={() => {
+                      if (confirmCancelId === invitation.id) {
+                        void cancelInvitation(invitation)
+                        setConfirmCancelId(null)
+                      } else {
+                        setConfirmCancelId(invitation.id)
+                      }
+                    }}
+                    aria-label={confirmCancelId === invitation.id ? 'Confirmer le retrait de l’invitation' : `Retirer l’invitation${invitation.email ? ` de ${invitation.email}` : ''}`}
                   >
                     <Trash2 size={18} aria-hidden="true" />
+                    {confirmCancelId === invitation.id ? ' Sûr ?' : ''}
                   </Button>
                 </Card>
               </li>

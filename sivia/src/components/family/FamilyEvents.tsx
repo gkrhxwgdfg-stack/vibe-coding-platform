@@ -26,6 +26,8 @@ export function FamilyEvents() {
 
   const [open, setOpen] = useState(false)
   useBodyScrollLock(open)
+  // Confirmation avant suppression : premier clic arme, second clic efface
+  const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null)
 
   // Regroupe les événements par année, du plus récent au plus ancien
   const byYear = new Map<string, typeof events>()
@@ -105,9 +107,25 @@ export function FamilyEvents() {
                           </div>
                           <button
                             type="button"
-                            onClick={() => remove(event.id)}
-                            aria-label={`Retirer le souvenir ${event.title}`}
-                            className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-doux hover:text-tomate inline-flex items-center justify-center shrink-0"
+                            onClick={() => {
+                              if (confirmRemoveId === event.id) {
+                                void remove(event.id)
+                                setConfirmRemoveId(null)
+                              } else {
+                                setConfirmRemoveId(event.id)
+                              }
+                            }}
+                            onBlur={() => {
+                              if (confirmRemoveId === event.id) setConfirmRemoveId(null)
+                            }}
+                            aria-label={confirmRemoveId === event.id ? 'Confirmer : retirer le souvenir' : `Retirer le souvenir ${event.title}`}
+                            title={confirmRemoveId === event.id ? 'Reclique pour confirmer' : undefined}
+                            className={cn(
+                              'touch-target-lg min-h-11 min-w-11 rounded-full inline-flex items-center justify-center shrink-0 transition-colors',
+                              confirmRemoveId === event.id
+                                ? 'bg-tomate text-white'
+                                : 'text-encre-doux hover:text-tomate',
+                            )}
                           >
                             <Trash2 size={18} aria-hidden="true" />
                           </button>

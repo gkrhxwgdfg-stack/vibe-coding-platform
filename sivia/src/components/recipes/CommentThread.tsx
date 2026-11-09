@@ -28,6 +28,8 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editBody, setEditBody] = useState('')
+  // Confirmation avant suppression : premier clic arme, second clic efface
+  const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null)
 
   function handlePhoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null
@@ -186,9 +188,25 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                     </button>
                     <button
                       type="button"
-                      onClick={() => remove(comment.id)}
-                      aria-label="Retirer mon message"
-                      className="touch-target-lg min-h-11 min-w-11 rounded-xl text-encre-doux hover:text-tomate inline-flex items-center justify-center"
+                      onClick={() => {
+                        if (confirmRemoveId === comment.id) {
+                          void remove(comment.id)
+                          setConfirmRemoveId(null)
+                        } else {
+                          setConfirmRemoveId(comment.id)
+                        }
+                      }}
+                      onBlur={() => {
+                        if (confirmRemoveId === comment.id) setConfirmRemoveId(null)
+                      }}
+                      aria-label={confirmRemoveId === comment.id ? 'Confirmer : retirer mon message' : 'Retirer mon message'}
+                      title={confirmRemoveId === comment.id ? 'Reclique pour confirmer' : undefined}
+                      className={cn(
+                        'touch-target-lg min-h-11 min-w-11 rounded-xl inline-flex items-center justify-center transition-colors',
+                        confirmRemoveId === comment.id
+                          ? 'bg-tomate text-white'
+                          : 'text-encre-doux hover:text-tomate',
+                      )}
                     >
                       <Trash2 size={18} aria-hidden="true" />
                     </button>

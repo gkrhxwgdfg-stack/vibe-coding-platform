@@ -32,7 +32,9 @@ export function useFamillePlan() {
     refetch()
   }, [refetch])
 
-  /** Ouvre l'essai d'un mois, sans carte bancaire (autorisé par le guard SQL : gratuit/expire → essai). */
+  /** Ouvre l'essai de 2 semaines, sans carte bancaire (autorisé par le guard
+   *  SQL UNIQUEMENT si la famille n'a jamais eu d'essai ni de plan :
+   *  un seul essai par famille, côté serveur aussi). */
   const activerEssai = useCallback(async (): Promise<{ error: string | null }> => {
     if (!family) return { error: 'Reconnecte-toi pour ouvrir l’essai.' }
     const { error } = await supabase
