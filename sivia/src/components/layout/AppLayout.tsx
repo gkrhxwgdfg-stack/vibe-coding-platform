@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { BookOpen, Heart, Users, UserRound } from 'lucide-react'
 import { WheatIcon } from '@/components/motifs/WheatIcon'
 import { Logo } from '@/components/ui/Logo'
+import { SignalerButton } from '@/components/ui/SignalerButton'
 import { AddButtonHost } from '@/components/layout/AddButtonHost'
 import { useAuth } from '@/context/AuthContext'
 import { cn } from '@/lib/utils'
@@ -55,6 +56,8 @@ export function AppLayout({ children }: { children?: ReactNode }) {
         <Link to="/confidentialite" className="hover:text-tomate hover:underline">Confidentialité</Link>
         <span aria-hidden="true"> · </span>
         <Link to="/conditions" className="hover:text-tomate hover:underline">Conditions d'utilisation</Link>
+        <span aria-hidden="true"> · </span>
+        <SignalerButton variant="link" label="un contenu" className="text-encre-doux/70 hover:text-tomate hover:underline" />
         <span aria-hidden="true"> · </span>
         © 2026 Sivia
       </footer>

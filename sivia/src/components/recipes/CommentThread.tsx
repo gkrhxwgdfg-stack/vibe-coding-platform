@@ -5,6 +5,7 @@ import { useComments } from '@/hooks/useComments'
 import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
+import { SignalerButton } from '@/components/ui/SignalerButton'
 import { Spinner } from '@/components/ui/Spinner'
 import { formatRelative } from '@/lib/format'
 import { cn } from '@/lib/utils'
@@ -208,6 +209,14 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                     >
                       <Trash2 size={18} aria-hidden="true" />
                     </button>
+                  </div>
+                )}
+                {!isMine && !isEditing && (
+                  <div className="flex shrink-0 items-center">
+                    <SignalerButton
+                      label={`le message de ${comment.author?.display_name ?? 'quelqu\u2019un'}`}
+                      className="touch-target-lg min-h-11 min-w-11 rounded-xl text-encre-doux/70 hover:text-tomate inline-flex items-center justify-center"
+                    />
                   </div>
                 )}
               </li>

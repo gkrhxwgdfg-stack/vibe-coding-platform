@@ -35,6 +35,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { Spinner } from '@/components/ui/Spinner'
 import { Stamp } from '@/components/ui/Stamp'
 import { CommentThread } from '@/components/recipes/CommentThread'
+import { SignalerButton } from '@/components/ui/SignalerButton'
 import { IngredientChecklist } from '@/components/recipes/IngredientChecklist'
 import { TransmissionBanner } from '@/components/recipes/TransmissionBanner'
 import { Torchon } from '@/components/ui/Torchon'
@@ -489,6 +490,11 @@ export function RecipeDetailPage() {
         <Link to="/recettes/nouvelle" className="text-vert font-bold hover:underline">
           Écrire une autre recette de la famille
         </Link>
+      </p>
+
+      {/* DSA, art. 16 : signalement discret, au bas de la fiche */}
+      <p className="text-center text-sm text-encre-doux/60 mt-1">
+        <SignalerButton variant="link" label={`la recette « ${recipe.title} »`} />
       </p>
 
       {/* Sivia Plus : ouvert au moment de fierté (imprimer / conserver) */}

@@ -53,7 +53,9 @@ export function MentionsLegalesPage() {
         Le site Sivia (ci-après « le Service ») est édité par <strong>GTB&CO</strong>
         {' '}(Gaspar Truchon-Bartès), [adresse postale à compléter], immatriculée sous le numéro
         {' '}[SIRET / RCS à compléter].<br />
-        Contact : [adresse e-mail de contact à compléter].
+        Contact : [adresse e-mail de contact à compléter].<br />
+        Téléphone : [numéro de téléphone à compléter] (obligation LCEN pour un éditeur
+        personne physique).
       </p>
       <H2>Directeur de la publication</H2>
       <p>Gaspar Truchon-Bartès, [adresse postale à compléter].</p>
@@ -105,6 +107,44 @@ export function ConfidentialitePage() {
       <p>
         <strong>Sécurité</strong> : nous gardons des journaux techniques minimaux le temps
         nécessaire à la sécurité du service (base légale : intérêt légitime).
+      </p>
+      <p>
+        <strong>Comptes inactifs</strong> : un compte sans connexion depuis 3 ans déclenche un
+        e-mail de préavis ; sans réponse de ta part, les données sont supprimées
+        (recommandation CNIL du 18 septembre 2025). Un préavis précède toujours la
+        suppression, le temps de récupérer tes recettes.
+      </p>
+      <p>
+        <strong>Identification des auteurs de contenus</strong> : comme tout hébergeur, nous
+        conservons les données d'identification des créateurs de contenus pendant 1 an
+        (art. 6-II de la LCEN, décret n° 2021-1362), pour répondre aux enquêtes judiciaires.
+      </p>
+      <H2>Nos sous-traitants</H2>
+      <p>
+        GTB&CO ne fait pas tout seule. Chaque sous-traitant agit sur nos instructions, pour
+        une finalité précise, dans le cadre d'un contrat de sous-traitance (RGPD, art. 28) :
+      </p>
+      <p>
+        <strong>Supabase</strong> (Supabase Inc.) : base de données, authentification et
+        stockage des photos — la colonne vertébrale du service. [Région d'hébergement à
+        confirmer : UE recommandée.] Transferts hors UE encadrés par clauses contractuelles
+        types (module 2) et le Data Privacy Framework ; contrat de sous-traitance (DPA)
+        à accepter dans le tableau de bord Supabase [action en attente].
+      </p>
+      <p>
+        <strong>Vercel</strong> (Vercel Inc.) : hébergement du site et livraison mondiale.
+        Garanties de transfert : Data Privacy Framework.
+      </p>
+      <p>
+        <strong>Stripe</strong> (Stripe Inc.) : paiements de Sivia Plus. Seule l'adresse
+        e-mail nécessaire au reçu transite ; aucune donnée bancaire ne nous est communiquée.
+        Garanties de transfert : Data Privacy Framework.
+      </p>
+      <H2>Registre des traitements</H2>
+      <p>
+        Un registre des traitements est tenu par GTB&CO (modèle simplifié CNIL) : il liste
+        chaque finalité, sa base légale, sa durée de conservation et ses destinataires,
+        comme sur cette page. Il peut être communiqué sur simple demande.
       </p>
       <H2>Ce que nous ne faisons pas</H2>
       <p>
@@ -164,8 +204,8 @@ export function ConditionsPage() {
       <p>
         Le service de base est gratuit. Sivia Plus (impression du livre, PDF sans filigrane)
         est proposé aux prix affichés TTC sur la page de paiement, en mensuel ou annuel, avec
-        un essai gratuit de 14 jours. Tu peux arrêter ton abonnement à tout moment ; il reste
-        actif jusqu'à la fin de la période payée.
+        un mois d'essai gratuit, sans carte bancaire. Tu peux arrêter ton abonnement à tout
+        moment ; il reste actif jusqu'à la fin de la période payée.
       </p>
       <H2>Droit de rétractation</H2>
       <p>
@@ -174,6 +214,47 @@ export function ConditionsPage() {
         service payant, tu reconnais, conformément à l'article L221-28 du code de la
         consommation, renoncer à ton droit de rétractation une fois le contenu délivré.
         Pour toute question ou remboursement : [adresse e-mail de contact à compléter].
+      </p>
+      <H2>Signaler un contenu</H2>
+      <p>
+        Sivia est un espace familial : chacun y publie en son âme et conscience. Si une
+        recette, une photo ou un message te semble illicite (haine, atteinte au droit à
+        l'image ou à la vie privée…), signale-le : le bouton « Signaler » est présent sur
+        chaque contenu, ou écris à [adresse e-mail de contact à compléter]. Tout
+        signalement est lu et traité sans tarder ; un contenu manifestement illicite est
+        retiré. Nous n'exerçons aucune surveillance générale des publications, mais nous
+        agissons dès qu'un signalement nous parvient (règlement sur les services numériques,
+        art. 16 ; LCEN, art. 6).
+      </p>
+      <H2>Sivia Plus : mises à jour, garanties, paiement</H2>
+      <p>
+        Pendant ton abonnement, le service reste conforme et reçoit ses mises à jour,
+        sécurité comprise (art. L224-25-24 du code de la consommation). La garantie légale
+        de conformité s'applique (2 ans) : en cas de non-conformité, mise à jour ou
+        remboursement partiel. Les fonctionnalités du plan sont celles affichées sur la
+        page de paiement ; le service fonctionne sur les navigateurs récents (Safari,
+        Chrome, Edge, Firefox), sur smartphone comme sur ordinateur, en français. Les
+        paiements s'effectuent par carte bancaire via Stripe. Un mineur ne peut souscrire
+        un abonnement sans l'autorisation d'un parent (art. L221-2).
+      </p>
+      <H2>Médiation de la consommation</H2>
+      <p>
+        En cas de réclamation non résolue, tu peux saisir gratuitement un médiateur de la
+        consommation dans l'année suivant ta réclamation écrite : [médiateur agréé CECMC —
+        nom et coordonnées à compléter avant l'ouverture des paiements réels].
+      </p>
+      <H2>Comptes inactifs</H2>
+      <p>
+        Un compte sans connexion depuis 3 ans reçoit un e-mail de préavis avant suppression.
+        Tes recettes et photos peuvent être exportées à tout moment depuis ton profil
+        (export JSON, PDF, livre de famille).
+      </p>
+      <H2>Et si le service s'arrêtait ?</H2>
+      <p>
+        Un carnet familial mérite mieux qu'une fermeture brutale. Si GTB&CO devait arrêter
+        le service, tu serais prévenu par e-mail bien à l'avance, avec le temps d'exporter
+        tes recettes et de faire imprimer ton livre ; les abonnements en cours seraient
+        remboursés au prorata.
       </p>
       <H2>Responsabilité</H2>
       <p>

@@ -25,6 +25,7 @@ import { MOTION, pickDaily, stableTilt } from '@/lib/motion'
 import { CordeALinge } from '@/components/motifs/CordeALinge'
 import { PluieFarine } from '@/components/motifs/PluieFarine'
 import { Sparkle } from '@/components/motifs/Sparkle'
+import { SignalerButton } from '@/components/ui/SignalerButton'
 import { DailyRecipeCard } from '@/components/recipes/DailyRecipeCard'
 import type { RecipeComment } from '@/lib/types'
 
@@ -247,7 +248,13 @@ export function HomePage() {
                                       <Trash2 size={14} aria-hidden="true" />
                                     </button>
                                   </span>
-                                ) : undefined
+                                ) : (
+                                  <span className="absolute top-2 right-2 z-10">
+                                    <SignalerButton
+                                      label={`le moment de ${comment.author?.display_name ?? 'quelqu\u2019un'}`}
+                                    />
+                                  </span>
+                                )
                               }
                             />
                             {confirmRemoveMomentId === comment.id && (
