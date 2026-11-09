@@ -30,20 +30,20 @@ export function ConfirmDialog({
     <span
       role="group"
       aria-label={title}
-      className="inline-flex items-center gap-1 rounded-full bg-carte border border-encre-doux/35 shadow-md px-3 py-1 shrink-0 anim-enter max-w-full"
+      className="inline-flex items-center gap-1 rounded-full bg-carte border border-encre-doux/35 shadow-md p-1 shrink-0 anim-enter max-w-full"
     >
       <span className="text-sm font-semibold text-encre break-words min-w-0">{title}</span>
       <button
         type="button"
         onClick={onCancel}
-        className="shrink-0 min-h-9 px-3 rounded-full text-sm text-encre-doux hover:bg-ble-clair"
+        className="shrink-0 min-h-9 px-1.5 rounded-full text-sm text-encre-doux hover:bg-ble-clair"
       >
         {cancelLabel}
       </button>
       <button
         type="button"
         onClick={onConfirm}
-        className="shrink-0 min-h-9 px-3 rounded-full bg-tomate text-white text-sm font-bold hover:bg-[#a72f23]"
+        className="shrink-0 min-h-9 px-1.5 rounded-full bg-tomate text-white text-sm font-bold hover:bg-[#a72f23]"
       >
         {confirmLabel}
       </button>
