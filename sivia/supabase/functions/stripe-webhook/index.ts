@@ -5,8 +5,15 @@
 // service_role/supabase_admin à écrire plan='actif' : ce webhook est donc
 // le SEUL chemin d'activation payante, comme prévu par la spécification.
 //
-// Déploiement (une fois, voir sivia/docs/stripe.md) :
-//   supabase functions deploy stripe-webhook --project-ref <ref>
+// auth: 'none' : Stripe ne peut pas envoyer de clé Supabase (publishable/
+// secret). La sécurité vient de la vérification de la signature Stripe
+// ci-dessous, pattern recommandé par Supabase pour les webhooks externes.
+// NB : sur la nouvelle plateforme, le Dashboard déploie les fonctions avec
+// withSupabase({ auth: ['publishable','secret'] }) par défaut : conserver
+// ce wrapper avec 'none' lors de TOUT redéploiement.
+//
+// Déploiement (voir sivia/docs/stripe.md) :
+//   supabase functions deploy stripe-webhook --project-ref <ref> --no-verify-jwt
 // Secrets à définir :
 //   supabase secrets set STRIPE_SECRET_KEY=... STRIPE_WEBHOOK_SECRET=...
 //   (SUPABASE_URL et SUPABASE_SERVICE_ROLE_KEY sont fournis d'office)
@@ -15,6 +22,7 @@
 //   checkout.session.completed, invoice.payment_succeeded
 // ============================================================================
 
+import { withSupabase } from 'npm:@supabase/server@1'
 import Stripe from 'npm:stripe@16.12.0'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 
@@ -66,7 +74,7 @@ async function expirationAbonnement(subscriptionId: string) {
   }
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withSupabase({ auth: 'none' }, async (req) => {
   const signature = req.headers.get('stripe-signature')
   const body = await req.text()
   let event: Stripe.Event
@@ -126,4 +134,4 @@ Deno.serve(async (req) => {
   return new Response(JSON.stringify({ received: true }), {
     headers: { 'content-type': 'application/json' },
   })
-})
+}))
