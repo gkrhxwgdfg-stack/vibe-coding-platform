@@ -1,9 +1,11 @@
 import { APP_BUILD_MARKER } from '@/lib/constants'
+import { usePageTitle } from '@/lib/usePageTitle'
 import type { ReactNode } from 'react'
 import { Logo } from '@/components/ui/Logo'
 
 /** Écran d'authentification : logo, slogan, contenu centré */
 export function AuthShell({ title, handNote, children }: { title: string; handNote?: string; children: ReactNode }) {
+  usePageTitle(title)
   return (
     <div className="min-h-dvh flex flex-col items-center justify-center px-5 py-10">
       <div className="w-full max-w-md">

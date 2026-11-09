@@ -1,5 +1,5 @@
 -- ============================================================
--- Savia — correctif RLS profiles
+-- Sivia — correctif RLS profiles
 -- Le self-healing côté client fait un INSERT puis un UPDATE si
 -- la ligne existe déjà. L'upsert (INSERT ... ON CONFLICT DO UPDATE)
 -- n'est pas possible car les policies RLS n'ont pas de clause

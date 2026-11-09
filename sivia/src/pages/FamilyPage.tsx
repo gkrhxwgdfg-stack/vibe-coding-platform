@@ -2,6 +2,7 @@ import { useMemo, useRef, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { Check, Copy, Download, Eye, Link2, Lock, Pencil, Share2, Trash2, UserCheck } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
+import { usePageTitle } from '@/lib/usePageTitle'
 import { useCreateInvitation, useFamilyMembers, useInvitations } from '@/hooks/useFamily'
 import { useFamilyGenerations, useFamilyTree } from '@/hooks/useFamilyTree'
 import { useRecipes } from '@/hooks/useRecipes'
@@ -28,6 +29,7 @@ import { ApercuLivreModal } from '@/components/monetisation/ApercuLivreModal'
 
 export function FamilyPage() {
   const { profile, family, refreshProfile } = useAuth()
+  usePageTitle(family?.name ?? 'Ta famille')
   const { members, loading: membersLoading } = useFamilyMembers()
   const { invitations, loading: invitationsLoading, refetch } = useInvitations()
   const createInvitation = useCreateInvitation()

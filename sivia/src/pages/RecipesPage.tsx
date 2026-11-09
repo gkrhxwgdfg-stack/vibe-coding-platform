@@ -13,10 +13,12 @@ import { MOTION } from '@/lib/motion'
 import { RecipeCardSkeletonGrid } from '@/components/recipes/RecipeCardSkeleton'
 import { RecipeCard } from '@/components/recipes/RecipeCard'
 import { cn } from '@/lib/utils'
+import { usePageTitle } from '@/lib/usePageTitle'
 
 type CategoryFilter = RecipeCategory | 'toutes'
 
 export function RecipesPage() {
+  usePageTitle('Nos recettes')
   const [searchParams] = useSearchParams()
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState<CategoryFilter>('toutes')

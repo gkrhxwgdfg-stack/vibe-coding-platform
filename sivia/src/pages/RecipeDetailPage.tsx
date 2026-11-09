@@ -19,6 +19,7 @@ import {
 import { useRecipe, useToggleFavorite } from '@/hooks/useRecipes'
 import { useCooks } from '@/hooks/useCooks'
 import { useAuth } from '@/context/AuthContext'
+import { usePageTitle } from '@/lib/usePageTitle'
 import { deleteRecipe, photoPublicUrl, sealRecipe } from '@/services/recipes'
 import { printRecipe } from '@/services/recipePrint'
 import { generateRecipePdf } from '@/services/recipePdf'
@@ -49,6 +50,7 @@ export function RecipeDetailPage() {
   const { id } = useParams<{ id: string }>()
   const { recipe, loading, error, setRecipe } = useRecipe(id)
   const { user, family } = useAuth()
+  usePageTitle(recipe?.title ?? 'Recette')
   const toggleFavorite = useToggleFavorite()
   const navigate = useNavigate()
 

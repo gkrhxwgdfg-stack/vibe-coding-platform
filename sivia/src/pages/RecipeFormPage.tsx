@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext'
 import { createRecipe, updateRecipe } from '@/services/recipes'
 import { Spinner } from '@/components/ui/Spinner'
 import { COPY } from '@/lib/copy'
+import { usePageTitle } from '@/lib/usePageTitle'
 import type { RecipeFormValues } from '@/lib/types'
 
 /**
@@ -15,6 +16,7 @@ import type { RecipeFormValues } from '@/lib/types'
 export function RecipeFormPage() {
   const { id } = useParams<{ id: string }>()
   const isEdit = Boolean(id)
+  usePageTitle(isEdit ? 'Modifier la recette' : 'Raconte ta recette')
   const { recipe, loading } = useRecipe(isEdit ? id : undefined)
   const { profile } = useAuth()
   const navigate = useNavigate()

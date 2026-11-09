@@ -4,12 +4,14 @@ import { useRecipes } from '@/hooks/useRecipes'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { COPY } from '@/lib/copy'
+import { usePageTitle } from '@/lib/usePageTitle'
 import { RecipeCardSkeletonGrid } from '@/components/recipes/RecipeCardSkeleton'
 import { RecipeCard } from '@/components/recipes/RecipeCard'
 
 const NO_FILTERS = { query: '', category: 'toutes' as const, authorId: 'tous' as const }
 
 export function FavoritesPage() {
+  usePageTitle('Mes favoris')
   const { recipes, loading } = useRecipes(NO_FILTERS)
   const favorites = recipes.filter((r) => r.is_favorite)
 

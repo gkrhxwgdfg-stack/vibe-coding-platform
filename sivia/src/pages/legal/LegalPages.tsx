@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import { Logo } from '@/components/ui/Logo'
+import { usePageTitle } from '@/lib/usePageTitle'
 
 /**
  * Pages juridiques publiques (LCEN + RGPD + code de la consommation).
@@ -10,6 +11,7 @@ import { Logo } from '@/components/ui/Logo'
  */
 
 function LegalShell({ title, children }: { title: string; children: ReactNode }) {
+  usePageTitle(title)
   return (
     <div className="min-h-dvh bg-papier">
       <header className="border-b border-encre-doux/20 bg-carte/95">

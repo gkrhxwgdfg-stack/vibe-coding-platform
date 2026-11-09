@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Check, ChefHat, ChevronLeft, ChevronRight, ImagePlus, Plus, X } from 'lucide-react'
 import { useRecipe } from '@/hooks/useRecipes'
 import { useAuth } from '@/context/AuthContext'
+import { usePageTitle } from '@/lib/usePageTitle'
 import { cookingStep } from '@/lib/cooking'
 import { scaleIngredients } from '@/lib/scale'
 import { formatDate } from '@/lib/format'
@@ -44,6 +45,7 @@ type Phase = 'mise-en-place' | 'cooking' | 'done'
 export function CookingPage() {
   const { id } = useParams<{ id: string }>()
   const { recipe, loading, error } = useRecipe(id)
+  usePageTitle(recipe?.title ?? 'Mode cuisson')
   const { profile } = useAuth()
   const navigate = useNavigate()
   const { premium, dejaEssai, refetch: refetchPlan } = useFamillePlan()

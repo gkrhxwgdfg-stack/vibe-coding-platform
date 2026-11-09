@@ -1,5 +1,5 @@
 -- ============================================================
--- Savia — bucket Storage (photos de recettes)
+-- Sivia — bucket Storage (photos de recettes)
 -- À exécuter si le bucket n'existe pas (le script initial a pu
 -- échouer partiellement si exécuté en plusieurs fois).
 -- ============================================================

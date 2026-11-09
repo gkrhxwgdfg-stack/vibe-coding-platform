@@ -118,6 +118,15 @@ body::after {
   border-radius: 6px;
 }
 
+/* Tailwind v4 n'applique plus cursor: pointer aux boutons (curseur flèche
+   par défaut). On le rétablit globalement : tout élément cliquable actif
+   montre la main ; un élément désactivé garde cursor-not-allowed. */
+button:not(:disabled),
+[role='button']:not(:disabled),
+summary {
+  cursor: pointer;
+}
+
 /* Cibles tactiles confortables (min 44px) gérées au niveau des composants */
 button,
 a,

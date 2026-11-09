@@ -1,8 +1,8 @@
-# Savia — Recettes de famille
+# Sivia — Recettes de famille
 
-> **Savia. Le savoir qui se transmet en cuisine.**
+> **Sivia. Le savoir qui se transmet en cuisine.**
 
-Savia est le carnet de recettes de votre famille — celui qui ne se perd jamais.
+Sivia est le carnet de recettes de votre famille — celui qui ne se perd jamais.
 Rassemblez les recettes de ceux que vous aimez : les annotations à la main de
 grand-mère, la photo du plat du dimanche, le secret de la sauce qui se transmet
 de génération en génération.
@@ -224,7 +224,7 @@ orchestrent ; les hooks et `services/` portent la logique Supabase.
 
 - **v1 (livrée)** : MVP complet, **commentaires et photos** compris
 - **v2 (livrée)** : dossier de raffinement v2 en 8 chantiers — fondations
-  motion + tokens, ton de voix Savia, accueil/bibliothèque animés, fiche
+  motion + tokens, ton de voix Sivia, accueil/bibliothèque animés, fiche
   recette v2 (tampon, transmission, anecdote), mode cuisson v2 (mise en place,
   minuteurs, fil de vie), export PDF fiche + impression, **le carnet familial
   en livre A5**, grande lecture + audit accessibilité WCAG AA
@@ -237,4 +237,4 @@ Projet familial privé — tous droits réservés.
 
 ---
 
-*À très vite, en cuisine. — Savia*
+*À très vite, en cuisine. — Sivia*

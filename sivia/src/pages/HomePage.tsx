@@ -5,6 +5,7 @@ import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { useRecipes } from '@/hooks/useRecipes'
 import { useRecentComments } from '@/hooks/useComments'
 import { useAuth } from '@/context/AuthContext'
+import { usePageTitle } from '@/lib/usePageTitle'
 import { deleteComment, fetchPlancheComments, updateComment } from '@/services/comments'
 import { AddPhotoModal } from '@/components/planche/AddPhotoModal'
 import { EditMomentModal } from '@/components/planche/EditMomentModal'
@@ -30,6 +31,7 @@ import type { RecipeComment } from '@/lib/types'
 const NO_FILTERS = { query: '', category: 'toutes' as const, authorId: 'tous' as const }
 
 export function HomePage() {
+  usePageTitle()
   const { profile, family } = useAuth()
   const { recipes, loading } = useRecipes(NO_FILTERS)
   const { items: recentActivity, loading: activityLoading } = useRecentComments(5)

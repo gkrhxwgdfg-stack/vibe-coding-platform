@@ -1,4 +1,4 @@
-# Configuration Supabase pour Savia
+# Configuration Supabase pour Sivia
 
 > **Projet configuré** : `vibe-coding-platform` — ref `dnpjbvjonwrovyqjrmnw`
 > URL : `https://dnpjbvjonwrovyqjrmnw.supabase.co`

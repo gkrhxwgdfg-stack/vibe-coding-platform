@@ -132,7 +132,7 @@ export function DiagnosticPage() {
   const [replayKey, setReplayKey] = useState(0)
 
   return (
-    <AuthShell title="Diagnostic Sivia" handNote="On vérifie que tout est bien branché.">
+    <AuthShell title="Diagnostic" handNote="On vérifie que tout est bien branché.">
       <Card className="anim-enter">
         <p className="text-sm text-encre-doux mb-4">
           Bac à sable motion (chantier 1) — les cartes ci-dessous rejouent leur

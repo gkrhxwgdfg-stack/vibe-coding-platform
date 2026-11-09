@@ -1,5 +1,5 @@
 -- ============================================================
--- Savia — schéma initial
+-- Sivia — schéma initial
 -- Principe fondamental : chaque groupe familial ne peut lire
 -- et écrire que ses propres données (Row Level Security).
 -- ============================================================

@@ -1,5 +1,5 @@
 -- ============================================================
--- Savia — correctif RLS complet (migration 0004)
+-- Sivia — correctif RLS complet (migration 0004)
 --
 -- Problèmes constatés en production :
 -- 1. La policy families_insert_authenticated existe mais l'INSERT échoue

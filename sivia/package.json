@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Savia — le carnet de recettes de famille. Le savoir qui se transmet à table.",
+  "description": "Sivia — le carnet de recettes de famille. Le savoir qui se transmet à table.",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

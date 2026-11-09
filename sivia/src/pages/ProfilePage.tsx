@@ -2,6 +2,7 @@ import { useRef, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { BookOpen, Camera, Download, Eye, Heart, LogOut, Mail, Sparkles, Trash2 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
+import { usePageTitle } from '@/lib/usePageTitle'
 import { useRecipes } from '@/hooks/useRecipes'
 import { useFamillePlan } from '@/hooks/useFamillePlan'
 import { supabase } from '@/lib/supabase'
@@ -61,6 +62,7 @@ export function ProfilePage() {
     setApercu(plan)
   }
 
+  usePageTitle(profile?.display_name ?? 'Mon profil')
   if (!profile) return null
   const profileId = profile.id
 

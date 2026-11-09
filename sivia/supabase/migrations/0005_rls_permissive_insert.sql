@@ -1,5 +1,5 @@
 -- ============================================================
--- Savia — correctif RLS familles (migration 0005)
+-- Sivia — correctif RLS familles (migration 0005)
 --
 -- Diagnostic : la policy families_insert_authenticated bloque TOUS les INSERT,
 -- même avec le bon created_by. auth.uid() fonctionne (prouvé via profiles).
