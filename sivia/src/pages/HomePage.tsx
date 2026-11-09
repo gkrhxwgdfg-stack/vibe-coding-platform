@@ -142,6 +142,7 @@ export function HomePage() {
                         </Button>
                       </EmptyState>
                     ) : (
+                      <>
                       <CordeALinge>
                         {recentPhotos.map((recipe, i) => (
                           <Link
@@ -225,6 +226,7 @@ export function HomePage() {
                           </Button>
                         </div>
                       )}
+                      </>
                     )
           return premium ? (
             plancheBody
