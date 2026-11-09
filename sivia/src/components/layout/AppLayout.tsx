@@ -46,8 +46,10 @@ export function AppLayout({ children }: { children?: ReactNode }) {
         {children ?? <Outlet />}
       </main>
 
-      {/* Pied de page : les pages que toute application française se doit d'offrir */}
-      <footer className="w-full max-w-3xl mx-auto px-4 pb-2 text-center text-xs text-encre-doux/70">
+      {/* Pied de page : les pages que toute application française se doit d'offrir.
+          mt-12 = de l'air entre le contenu et les mentions (la page respire,
+          les mentions restent tout en bas, accessibles et lisibles). */}
+      <footer className="mt-12 w-full max-w-3xl mx-auto px-4 pb-2 text-center text-sm text-encre-doux">
         <Link to="/mentions-legales" className="hover:text-tomate hover:underline">Mentions légales</Link>
         <span aria-hidden="true"> · </span>
         <Link to="/confidentialite" className="hover:text-tomate hover:underline">Confidentialité</Link>

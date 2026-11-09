@@ -36,14 +36,14 @@ export function ConfirmDialog({
       <button
         type="button"
         onClick={onCancel}
-        className="shrink-0 min-h-9 px-1.5 rounded-full text-sm text-encre-doux hover:bg-ble-clair"
+        className="shrink-0 min-h-9 px-2.5 rounded-full text-sm text-encre-doux hover:bg-ble-clair"
       >
         {cancelLabel}
       </button>
       <button
         type="button"
         onClick={onConfirm}
-        className="shrink-0 min-h-9 px-1.5 rounded-full bg-tomate text-white text-sm font-bold hover:bg-[#a72f23]"
+        className="shrink-0 min-h-9 px-2.5 rounded-full bg-tomate text-white text-sm font-bold hover:bg-[#a72f23]"
       >
         {confirmLabel}
       </button>
