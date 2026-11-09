@@ -249,11 +249,11 @@ export function HomePage() {
                               }
                             />
                             {confirmRemoveMomentId === comment.id && (
-                              <div className="absolute top-full right-0 mt-1 z-50 max-w-[200px]">
+                              <div className="mt-1 w-full flex justify-center">
                                 <ConfirmDialog
                                   title="Retirer ?"
                                   message="La photo et son mot quitteront la planche familiale."
-                                  confirmLabel="Oui, retirer"
+                                  confirmLabel="Oui"
                                   onCancel={() => setConfirmRemoveMomentId(null)}
                                   onConfirm={() => {
                                     setConfirmRemoveMomentId(null)
