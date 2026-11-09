@@ -293,7 +293,7 @@ export function FamilyPage() {
               />
               {confirmRemoveTreeMember && (
                 <ConfirmDialog
-                  title="Retirer ce membre de l’arbre ?"
+                  title="Retirer ce membre ?"
                   message="Rien d’autre ne sera effacé : ses recettes restent dans le carnet. Tu confirmes ?"
                   confirmLabel="Oui, retirer"
                   onCancel={() => setConfirmRemoveTreeMember(null)}
@@ -476,7 +476,7 @@ export function FamilyPage() {
                   </Button>
                   {confirmCancelId === invitation.id && (
                     <ConfirmDialog
-                      title="Retirer cette invitation ?"
+                      title="Retirer le lien ?"
                       message="Le lien ne fonctionnera plus pour ton invité. Tu confirmes ?"
                       confirmLabel="Oui, retirer"
                       onCancel={() => setConfirmCancelId(null)}

@@ -227,23 +227,38 @@ export function HomePage() {
                               tilt={stableTilt(comment.id)}
                               overlay={
                                 comment.author_id === profile?.id ? (
-                                  <span className="absolute top-2 right-2 flex gap-1.5 z-10">
+                                  <span className="absolute top-2 right-2 flex flex-col items-end gap-1.5 z-10">
                                     <button
                                       type="button"
                                       onClick={() => setEditingMoment(comment)}
                                       aria-label="Modifier le mot de ce moment"
-                                      className="min-h-11 min-w-11 rounded-full bg-carte/95 shadow inline-flex items-center justify-center text-encre hover:text-vert"
+                                      className="min-h-8 min-w-8 rounded-full bg-carte/85 shadow-sm inline-flex items-center justify-center text-encre-doux hover:text-vert"
                                     >
-                                      <Pencil size={16} aria-hidden="true" />
+                                      <Pencil size={14} aria-hidden="true" />
                                     </button>
                                     <button
                                       type="button"
                                       onClick={() => setConfirmRemoveMomentId(comment.id)}
                                       aria-label="Retirer ce moment de la planche"
-                                      className="min-h-11 min-w-11 rounded-full bg-carte/95 shadow inline-flex items-center justify-center text-encre hover:text-tomate"
+                                      className="min-h-8 min-w-8 rounded-full bg-carte/85 shadow-sm inline-flex items-center justify-center text-encre-doux hover:text-tomate"
                                     >
-                                      <Trash2 size={16} aria-hidden="true" />
+                                      <Trash2 size={14} aria-hidden="true" />
                                     </button>
+                                    {confirmRemoveMomentId === comment.id && (
+                                      <ConfirmDialog
+                                        title="Retirer ?"
+                                        message="La photo et son mot quitteront la planche familiale."
+                                        confirmLabel="Oui, retirer"
+                                        onCancel={() => setConfirmRemoveMomentId(null)}
+                                        onConfirm={() => {
+                                          setConfirmRemoveMomentId(null)
+                                          void (async () => {
+                                            await deleteComment(comment.id)
+                                            await refetchPlanche(true)
+                                          })()
+                                        }}
+                                      />
+                                    )}
                                   </span>
                                 ) : undefined
                               }
@@ -291,21 +306,6 @@ export function HomePage() {
           if (!editingMoment) return
           await updateComment(editingMoment.id, body)
           setEditingMoment(null)
-          await refetchPlanche(true)
-        }}
-      />
-      {/* Retirer un de ses moments de la planche : confirmation Oui/Non */}
-      <ConfirmDialog
-        open={confirmRemoveMomentId !== null}
-        title="Retirer ce moment ?"
-        message="La photo et son mot quitteront la planche familiale. Tu confirmes ?"
-        confirmLabel="Oui, retirer"
-        onCancel={() => setConfirmRemoveMomentId(null)}
-        onConfirm={async () => {
-          const id = confirmRemoveMomentId
-          setConfirmRemoveMomentId(null)
-          if (!id) return
-          await deleteComment(id)
           await refetchPlanche(true)
         }}
       />

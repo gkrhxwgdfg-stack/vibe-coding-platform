@@ -116,7 +116,7 @@ export function FamilyEvents() {
                           </button>
                           {confirmRemoveId === event.id && (
                             <ConfirmDialog
-                              title="Retirer ce souvenir ?"
+                              title="Retirer ?"
                               message="Le repas et sa photo quitteront la chronologie de la famille. Tu confirmes ?"
                               confirmLabel="Oui, retirer"
                               onCancel={() => setConfirmRemoveId(null)}
@@ -209,7 +209,7 @@ function AddEventModal({ recipes, onClose, onCreated, add }: AddEventModalProps)
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-encre/40 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-encre/40 p-4"
       role="presentation"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose()

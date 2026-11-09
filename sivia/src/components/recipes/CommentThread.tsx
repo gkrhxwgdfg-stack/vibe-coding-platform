@@ -178,7 +178,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                   </p>
                 </div>
                 {isMine && !isEditing && (
-                  <div className="flex shrink-0">
+                  <div className="flex shrink-0 items-center">
                     <button
                       type="button"
                       onClick={() => startEdit(comment)}
@@ -195,19 +195,19 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                     >
                       <Trash2 size={18} aria-hidden="true" />
                     </button>
+                    {confirmRemoveId === comment.id && (
+                      <ConfirmDialog
+                        title="Retirer ?"
+                        message="Le message et sa photo quitteront le fil de vie de la famille."
+                        confirmLabel="Oui, retirer"
+                        onCancel={() => setConfirmRemoveId(null)}
+                        onConfirm={() => {
+                          void remove(comment.id)
+                          setConfirmRemoveId(null)
+                        }}
+                      />
+                    )}
                   </div>
-                )}
-                {confirmRemoveId === comment.id && (
-                  <ConfirmDialog
-                    title="Retirer ce message ?"
-                    message="Le message et sa photo quitteront le fil de vie de la famille. Tu confirmes ?"
-                    confirmLabel="Oui, retirer"
-                    onCancel={() => setConfirmRemoveId(null)}
-                    onConfirm={() => {
-                      void remove(comment.id)
-                      setConfirmRemoveId(null)
-                    }}
-                  />
                 )}
               </li>
             )

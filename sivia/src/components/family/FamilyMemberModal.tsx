@@ -179,7 +179,7 @@ export function FamilyMemberModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-encre/40 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-encre/40 p-4"
       role="presentation"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose()
