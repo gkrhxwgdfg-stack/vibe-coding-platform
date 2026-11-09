@@ -11,6 +11,7 @@ import { generateFamilyBookPdf } from '@/services/familyBookPdf'
 import { invitationLink } from '@/lib/paths'
 import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { Card, CardHeader } from '@/components/ui/Card'
 import { Spinner } from '@/components/ui/Spinner'
 import { FamilyTree } from '@/components/family/FamilyTree'
@@ -70,8 +71,9 @@ export function FamilyPage() {
   const [submitting, setSubmitting] = useState(false)
   const [lastLink, setLastLink] = useState<string | null>(null)
   const [copiedId, setCopiedId] = useState<string | null>(null)
-  // Confirmation avant annulation d'une invitation
+  // Confirmations Oui/Non : annulation d'une invitation, retrait d'un membre de l'arbre
   const [confirmCancelId, setConfirmCancelId] = useState<string | null>(null)
+  const [confirmRemoveTreeMember, setConfirmRemoveTreeMember] = useState<FamilyMember | null>(null)
 
   // Renommage de la famille
   const [editingName, setEditingName] = useState(false)
@@ -131,12 +133,10 @@ export function FamilyPage() {
     setTimeout(() => setCopiedId(null), 2000)
   }
 
-  /** Retrait d'un membre de l'arbre : confirmation obligatoire — la
-   *  suppression ne doit jamais arriver par accident. */
-  async function handleRemoveTreeMember(member: FamilyMember) {
-    if (!window.confirm('Retirer ce membre de l’arbre ? Rien d’autre ne sera effacé.')) return
-    const { error: removeError } = await removeTreeMember(member.id)
-    if (removeError) setError(removeError)
+  /** Retrait d'un membre de l'arbre : le clic ouvre la confirmation
+   *  Oui/Non — la suppression ne doit jamais arriver par accident. */
+  function handleRemoveTreeMember(member: FamilyMember) {
+    setConfirmRemoveTreeMember(member)
   }
 
   /** Position d'arrivée des boutons Aperçu / Débloquer : le MILIEU de la
@@ -291,6 +291,21 @@ export function FamilyPage() {
                 onCreateMember={addTreeMember}
                 onUpdateMember={editTreeMember}
               />
+              {confirmRemoveTreeMember && (
+                <ConfirmDialog
+                  title="Retirer ce membre de l’arbre ?"
+                  message="Rien d’autre ne sera effacé : ses recettes restent dans le carnet. Tu confirmes ?"
+                  confirmLabel="Oui, retirer"
+                  onCancel={() => setConfirmRemoveTreeMember(null)}
+                  onConfirm={async () => {
+                    const member = confirmRemoveTreeMember
+                    setConfirmRemoveTreeMember(null)
+                    if (!member) return
+                    const { error: removeError } = await removeTreeMember(member.id)
+                    if (removeError) setError(removeError)
+                  }}
+                />
+              )}
             </div>
           </>
         ) : (
@@ -452,21 +467,25 @@ export function FamilyPage() {
                     )}
                   </Button>
                   <Button
-                    variant={confirmCancelId === invitation.id ? 'danger' : 'ghost'}
-                    className={confirmCancelId !== invitation.id ? 'text-tomate' : undefined}
-                    onClick={() => {
-                      if (confirmCancelId === invitation.id) {
-                        void cancelInvitation(invitation)
-                        setConfirmCancelId(null)
-                      } else {
-                        setConfirmCancelId(invitation.id)
-                      }
-                    }}
-                    aria-label={confirmCancelId === invitation.id ? 'Confirmer le retrait de l’invitation' : `Retirer l’invitation${invitation.email ? ` de ${invitation.email}` : ''}`}
+                    variant="ghost"
+                    className="text-tomate"
+                    onClick={() => setConfirmCancelId(invitation.id)}
+                    aria-label={`Retirer l’invitation${invitation.email ? ` de ${invitation.email}` : ''}`}
                   >
                     <Trash2 size={18} aria-hidden="true" />
-                    {confirmCancelId === invitation.id ? ' Sûr ?' : ''}
                   </Button>
+                  {confirmCancelId === invitation.id && (
+                    <ConfirmDialog
+                      title="Retirer cette invitation ?"
+                      message="Le lien ne fonctionnera plus pour ton invité. Tu confirmes ?"
+                      confirmLabel="Oui, retirer"
+                      onCancel={() => setConfirmCancelId(null)}
+                      onConfirm={() => {
+                        void cancelInvitation(invitation)
+                        setConfirmCancelId(null)
+                      }}
+                    />
+                  )}
                 </Card>
               </li>
             ))}

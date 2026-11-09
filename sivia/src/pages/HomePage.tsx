@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useMemo } from 'react'
-import { Plus } from 'lucide-react'
+import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { useRecipes } from '@/hooks/useRecipes'
 import { useRecentComments } from '@/hooks/useComments'
 import { useAuth } from '@/context/AuthContext'
-import { fetchPlancheComments } from '@/services/comments'
+import { deleteComment, fetchPlancheComments, updateComment } from '@/services/comments'
 import { AddPhotoModal } from '@/components/planche/AddPhotoModal'
+import { EditMomentModal } from '@/components/planche/EditMomentModal'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { PaywallModal } from '@/components/monetisation/PaywallModal'
 import { PremiumGate } from '@/components/monetisation/PremiumGate'
 import { useFamillePlan } from '@/hooks/useFamillePlan'
@@ -41,6 +43,9 @@ export function HomePage() {
   const [momentsHasMore, setMomentsHasMore] = useState(false)
   const [momentsLoadingMore, setMomentsLoadingMore] = useState(false)
   const [photoModalOpen, setPhotoModalOpen] = useState(false)
+  // Modifier ou retirer SES moments de la planche (confirmation Oui/Non)
+  const [editingMoment, setEditingMoment] = useState<RecipeComment | null>(null)
+  const [confirmRemoveMomentId, setConfirmRemoveMomentId] = useState<string | null>(null)
 
   const refetchPlanche = useCallback(async (silent = false) => {
     if (!profile?.family_id) {
@@ -220,6 +225,28 @@ export function HomePage() {
                                 </span>
                               }
                               tilt={stableTilt(comment.id)}
+                              overlay={
+                                comment.author_id === profile?.id ? (
+                                  <span className="absolute top-2 right-2 flex gap-1.5 z-10">
+                                    <button
+                                      type="button"
+                                      onClick={() => setEditingMoment(comment)}
+                                      aria-label="Modifier le mot de ce moment"
+                                      className="min-h-11 min-w-11 rounded-full bg-carte/95 shadow inline-flex items-center justify-center text-encre hover:text-vert"
+                                    >
+                                      <Pencil size={16} aria-hidden="true" />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => setConfirmRemoveMomentId(comment.id)}
+                                      aria-label="Retirer ce moment de la planche"
+                                      className="min-h-11 min-w-11 rounded-full bg-carte/95 shadow inline-flex items-center justify-center text-encre hover:text-tomate"
+                                    >
+                                      <Trash2 size={16} aria-hidden="true" />
+                                    </button>
+                                  </span>
+                                ) : undefined
+                              }
                             />
                           </div>
                         ))}
@@ -255,6 +282,32 @@ export function HomePage() {
         open={photoModalOpen}
         onClose={() => setPhotoModalOpen(false)}
         onPublished={() => refetchPlanche(true)}
+      />
+      {/* Modifier le mot d'un de ses moments de la planche */}
+      <EditMomentModal
+        moment={editingMoment}
+        onClose={() => setEditingMoment(null)}
+        onSaved={async (body) => {
+          if (!editingMoment) return
+          await updateComment(editingMoment.id, body)
+          setEditingMoment(null)
+          await refetchPlanche(true)
+        }}
+      />
+      {/* Retirer un de ses moments de la planche : confirmation Oui/Non */}
+      <ConfirmDialog
+        open={confirmRemoveMomentId !== null}
+        title="Retirer ce moment ?"
+        message="La photo et son mot quitteront la planche familiale. Tu confirmes ?"
+        confirmLabel="Oui, retirer"
+        onCancel={() => setConfirmRemoveMomentId(null)}
+        onConfirm={async () => {
+          const id = confirmRemoveMomentId
+          setConfirmRemoveMomentId(null)
+          if (!id) return
+          await deleteComment(id)
+          await refetchPlanche(true)
+        }}
       />
       <PaywallModal
         open={paywallOpen}
