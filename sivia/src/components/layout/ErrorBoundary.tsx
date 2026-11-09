@@ -1,47 +1,47 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
-import { Button } from '@/components/ui/Button'
-import { Card } from '@/components/ui/Card'
-import { Logo } from '@/components/ui/Logo'
 
+/**
+ * Filet de sécurité de l'application : si un écran casse (donnée
+ * inattendue, réseau au mauvais moment), la famille ne voit jamais une
+ * page blanche. Un mot doux, un bouton pour recharger, et le carnet
+ * reste intact côté serveur.
+ */
 interface Props {
   children: ReactNode
 }
 
 interface State {
-  hasError: boolean
+  error: Error | null
 }
 
-/**
- * Filet de sécurité global : si un écran plante (donnée manquante, réseau…),
- * on affiche un message chaleureux au lieu d'une page blanche.
- */
 export class ErrorBoundary extends Component<Props, State> {
-  state: State = { hasError: false }
+  state: State = { error: null }
 
-  static getDerivedStateFromError(): State {
-    return { hasError: true }
+  static getDerivedStateFromError(error: Error): State {
+    return { error }
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error('[Savia] Erreur interceptée:', error, info.componentStack)
+    console.error('Sivia — écran cassé :', error, info.componentStack)
   }
 
   render() {
-    if (this.state.hasError) {
+    if (this.state.error) {
       return (
-        <div className="min-h-dvh flex flex-col items-center justify-center px-5 py-10">
-          <div className="w-full max-w-md text-center">
-            <div className="inline-block mb-4">
-              <Logo link={false} />
-            </div>
-            <Card className="py-8">
-              <p className="font-serif text-4xl text-tomate mb-3" aria-hidden="true">Savia</p>
-              <h1 className="font-serif text-2xl font-semibold mb-2">Ratée, la page a débordé.</h1>
-              <p className="text-encre-doux mb-2">On essuie et on recommence ?</p>
-              <Button size="lg" onClick={() => window.location.assign('/')}>
-                Retour au carnet
-              </Button>
-            </Card>
+        <div className="min-h-screen bg-papier flex items-center justify-center p-6">
+          <div className="max-w-md text-center space-y-4">
+            <p className="font-serif text-3xl font-semibold">Un plat a débordé du four</p>
+            <p className="text-lg text-encre-doux">
+              Rien n’est perdu : le carnet de la famille est bien gardé.
+              Recharge la page pour reprendre où tu en étais.
+            </p>
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="rounded-full bg-tomate text-white font-bold px-6 py-3 min-h-11"
+            >
+              Recharger la page
+            </button>
           </div>
         </div>
       )

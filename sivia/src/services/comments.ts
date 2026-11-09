@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import { friendlyError } from '@/lib/copy'
 import { STORAGE_BUCKET } from '@/lib/constants'
-import { compressImage } from '@/lib/image'
+import { compressImage, estPhotoValide } from '@/lib/image'
 import type { RecipeComment } from '@/lib/types'
 
 /**
@@ -14,6 +14,8 @@ type CommentRow = RecipeComment & { author: import('@/lib/types').Profile | null
 /** Upload d'une photo de commentaire, allégée côté navigateur (compressImage),
  *  dossier = family_id. Retourne le chemin. */
 async function uploadCommentPhoto(familyId: string, authorId: string, file: File): Promise<string | null> {
+  // Garde-fou : fichier non-image ou trop lourd -> refus propre, message doux
+  if (!estPhotoValide(file)) return null
   const blob = await compressImage(file)
   const path = `${familyId}/comments/${authorId}/${crypto.randomUUID()}.jpg`
   const { error } = await supabase.storage.from(STORAGE_BUCKET).upload(path, blob, {
@@ -94,7 +96,7 @@ export async function addComment(
   let photoPath: string | null = null
   if (photoFile) {
     photoPath = await uploadCommentPhoto(familyId, authorId, photoFile)
-    if (!photoPath) return { error: "La photo n’a pas pu être envoyée. Réessaie ?" }
+    if (!photoPath) return { error: "La photo n’a pas pu être envoyée (trop lourde ou pas une image). Réessaie ?" }
   }
   const { error } = await supabase.from('recipe_comments').insert({
     recipe_id: recipeId,

@@ -52,9 +52,14 @@ export function HomePage() {
     // silent : après publication, la planche se met à jour sans spinner —
     // la page garde sa hauteur et sa position (aucun retour en haut).
     if (!silent) setPlancheLoading(true)
-    const page = await fetchPlancheComments(profile.family_id, { limit: 12 })
-    setPlancheMoments(page.items)
-    setMomentsHasMore(page.hasMore)
+    try {
+      const page = await fetchPlancheComments(profile.family_id, { limit: 12 })
+      setPlancheMoments(page.items)
+      setMomentsHasMore(page.hasMore)
+    } catch {
+      setPlancheMoments([])
+      setMomentsHasMore(false)
+    }
     setPlancheLoading(false)
   }, [profile?.family_id])
 
@@ -64,12 +69,16 @@ export function HomePage() {
     const oldest = plancheMoments[plancheMoments.length - 1]?.created_at
     if (!oldest) return
     setMomentsLoadingMore(true)
-    const page = await fetchPlancheComments(profile.family_id, { before: oldest, limit: 12 })
-    setPlancheMoments((prev) => {
-      const seen = new Set(prev.map((c) => c.id))
-      return [...prev, ...page.items.filter((c) => !seen.has(c.id))]
-    })
-    setMomentsHasMore(page.hasMore)
+    try {
+      const page = await fetchPlancheComments(profile.family_id, { before: oldest, limit: 12 })
+      setPlancheMoments((prev) => {
+        const seen = new Set(prev.map((c) => c.id))
+        return [...prev, ...page.items.filter((c) => !seen.has(c.id))]
+      })
+      setMomentsHasMore(page.hasMore)
+    } catch {
+      /* réseau capricieux : on garde les moments déjà affichés */
+    }
     setMomentsLoadingMore(false)
   }, [profile?.family_id, plancheMoments, momentsLoadingMore])
 

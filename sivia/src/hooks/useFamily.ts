@@ -19,12 +19,16 @@ export function useFamilyMembers() {
       return
     }
     if (!silent) setLoading(true)
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('family_id', profile.family_id)
-      .order('display_name')
-    setMembers((data ?? []) as Profile[])
+    try {
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('family_id', profile.family_id)
+        .order('display_name')
+      setMembers((data ?? []) as Profile[])
+    } catch {
+      setMembers([])
+    }
     setLoading(false)
   }, [profile?.family_id])
 
@@ -48,12 +52,16 @@ export function useInvitations() {
       return
     }
     if (!silent) setLoading(true)
-    const { data } = await supabase
-      .from('invitations')
-      .select('*')
-      .eq('family_id', profile.family_id)
-      .order('created_at', { ascending: false })
-    setInvitations((data ?? []) as Invitation[])
+    try {
+      const { data } = await supabase
+        .from('invitations')
+        .select('*')
+        .eq('family_id', profile.family_id)
+        .order('created_at', { ascending: false })
+      setInvitations((data ?? []) as Invitation[])
+    } catch {
+      setInvitations([])
+    }
     setLoading(false)
   }, [profile?.family_id])
 

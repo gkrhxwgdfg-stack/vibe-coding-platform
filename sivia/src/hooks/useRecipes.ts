@@ -34,6 +34,7 @@ export function useRecipes(filters: RecipeFilters): UseRecipesResult {
     setLoading(true)
     setError(null)
 
+    try {
     let query = supabase
       .from('recipes')
       .select('*, author:profiles!recipes_author_id_fkey(*)')
@@ -79,6 +80,11 @@ export function useRecipes(filters: RecipeFilters): UseRecipesResult {
     }))
 
     setRecipes(q ? enriched.filter((r) => matchesFullText(r, q)) : enriched)
+    } catch {
+      // Hors ligne / réseau coupé : erreur douce, pas de spinner figé
+      setError(friendlyError('failed to fetch'))
+      setRecipes([])
+    }
     setLoading(false)
   }, [familyId, user, filters.category, filters.authorId, filters.query])
 
@@ -116,6 +122,7 @@ export function useRecipe(recipeId: string | undefined) {
       return
     }
     setLoading(true)
+    try {
     const { data, error: fetchError } = await supabase
       .from('recipes')
       .select('*, author:profiles!recipes_author_id_fkey(*)')
@@ -149,6 +156,10 @@ export function useRecipe(recipeId: string | undefined) {
       is_favorite: !!fav,
       family_favorites: familyFavCount ?? 0,
     })
+    } catch {
+      setError(friendlyError('failed to fetch'))
+      setRecipe(null)
+    }
     setLoading(false)
   }, [recipeId, user])
 

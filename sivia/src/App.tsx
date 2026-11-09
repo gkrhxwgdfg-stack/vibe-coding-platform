@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { RequireAuth } from '@/components/layout/RequireAuth'
 import { ScrollToTop } from '@/components/layout/ScrollToTop'
+import { ErrorBoundary } from '@/components/layout/ErrorBoundary'
 import { Spinner } from '@/components/ui/Spinner'
 
 // Chargement différé par page : le premier écran reste léger (mobile-first)
@@ -30,6 +31,7 @@ function PageLoader() {
 export function App() {
   return (
     <Suspense fallback={<PageLoader />}>
+      <ErrorBoundary>
       {/* Chaque changement de page repart du haut — tous les boutons,
           tous les chemins (règle d'or de navigation Sivia). */}
       <ScrollToTop />
@@ -62,6 +64,7 @@ export function App() {
         <Route path="/404" element={<NotFoundPage />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>
+      </ErrorBoundary>
     </Suspense>
   )
 }

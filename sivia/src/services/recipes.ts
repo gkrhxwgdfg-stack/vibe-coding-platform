@@ -3,7 +3,7 @@ import { STORAGE_BUCKET } from '@/lib/constants'
 import type { RecipeFormValues } from '@/lib/types'
 import type { Database } from '@/lib/database.types'
 import { friendlyError } from '@/lib/copy'
-import { compressImage } from '@/lib/image'
+import { compressImage, estPhotoValide } from '@/lib/image'
 
 /**
  * Logique métier des recettes : création / mise à jour / photo / scellage.
@@ -17,6 +17,8 @@ function parseMinutes(value: string): number | null {
 
 /** Upload la photo dans le bucket, dossier = family_id. Retourne le chemin. */
 async function uploadPhoto(familyId: string, authorId: string, file: File): Promise<string | null> {
+  // Garde-fou : fichier non-image ou trop lourd -> refus propre
+  if (!estPhotoValide(file)) return null
   // Compression côté navigateur : ~3–5 Mo → ~200–400 Ko. Le carnet familial
   // reste léger et peu coûteux, même rempli pendant 10 ans.
   const blob = await compressImage(file)
@@ -40,6 +42,9 @@ export async function createRecipe(familyId: string, authorId: string, values: R
   let photoPath: string | null = null
   if (values.photoFile) {
     photoPath = await uploadPhoto(familyId, authorId, values.photoFile)
+    // Pas de photo perdue en silence : si l'upload échoue, on bloque la
+    // création pour que le formulaire affiche l'erreur et permette de réessayer.
+    if (!photoPath) return { data: null, error: "La photo n’a pas pu être envoyée (trop lourde ou pas une image). Réessaie ?" }
   }
 
   const payload = {
@@ -70,7 +75,11 @@ export async function updateRecipe(
 ) {
   let photoPath: string | null | undefined
   if (values.photoFile) {
-    photoPath = await uploadPhoto(familyId, authorId, values.photoFile)
+    const uploaded = await uploadPhoto(familyId, authorId, values.photoFile)
+    if (uploaded === null) {
+      return { data: null, error: "La photo n’a pas pu être envoyée (trop lourde ou pas une image). Réessaie ?" }
+    }
+    photoPath = uploaded
   } else if (values.keepExistingPhoto === false) {
     photoPath = null
   }

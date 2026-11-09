@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/context/AuthContext'
 import { addComment, deleteComment, fetchComments, updateComment } from '@/services/comments'
 import { photoPublicUrl } from '@/services/recipes'
+import { COPY } from '@/lib/copy'
 import type { RecipeComment } from '@/lib/types'
 
 /**
@@ -37,9 +38,14 @@ export function useComments(recipeId: string | undefined, familyId?: string) {
       return
     }
     if (!silent) setLoading(true)
-    const page = await fetchComments(recipeId, { limit: PAGE_SIZE })
-    setComments(page.items)
-    setHasOlder(page.hasMore)
+    try {
+      const page = await fetchComments(recipeId, { limit: PAGE_SIZE })
+      setComments(page.items)
+      setHasOlder(page.hasMore)
+    } catch {
+      // Réseau capricieux : message doux, pas de spinner figé à vie
+      setError(COPY.errors.reseau)
+    }
     setLoading(false)
   }, [recipeId])
 
@@ -49,9 +55,13 @@ export function useComments(recipeId: string | undefined, familyId?: string) {
     const oldest = comments[0]?.created_at
     if (!oldest) return
     setLoadingOlder(true)
-    const page = await fetchComments(recipeId, { before: oldest, limit: PAGE_SIZE })
-    setComments((prev) => mergeComments(prev, page.items))
-    setHasOlder(page.hasMore)
+    try {
+      const page = await fetchComments(recipeId, { before: oldest, limit: PAGE_SIZE })
+      setComments((prev) => mergeComments(prev, page.items))
+      setHasOlder(page.hasMore)
+    } catch {
+      setError(COPY.errors.reseau)
+    }
     setLoadingOlder(false)
   }, [recipeId, comments, loadingOlder])
 
@@ -74,9 +84,13 @@ export function useComments(recipeId: string | undefined, familyId?: string) {
       }
       // Fusion de la dernière page avec les messages déjà chargés : les
       // vieux messages déjà sortis par « voir plus anciens » restent affichés.
-      const page = await fetchComments(recipeId, { limit: PAGE_SIZE })
-      setComments((prev) => mergeComments(prev, page.items))
-      setHasOlder((prev) => prev || page.hasMore)
+      try {
+        const page = await fetchComments(recipeId, { limit: PAGE_SIZE })
+        setComments((prev) => mergeComments(prev, page.items))
+        setHasOlder((prev) => prev || page.hasMore)
+      } catch {
+        /* le message est parti : on garde l'affichage actuel */
+      }
       return { error: null }
     },
     [recipeId, profile, familyId, refetch],

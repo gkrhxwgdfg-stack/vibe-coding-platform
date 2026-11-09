@@ -38,3 +38,15 @@ export async function compressImage(
     return file
   }
 }
+
+/** Taille maximum acceptée pour une photo, même si la compression échoue. */
+export const PHOTO_MAX_OCTETS = 20 * 1024 * 1024
+
+/** Un fichier est-il une photo raisonnable ? (type ou extension connue,
+ *  taille sous la limite). Évite d'envoyer un PDF ou une vidéo de 200 Mo
+ *  au Storage quand la compression ne peut rien faire. */
+export function estPhotoValide(file: File): boolean {
+  if (file.size > PHOTO_MAX_OCTETS) return false
+  if (file.type.startsWith('image/')) return true
+  return /\.(jpe?g|png|webp|gif|heic|heif|avif)$/i.test(file.name)
+}
