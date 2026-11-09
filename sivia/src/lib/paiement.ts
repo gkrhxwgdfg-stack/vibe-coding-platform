@@ -17,10 +17,11 @@
  * (essai sans carte + liste d'attente). Voir docs/stripe.md.
  */
 
-/** Colle ici tes liens si tu ne veux pas passer par les variables d'env. */
+/** Liens de paiement (mode test). Passer en variables d'environnement
+ *  VITE_STRIPE_LINK_ANNUEL / VITE_STRIPE_LINK_MENSUEL pour le mode live. */
 const LIENS_DIRECTS: { annuel: string | null; mensuel: string | null } = {
-  annuel: null,
-  mensuel: null,
+  annuel: 'https://buy.stripe.com/test_cNi4gA3O04qy7qc2B7dnW00',
+  mensuel: 'https://buy.stripe.com/test_cNi6oI2JWf5ch0Ma3zdnW01',
 }
 
 function lien(nom: 'annuel' | 'mensuel'): string | null {

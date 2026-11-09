@@ -90,6 +90,12 @@ Deno.serve(async (req) => {
       if (familyId && typeof session.subscription === 'string') {
         const { expiresAt } = await expirationAbonnement(session.subscription)
         await activerFamille(familyId, expiresAt)
+        // Le lien de paiement est partagé entre familles : on persiste la
+        // famille sur l'abonnement pour que les renouvellements
+        // (invoice.payment_succeeded) la retrouvent sans client_reference_id.
+        await stripe.subscriptions.update(session.subscription, {
+          metadata: { family_id: familyId },
+        })
       } else if (familyId && session.mode === 'payment') {
         // Paiement unique (ex. le livre imprimé) : rien à activer côté plan.
         console.log('Paiement unique reçu pour la famille', familyId)
