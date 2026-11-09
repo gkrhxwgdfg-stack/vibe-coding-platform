@@ -27,6 +27,7 @@ import { scrollVersMilieu } from '@/lib/scroll'
 import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Spinner } from '@/components/ui/Spinner'
 import { Stamp } from '@/components/ui/Stamp'
@@ -301,15 +302,9 @@ export function RecipeDetailPage() {
               </Button>
             )}
             {isAuthor && (
-              confirmDelete ? (
-                <Button variant="danger" onClick={handleDelete}>
-                  <Trash2 size={18} aria-hidden="true" /> Oui, retirer du carnet
-                </Button>
-              ) : (
-                <Button variant="ghost" className="text-tomate" onClick={() => setConfirmDelete(true)}>
-                  <Trash2 size={18} aria-hidden="true" /> {COPY.actions.retirer}
-                </Button>
-              )
+              <Button variant="ghost" className="text-tomate" onClick={() => setConfirmDelete(true)}>
+                <Trash2 size={18} aria-hidden="true" /> {COPY.actions.retirer}
+              </Button>
             )}
           </div>
           {isAuthor && !confirmDelete && (
@@ -321,9 +316,14 @@ export function RecipeDetailPage() {
             </p>
           )}
           {isAuthor && confirmDelete && (
-            <p className="text-sm text-tomate font-bold mt-2">
-              Effacer une recette, c’est perdre un peu de quelqu’un. Tu confirmes ?
-            </p>
+            <div className="mt-2 flex justify-end">
+              <ConfirmDialog
+                title="Retirer du carnet ?"
+                message="Effacer une recette, c’est perdre un peu de quelqu’un."
+                onCancel={() => setConfirmDelete(false)}
+                onConfirm={handleDelete}
+              />
+            </div>
           )}
         </div>
       </Card>
