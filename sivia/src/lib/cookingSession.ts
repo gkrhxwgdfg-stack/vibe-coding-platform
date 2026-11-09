@@ -24,7 +24,7 @@ export interface CookingSessionState {
   updatedAt: number
 }
 
-const PREFIX = 'savia-cooking-'
+const PREFIX = 'sivia-cooking-'
 
 function key(recipeId: string): string {
   return PREFIX + recipeId

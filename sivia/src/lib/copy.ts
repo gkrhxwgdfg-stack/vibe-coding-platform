@@ -1,5 +1,5 @@
 /**
- * Charte éditoriale Savia (dossier de raffinement v2, section 2.3).
+ * Charte éditoriale Sivia (dossier de raffinement v2, section 2.3).
  * Ton de voix : tutoiement, phrases courtes, verbes de cuisine.
  * Toute microcopie de l'application passe par ici — aucun texte brut
  * dans les vues. Les messages d'erreur rassurent toujours et proposent
@@ -71,7 +71,7 @@ export const COPY = {
 
 /**
  * Transforme un message d'erreur technique brut (Supabase, réseau…) en
- * message Savia rassurant. Le détail technique reste en console.
+ * message Sivia rassurant. Le détail technique reste en console.
  */
 export function friendlyError(raw: string | null | undefined): string {
   if (!raw) return COPY.errors.generique

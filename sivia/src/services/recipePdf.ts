@@ -13,7 +13,7 @@ import { photoPublicUrl } from '@/services/recipes'
  * sur fond papier-âgé, tampon (cercles + rotation −4°) et pied de page famille.
  * Multi-pages propres si la recette dépasse une page.
  *
- * Nom de fichier : `savia-{titre}-{famille}.pdf` (tirets sûrs, pas d'accents).
+ * Nom de fichier : `sivia-{titre}-{famille}.pdf` (tirets sûrs, pas d'accents).
  */
 
 // ---------- Constantes A5 (mm) ----------
@@ -63,9 +63,9 @@ function slugify(value: string): string {
     .slice(0, 60)
 }
 
-/** Nom de fichier sûr : savia—{titre}—{famille}.pdf */
+/** Nom de fichier sûr : sivia—{titre}—{famille}.pdf */
 export function recipePdfFileName(recipe: RecipeWithMeta, familyName: string): string {
-  return `savia-${slugify(recipe.title)}-${slugify(familyName)}.pdf`
+  return `sivia-${slugify(recipe.title)}-${slugify(familyName)}.pdf`
 }
 
 // ---------- Polices embarquées (préchargées au premier export) ----------
@@ -193,7 +193,7 @@ export class Cursor {
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(8)
     doc.setTextColor(ENCRE_SOFT.r, ENCRE_SOFT.g, ENCRE_SOFT.b)
-    doc.text('Savia — le carnet de recettes de famille', MARGIN, PAGE_H - 12)
+    doc.text('Sivia — le carnet de recettes de famille', MARGIN, PAGE_H - 12)
   }
 }
 
@@ -283,6 +283,29 @@ export function imageDataFormat(dataUrl: string): string {
   const m = /^data:image\/(\w+)/.exec(dataUrl)
   const f = m?.[1]?.toUpperCase()
   return f === 'PNG' || f === 'WEBP' ? f : 'JPEG'
+}
+
+/**
+ * Charge une image (JPEG/PNG/WEBP) avec ses dimensions naturelles.
+ * Contrairement à la photo de la recette (cadrée 4:3), la carte manuscrite
+ * doit conserver son rapport d'origine : un portrait ou un format paysage
+ * ne doit jamais être déformé par le polaroïd.
+ */
+export async function loadPdfImage(
+  url: string,
+): Promise<{ dataUrl: string; w: number; h: number } | null> {
+  try {
+    const dataUrl = await loadPhotoAsJpeg(url)
+    if (!dataUrl) return null
+    return await new Promise((resolve) => {
+      const img = new Image()
+      img.onload = () => resolve({ dataUrl, w: img.naturalWidth || 4, h: img.naturalHeight || 3 })
+      img.onerror = () => resolve(null)
+      img.src = dataUrl
+    })
+  } catch {
+    return null
+  }
 }
 
 // ---------- Génération du PDF ----------
@@ -390,7 +413,7 @@ export async function drawRecipeOnPdf(
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(7.5)
   doc.setTextColor(COLORS.TERRA.r, COLORS.TERRA.g, COLORS.TERRA.b)
-  doc.text(`SAVIA · ${meta.label.toUpperCase()}`, MARGIN, cursor.y + 3)
+  doc.text(`SIVIA · ${meta.label.toUpperCase()}`, MARGIN, cursor.y + 3)
   cursor.space(6)
 
   // ---- En-t\u00eate compact : titre \u00e0 gauche, photo \u00e0 droite ----
@@ -550,6 +573,49 @@ export async function drawRecipeOnPdf(
     cursor.space(blockH + 2)
   }
 
+  // Carte manuscrite originale : polaroïd droit posé sur la page, rapport
+  // d'image préservé. C'est la pièce la plus intime de la fiche — on la
+  // place juste avant le tampon, entourée de blanc comme collée au carnet.
+  // (Le carnet familial hérite automatiquement de cette section.)
+  const cardUrl = photoPublicUrl(recipe.card_url)
+  if (cardUrl) {
+    const card = await loadPdfImage(cardUrl)
+    if (card) {
+      const CARD_MAX_W = CONTENT_W - 10
+      const CARD_MAX_H = 55
+      const ratio = card.w / card.h || 1
+      let imgW = CARD_MAX_W
+      let imgH = imgW / ratio
+      if (imgH > CARD_MAX_H) {
+        imgH = CARD_MAX_H
+        imgW = imgH * ratio
+      }
+      const PAD = 2
+      const CAPTION_H = 6
+      const frameW = imgW + PAD * 2
+      const frameH = imgH + PAD + CAPTION_H + PAD
+      const frameX = (PAGE_W - frameW) / 2
+      cursor.space(4)
+      cursor.advance(frameH + 2)
+      const frameY = cursor.y
+      doc.setFillColor(COLORS.BLANC.r, COLORS.BLANC.g, COLORS.BLANC.b)
+      doc.setDrawColor(200, 190, 175)
+      doc.setLineWidth(0.3)
+      doc.roundedRect(frameX, frameY, frameW, frameH, 1, 1, 'FD')
+      try {
+        doc.addImage(card.dataUrl, imageDataFormat(card.dataUrl), frameX + PAD, frameY + PAD, imgW, imgH)
+      } catch {
+        // image illisible : cadre vide
+      }
+      doc.setFont(hand, handStyle)
+      doc.setFontSize(8.5)
+      doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
+      const cardCaption = "La carte originale — l'écriture d'avant"
+      doc.text(cardCaption, PAGE_W / 2 - doc.getTextWidth(cardCaption) / 2, frameY + PAD + imgH + 4)
+      cursor.y = frameY + frameH
+    }
+  }
+
   // Tampon + pied de page famille : zone réservée, jamais superposée au texte
   // Le tampon (rayon 16) a besoin de 34 mm de hauteur ; on garantit la place
   // sur la page courante avant de le dessiner, et le pied de gauche est limité
@@ -562,7 +628,7 @@ export async function drawRecipeOnPdf(
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(7)
   doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
-  const familyLine = `Savia — le carnet de la famille ${familyName}`
+  const familyLine = `Sivia — le carnet de la famille ${familyName}`
   const familyLines = doc.splitTextToSize(familyLine, CONTENT_W - stampZoneH)
   familyLines.forEach((line, i) => {
     doc.text(line, MARGIN, cursor.y + 4 + i * 3.5)
@@ -583,6 +649,6 @@ export async function drawRecipeOnPdf(
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(7)
   doc.setTextColor(COLORS.ENCRE_SOFT.r, COLORS.ENCRE_SOFT.g, COLORS.ENCRE_SOFT.b)
-  const label = pageLabel ? pageLabel(pageNumber) : `Savia — le carnet de recettes de famille · page ${pageNumber}`
+  const label = pageLabel ? pageLabel(pageNumber) : `Sivia — le carnet de recettes de famille · page ${pageNumber}`
   doc.text(label, MARGIN, PAGE_H - 12)
 }

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-const LEGEND_SEEN_KEY = 'savia-tree-legend-seen'
+const LEGEND_SEEN_KEY = 'sivia-tree-legend-seen'
 
 /**
  * Légende vivante de l'arbre : note manuscrite (Fraunces italique,

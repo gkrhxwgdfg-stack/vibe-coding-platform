@@ -27,7 +27,7 @@ interface FamilyMemberCardProps {
  * Nœud de l'arbre : photo en pleine action dans la cuisine, polaroïd
  * avec pied brun, prénom, lien familial libre et lien typé vers le
  * référent (« cousine de mamie Jeanne »). Badge « connecté » si le
- * membre est lié à un compte Savia. Boutons d'édition et de retrait.
+ * membre est lié à un compte Sivia. Boutons d'édition et de retrait.
  */
 export function FamilyMemberCard({
   member,
@@ -74,7 +74,7 @@ export function FamilyMemberCard({
           {isConnected && (
             <span
               className="absolute top-1.5 right-1.5 inline-flex items-center gap-1 bg-carte/95 rounded-full px-2 py-1 text-xs font-extrabold text-vert"
-              title="Membre connecté à Savia"
+              title="Membre connecté à Sivia"
             >
               <UserCheck size={13} aria-hidden="true" /> Connecté
             </span>

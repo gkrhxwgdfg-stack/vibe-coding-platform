@@ -285,7 +285,7 @@ export function HomePage() {
           ) : (
             <PremiumGate
               title="La planche photos de la famille"
-              description="Les photos de cuisine accrochées par toute la famille, jour après jour — le frigo de la maison, version Savia."
+              description="Les photos de cuisine accrochées par toute la famille, jour après jour — le frigo de la maison, version Sivia."
               openPaywall={() => setPaywallOpen(true)}
             >
               {plancheBody}

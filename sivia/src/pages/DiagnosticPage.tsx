@@ -60,10 +60,10 @@ export function DiagnosticPage() {
         bucketError?.message ?? (hasBucket ? 'OK' : `Buckets: ${(buckets ?? []).map((b) => b.id).join(', ') || 'aucun'}`))
 
       // 8-11. Test end-to-end avec un compte jetable
-      const testEmail = `diag-${Date.now()}@savia-diag.fr`
+      const testEmail = `diag-${Date.now()}@sivia-diag.fr`
       const { data: signupData, error: signupError } = await supabase.auth.signUp({
         email: testEmail,
-        password: 'DiagSavia2026!',
+        password: 'DiagSivia2026!',
         options: { data: { display_name: 'Diagnostic' } },
       })
       if (signupError || !signupData.session) {
@@ -132,7 +132,7 @@ export function DiagnosticPage() {
   const [replayKey, setReplayKey] = useState(0)
 
   return (
-    <AuthShell title="Diagnostic Savia" handNote="On vérifie que tout est bien branché.">
+    <AuthShell title="Diagnostic Sivia" handNote="On vérifie que tout est bien branché.">
       <Card className="anim-enter">
         <p className="text-sm text-encre-doux mb-4">
           Bac à sable motion (chantier 1) — les cartes ci-dessous rejouent leur

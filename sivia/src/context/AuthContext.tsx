@@ -34,7 +34,7 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 
-/** Message brut -> message Savia (jamais de texte technique dans l'UI) */
+/** Message brut -> message Sivia (jamais de texte technique dans l'UI) */
 function errorMessage(error: { message: string } | null): string | null {
   return error ? friendlyError(error.message) : null
 }

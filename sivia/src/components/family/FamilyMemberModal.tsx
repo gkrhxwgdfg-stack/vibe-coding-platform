@@ -370,10 +370,10 @@ export function FamilyMemberModal({
             </div>
           )}
 
-          {/* Lien vers un compte Savia */}
+          {/* Lien vers un compte Sivia */}
           <div>
             <label htmlFor="member-profile" className="block font-bold text-encre mb-1.5">
-              Lier à un compte Savia (facultatif)
+              Lier à un compte Sivia (facultatif)
             </label>
             <select
               id="member-profile"

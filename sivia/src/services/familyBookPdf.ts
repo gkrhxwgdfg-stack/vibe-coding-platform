@@ -49,9 +49,9 @@ function slugify(value: string): string {
     .slice(0, 60)
 }
 
-/** Nom de fichier : savia-carnet-{famille}.pdf */
+/** Nom de fichier : sivia-carnet-{famille}.pdf */
 export function familyBookFileName(familyName: string): string {
-  return `savia-carnet-${slugify(familyName)}.pdf`
+  return `sivia-carnet-${slugify(familyName)}.pdf`
 }
 
 /** Pied de page numéroté du carnet */
@@ -183,12 +183,12 @@ export async function generateFamilyBookPdf(input: FamilyBookInput): Promise<{ p
   let cursor = new Cursor(doc)
   cursor.pageDecor = coverDecor
 
-  // Kicker "SAVIA" en haut, centré
+  // Kicker "SIVIA" en haut, centré
   cursor.y = 22
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(9)
   doc.setTextColor(COLORS.TERRA.r, COLORS.TERRA.g, COLORS.TERRA.b)
-  const kicker = 'SAVIA'
+  const kicker = 'SIVIA'
   doc.text(kicker, centeredX(doc, kicker), cursor.y)
 
   // Titre principal : "Le carnet de {famille}" en Fraunces, grand, centré

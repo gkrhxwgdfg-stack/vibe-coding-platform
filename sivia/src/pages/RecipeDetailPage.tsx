@@ -59,7 +59,7 @@ export function RecipeDetailPage() {
   // (désactivée ensuite pour le reste de la session)
   const [cookPulse] = useState(() => {
     if (typeof sessionStorage === 'undefined') return false
-    const key = `savia-cook-pulse-${id}`
+    const key = `sivia-cook-pulse-${id}`
     if (sessionStorage.getItem(key)) return false
     sessionStorage.setItem(key, '1')
     return true

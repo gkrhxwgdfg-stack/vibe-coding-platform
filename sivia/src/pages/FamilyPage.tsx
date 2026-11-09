@@ -272,7 +272,7 @@ export function FamilyPage() {
         />
         <p className="text-sm text-encre-doux mb-4">
           Un membre <span className="inline-flex items-center gap-1 font-bold text-vert"><UserCheck size={14} aria-hidden="true" /> connecté</span> a
-          un compte Savia. Un membre ajouté « de l'arbre » n'en a pas — mamie Jeanne, par exemple —
+          un compte Sivia. Un membre ajouté « de l'arbre » n'en a pas — mamie Jeanne, par exemple —
           mais elle peut être citée comme origine d'une recette. L'arbre grandit avec les « + » :
           en dessous d'une personne pour un enfant, sur le filet « + » du côté pour un partenaire
           (à côté, même génération), et le « + » carmine en haut pour un aîné au-dessus. Le lien
@@ -427,8 +427,8 @@ export function FamilyPage() {
                     if (lastLink) {
                       navigator
                         .share({
-                          title: 'Rejoins notre cuisine sur Savia',
-                          text: 'Voici le lien pour rejoindre la famille sur Savia — notre carnet de recettes.',
+                          title: 'Rejoins notre cuisine sur Sivia',
+                          text: 'Voici le lien pour rejoindre la famille sur Sivia — notre carnet de recettes.',
                           url: lastLink,
                         })
                         .catch(() => {})

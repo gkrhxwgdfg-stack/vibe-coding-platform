@@ -14,13 +14,13 @@ export function Logo({ className, link = true }: LogoProps) {
     <span className={cn('inline-flex items-center gap-2.5', className)}>
       <WheatIcon size={32} className="text-vert" />
       <span className="font-serif font-semibold text-2xl text-encre">
-        Savia<span className="text-tomate">.</span>
+        Sivia<span className="text-tomate">.</span>
       </span>
     </span>
   )
 
   return link ? (
-    <Link to="/" aria-label="Savia — retour à l'accueil">
+    <Link to="/" aria-label="Sivia — retour à l'accueil">
       {mark}
     </Link>
   ) : (

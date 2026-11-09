@@ -24,6 +24,7 @@ function escapeHtml(value: string): string {
 export function buildRecipePrintHtml(recipe: RecipeWithMeta, familyName: string): string {
   const meta = categoryMeta(recipe.category)
   const photo = photoPublicUrl(recipe.photo_url)
+  const card = photoPublicUrl(recipe.card_url)
   const author = recipe.author?.display_name ?? '…'
   const authorRole = recipe.author?.family_role ? ` · ${recipe.author.family_role}` : ''
   const prep = formatDuration(recipe.prep_time)
@@ -41,7 +42,7 @@ export function buildRecipePrintHtml(recipe: RecipeWithMeta, familyName: string)
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>${escapeHtml(recipe.title)} — Savia</title>
+<title>${escapeHtml(recipe.title)} — Sivia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Nunito+Sans:wght@400;600;700;800&family=Fraunces:wght@500;700&display=swap" rel="stylesheet" />
@@ -69,6 +70,8 @@ export function buildRecipePrintHtml(recipe: RecipeWithMeta, familyName: string)
   .polaroid img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 2px; display: block; }
   .polaroid figcaption { font-family: "Fraunces", cursive; font-size: 20px; color: #6b5d4f;
                           text-align: center; padding-top: 10px; }
+  .polaroid.carte { width: 360px; transform: rotate(1.5deg); }
+  .polaroid.carte img { aspect-ratio: auto; max-height: 480px; object-fit: contain; }
   ul.ingredients { list-style: none; padding: 0; margin: 0; }
   ul.ingredients li { padding: 6px 0 6px 24px; position: relative; }
   ul.ingredients li::before { content: ""; position: absolute; left: 4px; top: 14px;
@@ -100,7 +103,7 @@ export function buildRecipePrintHtml(recipe: RecipeWithMeta, familyName: string)
 </head>
 <body>
   <main class="page">
-    <p class="kicker">Savia · ${escapeHtml(meta.label)}</p>
+    <p class="kicker">Sivia · ${escapeHtml(meta.label)}</p>
     <h1>${escapeHtml(recipe.title)}</h1>
     <p class="byline">créée par ${escapeHtml(author)}${escapeHtml(authorRole)}</p>
     <div class="meta">
@@ -148,12 +151,22 @@ ${steps}
         : ''
     }
 
+    ${
+      card
+        ? `<h2>La carte originale</h2>
+    <figure class="polaroid carte">
+      <img src="${escapeHtml(card)}" alt="Carte manuscrite originale de la recette" />
+      <figcaption>L'écriture d'avant</figcaption>
+    </figure>`
+        : ''
+    }
+
     <div class="footer">
       <div>
         <p style="margin:0;font-weight:800">Transmise par ${escapeHtml(author)}${escapeHtml(authorRole)}</p>
         <p style="margin:2px 0 0">Dans le carnet depuis le ${escapeHtml(formatDate(recipe.created_at))}</p>
         <p style="margin:8px 0 0;font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:17px;color:#6b5d4f">
-          Savia — le carnet de la famille ${escapeHtml(familyName)}
+          Sivia — le carnet de la famille ${escapeHtml(familyName)}
         </p>
       </div>
       <div>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 /**
- * Tokens de motion Savia (dossier de raffinement v2, section 3).
+ * Tokens de motion Sivia (dossier de raffinement v2, section 3).
  * Toute durée ou courbe d'animation passe par ici — aucune valeur magique
  * dans les composants. Les utilitaires CSS (.anim-enter, .anim-press,
  * .skeleton-paper) consomment les mêmes valeurs.
@@ -16,7 +16,7 @@ export const MOTION = {
   durationPage: 350,
   /** Cérémonie : tampon, entrée en mode cuisson, écran de fin */
   durationSlow: 600,
-  /** Courbe standard Savia : départ doux, arrivée posée */
+  /** Courbe standard Sivia : départ doux, arrivée posée */
   easingStandard: 'cubic-bezier(0.22, 1, 0.36, 1)',
   /** Ressort doux pour les cascades (cartes, polaroïds) */
   easingSpring: 'cubic-bezier(0.34, 1.4, 0.4, 1)',
