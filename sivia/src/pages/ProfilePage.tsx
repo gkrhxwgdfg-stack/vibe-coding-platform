@@ -40,7 +40,7 @@ export function ProfilePage() {
   const [photoBusy, setPhotoBusy] = useState(false)
   const [photoError, setPhotoError] = useState<string | null>(null)
 
-  // Sivia Famille : état réel du groupe + réglage du mode aperçu
+  // Sivia Plus : état réel du groupe + réglage du mode aperçu
   const { info, premiumReel } = useFamillePlan()
   const [apercu, setApercu] = useState<SimulationPlan | null>(() => simulationPlan())
 
@@ -231,10 +231,10 @@ export function ProfilePage() {
         </Card>
       </section>
 
-      {/* Sivia Famille — mode aperçu : comparer les deux versions */}
+      {/* Sivia Plus — mode aperçu : comparer les deux versions */}
       <section aria-labelledby="apercu-plan-title">
         <Card>
-          <CardHeader kicker="Sivia Famille" title="Voir l’app comme gratuite ou abonnée" />
+          <CardHeader kicker="Sivia Plus" title="Voir l’app comme gratuite ou abonnée" />
           <p className="text-encre-doux mb-4 text-sm">
             Pour comparer les deux versions pendant tes tests. Ce choix ne change pas
             l’abonnement réel de la famille — il reste sur ton appareil, uniquement.
@@ -298,7 +298,7 @@ export function ProfilePage() {
               )}
             >
               <span className="font-extrabold text-encre inline-flex items-center gap-2">
-                <Sparkles size={16} aria-hidden="true" /> Forcer Sivia Famille
+                <Sparkles size={16} aria-hidden="true" /> Forcer Sivia Plus
               </span>
               <p className="text-sm text-encre-doux mt-0.5">
                 Tout déverrouillé : impression, PDF, livre complet sans filigrane

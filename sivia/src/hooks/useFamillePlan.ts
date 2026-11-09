@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext'
 import { planActif, simulationPlan, type PlanInfo } from '@/lib/monetisation'
 
 /**
- * Plan « Sivia Famille » du groupe : gratuit / essai / actif / expire.
+ * Plan « Sivia Plus » du groupe : gratuit / essai / actif / expire.
  * L'état s'attache à la famille, pas à la personne — un seul paieur par groupe.
  */
 export function useFamillePlan() {

@@ -67,7 +67,7 @@ export function RecipeDetailPage() {
   const [pdfBusy, setPdfBusy] = useState(false)
   const [pdfError, setPdfError] = useState<string | null>(null)
   const [pdfDone, setPdfDone] = useState(false)
-  // Sivia Famille : la conservation (PDF, impression) est le cœur du plan —
+  // Sivia Plus : la conservation (PDF, impression) est le cœur du plan —
   // consulter et contribuer restent toujours gratuits
   const { premium, dejaEssai, refetch: refetchPlan } = useFamillePlan()
   const [paywallOpen, setPaywallOpen] = useState(false)
@@ -268,12 +268,12 @@ export function RecipeDetailPage() {
             <Button variant="outline" onClick={handlePdfExport} disabled={pdfBusy}>
               {pdfDone ? <Check size={18} aria-hidden="true" /> : <Download size={18} aria-hidden="true" />}
               {pdfBusy ? 'On prépare le PDF…' : pdfDone ? 'La recette est dans vos téléchargements.' : 'Télécharger (PDF)'}
-              {!premium && <Lock size={14} aria-hidden="true" aria-label="Sivia Famille" />}
+              {!premium && <Lock size={14} aria-hidden="true" aria-label="Sivia Plus" />}
             </Button>
             <Button variant="ghost" onClick={handleExport}>
               {exported ? <Check size={18} aria-hidden="true" /> : <Printer size={18} aria-hidden="true" />}
               {exported ? 'Prêt — choisis « Enregistrer en PDF »' : 'Imprimer'}
-              {!premium && <Lock size={14} aria-hidden="true" aria-label="Sivia Famille" />}
+              {!premium && <Lock size={14} aria-hidden="true" aria-label="Sivia Plus" />}
             </Button>
             {pdfError && (
               <p className="text-sm text-tomate font-bold" role="alert">{pdfError}</p>
@@ -378,7 +378,7 @@ export function RecipeDetailPage() {
         </aside>
       )}
 
-      {/* Fil de vie : commentaires et photos de la famille (Sivia Famille) */}
+      {/* Fil de vie : commentaires et photos de la famille (Sivia Plus) */}
       {premium ? (
         <CommentThread recipeId={recipe.id} familyId={recipe.family_id} />
       ) : (
@@ -408,7 +408,7 @@ export function RecipeDetailPage() {
         </Link>
       </p>
 
-      {/* Sivia Famille : ouvert au moment de fierté (imprimer / conserver) */}
+      {/* Sivia Plus : ouvert au moment de fierté (imprimer / conserver) */}
       <PaywallModal
         open={paywallOpen}
         onClose={() => setPaywallOpen(false)}

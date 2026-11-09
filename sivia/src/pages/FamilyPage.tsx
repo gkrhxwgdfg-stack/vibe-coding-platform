@@ -55,7 +55,7 @@ export function FamilyPage() {
   const [bookBusy, setBookBusy] = useState(false)
   const [bookDone, setBookDone] = useState(false)
   const [bookError, setBookError] = useState<string | null>(null)
-  // Sivia Famille : le livre complet (sans filigrane) est le cœur du plan ;
+  // Sivia Plus : le livre complet (sans filigrane) est le cœur du plan ;
   // l'aperçu filigrané reste gratuit, pour toujours
   const { premium, dejaEssai, refetch: refetchPlan } = useFamillePlan()
   const [paywallOpen, setPaywallOpen] = useState(false)
@@ -345,7 +345,7 @@ export function FamilyPage() {
             >
               <Download size={18} aria-hidden="true" />
               {bookBusy ? 'On relie le carnet…' : 'Télécharger le carnet'}
-              {!premium && <Lock size={14} aria-hidden="true" aria-label="Sivia Famille" />}
+              {!premium && <Lock size={14} aria-hidden="true" aria-label="Sivia Plus" />}
             </Button>
           </div>
         </Card>
@@ -478,7 +478,7 @@ export function FamilyPage() {
         onDownload={handleDownloadBook}
       />
 
-      {/* Sivia Famille : ouvert au moment de fierté (le livre de la famille) */}
+      {/* Sivia Plus : ouvert au moment de fierté (le livre de la famille) */}
       <PaywallModal
         open={paywallOpen}
         onClose={() => setPaywallOpen(false)}

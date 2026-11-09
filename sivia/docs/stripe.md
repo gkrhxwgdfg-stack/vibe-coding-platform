@@ -1,4 +1,4 @@
-# Sivia Famille — brancher Stripe (guide complet)
+# Sivia Plus — brancher Stripe (guide complet)
 
 Le code est prêt : il ne reste qu'à créer les liens de paiement et à déployer
 le webhook. Tant que ce n'est pas fait, le paywall garde son parcours actuel
@@ -25,10 +25,10 @@ le webhook. Tant que ce n'est pas fait, le paywall garde son parcours actuel
 
 2. **Créer les deux liens de paiement** (Dashboard > Payment links >
    + New) :
-   - **Sivia Famille — année** : produit récurrent 24,99 € / an
+   - **Sivia Plus — année** : produit récurrent 24,99 € / an
      (12 mois, 13ᵉ offert = 13 mois si tu préfères : mettre 24,99 € / 13 mois
      n'est pas possible en standard, rester sur /an).
-   - **Sivia Famille — mois** : produit récurrent 2,99 € / mois.
+   - **Sivia Plus — mois** : produit récurrent 2,99 € / mois.
    Dans les deux cas : activer « Add subscription data » > **Metadata** >
      `family_id = {family_id}` (permet au webhook de retrouver la famille
      aussi lors des renouvellements).

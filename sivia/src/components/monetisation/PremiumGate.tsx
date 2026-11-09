@@ -8,14 +8,14 @@ interface PremiumGateProps {
   title: string
   /** La promesse, en une phrase : ce que la famille gagne */
   description: string
-  /** Ouvre le paywall « Sivia Famille » */
+  /** Ouvre le paywall « Sivia Plus » */
   openPaywall: () => void
   /** Aperçu en vitrine : la section réelle, floutée sous le voile */
   children?: ReactNode
 }
 
 /**
- * Voile premium — la vitrine de Sivia Famille.
+ * Voile premium — la vitrine de Sivia Plus.
  *
  * La section reste visible (floutée, non interactive) : la famille devine
  * la valeur avant de payer. Le voile parle fierté et promesse, jamais
@@ -34,7 +34,7 @@ export function PremiumGate({ title, description, openPaywall, children }: Premi
           <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-vert-clair">
             <Lock size={22} className="text-vert" aria-hidden="true" />
           </div>
-          <p className="kicker text-vert mb-1">Sivia Famille</p>
+          <p className="kicker text-vert mb-1">Sivia Plus</p>
           <p className="font-serif text-xl text-encre mb-1.5">{title}</p>
           <p className="text-sm text-encre-doux leading-relaxed mb-4">{description}</p>
           <Button
@@ -46,7 +46,7 @@ export function PremiumGate({ title, description, openPaywall, children }: Premi
               openPaywall()
             }}
           >
-            Découvrir Sivia Famille
+            Découvrir Sivia Plus
           </Button>
         </div>
       </div>

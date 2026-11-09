@@ -189,7 +189,7 @@ export function ApercuLivreModal({
                     Débloquer le livre complet
                   </Button>
                   <p className="text-center text-encre-doux text-sm leading-relaxed">
-                    Sivia Famille — {eur(PRIX.mensuel)} par mois ou {eur(PRIX.annuel)} par an, pour
+                    Sivia Plus — {eur(PRIX.mensuel)} par mois ou {eur(PRIX.annuel)} par an, pour
                     toute la famille
                   </p>
                 </div>

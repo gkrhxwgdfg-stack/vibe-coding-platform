@@ -1,5 +1,5 @@
 /**
- * Sivia Famille — liens de paiement Stripe (Payment Links).
+ * Sivia Plus — liens de paiement Stripe (Payment Links).
  *
  * Stripe héberge la page de paiement : aucune donnée carte ne passe par
  * Sivia. Le lien transporte `client_reference_id` = l'id de la famille :

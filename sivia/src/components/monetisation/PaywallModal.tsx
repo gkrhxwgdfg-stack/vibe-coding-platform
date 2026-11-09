@@ -33,7 +33,7 @@ interface PaywallModalProps {
 }
 
 /**
- * Paywall « Sivia Famille » — un seul plan au nom du groupe.
+ * Paywall « Sivia Plus » — un seul plan au nom du groupe.
  *
  * Ton : fierté, jamais de culpabilisation ni d'urgence artificielle.
  * Fermeture toujours facile (X, Échap, clic sur le voile) ; aucune
@@ -224,7 +224,7 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai,
               >
                 <X size={20} aria-hidden="true" />
               </button>
-              <p className="kicker text-white/75 mb-1">Sivia Famille</p>
+              <p className="kicker text-white/75 mb-1">Sivia Plus</p>
               <h2 id="paywall-title" className="font-serif text-2xl leading-snug pr-10">
                 Le carnet de votre famille mérite d’exister pour toujours
               </h2>
@@ -236,7 +236,7 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai,
             <div className="p-5 sm:p-6 space-y-5">
               <p className="text-encre-doux text-sm leading-relaxed">
                 Transmettre est <strong className="text-encre">gratuit pour toujours</strong>.
-                Conserver le carnet complet de la famille, c’est Sivia Famille.
+                Conserver le carnet complet de la famille, c’est Sivia Plus.
               </p>
               {simulation && (
                 <p className="rounded-xl bg-vert-clair/60 text-vert text-sm font-bold px-4 py-2.5">
@@ -244,7 +244,7 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai,
                 </p>
               )}
               {/* L'offre en deux colonnes : l'essentiel est gratuit pour
-                  toujours, Sivia Famille ouvre le plein potentiel de l'app */}
+                  toujours, Sivia Plus ouvre le plein potentiel de l'app */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div className="rounded-2xl border-2 border-encre-doux/35 bg-ble-clair p-3.5">
                   <p className="font-extrabold text-encre text-sm">Gratuit</p>
@@ -254,11 +254,11 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai,
                   <ul className="space-y-1.5 text-xs text-encre-doux leading-snug">
                     <li className="flex items-start gap-1.5">
                       <Check size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
-                      Consulter, créer et partager toutes les recettes
+                      Consulter, créer et partager des recettes complètes, photos et anecdotes incluses
                     </li>
                     <li className="flex items-start gap-1.5">
                       <Check size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
-                      Photos, anecdotes, recherche et favoris
+                      Recherche et favoris
                     </li>
                     <li className="flex items-start gap-1.5">
                       <Check size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
@@ -267,14 +267,18 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai,
                   </ul>
                 </div>
                 <div className="rounded-2xl border-2 border-vert bg-vert-clair/40 p-3.5">
-                  <p className="font-extrabold text-vert text-sm">Sivia Famille</p>
+                  <p className="font-extrabold text-vert text-sm">Sivia Plus</p>
                   <p className="text-encre-doux text-xs font-bold mt-0.5 mb-2">
                     Le plein potentiel du carnet
                   </p>
                   <ul className="space-y-1.5 text-xs text-encre leading-snug">
                     <li className="flex items-start gap-1.5">
                       <Sparkles size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
-                      L’arbre vivant, la planche photos et le fil de vie
+                      L’arbre vivant et les événements de famille
+                    </li>
+                    <li className="flex items-start gap-1.5">
+                      <Sparkles size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />
+                      La planche photos et le fil de vie : poster et commenter
                     </li>
                     <li className="flex items-start gap-1.5">
                       <Sparkles size={13} className="text-vert mt-0.5 shrink-0" aria-hidden="true" />

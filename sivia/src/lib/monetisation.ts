@@ -1,5 +1,5 @@
 /**
- * Sivia Famille — Phase 1 monétisation (au nom du groupe, jamais de la personne).
+ * Sivia Plus — Phase 1 monétisation (au nom du groupe, jamais de la personne).
  *
  * Règles (spécification « Sivia — Architecture monétisation ») :
  *  - contribuer, consulter, se souvenir : toujours gratuit ;
@@ -22,7 +22,7 @@ export interface PlanInfo {
   plan_source: PlanSource | null
 }
 
-/** Tarifs Sivia Famille — un seul plan, deux durées. */
+/** Tarifs Sivia Plus — un seul plan, deux durées. */
 export const PRIX = {
   /** Mensuel sans engagement */
   mensuel: 2.99,
@@ -112,8 +112,8 @@ export function pauseActivee(): boolean {
 }
 
 /* ------------------------------------------------------------------ */
-/* Mode aperçu (Profil) : forcer l'affichage « gratuit » ou « Sivia    */
-/* Famille » pour comparer les deux versions — sans toucher à         */
+/* Mode aperçu (Profil) : forcer l'affichage « gratuit » ou « Sivia Plus »
+/* pour comparer les deux versions — sans toucher à         */
 /* l'abonnement réel de la famille (le guard SQL l'interdit de toute  */
 /* façon). C'est un réglage personnel, stocké sur l'appareil.          */
 /* ------------------------------------------------------------------ */

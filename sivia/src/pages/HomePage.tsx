@@ -54,7 +54,7 @@ export function HomePage() {
     refetchPlanche()
   }, [refetchPlanche])
 
-  // Sivia Famille : la planche est un extra — vitrine floutée sans le plan
+  // Sivia Plus : la planche est un extra — vitrine floutée sans le plan
   const { premium, refetch: refetchPlan } = useFamillePlan()
   const [paywallOpen, setPaywallOpen] = useState(false)
   // Planche familiale personnalisable : les photos publiées par toute la famille,
@@ -100,7 +100,7 @@ export function HomePage() {
         <div className="flex items-center justify-between mb-3">
           <CardHeader kicker="Planche familiale" title="Moments de cuisine partagés" />
           {/* Le « + » de la planche ouvre le modal photo — jamais le formulaire de recette.
-              Extra Sivia Famille : le bouton n'existe pas sans le plan. */}
+              Extra Sivia Plus : le bouton n'existe pas sans le plan. */}
           {premium && (
             <Button onClick={() => setPhotoModalOpen(true)} aria-label="Ajouter une photo à la planche familiale">
               <Plus size={20} aria-hidden="true" /> Ajouter

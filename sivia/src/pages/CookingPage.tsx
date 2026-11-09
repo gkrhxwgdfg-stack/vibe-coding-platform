@@ -387,7 +387,7 @@ export function CookingPage() {
             </Button>
           </div>
 
-          {/* En gratuit : le moment rejoint le fil de vie (Sivia Famille).
+          {/* En gratuit : le moment rejoint le fil de vie (Sivia Plus).
               On le dit avec fierté — le souvenir existe, la famille le
               retrouvera ; pas de culpabilisation, une porte discrète. */}
           {!premium && (
@@ -398,7 +398,7 @@ export function CookingPage() {
               <p className="text-sm text-encre-doux leading-relaxed">
                 Ton moment est accroché au fil de vie de la famille : tous les
                 souvenirs de cuisine, recette après recette, se collectionnent
-                dans Sivia Famille.
+                dans Sivia Plus.
               </p>
               <button
                 type="button"
@@ -410,7 +410,7 @@ export function CookingPage() {
                 }}
                 className="mt-2 text-sm font-extrabold text-vert hover:underline"
               >
-                Découvrir Sivia Famille
+                Découvrir Sivia Plus
               </button>
             </div>
           )}
