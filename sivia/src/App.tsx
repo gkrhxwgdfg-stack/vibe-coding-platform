@@ -13,6 +13,9 @@ const ForgotPasswordPage = lazy(() => import('@/pages/auth/ForgotPasswordPage').
 const ResetPasswordPage = lazy(() => import('@/pages/auth/ResetPasswordPage').then((m) => ({ default: m.ResetPasswordPage })))
 const OnboardingPage = lazy(() => import('@/pages/auth/OnboardingPage').then((m) => ({ default: m.OnboardingPage })))
 const InvitationPage = lazy(() => import('@/pages/InvitationPage').then((m) => ({ default: m.InvitationPage })))
+const MentionsLegalesPage = lazy(() => import('@/pages/legal/LegalPages').then((m) => ({ default: m.MentionsLegalesPage })))
+const ConfidentialitePage = lazy(() => import('@/pages/legal/LegalPages').then((m) => ({ default: m.ConfidentialitePage })))
+const ConditionsPage = lazy(() => import('@/pages/legal/LegalPages').then((m) => ({ default: m.ConditionsPage })))
 const HomePage = lazy(() => import('@/pages/HomePage').then((m) => ({ default: m.HomePage })))
 const RecipesPage = lazy(() => import('@/pages/RecipesPage').then((m) => ({ default: m.RecipesPage })))
 const RecipeDetailPage = lazy(() => import('@/pages/RecipeDetailPage').then((m) => ({ default: m.RecipeDetailPage })))
@@ -42,6 +45,10 @@ export function App() {
         <Route path="/mot-de-passe-oublie" element={<ForgotPasswordPage />} />
         <Route path="/reinitialiser-mot-de-passe" element={<ResetPasswordPage />} />
         <Route path="/invitation" element={<InvitationPage />} />
+        {/* Pages juridiques publiques (LCEN, RGPD, code de la consommation) */}
+        <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
+        <Route path="/confidentialite" element={<ConfidentialitePage />} />
+        <Route path="/conditions" element={<ConditionsPage />} />
         <Route path="/diagnostic" element={<DiagnosticPage />} />
 
         {/* Zone authentifiée, avec coque maison */}

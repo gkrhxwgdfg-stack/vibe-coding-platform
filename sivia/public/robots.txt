@@ -1,0 +1,13 @@
+# Sivia — laisse les moteurs voir l'accueil et les pages publiques,
+# jamais les espaces des familles.
+User-agent: *
+Allow: /
+Disallow: /recettes
+Disallow: /favoris
+Disallow: /famille
+Disallow: /profil
+Disallow: /bienvenue
+Disallow: /invitation
+Disallow: /diagnostic
+
+Sitemap: https://temporary-rapid-pumice-22jbvag.vercel.app/sitemap.xml

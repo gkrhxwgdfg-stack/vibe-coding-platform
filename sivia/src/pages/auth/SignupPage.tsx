@@ -14,6 +14,7 @@ export function SignupPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
+  const [acceptCgu, setAcceptCgu] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
@@ -22,12 +23,16 @@ export function SignupPage() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setError(null)
-    if (password.length < 6) {
-      setError('Ton mot de passe doit faire au moins 6 caractères.')
+    if (password.length < 8) {
+      setError('Ton mot de passe doit faire au moins 8 caractères.')
       return
     }
     if (password !== confirm) {
       setError('Les deux mots de passe ne sont pas identiques.')
+      return
+    }
+    if (!acceptCgu) {
+      setError('Il faut lire et accepter les conditions pour créer ton compte.')
       return
     }
     setSubmitting(true)
@@ -82,6 +87,21 @@ export function SignupPage() {
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
         />
+        <label className="flex items-start gap-3 my-4 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={acceptCgu}
+            onChange={(e) => setAcceptCgu(e.target.checked)}
+            className="mt-0.5 w-5 h-5 shrink-0 accent-vert"
+            aria-required="true"
+          />
+          <span className="text-sm text-encre-doux leading-snug">
+            J'ai 15 ans ou plus (ou j'ai l'accord d'un parent) et j'accepte les{' '}
+            <Link to="/conditions" className="text-tomate font-bold hover:underline">conditions d'utilisation</Link>
+            {' '}et la{' '}
+            <Link to="/confidentialite" className="text-tomate font-bold hover:underline">politique de confidentialité</Link>.
+          </span>
+        </label>
         {error && (
           <p className="text-tomate font-bold mb-4" role="alert">
             {error}

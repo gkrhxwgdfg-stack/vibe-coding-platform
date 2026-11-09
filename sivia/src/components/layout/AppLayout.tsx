@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { BookOpen, Heart, Users, UserRound } from 'lucide-react'
 import { WheatIcon } from '@/components/motifs/WheatIcon'
 import { Logo } from '@/components/ui/Logo'
@@ -45,6 +45,17 @@ export function AppLayout({ children }: { children?: ReactNode }) {
       <main key={location.pathname} className="anim-enter flex-1 w-full max-w-3xl mx-auto px-4 py-6">
         {children ?? <Outlet />}
       </main>
+
+      {/* Pied de page : les pages que toute application française se doit d'offrir */}
+      <footer className="w-full max-w-3xl mx-auto px-4 pb-2 text-center text-xs text-encre-doux/70">
+        <Link to="/mentions-legales" className="hover:text-tomate hover:underline">Mentions légales</Link>
+        <span aria-hidden="true"> · </span>
+        <Link to="/confidentialite" className="hover:text-tomate hover:underline">Confidentialité</Link>
+        <span aria-hidden="true"> · </span>
+        <Link to="/conditions" className="hover:text-tomate hover:underline">Conditions d'utilisation</Link>
+        <span aria-hidden="true"> · </span>
+        © 2026 Sivia
+      </footer>
 
       {/* Bouton flottant « + » contextuel (accueil : photo planche, recettes : nouvelle
           recette, famille : membre de l'arbre ; absent sur favoris, profil, fiches) */}

@@ -1,17 +1,19 @@
 import { useRef, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { BookOpen, Camera, Eye, Heart, LogOut, Sparkles } from 'lucide-react'
+import { BookOpen, Camera, Download, Eye, Heart, LogOut, Mail, Sparkles, Trash2 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { useRecipes } from '@/hooks/useRecipes'
 import { useFamillePlan } from '@/hooks/useFamillePlan'
 import { supabase } from '@/lib/supabase'
 import { uploadAvatar } from '@/services/profile'
+import { exporterMesDonnees, supprimerMonCompte } from '@/services/account'
 import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
 import { Card, CardHeader } from '@/components/ui/Card'
 import { Stamp } from '@/components/ui/Stamp'
 import { TextInput, TextArea } from '@/components/ui/FormFields'
 import { ReadingSizePicker } from '@/components/ui/ReadingSizePicker'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { formatDate } from '@/lib/format'
 import { Sparkle } from '@/components/motifs/Sparkle'
 import { cn } from '@/lib/utils'
@@ -39,6 +41,16 @@ export function ProfilePage() {
   const photoInputRef = useRef<HTMLInputElement>(null)
   const [photoBusy, setPhotoBusy] = useState(false)
   const [photoError, setPhotoError] = useState<string | null>(null)
+
+  // Mon compte : adresse e-mail, export des données, suppression (RGPD)
+  const [newEmail, setNewEmail] = useState('')
+  const [emailBusy, setEmailBusy] = useState(false)
+  const [emailMsg, setEmailMsg] = useState<string | null>(null)
+  const [exportBusy, setExportBusy] = useState(false)
+  const [exportError, setExportError] = useState<string | null>(null)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleteBusy, setDeleteBusy] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   // Sivia Plus : état réel du groupe + réglage du mode aperçu
   const { info, premiumReel } = useFamillePlan()
@@ -122,6 +134,50 @@ export function ProfilePage() {
     } finally {
       setPhotoBusy(false)
     }
+  }
+
+  /** Changer d'adresse e-mail : Supabase envoie une confirmation à la nouvelle adresse. */
+  async function handleChangeEmail(e: FormEvent) {
+    e.preventDefault()
+    setEmailMsg(null)
+    const email = newEmail.trim()
+    if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      setEmailMsg("Écris l'adresse e-mail complète qui remplacera l'actuelle.")
+      return
+    }
+    setEmailBusy(true)
+    const { error: emailError } = await supabase.auth.updateUser({ email })
+    setEmailBusy(false)
+    setEmailMsg(
+      emailError
+        ? "Le changement n'a pas abouti. Reconnecte-toi puis réessaie."
+        : "C'est noté : confirme depuis le message envoyé à ta nouvelle adresse.",
+    )
+    if (!emailError) setNewEmail('')
+  }
+
+  /** Droit à la portabilité : un fichier JSON avec tout ce que le compte a créé. */
+  async function handleExport() {
+    setExportBusy(true)
+    setExportError(null)
+    const { error } = await exporterMesDonnees()
+    setExportBusy(false)
+    if (error) setExportError(error)
+  }
+
+  /** Droit à l'effacement : le serveur préserve l'héritage familial, efface le reste. */
+  async function handleDeleteAccount() {
+    setDeleteBusy(true)
+    setDeleteError(null)
+    const { error } = await supprimerMonCompte()
+    setDeleteBusy(false)
+    setConfirmDelete(false)
+    if (error) {
+      setDeleteError(error)
+      return
+    }
+    await signOut()
+    navigate('/connexion', { replace: true })
   }
 
   async function handleSignOut() {
@@ -333,6 +389,72 @@ export function ProfilePage() {
           <Button variant="danger" size="lg" className="w-full mt-4" onClick={handleSignOut}>
             <LogOut size={18} aria-hidden="true" /> Se déconnecter
           </Button>
+        </Card>
+      </section>
+
+      {/* Mon compte : adresse e-mail, données personnelles, suppression (RGPD) */}
+      <section aria-labelledby="account-title">
+        <Card>
+          <CardHeader kicker="Mon compte" title="Ton adresse, tes données, ta décision" />
+          <form onSubmit={handleChangeEmail} className="mb-2">
+            <TextInput
+              label="Changer mon adresse e-mail"
+              htmlFor="newEmail"
+              type="email"
+              autoComplete="email"
+              value={newEmail}
+              onChange={(e) => setNewEmail(e.target.value)}
+              placeholder="nouvelle.adresse@famille.fr"
+              hint="Un message de confirmation part vers la nouvelle adresse."
+            />
+            {emailMsg && <p className="text-sm text-encre-doux mb-2">{emailMsg}</p>}
+            <Button type="submit" variant="outline" disabled={emailBusy}>
+              <Mail size={18} aria-hidden="true" /> {emailBusy ? 'On envoie…' : 'Envoyer la confirmation'}
+            </Button>
+          </form>
+          <hr className="filet-double my-6" />
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              <strong>Exporter mes données</strong>
+              <p className="text-sm text-encre-doux mt-0.5">
+                Tes recettes, tes messages et tes favoris, dans un fichier à toi
+                (droit à la portabilité).
+              </p>
+              {exportError && <p className="text-sm text-tomate font-bold mt-1">{exportError}</p>}
+            </div>
+            <Button variant="outline" onClick={handleExport} disabled={exportBusy}>
+              <Download size={18} aria-hidden="true" /> {exportBusy ? 'On prépare…' : 'Exporter'}
+            </Button>
+          </div>
+          <hr className="filet-double my-6" />
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              <strong>Supprimer mon compte</strong>
+              <p className="text-sm text-encre-doux mt-0.5">
+                Ton profil, tes messages et tes photos partent. Tes recettes restent à la
+                famille : elles sont confiées à un autre membre. Irréversible.
+              </p>
+              {deleteError && <p className="text-sm text-tomate font-bold mt-1">{deleteError}</p>}
+            </div>
+            <Button
+              variant="ghost"
+              className="text-tomate"
+              onClick={() => setConfirmDelete(true)}
+              disabled={deleteBusy}
+            >
+              <Trash2 size={18} aria-hidden="true" /> {deleteBusy ? 'On efface…' : 'Supprimer'}
+            </Button>
+          </div>
+          {confirmDelete && (
+            <div className="mt-2 flex justify-end">
+              <ConfirmDialog
+                title="Supprimer mon compte ?"
+                message="Le serveur préserve l'héritage familial puis efface tes données."
+                onCancel={() => setConfirmDelete(false)}
+                onConfirm={handleDeleteAccount}
+              />
+            </div>
+          )}
         </Card>
       </section>
     </div>
