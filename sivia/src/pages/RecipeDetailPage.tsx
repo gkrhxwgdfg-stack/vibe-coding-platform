@@ -79,7 +79,6 @@ export function RecipeDetailPage() {
   // consulter et contribuer restent toujours gratuits
   const { premium, dejaEssai, refetch: refetchPlan } = useFamillePlan()
   const [paywallOpen, setPaywallOpen] = useState(false)
-  const [confirmUncook, setConfirmUncook] = useState(false)
 
   const effectiveServings = servings ?? recipe?.servings ?? 4
 
@@ -140,12 +139,7 @@ export function RecipeDetailPage() {
   const photo = photoPublicUrl(current.photo_url)
   const cardPhoto = photoPublicUrl(current.card_url)
 
-  /** « Je l'ai faite » : retire son marqueur après confirmation (pastille) */
-  async function handleUncook() {
-    setConfirmUncook(false)
-    await unmarkCookedByMe()
-  }
-
+  /** « Je l'ai faite » : retrait direct, sans confirmation — l'action est réversible */
   async function handleFavorite() {
     setFavBusy(true)
     const { error: favError } = await toggleFavorite(current.id, !!current.is_favorite)
@@ -305,7 +299,7 @@ export function RecipeDetailPage() {
             </Button>
             {/* « Je l'ai faite ! » : le petit bouton de fierté, la recette vit */}
             {mine ? (
-              <Button variant="primary" onClick={() => setConfirmUncook(true)} disabled={cookedBusy}>
+              <Button variant="primary" onClick={() => unmarkCookedByMe()} disabled={cookedBusy}>
                 <ChefHat size={18} aria-hidden="true" /> Tu l'as faite !
               </Button>
             ) : (
@@ -347,15 +341,6 @@ export function RecipeDetailPage() {
                 message="Effacer une recette, c’est perdre un peu de quelqu’un."
                 onCancel={() => setConfirmDelete(false)}
                 onConfirm={handleDelete}
-              />
-            </div>
-          )}
-          {mine && confirmUncook && (
-            <div className="mt-2 flex justify-end">
-              <ConfirmDialog
-                title="Retirer ?"
-                onCancel={() => setConfirmUncook(false)}
-                onConfirm={handleUncook}
               />
             </div>
           )}
