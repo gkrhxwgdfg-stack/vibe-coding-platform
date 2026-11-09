@@ -2,7 +2,8 @@ import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { Button } from '@/components/ui/Button'
 
 interface ConfirmDialogProps {
-  open: boolean
+  /** Fermé par défaut ; les usages conditionnels (cond && <ConfirmDialog …>) n'ont pas besoin de le préciser. */
+  open?: boolean
   title: string
   message: string
   confirmLabel?: string
@@ -17,7 +18,7 @@ interface ConfirmDialogProps {
  * rien d'effacable par accident, jamais de double-clic deviné.
  */
 export function ConfirmDialog({
-  open,
+  open = true,
   title,
   message,
   confirmLabel = 'Oui',
