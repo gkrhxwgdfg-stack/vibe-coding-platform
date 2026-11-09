@@ -112,8 +112,8 @@ export function pauseActivee(): boolean {
 }
 
 /* ------------------------------------------------------------------ */
-/* Mode aperçu (Profil) : forcer l'affichage « gratuit » ou « Sivia Plus »
-/* pour comparer les deux versions — sans toucher à         */
+/* Mode aperçu (Profil) : forcer l'affichage « gratuit » ou « Sivia    */
+/* Plus » pour comparer les deux versions — sans toucher à            */
 /* l'abonnement réel de la famille (le guard SQL l'interdit de toute  */
 /* façon). C'est un réglage personnel, stocké sur l'appareil.          */
 /* ------------------------------------------------------------------ */

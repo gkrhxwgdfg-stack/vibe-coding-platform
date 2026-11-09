@@ -104,7 +104,7 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai,
     }
     setBusy(true)
     setErreur(null)
-    // Essai d'un mois, sans carte — le serveur fixe les dates (guard SQL)
+    // Essai de 2 semaines, sans carte — le serveur fixe les dates (guard SQL)
     const { error } = await supabase.from('families').update({ plan: 'essai' }).eq('id', family.id)
     setBusy(false)
     if (error) {
