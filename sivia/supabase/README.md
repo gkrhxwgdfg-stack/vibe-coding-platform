@@ -77,6 +77,18 @@ les policies RLS et le bucket `recipe-photos` ne sont **pas encore créés** sur
    (**essai sans carte réduit de 1 mois à 2 semaines** : recrée le garde-fou
    `guard_family_plan` avec `interval '14 days'` — sans cette migration, les
    nouveaux essais durent encore 1 mois)
+16. **New query** → collez le **contenu** de
+   [`migrations/0016_essai_unique.sql`](./migrations/0016_essai_unique.sql) → **Run**
+   (**l'essai ne se réouvre plus** : un seul essai par famille, le garde-fou
+   serveur n'autorise l'essai que si la famille n'en a jamais eu ni payé —
+   remplace 0015 ; appliquée le 9 novembre 2026)
+17. **New query** → collez le **contenu** de
+   [`migrations/0017_recipe_cooks_et_carte_manuscrite.sql`](./migrations/0017_recipe_cooks_et_carte_manuscrite.sql) → **Run**
+   (**« Je l'ai faite ! »** : table `recipe_cooks` qui se souvient de qui a
+   refait la recette et quand — la petite histoire du plat — et
+   **carte manuscrite** : colonne `recipes.card_url` pour la photo du papier
+   d'origine. **Requis** pour ces deux fonctionnalités : sans elle, le bouton
+   « Je l'ai faite ! » reste sans effet et la carte ne s'enregistre pas)
 
 > Erreur fréquente : coller le chemin `sivia/supabase/migrations/...` au lieu
 > du contenu SQL → `ERROR: 42601: syntax error`. Le SQL Editor attend du **code SQL**.

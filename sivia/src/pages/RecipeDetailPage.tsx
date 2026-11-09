@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
   ArrowLeft,
   Check,
+  ChefHat,
   Clock,
   Download,
   Heart,
@@ -16,6 +17,7 @@ import {
   Users,
 } from 'lucide-react'
 import { useRecipe, useToggleFavorite } from '@/hooks/useRecipes'
+import { useCooks } from '@/hooks/useCooks'
 import { useAuth } from '@/context/AuthContext'
 import { deleteRecipe, photoPublicUrl, sealRecipe } from '@/services/recipes'
 import { printRecipe } from '@/services/recipePrint'
@@ -63,6 +65,8 @@ export function RecipeDetailPage() {
     return true
   })
   const cookedCount = useCookedCount(id)
+  // « Je l'ai faite ! » : qui a refait la recette (généalogie du plat)
+  const { cooks, mine, busy: cookedBusy, mark: markCookedByMe, unmark: unmarkCookedByMe } = useCooks(id, user?.id)
   // Export « carnet familial » : confirmation après le téléchargement
   const [exported, setExported] = useState(false)
   const [pdfBusy, setPdfBusy] = useState(false)
@@ -72,6 +76,7 @@ export function RecipeDetailPage() {
   // consulter et contribuer restent toujours gratuits
   const { premium, dejaEssai, refetch: refetchPlan } = useFamillePlan()
   const [paywallOpen, setPaywallOpen] = useState(false)
+  const [confirmUncook, setConfirmUncook] = useState(false)
 
   const effectiveServings = servings ?? recipe?.servings ?? 4
 
@@ -130,6 +135,13 @@ export function RecipeDetailPage() {
   const isAuthor = user?.id === current.author_id
   const canEdit = isAuthor || !current.is_sealed
   const photo = photoPublicUrl(current.photo_url)
+  const cardPhoto = photoPublicUrl(current.card_url)
+
+  /** « Je l'ai faite » : retire son marqueur après confirmation (pastille) */
+  async function handleUncook() {
+    setConfirmUncook(false)
+    await unmarkCookedByMe()
+  }
 
   async function handleFavorite() {
     setFavBusy(true)
@@ -288,6 +300,16 @@ export function RecipeDetailPage() {
               <Heart size={18} aria-hidden="true" className={cn(recipe.is_favorite && 'fill-white')} />
               {recipe.is_favorite ? 'Dans mes favoris' : 'Ajouter aux favoris'}
             </Button>
+            {/* « Je l'ai faite ! » : le petit bouton de fierté, la recette vit */}
+            {mine ? (
+              <Button variant="primary" onClick={() => setConfirmUncook(true)} disabled={cookedBusy}>
+                <ChefHat size={18} aria-hidden="true" /> Tu l'as faite !
+              </Button>
+            ) : (
+              <Button variant="outline" onClick={() => markCookedByMe()} disabled={cookedBusy}>
+                <ChefHat size={18} aria-hidden="true" /> Je l'ai faite !
+              </Button>
+            )}
             {canEdit && (
               <Link to={`/recettes/${recipe.id}/modifier`}>
                 <Button variant="outline">
@@ -322,6 +344,15 @@ export function RecipeDetailPage() {
                 message="Effacer une recette, c’est perdre un peu de quelqu’un."
                 onCancel={() => setConfirmDelete(false)}
                 onConfirm={handleDelete}
+              />
+            </div>
+          )}
+          {mine && confirmUncook && (
+            <div className="mt-2 flex justify-end">
+              <ConfirmDialog
+                title="Retirer ?"
+                onCancel={() => setConfirmUncook(false)}
+                onConfirm={handleUncook}
               />
             </div>
           )}
@@ -363,6 +394,56 @@ export function RecipeDetailPage() {
           </ol>
         )}
       </Card>
+
+      {/* La carte manuscrite originale — le papier d'avant, l'écriture d'avant */}
+      {cardPhoto && (
+        <aside className="marge-note anim-enter flex justify-center" aria-label="La carte manuscrite originale">
+          <figure className="polaroid relative w-[240px] rotate-[2deg]">
+            <span className="epingle" aria-hidden="true" />
+            <img
+              src={cardPhoto}
+              alt="La carte manuscrite originale"
+              className="w-full rounded-sm"
+            />
+            <figcaption className="font-serif italic text-[11.5px] text-cannelle text-center pt-1.5">
+              La carte originale — l'écriture d'avant
+            </figcaption>
+          </figure>
+        </aside>
+      )}
+
+      {/* Généalogie de la recette : écrite par l'un, refaite par les autres */}
+      {cooks.length > 0 && (
+        <>
+          <hr className="filet-double" />
+          <Card className="relative">
+            <p className="kicker">De génération en génération</p>
+            <h2 className="text-2xl font-semibold mb-4">La petite histoire de ce plat</h2>
+            <ul className="space-y-4">
+              <li className="flex items-center gap-3">
+                {recipe.author && (
+                  <Avatar name={recipe.author.display_name} src={recipe.author.avatar_url} size="sm" />
+                )}
+                <span className="text-lg">
+                  <strong className="text-encre">Écrite par {recipe.author?.display_name ?? '…'}</strong>{' '}
+                  <span className="text-encre-doux">· {formatDate(recipe.created_at)}</span>
+                </span>
+              </li>
+              {cooks.map((c) => (
+                <li key={c.id} className="flex items-center gap-3">
+                  <Avatar name={c.cook?.display_name ?? '…'} src={c.cook?.avatar_url} size="sm" />
+                  <span className="text-lg">
+                    <strong className="text-encre">Refaite par {c.cook?.display_name ?? '…'}</strong>{' '}
+                    <span className="text-encre-doux">
+                      · {formatDate(c.cooked_at)}{c.user_id === user?.id ? ' (toi)' : ''}
+                    </span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </Card>
+        </>
+      )}
 
       {/* Anecdote — marginalia : 1 note max par page, astuces transmises (§7) */}
       {recipe.anecdote && (

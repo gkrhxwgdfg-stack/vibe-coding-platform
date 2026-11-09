@@ -79,6 +79,8 @@ export interface Recipe {
   origin_story: string | null
   /** Chemin dans le bucket storage (pas d'URL absolue) */
   photo_url: string | null
+  /** Photo de la carte manuscrite originale (chemin storage, facultatif) */
+  card_url: string | null
   /** Recette scellée : l'original n'est plus modifiable */
   is_sealed: boolean
   created_at: string
@@ -109,6 +111,8 @@ export interface RecipeFormValues {
   anecdote: string
   origin_story: string
   photoFile: File | null
+  /** Photo de la carte manuscrite originale (facultatif) */
+  cardFile: File | null
 }
 
 /** Génération nommée de l'arbre (« Les aînés », « Les cousins »…).

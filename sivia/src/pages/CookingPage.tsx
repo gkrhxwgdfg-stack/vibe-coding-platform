@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { Check, ChevronLeft, ChevronRight, ImagePlus, Plus, X } from 'lucide-react'
+import { Check, ChefHat, ChevronLeft, ChevronRight, ImagePlus, Plus, X } from 'lucide-react'
 import { useRecipe } from '@/hooks/useRecipes'
 import { useAuth } from '@/context/AuthContext'
 import { cookingStep } from '@/lib/cooking'
@@ -14,7 +14,7 @@ import {
   type TimerState,
 } from '@/lib/cookingSession'
 import { addComment } from '@/services/comments'
-import { photoPublicUrl } from '@/services/recipes'
+import { markCooked, photoPublicUrl } from '@/services/recipes'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -60,6 +60,9 @@ export function CookingPage() {
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const [publishing, setPublishing] = useState(false)
+  // « Je l'ai faite ! » : le marqueur de fierté dans l'histoire de la recette
+  const [marking, setMarking] = useState(false)
+  const [justCooked, setJustCooked] = useState(false)
   const touchStartX = useRef<number | null>(null)
 
   // Reprise de session persistée (étape + minuteurs)
@@ -184,6 +187,19 @@ export function CookingPage() {
     // Le message est écrit dans le fil de vie, avec la photo du plat si jointe
     await addComment(recipe.id, profile.family_id, profile.id, body, photoFile)
     setPublishing(false)
+  }
+
+  /** « Je l'ai faite ! » : pose le marqueur dans l'histoire de la recette */
+  async function markCookedByMe() {
+    if (!recipe || !profile?.id) return
+    await markCooked(recipe.id, profile.id)
+  }
+
+  async function handleMarkCooked() {
+    setMarking(true)
+    await markCookedByMe()
+    setJustCooked(true)
+    setMarking(false)
   }
 
   function handlePhoto(e: React.ChangeEvent<HTMLInputElement>) {
@@ -372,12 +388,22 @@ export function CookingPage() {
               size="lg"
               onClick={async () => {
                 await publishCooked()
+                await markCookedByMe()
                 navigate('/recettes/' + recipe.id, { replace: true })
               }}
               disabled={publishing}
             >
               {publishing ? 'On écrit dans le fil de vie...' : 'Partager à la famille'}
             </Button>
+            {!justCooked ? (
+              <Button size="lg" variant="outline" onClick={handleMarkCooked} disabled={marking}>
+                <ChefHat size={20} aria-hidden="true" /> Je l'ai faite !
+              </Button>
+            ) : (
+              <p className="text-encre-doux font-bold flex items-center justify-center gap-2 min-h-12">
+                <ChefHat size={18} aria-hidden="true" /> C'est noté dans l'histoire de la recette.
+              </p>
+            )}
             <Button
               size="lg"
               variant="outline"

@@ -136,6 +136,7 @@ export interface Database {
           anecdote: string | null
           origin_story: string | null
           photo_url: string | null
+          card_url: string | null
           is_sealed: boolean
           created_at: string
           updated_at: string
@@ -154,6 +155,7 @@ export interface Database {
           anecdote?: string | null
           origin_story?: string | null
           photo_url?: string | null
+          card_url?: string | null
           is_sealed?: boolean
           created_at?: string
           updated_at?: string
@@ -172,6 +174,7 @@ export interface Database {
           anecdote?: string | null
           origin_story?: string | null
           photo_url?: string | null
+          card_url?: string | null
           is_sealed?: boolean
           created_at?: string
           updated_at?: string
@@ -187,6 +190,42 @@ export interface Database {
           {
             foreignKeyName: 'recipes_author_id_fkey'
             columns: ['author_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      recipe_cooks: {
+        Row: {
+          id: string
+          recipe_id: string
+          user_id: string
+          cooked_at: string
+        }
+        Insert: {
+          id?: string
+          recipe_id: string
+          user_id: string
+          cooked_at?: string
+        }
+        Update: {
+          id?: string
+          recipe_id?: string
+          user_id?: string
+          cooked_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'recipe_cooks_recipe_id_fkey'
+            columns: ['recipe_id']
+            isOneToOne: false
+            referencedRelation: 'recipes'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'recipe_cooks_user_id_fkey'
+            columns: ['user_id']
             isOneToOne: false
             referencedRelation: 'profiles'
             referencedColumns: ['id']

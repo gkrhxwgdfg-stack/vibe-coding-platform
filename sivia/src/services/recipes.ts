@@ -46,6 +46,11 @@ export async function createRecipe(familyId: string, authorId: string, values: R
     // création pour que le formulaire affiche l'erreur et permette de réessayer.
     if (!photoPath) return { data: null, error: "La photo n’a pas pu être envoyée (trop lourde ou pas une image). Réessaie ?" }
   }
+  let cardPath: string | null = null
+  if (values.cardFile) {
+    cardPath = await uploadPhoto(familyId, authorId, values.cardFile)
+    if (!cardPath) return { data: null, error: "La photo de la carte n’a pas pu être envoyée. Réessaie ?" }
+  }
 
   const payload = {
     family_id: familyId,
@@ -60,6 +65,7 @@ export async function createRecipe(familyId: string, authorId: string, values: R
     anecdote: values.anecdote.trim() || null,
     origin_story: values.origin_story.trim() || null,
     photo_url: photoPath,
+    card_url: cardPath,
   }
 
   const { data, error } = await supabase.from('recipes').insert(payload).select().single()
@@ -71,7 +77,7 @@ export async function updateRecipe(
   recipeId: string,
   familyId: string,
   authorId: string,
-  values: RecipeFormValues & { keepExistingPhoto?: boolean },
+  values: RecipeFormValues & { keepExistingPhoto?: boolean; keepExistingCard?: boolean },
 ) {
   let photoPath: string | null | undefined
   if (values.photoFile) {
@@ -82,6 +88,16 @@ export async function updateRecipe(
     photoPath = uploaded
   } else if (values.keepExistingPhoto === false) {
     photoPath = null
+  }
+  let cardPath: string | null | undefined
+  if (values.cardFile) {
+    const uploadedCard = await uploadPhoto(familyId, authorId, values.cardFile)
+    if (uploadedCard === null) {
+      return { data: null, error: "La photo de la carte n’a pas pu être envoyée. Réessaie ?" }
+    }
+    cardPath = uploadedCard
+  } else if (values.keepExistingCard === false) {
+    cardPath = null
   }
 
   const payload: Database['public']['Tables']['recipes']['Update'] = {
@@ -96,6 +112,7 @@ export async function updateRecipe(
     origin_story: values.origin_story.trim() || null,
   }
   if (photoPath !== undefined) payload.photo_url = photoPath
+  if (cardPath !== undefined) payload.card_url = cardPath
 
   const { data, error } = await supabase
     .from('recipes')
@@ -118,5 +135,51 @@ export async function sealRecipe(recipeId: string, sealed: boolean) {
 
 export async function deleteRecipe(recipeId: string) {
   const { error } = await supabase.from('recipes').delete().eq('id', recipeId)
+  return { error: error ? friendlyError(error.message) : null }
+}
+
+// ---------------------------------------------------------------------------
+// « Je l'ai faite ! » — qui a refait la recette, et quand.
+// La généalogie du plat : l'écrite par l'un, refaite par les autres.
+// ---------------------------------------------------------------------------
+
+export interface RecipeCookEntry {
+  id: string
+  user_id: string
+  cooked_at: string
+  cook: {
+    display_name: string | null
+    family_role: string | null
+    avatar_url: string | null
+  } | null
+}
+
+/** Qui a déjà refait cette recette (plus ancien d'abord) */
+export async function fetchCooks(recipeId: string): Promise<RecipeCookEntry[]> {
+  const { data, error } = await supabase
+    .from('recipe_cooks')
+    .select('id, user_id, cooked_at, cook:profiles!recipe_cooks_user_id_fkey(display_name, family_role, avatar_url)')
+    .eq('recipe_id', recipeId)
+    .order('cooked_at', { ascending: true })
+  if (error || !data) return []
+  return data as unknown as RecipeCookEntry[]
+}
+
+/** « Je l'ai faite ! » — un marqueur par personne et par recette (idempotent :
+ *  re-cliquer ne crée rien de plus, grâce à la contrainte unique + DO NOTHING) */
+export async function markCooked(recipeId: string, userId: string) {
+  const { error } = await supabase
+    .from('recipe_cooks')
+    .upsert({ recipe_id: recipeId, user_id: userId }, { onConflict: 'recipe_id,user_id', ignoreDuplicates: true })
+  return { error: error ? friendlyError(error.message) : null }
+}
+
+/** Retire son marqueur « Je l'ai faite » (se rétracter reste possible) */
+export async function unmarkCooked(recipeId: string, userId: string) {
+  const { error } = await supabase
+    .from('recipe_cooks')
+    .delete()
+    .eq('recipe_id', recipeId)
+    .eq('user_id', userId)
   return { error: error ? friendlyError(error.message) : null }
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Camera, ImagePlus, Minus, Plus, Trash2 } from 'lucide-react'
+import { Camera, ImagePlus, Minus, PenLine, Plus, Trash2 } from 'lucide-react'
 import { CATEGORIES } from '@/lib/constants'
 import type { Recipe, RecipeCategory, RecipeFormValues } from '@/lib/types'
 import { photoPublicUrl } from '@/services/recipes'
@@ -27,6 +27,7 @@ function toFormValues(recipe?: Recipe | null): RecipeFormValues {
     anecdote: recipe?.anecdote ?? '',
     origin_story: recipe?.origin_story ?? '',
     photoFile: null,
+    cardFile: null,
   }
 }
 
@@ -37,12 +38,16 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
   const [error, setError] = useState<string | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(initial?.photo_url ? photoPublicUrl(initial.photo_url) : null)
   const [removePhoto, setRemovePhoto] = useState(false)
+  const [cardPreview, setCardPreview] = useState<string | null>(initial?.card_url ? photoPublicUrl(initial.card_url) : null)
+  const [removeCard, setRemoveCard] = useState(false)
 
   // Réinitialise si on passe de création à édition (changement de recette)
   useEffect(() => {
     setValues(toFormValues(initial))
     setPhotoPreview(initial?.photo_url ? photoPublicUrl(initial.photo_url) : null)
     setRemovePhoto(false)
+    setCardPreview(initial?.card_url ? photoPublicUrl(initial.card_url) : null)
+    setRemoveCard(false)
   }, [initial?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function update<K extends keyof RecipeFormValues>(key: K, value: RecipeFormValues[K]) {
@@ -77,6 +82,19 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
     }
   }
 
+  function handleCard(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0] ?? null
+    update('cardFile', file)
+    setRemoveCard(false)
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = () => setCardPreview(reader.result as string)
+      reader.readAsDataURL(file)
+    } else if (!initial?.card_url) {
+      setCardPreview(null)
+    }
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setError(null)
@@ -91,7 +109,8 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
     const { error: submitError } = await onSubmit({
       ...values,
       keepExistingPhoto: !removePhoto,
-    } as RecipeFormValues & { keepExistingPhoto: boolean })
+      keepExistingCard: !removeCard,
+    } as RecipeFormValues & { keepExistingPhoto: boolean; keepExistingCard: boolean })
     if (submitError) setError(submitError)
   }
 
@@ -223,6 +242,70 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
                 setPhotoPreview(null)
               }}
               aria-label="Retirer la photo"
+              className="relative touch-target-lg min-h-11 min-w-11 rounded-full bg-tomate text-white flex items-center justify-center"
+            >
+              <Trash2 size={16} aria-hidden="true" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Carte manuscrite : le papier d'origine, l'écriture de celle ou
+          celui qui l'a transmise (facultatif — polaroïd incliné de l'autre côté) */}
+      <div>
+        <span className="block font-bold text-[15px] text-encre mb-1.5">
+          La carte manuscrite <span className="font-normal text-encre-doux">(facultatif)</span>
+        </span>
+        <p className="text-sm text-encre-doux mb-3">
+          Le papier d'origine, taché de farine ou d'encre — photographie-le :
+          il restera dans le carnet, à côté de la recette.
+        </p>
+        <div className="flex flex-wrap items-center gap-6">
+          <label
+            htmlFor="card"
+            className={cn(
+              'cursor-pointer inline-flex items-center gap-2 min-h-12 px-5 rounded-full border-2 font-extrabold transition-colors',
+              'border-encre-doux/35 bg-carte hover:border-vert hover:text-vert',
+            )}
+          >
+            <PenLine size={20} aria-hidden="true" />
+            {cardPreview ? 'Changer la carte' : 'Ajouter la carte'}
+          </label>
+          <input id="card" type="file" accept="image/*" className="sr-only" onChange={handleCard} />
+          {cardPreview && !removeCard ? (
+            <figure className="polaroid relative w-[180px] rotate-[2deg]">
+              <span className="epingle" aria-hidden="true" />
+              <img
+                src={cardPreview}
+                alt="Aperçu de la carte manuscrite"
+                className="w-full aspect-[4/3] object-cover rounded-sm"
+              />
+              <figcaption className="font-serif italic text-[11.5px] text-cannelle text-center pt-1.5">
+                La carte originale
+              </figcaption>
+            </figure>
+          ) : (
+            !removeCard && (
+              <figure className="polaroid relative w-[180px] rotate-[2deg]" aria-hidden="true">
+                <span className="epingle" />
+                <div className="motif-tamis w-full aspect-[4/3] rounded-sm flex items-center justify-center">
+                  <PenLine size={26} className="text-encre-doux" aria-hidden="true" />
+                </div>
+                <figcaption className="font-serif italic text-[11.5px] text-cannelle text-center pt-1.5">
+                  En attente de la carte
+                </figcaption>
+              </figure>
+            )
+          )}
+          {cardPreview && !removeCard && (
+            <button
+              type="button"
+              onClick={() => {
+                setRemoveCard(true)
+                update('cardFile', null)
+                setCardPreview(null)
+              }}
+              aria-label="Retirer la carte"
               className="relative touch-target-lg min-h-11 min-w-11 rounded-full bg-tomate text-white flex items-center justify-center"
             >
               <Trash2 size={16} aria-hidden="true" />
