@@ -21,7 +21,7 @@ export function Polaroid({ src, caption, tilt = -2, className, overlay }: Polaro
       <span className="epingle" aria-hidden="true" />
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-vert-clair">
         {src ? (
-          <img src={src} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+          <img src={src} alt="" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover" />
         ) : (
           <div
             className="absolute inset-0"

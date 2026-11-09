@@ -9,10 +9,21 @@ import type { RecipeComment } from '@/lib/types'
  * Fil de vie d'une recette : commentaires et photos de la famille.
  * Toute la famille peut écrire ; seul l'auteur peut retirer son message.
  */
+const PAGE_SIZE = 20
+
+/** Fusion sans doublon, triée du plus ancien au plus récent */
+function mergeComments(a: RecipeComment[], b: RecipeComment[]): RecipeComment[] {
+  const byId = new Map<string, RecipeComment>()
+  for (const c of [...a, ...b]) byId.set(c.id, c)
+  return [...byId.values()].sort((x, y) => x.created_at.localeCompare(y.created_at))
+}
+
 export function useComments(recipeId: string | undefined, familyId?: string) {
   const { profile } = useAuth()
   const [comments, setComments] = useState<RecipeComment[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadingOlder, setLoadingOlder] = useState(false)
+  const [hasOlder, setHasOlder] = useState(false)
   const [sending, setSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -21,13 +32,28 @@ export function useComments(recipeId: string | undefined, familyId?: string) {
   const refetch = useCallback(async (silent = false) => {
     if (!recipeId) {
       setComments([])
+      setHasOlder(false)
       setLoading(false)
       return
     }
     if (!silent) setLoading(true)
-    setComments(await fetchComments(recipeId))
+    const page = await fetchComments(recipeId, { limit: PAGE_SIZE })
+    setComments(page.items)
+    setHasOlder(page.hasMore)
     setLoading(false)
   }, [recipeId])
+
+  /** Charge la page de messages plus anciens et les place au début du fil */
+  const loadOlder = useCallback(async () => {
+    if (!recipeId || loadingOlder) return
+    const oldest = comments[0]?.created_at
+    if (!oldest) return
+    setLoadingOlder(true)
+    const page = await fetchComments(recipeId, { before: oldest, limit: PAGE_SIZE })
+    setComments((prev) => mergeComments(prev, page.items))
+    setHasOlder(page.hasMore)
+    setLoadingOlder(false)
+  }, [recipeId, comments, loadingOlder])
 
   useEffect(() => {
     refetch()
@@ -46,7 +72,11 @@ export function useComments(recipeId: string | undefined, familyId?: string) {
         setError(sendError)
         return { error: sendError }
       }
-      await refetch(true)
+      // Fusion de la dernière page avec les messages déjà chargés : les
+      // vieux messages déjà sortis par « voir plus anciens » restent affichés.
+      const page = await fetchComments(recipeId, { limit: PAGE_SIZE })
+      setComments((prev) => mergeComments(prev, page.items))
+      setHasOlder((prev) => prev || page.hasMore)
       return { error: null }
     },
     [recipeId, profile, familyId, refetch],
@@ -79,7 +109,7 @@ export function useComments(recipeId: string | undefined, familyId?: string) {
     [],
   )
 
-  return { comments, loading, sending, error, refetch, send, remove, edit, commentPhotoUrl: photoPublicUrl }
+  return { comments, loading, loadingOlder, hasOlder, loadOlder, sending, error, refetch, send, remove, edit, commentPhotoUrl: photoPublicUrl }
 }
 
 /** Derniers commentaires de la famille, tous confondus (pour les notifications d'accueil) */

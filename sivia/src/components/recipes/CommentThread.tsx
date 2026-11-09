@@ -21,7 +21,7 @@ interface CommentThreadProps {
  */
 export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
   const { profile } = useAuth()
-  const { comments, loading, sending, error, send, remove, edit, commentPhotoUrl } = useComments(recipeId, familyId)
+  const { comments, loading, loadingOlder, hasOlder, loadOlder, sending, error, send, remove, edit, commentPhotoUrl } = useComments(recipeId, familyId)
 
   const [body, setBody] = useState('')
   const [photoFile, setPhotoFile] = useState<File | null>(null)
@@ -96,6 +96,18 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
             <li className="text-encre-doux">
               Personne n'a encore raconté cette recette. Sois le premier — la famille
               suivra.
+            </li>
+          )}
+          {hasOlder && (
+            <li className="text-center">
+              <button
+                type="button"
+                onClick={loadOlder}
+                disabled={loadingOlder}
+                className="inline-flex items-center gap-1.5 min-h-11 px-5 rounded-2xl border-2 border-encre-doux/35 bg-carte font-bold text-sm hover:border-vert hover:text-vert transition-colors"
+              >
+                {loadingOlder ? 'On ressort les vieux messages…' : 'Voir les messages plus anciens'}
+              </button>
             </li>
           )}
           {comments.map((comment) => {

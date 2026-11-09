@@ -32,23 +32,46 @@ export function HomePage() {
   const { recipes, loading } = useRecipes(NO_FILTERS)
   const { items: recentActivity, loading: activityLoading } = useRecentComments(5)
 
-  // Moments de la planche publiés sans recette (photo + commentaire, famille)
+  // Moments de la planche publiés sans recette (photo + commentaire, famille).
+  // Pagination par pages de 12 : même après 10 ans de vie d'une famille
+  // nombreuse, la planche ne charge jamais tout d'un bloc — les vieux
+  // moments se sortent au clic, et la page reste légère.
   const [plancheMoments, setPlancheMoments] = useState<RecipeComment[]>([])
   const [plancheLoading, setPlancheLoading] = useState(true)
+  const [momentsHasMore, setMomentsHasMore] = useState(false)
+  const [momentsLoadingMore, setMomentsLoadingMore] = useState(false)
   const [photoModalOpen, setPhotoModalOpen] = useState(false)
 
   const refetchPlanche = useCallback(async (silent = false) => {
     if (!profile?.family_id) {
       setPlancheMoments([])
+      setMomentsHasMore(false)
       setPlancheLoading(false)
       return
     }
     // silent : après publication, la planche se met à jour sans spinner —
     // la page garde sa hauteur et sa position (aucun retour en haut).
     if (!silent) setPlancheLoading(true)
-    setPlancheMoments(await fetchPlancheComments(profile.family_id))
+    const page = await fetchPlancheComments(profile.family_id, { limit: 12 })
+    setPlancheMoments(page.items)
+    setMomentsHasMore(page.hasMore)
     setPlancheLoading(false)
   }, [profile?.family_id])
+
+  /** Charge la page de moments plus anciens, sans retour en haut */
+  const loadMoreMoments = useCallback(async () => {
+    if (!profile?.family_id || momentsLoadingMore) return
+    const oldest = plancheMoments[plancheMoments.length - 1]?.created_at
+    if (!oldest) return
+    setMomentsLoadingMore(true)
+    const page = await fetchPlancheComments(profile.family_id, { before: oldest, limit: 12 })
+    setPlancheMoments((prev) => {
+      const seen = new Set(prev.map((c) => c.id))
+      return [...prev, ...page.items.filter((c) => !seen.has(c.id))]
+    })
+    setMomentsHasMore(page.hasMore)
+    setMomentsLoadingMore(false)
+  }, [profile?.family_id, plancheMoments, momentsLoadingMore])
 
   useEffect(() => {
     refetchPlanche()
@@ -62,7 +85,7 @@ export function HomePage() {
   // partagés en commentaires de recettes.
   const recentPhotos = recipes.filter((r) => r.photo_url).slice(0, 6)
   const photoComments = recentActivity.filter((c) => c.photo_url && c.recipe_id).slice(0, 6)
-  const moments = plancheMoments.filter((c) => c.photo_url).slice(0, 6)
+  const moments = plancheMoments.filter((c) => c.photo_url)
   const plancheEmpty = recentPhotos.length === 0 && photoComments.length === 0 && moments.length === 0
   const isLoading = loading || activityLoading || plancheLoading
 
@@ -191,6 +214,17 @@ export function HomePage() {
                           </div>
                         ))}
                       </CordeALinge>
+                      {momentsHasMore && (
+                        <div className="mt-4 text-center">
+                          <Button
+                            variant="outline"
+                            onClick={loadMoreMoments}
+                            disabled={momentsLoadingMore}
+                          >
+                            {momentsLoadingMore ? 'On ressort les vieux moments…' : 'Voir les moments plus anciens'}
+                          </Button>
+                        </div>
+                      )}
                     )
           return premium ? (
             plancheBody

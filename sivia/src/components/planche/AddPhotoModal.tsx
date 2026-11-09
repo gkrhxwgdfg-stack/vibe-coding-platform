@@ -125,6 +125,9 @@ export function AddPhotoModal({ open, onClose, onPublished }: AddPhotoModalProps
               {photoFile ? 'Changer la photo' : 'Choisir une photo'}
             </label>
             <input id="planche-photo" type="file" accept="image/*" className="sr-only" onChange={handlePhoto} />
+            <p className="text-sm text-encre-doux mt-1.5">
+              La photo est allégée automatiquement — inutile de la retoucher avant de l'envoyer.
+            </p>
             {photoPreview && (
               <span className="relative inline-block mt-3">
                 <img

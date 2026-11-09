@@ -3,6 +3,7 @@ import { STORAGE_BUCKET } from '@/lib/constants'
 import type { RecipeFormValues } from '@/lib/types'
 import type { Database } from '@/lib/database.types'
 import { friendlyError } from '@/lib/copy'
+import { compressImage } from '@/lib/image'
 
 /**
  * Logique métier des recettes : création / mise à jour / photo / scellage.
@@ -16,10 +17,12 @@ function parseMinutes(value: string): number | null {
 
 /** Upload la photo dans le bucket, dossier = family_id. Retourne le chemin. */
 async function uploadPhoto(familyId: string, authorId: string, file: File): Promise<string | null> {
-  const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
-  const path = `${familyId}/${authorId}/${crypto.randomUUID()}.${ext}`
-  const { error } = await supabase.storage.from(STORAGE_BUCKET).upload(path, file, {
-    contentType: file.type || 'image/jpeg',
+  // Compression côté navigateur : ~3–5 Mo → ~200–400 Ko. Le carnet familial
+  // reste léger et peu coûteux, même rempli pendant 10 ans.
+  const blob = await compressImage(file)
+  const path = `${familyId}/${authorId}/${crypto.randomUUID()}.jpg`
+  const { error } = await supabase.storage.from(STORAGE_BUCKET).upload(path, blob, {
+    contentType: blob.type || 'image/jpeg',
     upsert: false,
   })
   if (error) return null

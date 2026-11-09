@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import { friendlyError } from '@/lib/copy'
 import { STORAGE_BUCKET } from '@/lib/constants'
+import { compressImage } from '@/lib/image'
 import type { RecipeComment } from '@/lib/types'
 
 /**
@@ -10,45 +11,71 @@ import type { RecipeComment } from '@/lib/types'
 
 type CommentRow = RecipeComment & { author: import('@/lib/types').Profile | null }
 
-/** Upload d'une photo de commentaire, dossier = family_id. Retourne le chemin. */
+/** Upload d'une photo de commentaire, allégée côté navigateur (compressImage),
+ *  dossier = family_id. Retourne le chemin. */
 async function uploadCommentPhoto(familyId: string, authorId: string, file: File): Promise<string | null> {
-  const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
-  const path = `${familyId}/comments/${authorId}/${crypto.randomUUID()}.${ext}`
-  const { error } = await supabase.storage.from(STORAGE_BUCKET).upload(path, file, {
-    contentType: file.type || 'image/jpeg',
+  const blob = await compressImage(file)
+  const path = `${familyId}/comments/${authorId}/${crypto.randomUUID()}.jpg`
+  const { error } = await supabase.storage.from(STORAGE_BUCKET).upload(path, blob, {
+    contentType: blob.type || 'image/jpeg',
     upsert: false,
   })
   if (error) return null
   return path
 }
 
-/** Charge les commentaires d'une recette, du plus ancien au plus récent */
-export async function fetchComments(recipeId: string): Promise<RecipeComment[]> {
-  const { data, error } = await supabase
+/** Une page de commentaires : `items` prêts à afficher, `hasMore` = il en
+ *  existe d'autres (pagination par curseur — la page reste légère même
+ *  après 10 ans de vie d'une recette très commentée). */
+export interface CommentPage {
+  items: RecipeComment[]
+  hasMore: boolean
+}
+
+/** Charge une page de commentaires d'une recette. `items` est remis dans
+ *  l'ordre chronologique (du plus ancien au plus récent de la page).
+ *  `before` = date du plus ancien message déjà chargé (curseur). */
+export async function fetchComments(
+  recipeId: string,
+  { before, limit = 20 }: { before?: string; limit?: number } = {},
+): Promise<CommentPage> {
+  let query = supabase
     .from('recipe_comments')
     .select('*, author:profiles!recipe_comments_author_id_fkey(*)')
     .eq('recipe_id', recipeId)
-    .order('created_at', { ascending: true })
-  if (error || !data) return []
-  return (data as unknown as CommentRow[]).map((row) => ({
+  if (before) query = query.lt('created_at', before)
+  const { data, error } = await query.order('created_at', { ascending: false }).limit(limit + 1)
+  if (error || !data) return { items: [], hasMore: false }
+  const rows = data as unknown as CommentRow[]
+  const hasMore = rows.length > limit
+  const items = rows.slice(0, limit).reverse().map((row) => ({
     ...row,
     author: row.author ?? undefined,
   }))
+  return { items, hasMore }
 }
 
-/** Charge les moments de la planche familiale (commentaires sans recette) */
-export async function fetchPlancheComments(familyId: string): Promise<RecipeComment[]> {
-  const { data, error } = await supabase
+/** Charge une page de moments de la planche familiale (commentaires sans
+ *  recette), du plus récent au plus ancien. `before` = curseur de pagination. */
+export async function fetchPlancheComments(
+  familyId: string,
+  { before, limit = 12 }: { before?: string; limit?: number } = {},
+): Promise<CommentPage> {
+  let query = supabase
     .from('recipe_comments')
     .select('*, author:profiles!recipe_comments_author_id_fkey(*)')
     .eq('family_id', familyId)
     .is('recipe_id', null)
-    .order('created_at', { ascending: false })
-  if (error || !data) return []
-  return (data as unknown as CommentRow[]).map((row) => ({
+  if (before) query = query.lt('created_at', before)
+  const { data, error } = await query.order('created_at', { ascending: false }).limit(limit + 1)
+  if (error || !data) return { items: [], hasMore: false }
+  const rows = data as unknown as CommentRow[]
+  const hasMore = rows.length > limit
+  const items = rows.slice(0, limit).map((row) => ({
     ...row,
     author: row.author ?? undefined,
   }))
+  return { items, hasMore }
 }
 
 /** Ajoute un commentaire (texte seul ou texte + photo).
