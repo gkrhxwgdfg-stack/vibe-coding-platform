@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" font-family="Fraunces, Georgia, 'DejaVu Serif', serif">
+  <!-- Fond papier vieilli + foxing -->
+  <rect width="1200" height="630" fill="#FAF5EA"/>
+  <radialGradient id="fox1" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#8A5A2B" stop-opacity="0.07"/>
+    <stop offset="100%" stop-color="#8A5A2B" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="fox2" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#8A5A2B" stop-opacity="0.05"/>
+    <stop offset="100%" stop-color="#8A5A2B" stop-opacity="0"/>
+  </radialGradient>
+  <circle cx="150" cy="120" r="180" fill="url(#fox1)"/>
+  <circle cx="1060" cy="560" r="200" fill="url(#fox2)"/>
+  <circle cx="700" cy="80" r="140" fill="url(#fox2)"/>
+
+  <!-- Filets doubles haut et bas -->
+  <line x1="70" y1="42" x2="1130" y2="42" stroke="#2A211B" stroke-opacity="0.5" stroke-width="2.5"/>
+  <line x1="70" y1="49" x2="1130" y2="49" stroke="#2A211B" stroke-opacity="0.5" stroke-width="2.5"/>
+  <line x1="70" y1="581" x2="1130" y2="581" stroke="#2A211B" stroke-opacity="0.5" stroke-width="2.5"/>
+  <line x1="70" y1="588" x2="1130" y2="588" stroke="#2A211B" stroke-opacity="0.5" stroke-width="2.5"/>
+
+  <!-- Colonne texte -->
+  <text x="90" y="180" font-size="27" letter-spacing="9" fill="#2E5939" font-weight="bold">LE CARNET DE RECETTES DE LA FAMILLE</text>
+  <text x="86" y="360" font-size="185" fill="#2A211B" font-weight="600">Sivia.</text>
+  <text x="90" y="445" font-size="42" fill="#C93A2B">Le savoir qui se transmet en cuisine.</text>
+  <text x="90" y="505" font-size="30" fill="#6B5D4F">Recettes, photos, anecdotes — transmises entre générations.</text>
+
+  <!-- Polaroid 1 : crêpes de Mamie -->
+  <g transform="rotate(-5 830 210)">
+    <rect x="700" y="60" width="260" height="320" fill="#FFFFFF" stroke="#2A211B" stroke-opacity="0.12"/>
+    <rect x="716" y="76" width="228" height="222" fill="#E7EFE3"/>
+    <g transform="translate(770 110) scale(5.4)" fill="none" stroke="#2E5939" stroke-width="1.6" stroke-linecap="round">
+      <path d="M12 22V8"/>
+      <ellipse cx="9.4" cy="9" rx="2" ry="4" transform="rotate(-38 9.4 9)"/>
+      <ellipse cx="14.6" cy="9" rx="2" ry="4" transform="rotate(38 14.6 9)"/>
+      <ellipse cx="9.4" cy="13" rx="2" ry="4" transform="rotate(-38 9.4 13)"/>
+      <ellipse cx="14.6" cy="13" rx="2" ry="4" transform="rotate(38 14.6 13)"/>
+      <ellipse cx="9.4" cy="17" rx="2" ry="4" transform="rotate(-38 9.4 17)"/>
+      <ellipse cx="14.6" cy="17" rx="2" ry="4" transform="rotate(38 14.6 17)"/>
+      <ellipse cx="12" cy="5.5" rx="1.8" ry="3.4" stroke="#8A5A2B"/>
+    </g>
+    <text x="830" y="342" font-size="24" fill="#8A5A2B" text-anchor="middle" font-style="italic">Les crêpes de Mamie</text>
+  </g>
+
+  <!-- Polaroid 2 : gratin du dimanche -->
+  <g transform="rotate(4 1030 420)">
+    <rect x="905" y="270" width="260" height="320" fill="#FFFFFF" stroke="#2A211B" stroke-opacity="0.12"/>
+    <rect x="921" y="286" width="228" height="222" fill="#FAE9E4"/>
+    <circle cx="1035" cy="397" r="76" fill="#C93A2B" fill-opacity="0.9"/>
+    <circle cx="1010" cy="372" r="13" fill="#FAF5EA"/>
+    <circle cx="1058" cy="380" r="10" fill="#FAF5EA"/>
+    <circle cx="1030" cy="425" r="11" fill="#FAF5EA"/>
+    <text x="1035" y="552" font-size="24" fill="#8A5A2B" text-anchor="middle" font-style="italic">Le gratin du dimanche</text>
+  </g>
+
+  <!-- Épingles bois -->
+  <rect x="822" y="52" width="13" height="21" rx="3" fill="#B08968"/>
+  <rect x="1028" y="262" width="13" height="21" rx="3" fill="#B08968"/>
+</svg>

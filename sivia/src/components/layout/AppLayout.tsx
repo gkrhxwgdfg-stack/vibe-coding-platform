@@ -29,7 +29,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
 
   return (
     <div className="min-h-dvh flex flex-col pb-24">
-      <header className="sticky top-0 z-40 bg-papier/95 backdrop-blur border-b border-encre-doux/20">
+      <header className="sticky top-0 z-40 bg-papier/95 safe-area-pt backdrop-blur border-b border-encre-doux/20">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <Logo />
           <div className="text-right min-w-0">
@@ -57,7 +57,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
         <span aria-hidden="true"> · </span>
         <Link to="/conditions" className="hover:text-tomate hover:underline">Conditions d'utilisation</Link>
         <span aria-hidden="true"> · </span>
-        <SignalerButton variant="link" label="un contenu" className="text-encre-doux/70 hover:text-tomate hover:underline" />
+        <SignalerButton variant="link" label="un contenu" className="text-encre-doux hover:text-tomate hover:underline" />
         <span aria-hidden="true"> · </span>
         © 2026 Sivia
       </footer>

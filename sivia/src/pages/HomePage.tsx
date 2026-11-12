@@ -175,6 +175,7 @@ export function HomePage() {
                             <Polaroid
                               src={photoPublicUrl(recipe.photo_url)}
                               caption={`${recipe.title} — ${recipe.author?.display_name ?? ''}`}
+                              alt={recipe.title}
                               tilt={stableTilt(recipe.id)}
                             />
                           </Link>
@@ -205,6 +206,7 @@ export function HomePage() {
                                   </span>
                                 </span>
                               }
+                              alt={`Photo partagée par ${comment.author?.display_name ?? 'la famille'}`}
                               tilt={stableTilt(comment.id)}
                             />
                           </Link>
@@ -227,6 +229,7 @@ export function HomePage() {
                                   <span className="block">{comment.author?.display_name ?? ''}</span>
                                 </span>
                               }
+                              alt={comment.body ? `Moment de cuisine partagé par ${comment.author?.display_name ?? 'la famille'}` : `Photo de ${comment.author?.display_name ?? 'la famille'}`}
                               tilt={stableTilt(comment.id)}
                               overlay={
                                 comment.author_id === profile?.id ? (

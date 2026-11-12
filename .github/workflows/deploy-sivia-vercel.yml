@@ -55,6 +55,21 @@ jobs:
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
 
+      - name: Installer Fraunces (police des images)
+        continue-on-error: true
+        run: |
+          mkdir -p "$HOME/.fonts"
+          curl -sL -A "curl/8" "https://fonts.googleapis.com/css2?family=Fraunces" -o /tmp/f.css || true
+          grep -o "https://[^)]*" /tmp/f.css | head -1 | xargs -r curl -sL -o "$HOME/.fonts/Fraunces.ttf"
+          fc-cache -f || true
+
+      - name: Générer les images sociales et icônes (PNG)
+        continue-on-error: true
+        working-directory: sivia
+        run: |
+          npm install --no-save sharp
+          node scripts/generate-images.mjs
+
       - name: Déployer sur Vercel (production)
         working-directory: sivia
         run: |

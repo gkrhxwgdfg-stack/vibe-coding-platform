@@ -9,10 +9,12 @@ interface PolaroidProps {
   className?: string
   /** Contenu optionnel superposé sur la photo (badge, etc.) */
   overlay?: ReactNode
+  /** Description de la photo pour les lecteurs d'écran ; vide = décorative */
+  alt?: string
 }
 
 /** Photo « polaroid » posée en biais avec un mot dessous. Taille fixe, ne grandit pas. */
-export function Polaroid({ src, caption, tilt = -2, className, overlay }: PolaroidProps) {
+export function Polaroid({ src, caption, tilt = -2, className, overlay, alt }: PolaroidProps) {
   return (
     <figure
       className={cn('polaroid relative inline-block w-[200px] shrink-0', className)}
@@ -21,7 +23,7 @@ export function Polaroid({ src, caption, tilt = -2, className, overlay }: Polaro
       <span className="epingle" aria-hidden="true" />
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-vert-clair">
         {src ? (
-          <img src={src} alt="" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover" />
+          <img src={src} alt={alt ?? ''} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover" />
         ) : (
           <div
             className="absolute inset-0"

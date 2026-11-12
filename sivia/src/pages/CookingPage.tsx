@@ -344,6 +344,7 @@ export function CookingPage() {
             <Polaroid
               src={photo}
               caption={`${recipe.title} — cuisinée aujourd'hui`}
+              alt={`${recipe.title} — cuisinée aujourd'hui`}
               tilt={-2.5}
               className="w-[220px]"
             />

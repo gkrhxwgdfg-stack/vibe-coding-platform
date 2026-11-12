@@ -752,3 +752,57 @@ html.reading-xl .card-pad {
     opacity: 0.12;
   }
 }
+
+/* ============================================================
+   Zones sûres iOS (encoche, barre de gestes) — viewport-fit=cover.
+   safe-area-pb est déjà posé sur la navigation basse ; les utilitaires
+   ci-dessous couvrent aussi l'en-tête et les bords latéraux.
+   ============================================================ */
+@utility safe-area-pt {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+@utility safe-area-pb {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@utility safe-area-px {
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+/* ============================================================
+   Contrastes renforcés (Windows « contraste élevé », besoins
+   visuels spécifiques) : papier plein, filets et cadres appuyés.
+   ============================================================ */
+@media (prefers-contrast: more) {
+  body {
+    background: #fffdf8;
+  }
+
+  .filet-double {
+    border-top: 3px double rgba(42, 33, 27, 0.85);
+  }
+
+  .card-surface {
+    border: 2px solid rgba(107, 93, 79, 0.9);
+  }
+
+  .folio,
+  .marge-note {
+    color: #4a3f35;
+  }
+}
+
+/* Mode couleurs forcées (Windows/Edge) : garantir les contours
+   des structures décoratives (polaroids, cadre couture, épingles). */
+@media (forced-colors: active) {
+  .polaroid,
+  .cadre-couture {
+    border: 1.5px solid CanvasText;
+  }
+
+  .epingle {
+    background: CanvasText;
+  }
+}

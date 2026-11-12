@@ -42,6 +42,14 @@ jobs:
             exit 1
           fi
           echo "Configuration Supabase présente."
+      - name: Installer Fraunces (police des images)
+        continue-on-error: true
+        run: |
+          mkdir -p "$HOME/.fonts"
+          curl -sL -A "curl/8" "https://fonts.googleapis.com/css2?family=Fraunces" -o /tmp/f.css || true
+          grep -o "https://[^)]*" /tmp/f.css | head -1 | xargs -r curl -sL -o "$HOME/.fonts/Fraunces.ttf"
+          fc-cache -f || true
+
       - name: Build
         working-directory: sivia
         run: npm run build
@@ -49,6 +57,13 @@ jobs:
           SIVIA_BASE_PATH: /vibe-coding-platform/
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+      - name: Générer les images sociales et icônes (PNG)
+        continue-on-error: true
+        working-directory: sivia
+        run: |
+          npm install --no-save sharp
+          node scripts/generate-images.mjs
+
       - name: Fallback SPA pour GitHub Pages
         run: cp sivia/dist/index.html sivia/dist/404.html
       - name: Setup Pages
