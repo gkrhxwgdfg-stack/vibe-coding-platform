@@ -51,14 +51,14 @@ export function MentionsLegalesPage() {
       <H2>Éditeur du site</H2>
       <p>
         Le site Sivia (ci-après « le Service ») est édité par <strong>GTB&CO</strong>
-        {' '}(Gaspar Truchon-Bartès), [adresse postale à compléter], immatriculée sous le numéro
-        {' '}[SIRET / RCS à compléter].<br />
+        {' '}(Gaspar Truchon-Bartès), 8 rue de la Cité, 51200 Épernay — entrepreneur individuel (micro-entreprise GTB&CO), immatriculé au registre national des entreprises sous le numéro
+        {' '}[SIRET en cours d'attribution, formalité de création déposée le 12 novembre 2026].<br />
         Contact : [adresse e-mail de contact à compléter].<br />
         Téléphone : [numéro de téléphone à compléter] (obligation LCEN pour un éditeur
         personne physique).
       </p>
       <H2>Directeur de la publication</H2>
-      <p>Gaspar Truchon-Bartès, [adresse postale à compléter].</p>
+      <p>Gaspar Truchon-Bartès, 8 rue de la Cité, 51200 Épernay.</p>
       <H2>Hébergement</H2>
       <p>
         L'application est hébergée par <strong>Vercel Inc.</strong> (vercel.com) — 410 Terry
