@@ -76,9 +76,11 @@ export function CookingTimerV2({ timer, onChange }: CookingTimerV2Props) {
     if (!muted) playBell()
   }, [done, muted])
 
-  // Durée totale affichée : le temps figé en pause, sinon le temps initial
-  // (recalculé à la reprise depuis endsAt)
-  const initialTotal = timer.remainingWhenPaused ?? Math.max(remaining, 1)
+  // Durée totale d'origine du minuteur : la remise à zéro y revient toujours.
+  // Fallback (sessions persistées avant l'ajout de totalSeconds) : le temps
+  // figé en pause, sinon le temps restant courant.
+  const initialTotal =
+    timer.totalSeconds ?? timer.remainingWhenPaused ?? Math.max(remaining, 1)
   const elapsedFraction = initialTotal > 0 ? (initialTotal - remaining) / initialTotal : 0
   const progressDash = Math.min(CIRCUMFERENCE, elapsedFraction * CIRCUMFERENCE).toFixed(1) + ' ' + CIRCUMFERENCE.toFixed(1)
 
@@ -152,7 +154,7 @@ export function CookingTimerV2({ timer, onChange }: CookingTimerV2Props) {
           {running ? <Pause size={18} aria-hidden="true" /> : <Play size={18} aria-hidden="true" />}
           {running ? 'Pause' : remaining === initialTotal ? 'Démarrer' : 'Reprendre'}
         </Button>
-        <Button variant="ghost" onClick={reset} aria-label={`Remettre le minuteur « ${timer.label} » à zéro`}>
+        <Button variant="ghost" onClick={reset} aria-label={`Recommencer le minuteur « ${timer.label} » depuis le départ`}>
           <RotateCcw size={18} aria-hidden="true" />
         </Button>
       </div>

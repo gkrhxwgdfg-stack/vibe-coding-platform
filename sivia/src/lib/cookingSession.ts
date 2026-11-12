@@ -8,6 +8,8 @@
 export interface TimerState {
   id: string
   label: string
+  /** Durée totale d'origine en secondes — sert à la remise à zéro */
+  totalSeconds?: number
   /** Timestamp (ms) de fin — null si en pause */
   endsAt: number | null
   /** Secondes restantes quand mis en pause */
@@ -79,6 +81,7 @@ export function createTimer(label: string, minutes: number, now = Date.now()): T
   return {
     id: crypto.randomUUID(),
     label,
+    totalSeconds: Math.round(minutes * 60),
     endsAt: now + Math.round(minutes * 60 * 1000),
     remainingWhenPaused: null,
   }
