@@ -8,6 +8,8 @@ import {
   Download,
   Heart,
   Lock,
+  LockKeyhole,
+  LockKeyholeOpen,
   Minus,
   Pencil,
   Play,
@@ -174,11 +176,11 @@ export function RecipeDetailPage() {
           ) : (
             <Torchon label={meta.label} className="[&>span]:w-24 [&>span]:h-24 [&>span]:text-5xl" />
           )}
-          <span className="absolute top-4 left-4 bg-carte/95 rounded-full px-4 py-1.5 font-extrabold text-xs uppercase tracking-[0.12em] text-tomate">
+          <span className="absolute top-3 left-3 bg-carte/95 rounded-full px-3 py-1 font-extrabold text-[11px] uppercase tracking-[0.12em] text-tomate">
             {meta.label}
           </span>
           {recipe.is_sealed && (
-            <span className="absolute top-4 right-4 bg-carte/95 rounded-full px-4 py-1.5 font-bold text-tomate inline-flex items-center gap-1.5">
+            <span className="absolute top-3 right-3 bg-carte/95 rounded-full px-3 py-1 font-bold text-[11px] text-tomate inline-flex items-center gap-1.5">
               <Lock size={15} aria-hidden="true" /> Recette scellée
             </span>
           )}
@@ -230,17 +232,17 @@ export function RecipeDetailPage() {
                   type="button"
                   onClick={() => setServings(Math.max(1, effectiveServings - 1))}
                   aria-label="Une part de moins"
-                  className="touch-target-lg min-h-12 min-w-12 hover:text-vert inline-flex items-center justify-center"
+                  className="touch-target-lg min-h-11 min-w-11 hover:text-vert inline-flex items-center justify-center"
                 >
-                  <Minus size={18} aria-hidden="true" />
+                  <Minus size={16} aria-hidden="true" />
                 </button>
                 <button
                   type="button"
                   onClick={() => setServings(effectiveServings + 1)}
                   aria-label="Une part de plus"
-                  className="touch-target-lg min-h-12 min-w-12 hover:text-vert inline-flex items-center justify-center"
+                  className="touch-target-lg min-h-11 min-w-11 hover:text-vert inline-flex items-center justify-center"
                 >
-                  <Plus size={18} aria-hidden="true" />
+                  <Plus size={16} aria-hidden="true" />
                 </button>
               </span>
             </span>
@@ -264,75 +266,101 @@ export function RecipeDetailPage() {
             </div>
           )}
 
-          {/* Actions */}
-          <div className="flex flex-wrap gap-3 mt-5">
+          {/* Actions — fines et lisibles : la cuisine d'abord, le carnet ensuite,
+              l'espace créateur (scellé, retrait) regroupé et discret en dernier.
+              Taille sm partout (44 px, seuil WCAG) : visuellement compact, tactile intact. */}
+          <div className="flex flex-wrap items-center gap-2 mt-5">
             {/* Mode cuisson : diaporama plein écran, une étape à la fois */}
             {recipe.steps.length > 0 && (
               <Link to={'/recettes/' + recipe.id + '/cuisson'}>
-                <Button variant="primary">
-                  <Play size={18} aria-hidden="true" /> Cuisiner
+                <Button size="sm" variant="primary">
+                  <Play size={16} aria-hidden="true" /> Cuisiner
                 </Button>
               </Link>
             )}
-            {/* Export PDF direct (bouton principal) + impression navigateur en 2e choix */}
-            <Button variant="outline" onClick={handlePdfExport} disabled={pdfBusy}>
-              {pdfDone ? <Check size={18} aria-hidden="true" /> : <Download size={18} aria-hidden="true" />}
-              {pdfBusy ? 'On prépare le PDF…' : pdfDone ? 'La recette est dans vos téléchargements.' : 'Télécharger (PDF)'}
-              {!premium && <Lock size={14} aria-hidden="true" aria-label="Sivia Plus" />}
-            </Button>
-            <Button variant="ghost" onClick={handleExport}>
-              {exported ? <Check size={18} aria-hidden="true" /> : <Printer size={18} aria-hidden="true" />}
-              {exported ? 'Prêt — choisis « Enregistrer en PDF »' : 'Imprimer'}
-              {!premium && <Lock size={14} aria-hidden="true" aria-label="Sivia Plus" />}
-            </Button>
-            {pdfError && (
-              <p className="text-sm text-tomate font-bold" role="alert">{pdfError}</p>
+            {/* « Je l'ai faite ! » : le petit bouton de fierté, la recette vit */}
+            {mine ? (
+              <Button size="sm" variant="primary" onClick={() => unmarkCookedByMe()} disabled={cookedBusy}>
+                <ChefHat size={16} aria-hidden="true" /> Tu l'as faite !
+              </Button>
+            ) : (
+              <Button size="sm" variant="outline" onClick={() => markCookedByMe()} disabled={cookedBusy}>
+                <ChefHat size={16} aria-hidden="true" /> Je l'ai faite !
+              </Button>
             )}
             <Button
-              variant={recipe.is_favorite ? 'primary' : 'outline'}
+              size="sm"
+              variant={recipe.is_favorite ? 'soft' : 'outline'}
               onClick={handleFavorite}
               disabled={favBusy}
               aria-pressed={recipe.is_favorite}
             >
-              <Heart size={18} aria-hidden="true" className={cn(recipe.is_favorite && 'fill-white')} />
-              {recipe.is_favorite ? 'Dans mes favoris' : 'Ajouter aux favoris'}
+              <Heart size={16} aria-hidden="true" className={cn(recipe.is_favorite && 'fill-vert')} />
+              {recipe.is_favorite ? 'Dans mes favoris' : 'Favoris'}
             </Button>
-            {/* « Je l'ai faite ! » : le petit bouton de fierté, la recette vit */}
-            {mine ? (
-              <Button variant="primary" onClick={() => unmarkCookedByMe()} disabled={cookedBusy}>
-                <ChefHat size={18} aria-hidden="true" /> Tu l'as faite !
-              </Button>
-            ) : (
-              <Button variant="outline" onClick={() => markCookedByMe()} disabled={cookedBusy}>
-                <ChefHat size={18} aria-hidden="true" /> Je l'ai faite !
-              </Button>
-            )}
             {canEdit && (
               <Link to={`/recettes/${recipe.id}/modifier`}>
-                <Button variant="outline">
-                  <Pencil size={18} aria-hidden="true" /> Modifier
+                <Button size="sm" variant="ghost">
+                  <Pencil size={16} aria-hidden="true" /> Modifier
                 </Button>
               </Link>
             )}
-            {isAuthor && (
-              <Button variant="outline" onClick={handleSeal}>
-                <Lock size={18} aria-hidden="true" />
-                {recipe.is_sealed ? 'Desceller la recette' : 'Sceller la recette'}
-              </Button>
-            )}
-            {isAuthor && (
-              <Button variant="ghost" className="text-tomate" onClick={() => setConfirmDelete(true)}>
-                <Trash2 size={18} aria-hidden="true" /> {COPY.actions.retirer}
-              </Button>
+          </div>
+
+          {/* Conservation (Sivia Plus) : PDF et impression, compacts —
+              le petit cadenas renvoie au plan, pas au scellé (icônes distinctes) */}
+          <div className="flex flex-wrap items-center gap-2 mt-2">
+            <Button size="sm" variant="ghost" onClick={handlePdfExport} disabled={pdfBusy}>
+              {pdfDone ? <Check size={16} aria-hidden="true" /> : <Download size={16} aria-hidden="true" />}
+              {pdfBusy ? 'On prépare le PDF…' : pdfDone ? 'La recette est dans vos téléchargements' : 'PDF'}
+              {!premium && <Lock size={12} aria-hidden="true" aria-label="Sivia Plus" />}
+            </Button>
+            <Button size="sm" variant="ghost" onClick={handleExport}>
+              {exported ? <Check size={16} aria-hidden="true" /> : <Printer size={16} aria-hidden="true" />}
+              {exported ? 'Prêt — « Enregistrer en PDF »' : 'Imprimer'}
+              {!premium && <Lock size={12} aria-hidden="true" aria-label="Sivia Plus" />}
+            </Button>
+            {pdfError && (
+              <p className="text-sm text-tomate font-bold" role="alert">{pdfError}</p>
             )}
           </div>
-          {isAuthor && !confirmDelete && (
-            <p className="text-sm text-encre-doux mt-2">
-              {recipe.is_sealed
-                ? 'Recette scellée : tu es le seul à pouvoir modifier l’original.'
-                : 'Sceller une recette la rend non modifiable — sauf par toi, son créateur.'}
-              
-            </p>
+
+          {/* Espace créateur : sceller (cadenas seul, distinct du cadenas premium)
+              et retirer, discrets — sous les actions principales */}
+          {isAuthor && (
+            <div className="flex flex-wrap items-center gap-2 mt-2">
+              <Button
+                size="sm"
+                variant="ghost"
+                className="min-w-11 px-2 text-cannelle hover:text-encre"
+                onClick={handleSeal}
+                aria-pressed={recipe.is_sealed}
+                aria-label={
+                  recipe.is_sealed
+                    ? 'Desceller la recette : elle redevient modifiable par tous'
+                    : 'Sceller la recette : plus personne ne peut la modifier, sauf toi'
+                }
+                title={recipe.is_sealed ? 'Desceller la recette' : 'Sceller la recette'}
+              >
+                {recipe.is_sealed ? (
+                  <LockKeyhole size={16} aria-hidden="true" />
+                ) : (
+                  <LockKeyholeOpen size={16} aria-hidden="true" />
+                )}
+              </Button>
+              <p className="text-xs text-encre-doux">
+                {recipe.is_sealed
+                  ? 'Recette scellée : tu es le seul à pouvoir modifier l’original.'
+                  : 'Sceller la recette : personne ne pourra la modifier, sauf toi.'}
+              </p>
+              <button
+                type="button"
+                onClick={() => setConfirmDelete(true)}
+                className="ml-auto inline-flex items-center gap-1.5 min-h-11 px-1 text-sm font-bold text-tomate/80 hover:text-tomate"
+              >
+                <Trash2 size={15} aria-hidden="true" /> {COPY.actions.retirer}
+              </button>
+            </div>
           )}
           {isAuthor && confirmDelete && (
             <div className="mt-2 flex justify-end">
@@ -371,7 +399,7 @@ export function RecipeDetailPage() {
             {recipe.steps.map((step, i) => (
               <li key={i} className="flex items-start gap-4">
                 <span
-                  className="touch-target-lg min-h-11 min-w-11 rounded-full bg-tomate text-white font-serif font-bold flex items-center justify-center shrink-0"
+                  className="h-9 w-9 rounded-full bg-tomate text-white font-serif font-bold text-lg flex items-center justify-center shrink-0"
                   aria-hidden="true"
                 >
                   {i + 1}

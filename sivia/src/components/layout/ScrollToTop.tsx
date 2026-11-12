@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 /**
  * À chaque changement de PAGE, on remonte tout en haut — instantané,
@@ -15,8 +15,15 @@ import { useLocation } from 'react-router-dom'
  * d'URL de même page) — gardent la position de lecture.
  */
 export function ScrollToTop() {
-  const { pathname } = useLocation()
+  const { pathname, search, hash } = useLocation()
+  const navigate = useNavigate()
   useEffect(() => {
+    // GitHub Pages sert les routes partageables via /route/ (301 depuis /route) :
+    // on retire le slash final pour que les chemins restent canoniques.
+    if (pathname !== '/' && pathname.endsWith('/')) {
+      navigate(pathname.replace(/\/+$/, '') + search + hash, { replace: true })
+      return
+    }
     window.scrollTo(0, 0)
   }, [pathname])
   return null

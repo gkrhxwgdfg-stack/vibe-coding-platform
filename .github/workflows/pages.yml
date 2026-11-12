@@ -64,6 +64,13 @@ jobs:
           npm install --no-save sharp
           node scripts/generate-images.mjs
 
+      - name: Chemins partageables en 200 (aperçu WhatsApp/iMessage)
+        run: |
+          cd sivia/dist
+          for route in invitation bienvenue mentions-legales confidentialite conditions connexion inscription diagnostic recettes favoris famille profil mot-de-passe-oublie reinitialiser-mot-de-passe; do
+            mkdir -p "$route" && cp index.html "$route/index.html"
+          done
+
       - name: Fallback SPA pour GitHub Pages
         run: cp sivia/dist/index.html sivia/dist/404.html
       - name: Setup Pages

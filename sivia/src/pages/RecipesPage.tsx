@@ -67,7 +67,7 @@ export function RecipesPage() {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Farfouiller : un mot, un ingrédient, une histoire…"
           aria-label="Rechercher une recette"
-          className="w-full min-h-13 rounded-[14px] border-[1.5px] border-encre-doux/35 bg-carte pl-12 pr-12 text-lg focus:border-vert focus:ring-3 focus:ring-vert-clair focus:outline-none"
+          className="w-full min-h-12 rounded-xl border-[1.5px] border-encre-doux/35 bg-carte pl-11 pr-11 text-base focus:border-vert focus:ring-3 focus:ring-vert-clair focus:outline-none"
         />
         {query && (
           <button
@@ -141,14 +141,14 @@ export function RecipesPage() {
       ) : recipes.length === 0 ? (
         hasActiveFilters ? (
           <EmptyState title="Rien à cette page" handText={COPY.empty.recherche}>
-            <Button size="lg" variant="outline" onClick={resetFilters}>
+            <Button size="sm" variant="outline" onClick={resetFilters}>
               <X size={20} aria-hidden="true" /> Effacer
             </Button>
           </EmptyState>
         ) : (
           <EmptyState title="Le carnet est vide" handText="Toute famille a une première recette. Laquelle est la vôtre ?">
             <Link to="/recettes/nouvelle">
-              <Button size="lg">
+              <Button size="sm">
                 <Plus size={20} aria-hidden="true" /> Écrire une recette
               </Button>
             </Link>
