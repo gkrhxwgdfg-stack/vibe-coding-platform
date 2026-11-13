@@ -108,7 +108,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                 type="button"
                 onClick={loadOlder}
                 disabled={loadingOlder}
-                className="inline-flex items-center gap-1.5 min-h-11 px-5 rounded-2xl border-2 border-encre-doux/35 bg-carte font-bold text-sm hover:border-vert hover:text-vert transition-colors"
+                className="inline-flex items-center gap-1.5 min-h-11 px-5 rounded-full border-2 border-encre-doux/35 bg-carte font-bold text-sm hover:border-vert hover:text-vert transition-colors"
               >
                 {loadingOlder ? 'On ressort les vieux messages…' : 'Voir les messages plus anciens'}
               </button>
@@ -147,7 +147,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                         type="button"
                         onClick={() => startEdit(comment)}
                         aria-label="Modifier mon message"
-                        className="touch-target-lg min-h-11 min-w-11 rounded-xl text-encre-doux hover:text-tomate inline-flex items-center justify-center"
+                        className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-doux hover:text-tomate inline-flex items-center justify-center"
                       >
                         <Pencil size={16} aria-hidden="true" />
                       </button>
@@ -155,7 +155,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                         type="button"
                         onClick={() => setConfirmRemoveId(comment.id)}
                         aria-label="Retirer mon message"
-                        className="touch-target-lg min-h-11 min-w-11 rounded-xl text-encre-doux hover:text-tomate inline-flex items-center justify-center"
+                        className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-doux hover:text-tomate inline-flex items-center justify-center"
                       >
                         <Trash2 size={16} aria-hidden="true" />
                       </button>
@@ -165,7 +165,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
                     <div className="flex shrink-0 items-center -mr-2">
                       <SignalerButton
                         label={`le message de ${comment.author?.display_name ?? 'quelqu\u2019un'}`}
-                        className="touch-target-lg min-h-11 min-w-11 rounded-xl text-encre-doux/70 hover:text-tomate inline-flex items-center justify-center"
+                        className="touch-target-lg min-h-11 min-w-11 rounded-full text-encre-doux/70 hover:text-tomate inline-flex items-center justify-center"
                       />
                     </div>
                   )}
@@ -249,7 +249,7 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
           <label
             htmlFor="comment-photo"
             className={cn(
-              'cursor-pointer inline-flex items-center gap-2 min-h-11 px-5 rounded-2xl border-2 font-bold transition-colors',
+              'cursor-pointer inline-flex items-center gap-2 min-h-11 px-5 rounded-full border-2 font-bold transition-colors',
               'border-encre-doux/35 bg-carte hover:border-tomate hover:text-tomate',
             )}
           >

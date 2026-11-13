@@ -142,14 +142,14 @@ export function RecipesPage() {
         hasActiveFilters ? (
           <EmptyState title="Rien à cette page" handText={COPY.empty.recherche}>
             <Button size="sm" variant="outline" onClick={resetFilters}>
-              <X size={20} aria-hidden="true" /> Effacer
+              <X size={18} aria-hidden="true" /> Effacer
             </Button>
           </EmptyState>
         ) : (
           <EmptyState title="Le carnet est vide" handText="Toute famille a une première recette. Laquelle est la vôtre ?">
             <Link to="/recettes/nouvelle">
               <Button size="sm">
-                <Plus size={20} aria-hidden="true" /> Écrire une recette
+                <Plus size={18} aria-hidden="true" /> Écrire une recette
               </Button>
             </Link>
           </EmptyState>

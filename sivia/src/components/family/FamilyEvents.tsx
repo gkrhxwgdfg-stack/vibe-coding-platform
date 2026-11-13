@@ -294,7 +294,7 @@ function AddEventModal({ recipes, onClose, onCreated, add }: AddEventModalProps)
             <label
               htmlFor="event-photo"
               className={cn(
-                'cursor-pointer w-full min-h-11 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 font-bold transition-colors',
+                'cursor-pointer w-full min-h-11 inline-flex items-center justify-center gap-2 px-5 rounded-full border-2 font-bold transition-colors',
                 photoFile
                   ? 'border-vert bg-vert/10 text-encre'
                   : 'border-encre-doux/35 bg-carte hover:border-tomate hover:text-tomate',

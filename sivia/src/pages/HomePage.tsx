@@ -143,7 +143,7 @@ export function HomePage() {
               Extra Sivia Plus : le bouton n'existe pas sans le plan. */}
           {premium && (
             <Button onClick={() => setPhotoModalOpen(true)} aria-label="Ajouter une photo à la planche familiale">
-              <Plus size={20} aria-hidden="true" /> Ajouter
+              <Plus size={18} aria-hidden="true" /> Ajouter
             </Button>
           )}
         </div>

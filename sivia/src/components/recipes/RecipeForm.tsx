@@ -200,7 +200,7 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
           <label
             htmlFor="photo"
             className={cn(
-              'cursor-pointer inline-flex items-center gap-2 min-h-12 px-5 rounded-full border-2 font-extrabold transition-colors',
+              'cursor-pointer inline-flex items-center gap-2 min-h-11 px-5 rounded-full border-2 font-bold transition-colors',
               'border-encre-doux/35 bg-carte hover:border-vert hover:text-vert',
             )}
           >
@@ -264,7 +264,7 @@ export function RecipeForm({ initial, submitting, onSubmit }: RecipeFormProps) {
           <label
             htmlFor="card"
             className={cn(
-              'cursor-pointer inline-flex items-center gap-2 min-h-12 px-5 rounded-full border-2 font-extrabold transition-colors',
+              'cursor-pointer inline-flex items-center gap-2 min-h-11 px-5 rounded-full border-2 font-bold transition-colors',
               'border-encre-doux/35 bg-carte hover:border-vert hover:text-vert',
             )}
           >

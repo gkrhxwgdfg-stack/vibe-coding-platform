@@ -110,7 +110,7 @@ export function InvitationPage() {
           <Button className="w-full" onClick={accept} disabled={joining}>
             {joining ? 'On te réserve une place…' : (
               <>
-                <Check size={20} aria-hidden="true" /> Rejoindre la famille
+                <Check size={18} aria-hidden="true" /> Rejoindre la famille
               </>
             )}
           </Button>

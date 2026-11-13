@@ -358,7 +358,7 @@ export function CookingPage() {
           <div className="w-full">
             <label
               htmlFor="cooked-photo"
-              className="cursor-pointer w-full min-h-12 inline-flex items-center justify-center gap-2 px-5 rounded-2xl border-2 border-encre-doux/35 bg-carte font-bold hover:border-vert hover:text-vert transition-colors"
+              className="cursor-pointer w-full min-h-11 inline-flex items-center justify-center gap-2 px-5 rounded-full border-2 border-encre-doux/35 bg-carte font-bold hover:border-vert hover:text-vert transition-colors"
             >
               <ImagePlus size={20} aria-hidden="true" />
               {photoFile ? 'Changer la photo' : 'Ajouter une photo du plat'}
@@ -400,7 +400,7 @@ export function CookingPage() {
             </Button>
             {!justCooked ? (
               <Button size="lg" variant="outline" onClick={handleMarkCooked} disabled={marking}>
-                <ChefHat size={20} aria-hidden="true" /> Je l'ai faite !
+                <ChefHat size={18} aria-hidden="true" /> Je l'ai faite !
               </Button>
             ) : (
               <p className="text-encre-doux font-bold flex items-center justify-center gap-2 min-h-12">
@@ -602,7 +602,8 @@ export function CookingPage() {
         )}
       </main>
 
-      {/* Navigation : précédent / suivant, flèches 64 px */}
+      {/* Navigation : précédent / suivant, grosses flèches de cuisine (56 px,
+          utilisables doigts farineux — plus fines qu'avant mais toujours XXL) */}
       <footer className="sticky bottom-0 p-4 pb-6 bg-gradient-to-t from-papier via-papier">
         <div className="max-w-3xl mx-auto flex items-center justify-between gap-4">
           <button
@@ -610,23 +611,23 @@ export function CookingPage() {
             onClick={goPrev}
             disabled={index === 0}
             aria-label="Étape précédente"
-            className="touch-target-lg min-h-16 min-w-16 rounded-full bg-carte border-2 border-encre-doux/20 inline-flex items-center justify-center hover:border-vert hover:text-vert disabled:opacity-40 disabled:cursor-not-allowed"
+            className="touch-target-lg min-h-14 min-w-14 rounded-full bg-carte border-2 border-encre-doux/20 inline-flex items-center justify-center hover:border-vert hover:text-vert disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            <ChevronLeft size={28} aria-hidden="true" />
+            <ChevronLeft size={24} aria-hidden="true" />
           </button>
 
           {lastStep ? (
             <Button variant="primary" size="lg" onClick={goNext}>
-              C'est prêt ! <Check size={20} aria-hidden="true" />
+              C'est prêt ! <Check size={18} aria-hidden="true" />
             </Button>
           ) : (
             <button
               type="button"
               onClick={goNext}
               aria-label="Étape suivante"
-              className="touch-target-lg min-h-16 min-w-16 rounded-full bg-tomate text-white inline-flex items-center justify-center hover:bg-[#a72f23]"
+              className="touch-target-lg min-h-14 min-w-14 rounded-full bg-tomate text-white inline-flex items-center justify-center hover:bg-[#a72f23]"
             >
-              <ChevronRight size={28} aria-hidden="true" />
+              <ChevronRight size={24} aria-hidden="true" />
             </button>
           )}
         </div>

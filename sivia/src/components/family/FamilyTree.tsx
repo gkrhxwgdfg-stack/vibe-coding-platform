@@ -273,9 +273,9 @@ export function FamilyTree({
             <button
               type="button"
               onClick={() => openAdd(null)}
-              className="touch-target-lg min-h-13 px-6 py-3 rounded-full bg-tomate text-white font-bold inline-flex items-center gap-2 hover:bg-[#a72f23]"
+              className="touch-target-lg min-h-12 px-6 py-2 rounded-full bg-tomate text-white font-bold inline-flex items-center gap-2 hover:bg-[#a72f23]"
             >
-              <Plus size={22} aria-hidden="true" /> Créer la base de l'arbre
+              <Plus size={18} aria-hidden="true" /> Créer la base de l'arbre
             </button>
           </div>
         )}
