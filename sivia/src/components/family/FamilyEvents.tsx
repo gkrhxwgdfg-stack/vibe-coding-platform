@@ -56,8 +56,8 @@ export function FamilyEvents() {
         <Spinner label={COPY.loading.souvenirs} />
       ) : events.length === 0 ? (
         <EmptyState title="Pas encore de souvenirs" handText="Aucun repas noté pour l'instant. Noël approche — on commence par là ?">
-          <Button size="lg" onClick={() => setOpen(true)}>
-            <Plus size={20} aria-hidden="true" /> Noter notre premier repas
+          <Button onClick={() => setOpen(true)}>
+            <Plus size={18} aria-hidden="true" /> Noter notre premier repas
           </Button>
         </EmptyState>
       ) : (

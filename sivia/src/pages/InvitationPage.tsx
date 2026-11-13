@@ -59,10 +59,10 @@ export function InvitationPage() {
             Demande un nouveau lien à ta famille, ou connecte-toi si tu as déjà un compte.
           </p>
           <div className="flex flex-col gap-3">
-            <Button size="lg" onClick={() => navigate('/connexion')}>
+            <Button onClick={() => navigate('/connexion')}>
               {COPY.nav.seConnecter}
             </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate('/inscription')}>
+            <Button variant="outline" onClick={() => navigate('/inscription')}>
               {COPY.nav.sInscrire}
             </Button>
           </div>
@@ -107,7 +107,7 @@ export function InvitationPage() {
           </p>
         )}
         {user ? (
-          <Button size="lg" className="w-full" onClick={accept} disabled={joining}>
+          <Button className="w-full" onClick={accept} disabled={joining}>
             {joining ? 'On te réserve une place…' : (
               <>
                 <Check size={20} aria-hidden="true" /> Rejoindre la famille
@@ -117,7 +117,6 @@ export function InvitationPage() {
         ) : (
           <div className="flex flex-col gap-3">
             <Button
-              size="lg"
               className="w-full"
               onClick={() =>
                 navigate(`/inscription?token=${invitation.token}`)
@@ -126,7 +125,6 @@ export function InvitationPage() {
               Créer mon compte et rejoindre
             </Button>
             <Button
-              size="lg"
               variant="outline"
               className="w-full"
               onClick={() => navigate(`/connexion?token=${invitation.token}`)}

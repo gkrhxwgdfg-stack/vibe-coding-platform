@@ -9,7 +9,7 @@ export function NotFoundPage() {
     <AuthShell title="Page perdue" handNote="Ratée, la page a débordé. On essuie et on recommence ?">
       <EmptyState title="Cette page a dû sortir du four" handText={COPY.empty.recetteIntrouvable}>
         <Link to="/">
-          <Button size="lg">{COPY.nav.retourCarnet}</Button>
+          <Button>{COPY.nav.retourCarnet}</Button>
         </Link>
       </EmptyState>
     </AuthShell>

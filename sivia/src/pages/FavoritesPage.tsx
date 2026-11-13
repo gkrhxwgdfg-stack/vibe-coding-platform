@@ -29,7 +29,7 @@ export function FavoritesPage() {
       ) : favorites.length === 0 ? (
         <EmptyState title="Pas encore de chouchous" handText={COPY.empty.favoris}>
           <Link to="/recettes">
-            <Button size="lg">Farfouiller dans le carnet</Button>
+            <Button>Farfouiller dans le carnet</Button>
           </Link>
         </EmptyState>
       ) : (

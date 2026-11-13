@@ -119,103 +119,111 @@ export function CommentThread({ recipeId, familyId }: CommentThreadProps) {
             const isMine = comment.author_id === profile?.id
             const isEditing = editingId === comment.id
             return (
-              <li key={comment.id} className="flex items-start gap-3">
-                {comment.author && (
-                  <Avatar name={comment.author.display_name} src={comment.author.avatar_url} size="md" />
-                )}
-                <div className="min-w-0 flex-1">
-                  <div className="rounded-2xl bg-ble-clair px-4 py-3">
-                    <p className="font-bold">
-                      {comment.author?.display_name ?? '…'}
-                      {comment.author?.family_role && (
-                        <span className="text-encre-doux font-normal"> · {comment.author.family_role}</span>
-                      )}
-                    </p>
-                    {isEditing ? (
-                      <div className="mt-1 space-y-2">
-                        <textarea
-                          rows={2}
-                          value={editBody}
-                          onChange={(e) => setEditBody(e.target.value)}
-                          className="w-full min-h-11 rounded-xl border-2 border-encre-doux/35 bg-carte px-3 py-2 text-encre placeholder:text-encre-doux/60 focus:border-tomate focus:outline-none"
-                          aria-label="Modifier mon message"
-                        />
-                        <div className="flex gap-2">
-                          <button
-                            type="button"
-                            onClick={() => saveEdit(comment.id)}
-                            className="inline-flex items-center gap-1 min-h-11 px-4 rounded-xl bg-tomate text-white font-bold"
-                          >
-                            <Check size={16} aria-hidden="true" /> Enregistrer
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setEditingId(null)
-                              setEditBody('')
-                            }}
-                            className="inline-flex items-center gap-1 min-h-11 px-4 rounded-xl border-2 border-encre-doux/35 font-bold hover:border-encre-doux/60"
-                          >
-                            <X size={16} aria-hidden="true" /> Ranger
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        {comment.body && <p className="text-lg whitespace-pre-line break-words mt-0.5">{comment.body}</p>}
-                        {photo && (
-                          <img
-                            src={photo}
-                            alt={`Photo partagée par ${comment.author?.display_name ?? 'la famille'}`}
-                            loading="lazy"
-                            className="mt-2 w-full max-w-xs aspect-[4/3] object-cover rounded-xl border-2 border-encre-doux/20"
-                          />
-                        )}
-                      </>
+              <li key={comment.id} className="space-y-1.5">
+                {/* Entête du message : profil à gauche, date et actions à droite —
+                    la bulle prend toute la largeur en dessous (pattern messagerie),
+                    fini la bulle coincée entre l'avatar et les icônes */}
+                <div className="flex items-center gap-2 min-w-0">
+                  {comment.author && (
+                    <Avatar
+                      name={comment.author.display_name}
+                      src={comment.author.avatar_url}
+                      size="sm"
+                      className="w-9 h-9 text-xs"
+                    />
+                  )}
+                  <p className="font-bold truncate">
+                    {comment.author?.display_name ?? '…'}
+                    {comment.author?.family_role && (
+                      <span className="text-encre-doux font-normal"> · {comment.author.family_role}</span>
                     )}
-                  </div>
-                  <p className="text-sm text-encre-doux mt-1 px-1">
-                    {formatRelative(comment.created_at)}
                   </p>
-                  {confirmRemoveId === comment.id && (
-                    <div className="mt-1 flex justify-end">
-                      <ConfirmDialog
-                        title="Retirer ?"
-                        message="Le message et sa photo quitteront le fil de vie de la famille."
-                        onCancel={() => setConfirmRemoveId(null)}
-                        onConfirm={() => {
-                          void remove(comment.id)
-                          setConfirmRemoveId(null)
-                        }}
+                  <span className="ml-auto shrink-0 text-sm text-encre-doux">
+                    {formatRelative(comment.created_at)}
+                  </span>
+                  {isMine && !isEditing && (
+                    <div className="flex shrink-0 items-center -mr-2">
+                      <button
+                        type="button"
+                        onClick={() => startEdit(comment)}
+                        aria-label="Modifier mon message"
+                        className="touch-target-lg min-h-11 min-w-11 rounded-xl text-encre-doux hover:text-tomate inline-flex items-center justify-center"
+                      >
+                        <Pencil size={16} aria-hidden="true" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setConfirmRemoveId(comment.id)}
+                        aria-label="Retirer mon message"
+                        className="touch-target-lg min-h-11 min-w-11 rounded-xl text-encre-doux hover:text-tomate inline-flex items-center justify-center"
+                      >
+                        <Trash2 size={16} aria-hidden="true" />
+                      </button>
+                    </div>
+                  )}
+                  {!isMine && !isEditing && (
+                    <div className="flex shrink-0 items-center -mr-2">
+                      <SignalerButton
+                        label={`le message de ${comment.author?.display_name ?? 'quelqu\u2019un'}`}
+                        className="touch-target-lg min-h-11 min-w-11 rounded-xl text-encre-doux/70 hover:text-tomate inline-flex items-center justify-center"
                       />
                     </div>
                   )}
                 </div>
-                {isMine && !isEditing && (
-                  <div className="flex shrink-0 items-center">
-                    <button
-                      type="button"
-                      onClick={() => startEdit(comment)}
-                      aria-label="Modifier mon message"
-                      className="touch-target-lg min-h-11 min-w-11 rounded-xl text-encre-doux hover:text-tomate inline-flex items-center justify-center"
-                    >
-                      <Pencil size={18} aria-hidden="true" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setConfirmRemoveId(comment.id)}
-                      aria-label="Retirer mon message"
-                      className="touch-target-lg min-h-11 min-w-11 rounded-xl text-encre-doux hover:text-tomate inline-flex items-center justify-center"
-                    >
-                      <Trash2 size={18} aria-hidden="true" />
-                    </button>
-                  </div>
-                )}
-                {!isMine && !isEditing && (
-                  <div className="flex shrink-0 items-center">
-                    <SignalerButton
-                      label={`le message de ${comment.author?.display_name ?? 'quelqu\u2019un'}`}
-                      className="touch-target-lg min-h-11 min-w-11 rounded-xl text-encre-doux/70 hover:text-tomate inline-flex items-center justify-center"
+                <div className="rounded-2xl bg-ble-clair px-4 py-3">
+                  {isEditing ? (
+                    <div className="space-y-2">
+                      <textarea
+                        rows={2}
+                        value={editBody}
+                        onChange={(e) => setEditBody(e.target.value)}
+                        className="w-full min-h-11 rounded-xl border-2 border-encre-doux/35 bg-carte px-3 py-2 text-encre placeholder:text-encre-doux/60 focus:border-tomate focus:outline-none"
+                        aria-label="Modifier mon message"
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => saveEdit(comment.id)}
+                          className="inline-flex items-center gap-1 min-h-11 px-4 rounded-xl bg-tomate text-white font-bold"
+                        >
+                          <Check size={16} aria-hidden="true" /> Enregistrer
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingId(null)
+                            setEditBody('')
+                          }}
+                          className="inline-flex items-center gap-1 min-h-11 px-4 rounded-xl border-2 border-encre-doux/35 font-bold hover:border-encre-doux/60"
+                        >
+                          <X size={16} aria-hidden="true" /> Ranger
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      {comment.body && <p className="text-lg whitespace-pre-line break-words">{comment.body}</p>}
+                      {photo && (
+                        <img
+                          src={photo}
+                          alt={`Photo partagée par ${comment.author?.display_name ?? 'la famille'}`}
+                          loading="lazy"
+                          className="mt-2 w-full max-w-xs aspect-[4/3] object-cover rounded-xl border-2 border-encre-doux/20"
+                        />
+                      )}
+                    </>
+                  )}
+                </div>
+                {confirmRemoveId === comment.id && (
+                  <div className="flex justify-end">
+                    <ConfirmDialog
+                      title="Retirer ?"
+                      message="Le message et sa photo quitteront le fil de vie de la famille."
+                      onCancel={() => setConfirmRemoveId(null)}
+                      onConfirm={() => {
+                        void remove(comment.id)
+                        setConfirmRemoveId(null)
+                      }}
                     />
                   </div>
                 )}

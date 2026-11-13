@@ -266,104 +266,109 @@ export function RecipeDetailPage() {
             </div>
           )}
 
-          {/* Actions — fines et lisibles : la cuisine d'abord, le carnet ensuite,
-              l'espace créateur (scellé, retrait) regroupé et discret en dernier.
-              Taille sm partout (44 px, seuil WCAG) : visuellement compact, tactile intact. */}
-          <div className="flex flex-wrap items-center gap-2 mt-5">
+          {/* Actions — centrées et organisées en lignes lisibles : la cuisine
+              d'abord (héros, pleine largeur sur mobile), la fierté et le carnet
+              ensuite, la conservation puis l'espace créateur discret en dernier.
+              Taille sm/md partout (44 px, seuil WCAG) : visuellement compact, tactile intact. */}
+          <div className="mt-5 flex flex-col items-center gap-2">
             {/* Mode cuisson : diaporama plein écran, une étape à la fois */}
             {recipe.steps.length > 0 && (
-              <Link to={'/recettes/' + recipe.id + '/cuisson'}>
-                <Button size="sm" variant="primary">
-                  <Play size={16} aria-hidden="true" /> Cuisiner
+              <Link to={'/recettes/' + recipe.id + '/cuisson'} className="w-full sm:w-auto">
+                <Button size="md" className="w-full sm:w-auto">
+                  <Play size={18} aria-hidden="true" /> Cuisiner
                 </Button>
               </Link>
             )}
-            {/* « Je l'ai faite ! » : le petit bouton de fierté, la recette vit */}
-            {mine ? (
-              <Button size="sm" variant="primary" onClick={() => unmarkCookedByMe()} disabled={cookedBusy}>
-                <ChefHat size={16} aria-hidden="true" /> Tu l'as faite !
-              </Button>
-            ) : (
-              <Button size="sm" variant="outline" onClick={() => markCookedByMe()} disabled={cookedBusy}>
-                <ChefHat size={16} aria-hidden="true" /> Je l'ai faite !
-              </Button>
-            )}
-            <Button
-              size="sm"
-              variant={recipe.is_favorite ? 'soft' : 'outline'}
-              onClick={handleFavorite}
-              disabled={favBusy}
-              aria-pressed={recipe.is_favorite}
-            >
-              <Heart size={16} aria-hidden="true" className={cn(recipe.is_favorite && 'fill-vert')} />
-              {recipe.is_favorite ? 'Dans mes favoris' : 'Favoris'}
-            </Button>
-            {canEdit && (
-              <Link to={`/recettes/${recipe.id}/modifier`}>
-                <Button size="sm" variant="ghost">
-                  <Pencil size={16} aria-hidden="true" /> Modifier
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {/* « Je l'ai faite ! » : le petit bouton de fierté, la recette vit */}
+              {mine ? (
+                <Button size="sm" variant="primary" onClick={() => unmarkCookedByMe()} disabled={cookedBusy}>
+                  <ChefHat size={16} aria-hidden="true" /> Tu l'as faite !
                 </Button>
-              </Link>
-            )}
-          </div>
+              ) : (
+                <Button size="sm" variant="outline" onClick={() => markCookedByMe()} disabled={cookedBusy}>
+                  <ChefHat size={16} aria-hidden="true" /> Je l'ai faite !
+                </Button>
+              )}
+              <Button
+                size="sm"
+                variant={recipe.is_favorite ? 'soft' : 'outline'}
+                onClick={handleFavorite}
+                disabled={favBusy}
+                aria-pressed={recipe.is_favorite}
+              >
+                <Heart size={16} aria-hidden="true" className={cn(recipe.is_favorite && 'fill-vert')} />
+                {recipe.is_favorite ? 'Dans mes favoris' : 'Favoris'}
+              </Button>
+              {canEdit && (
+                <Link to={`/recettes/${recipe.id}/modifier`}>
+                  <Button size="sm" variant="ghost">
+                    <Pencil size={16} aria-hidden="true" /> Modifier
+                  </Button>
+                </Link>
+              )}
+            </div>
 
-          {/* Conservation (Sivia Plus) : PDF et impression, compacts —
-              le petit cadenas renvoie au plan, pas au scellé (icônes distinctes) */}
-          <div className="flex flex-wrap items-center gap-2 mt-2">
-            <Button size="sm" variant="ghost" onClick={handlePdfExport} disabled={pdfBusy}>
-              {pdfDone ? <Check size={16} aria-hidden="true" /> : <Download size={16} aria-hidden="true" />}
-              {pdfBusy ? 'On prépare le PDF…' : pdfDone ? 'La recette est dans vos téléchargements' : 'PDF'}
-              {!premium && <Lock size={12} aria-hidden="true" aria-label="Sivia Plus" />}
-            </Button>
-            <Button size="sm" variant="ghost" onClick={handleExport}>
-              {exported ? <Check size={16} aria-hidden="true" /> : <Printer size={16} aria-hidden="true" />}
-              {exported ? 'Prêt — « Enregistrer en PDF »' : 'Imprimer'}
-              {!premium && <Lock size={12} aria-hidden="true" aria-label="Sivia Plus" />}
-            </Button>
+            {/* Conservation (Sivia Plus) : PDF et impression, compacts —
+                le petit cadenas renvoie au plan, pas au scellé (icônes distinctes) */}
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <Button size="sm" variant="ghost" onClick={handlePdfExport} disabled={pdfBusy}>
+                {pdfDone ? <Check size={16} aria-hidden="true" /> : <Download size={16} aria-hidden="true" />}
+                {pdfBusy ? 'On prépare le PDF…' : pdfDone ? 'La recette est dans vos téléchargements' : 'PDF'}
+                {!premium && <Lock size={12} aria-hidden="true" aria-label="Sivia Plus" />}
+              </Button>
+              <Button size="sm" variant="ghost" onClick={handleExport}>
+                {exported ? <Check size={16} aria-hidden="true" /> : <Printer size={16} aria-hidden="true" />}
+                {exported ? 'Prêt — « Enregistrer en PDF »' : 'Imprimer'}
+                {!premium && <Lock size={12} aria-hidden="true" aria-label="Sivia Plus" />}
+              </Button>
+            </div>
             {pdfError && (
               <p className="text-sm text-tomate font-bold" role="alert">{pdfError}</p>
             )}
-          </div>
 
-          {/* Espace créateur : sceller (cadenas seul, distinct du cadenas premium)
-              et retirer, discrets — sous les actions principales */}
-          {isAuthor && (
-            <div className="flex flex-wrap items-center gap-2 mt-2">
-              <Button
-                size="sm"
-                variant="ghost"
-                className="min-w-11 px-2 text-cannelle hover:text-encre"
-                onClick={handleSeal}
-                aria-pressed={recipe.is_sealed}
-                aria-label={
-                  recipe.is_sealed
-                    ? 'Desceller la recette : elle redevient modifiable par tous'
-                    : 'Sceller la recette : plus personne ne peut la modifier, sauf toi'
-                }
-                title={recipe.is_sealed ? 'Desceller la recette' : 'Sceller la recette'}
-              >
-                {recipe.is_sealed ? (
-                  <LockKeyhole size={16} aria-hidden="true" />
-                ) : (
-                  <LockKeyholeOpen size={16} aria-hidden="true" />
-                )}
-              </Button>
-              <p className="text-xs text-encre-doux">
-                {recipe.is_sealed
-                  ? 'Recette scellée : tu es le seul à pouvoir modifier l’original.'
-                  : 'Sceller la recette : personne ne pourra la modifier, sauf toi.'}
-              </p>
-              <button
-                type="button"
-                onClick={() => setConfirmDelete(true)}
-                className="ml-auto inline-flex items-center gap-1.5 min-h-11 px-1 text-sm font-bold text-tomate/80 hover:text-tomate"
-              >
-                <Trash2 size={15} aria-hidden="true" /> {COPY.actions.retirer}
-              </button>
-            </div>
-          )}
+            {/* Espace créateur : sceller (cadenas seul, distinct du cadenas premium)
+                et retirer, discrets — sous les actions principales, centrés */}
+            {isAuthor && (
+              <div className="w-full flex flex-col items-center gap-1.5 mt-1">
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="min-w-11 px-2 text-cannelle hover:text-encre"
+                    onClick={handleSeal}
+                    aria-pressed={recipe.is_sealed}
+                    aria-label={
+                      recipe.is_sealed
+                        ? 'Desceller la recette : elle redevient modifiable par tous'
+                        : 'Sceller la recette : plus personne ne peut la modifier, sauf toi'
+                    }
+                    title={recipe.is_sealed ? 'Desceller la recette' : 'Sceller la recette'}
+                  >
+                    {recipe.is_sealed ? (
+                      <LockKeyhole size={16} aria-hidden="true" />
+                    ) : (
+                      <LockKeyholeOpen size={16} aria-hidden="true" />
+                    )}
+                  </Button>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDelete(true)}
+                    className="inline-flex items-center gap-1.5 min-h-11 px-1 text-sm font-bold text-tomate/80 hover:text-tomate"
+                  >
+                    <Trash2 size={15} aria-hidden="true" /> {COPY.actions.retirer}
+                  </button>
+                </div>
+                <p className="text-xs text-encre-doux text-center">
+                  {recipe.is_sealed
+                    ? 'Recette scellée : tu es le seul à pouvoir modifier l’original.'
+                    : 'Sceller la recette : personne ne pourra la modifier, sauf toi.'}
+                </p>
+              </div>
+            )}
+          </div>
           {isAuthor && confirmDelete && (
-            <div className="mt-2 flex justify-end">
+            <div className="mt-2 flex justify-center">
               <ConfirmDialog
                 title="Retirer du carnet ?"
                 message="Effacer une recette, c’est perdre un peu de quelqu’un."
@@ -488,12 +493,14 @@ export function RecipeDetailPage() {
         </PremiumGate>
       )}
 
-      {/* Bouton « Cuisiner » sticky en bas de fiche (au-dessus de la nav fixe) */}
+      {/* Bouton « Cuisiner » sticky en bas de fiche — au-dessus de la nav fixe
+          avec la marge safe-area : plus jamais rogné par la barre de menu
+          (la nav fait 64 px + l'encoche iPhone par-dessus) */}
       {recipe.steps.length > 0 && (
-        <div className="sticky bottom-20 z-30 flex justify-center pointer-events-none">
+        <div className="sticky bottom-[calc(5rem+env(safe-area-inset-bottom,0px))] z-30 flex justify-center pointer-events-none">
           <Link to={'/recettes/' + recipe.id + '/cuisson'} className="pointer-events-auto">
-            <Button size="lg" className={cn(cookPulse && 'pulse-once')}>
-              <Play size={20} aria-hidden="true" /> Cuisiner
+            <Button size="md" className={cn('shadow-lg', cookPulse && 'pulse-once')}>
+              <Play size={18} aria-hidden="true" /> Cuisiner
             </Button>
           </Link>
         </div>

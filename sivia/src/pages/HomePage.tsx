@@ -154,8 +154,8 @@ export function HomePage() {
                       <Spinner label={COPY.loading.planche} />
                     ) : plancheEmpty ? (
                       <EmptyState title="La planche est vide" handText={COPY.empty.planche}>
-                        <Button size="lg" onClick={() => setPhotoModalOpen(true)}>
-                          <Plus size={20} aria-hidden="true" /> Accrocher la première photo
+                        <Button onClick={() => setPhotoModalOpen(true)}>
+                          <Plus size={18} aria-hidden="true" /> Accrocher la première photo
                         </Button>
                       </EmptyState>
                     ) : (

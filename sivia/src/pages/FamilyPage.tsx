@@ -391,10 +391,12 @@ export function FamilyPage() {
           <CardHeader kicker="Inviter" title="Ouvrir la porte à quelqu’un" />
           <div className="space-y-4">
             {error && <p className="text-tomate font-bold" role="alert">{error}</p>}
-            <Button size="lg" className="w-full" onClick={() => void handleInvite()} disabled={submitting}>
-              <Link2 size={18} aria-hidden="true" />
-              {submitting ? 'On prépare le lien…' : 'Générer un lien d’invitation'}
-            </Button>
+            <div className="flex justify-center">
+              <Button onClick={() => void handleInvite()} disabled={submitting}>
+                <Link2 size={18} aria-hidden="true" />
+                {submitting ? 'On prépare le lien…' : 'Générer un lien d’invitation'}
+              </Button>
+            </div>
             <p className="text-sm text-encre-doux text-center">
               Pas d’adresse à entrer : le lien suffit. Envoie-le par SMS, mail ou
               WhatsApp — ton invité n’aura qu’à le suivre pour rejoindre la famille.
