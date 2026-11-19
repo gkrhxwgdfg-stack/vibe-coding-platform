@@ -822,3 +822,74 @@ html.reading-xl .card-pad {
     background: CanvasText;
   }
 }
+
+/* ============================================================
+   Chantier « identité & modernité » (19 novembre 2026) —
+   verre chaud, mascotte Miette, pilule de navigation élastique.
+   Toujours dans la langue Farine & Blé : verre teinté papier,
+   jamais de gris froids ; dosage discret.
+   ============================================================ */
+
+/* Miette, la mascotte : balancement très doux d'un épi au champ
+   (±2°, 6 s). Coupé quand l'utilisateur demande moins de mouvement. */
+.miette {
+  display: inline-block;
+  transform-origin: 50% 90%;
+  animation: miette-balance 6s ease-in-out infinite;
+}
+
+@keyframes miette-balance {
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(2deg);
+  }
+}
+
+/* Verre chaud — en-tête et navigation basse : le contenu glisse sous
+   une surface translucide teintée papier, avec un liseré encre-doux.
+   backdrop-blur + saturate : le verre « vivant » des OS modernes,
+   dans la couleur de la maison (jamais de gris froid). */
+.glass-papier {
+  background-color: rgba(250, 245, 234, 0.82);
+  -webkit-backdrop-filter: blur(14px) saturate(1.35);
+  backdrop-filter: blur(14px) saturate(1.35);
+}
+
+.glass-carte {
+  background-color: rgba(255, 253, 248, 0.86);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  backdrop-filter: blur(16px) saturate(1.3);
+}
+
+/* Pilule de navigation : sous l'onglet actif, un trait court s'étire
+   de 8 à 18 px (ressort doux 250 ms) — le même geste que les pastilles
+   du kit UI GTB & CO. Sens du mouvement = on regarde déjà ailleurs. */
+.nav-dot {
+  display: block;
+  width: 8px;
+  height: 4px;
+  border-radius: 999px;
+  background-color: var(--sivia-vert);
+  transform: scaleX(1);
+  transition: width 250ms cubic-bezier(0.34, 1.4, 0.4, 1);
+}
+
+[aria-current='page'] .nav-dot,
+.nav-dot[data-active='true'] {
+  width: 18px;
+}
+
+/* Si l'utilisateur demande moins de mouvement : le trait reste, statique,
+   et Miette se tient droite sans balancer. */
+@media (prefers-reduced-motion: reduce) {
+  .miette {
+    animation: none;
+  }
+
+  .nav-dot {
+    transition: none;
+  }
+}

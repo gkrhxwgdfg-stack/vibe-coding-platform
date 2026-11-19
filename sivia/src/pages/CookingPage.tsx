@@ -22,6 +22,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { Spinner } from '@/components/ui/Spinner'
 import { CookingTimerV2 } from '@/components/recipes/CookingTimerV2'
 import { VapeurCuisine } from '@/components/recipes/VapeurCuisine'
+import { Miette } from '@/components/motifs/Miette'
 import { Sparkle } from '@/components/motifs/Sparkle'
 import { Polaroid } from '@/components/ui/Polaroid'
 import { COPY } from '@/lib/copy'
@@ -339,6 +340,7 @@ export function CookingPage() {
       <div className="relative min-h-[100dvh] bg-papier flex flex-col items-center justify-center px-4 py-10 overflow-hidden anim-fold-in">
         <VapeurCuisine />
         <div className="relative z-10 flex flex-col items-center gap-6 text-center max-w-md">
+          <Miette size={72} mood="fier" label="Miette, l’épi mascotte de Sivia, fière du plat réussi" />
           <h1 className="font-serif text-4xl font-bold text-tomate">C'est prêt !</h1>
           {photo && (
             <Polaroid

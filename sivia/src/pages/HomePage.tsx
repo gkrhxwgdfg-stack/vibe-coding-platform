@@ -25,6 +25,7 @@ import { MOTION, pickDaily, stableTilt } from '@/lib/motion'
 import { greeting } from '@/lib/format'
 import { CordeALinge } from '@/components/motifs/CordeALinge'
 import { PluieFarine } from '@/components/motifs/PluieFarine'
+import { Miette } from '@/components/motifs/Miette'
 import { Sparkle } from '@/components/motifs/Sparkle'
 import { SignalerButton } from '@/components/ui/SignalerButton'
 import { DailyRecipeCard } from '@/components/recipes/DailyRecipeCard'
@@ -118,6 +119,8 @@ export function HomePage() {
       {/* Hero : pluie de farine sur le header d'accueil uniquement (§8) */}
       <section aria-labelledby="home-title" className="relative overflow-hidden">
         <PluieFarine />
+        {/* Miette veille sur le carnet, en haut à droite du hero */}
+        <Miette size={56} mood="sourit" className="absolute right-3 top-1 z-10" />
         <p className="kicker relative">Le carnet de {family?.name ?? 'ta famille'}</p>
         <h1 id="home-title" className="relative font-serif text-4xl font-semibold mt-1">
           {greeting()}, {profile?.display_name}
