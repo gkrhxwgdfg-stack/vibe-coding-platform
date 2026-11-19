@@ -7,6 +7,7 @@ import { SignalerButton } from '@/components/ui/SignalerButton'
 import { AddButtonHost } from '@/components/layout/AddButtonHost'
 import { useAuth } from '@/context/AuthContext'
 import { cn } from '@/lib/utils'
+import { greeting } from '@/lib/format'
 
 const navItems = [
   // Accueil : l'épi de blé — le seul symbole patrimonial devenu icône (§4)
@@ -37,7 +38,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
               <p className="font-serif font-semibold text-encre truncate">{family.name}</p>
             )}
             {profile && (
-              <p className="text-sm text-encre-doux truncate">Bonjour, {profile.display_name}</p>
+              <p className="text-sm text-encre-doux truncate">{greeting()}, {profile.display_name}</p>
             )}
           </div>
         </div>

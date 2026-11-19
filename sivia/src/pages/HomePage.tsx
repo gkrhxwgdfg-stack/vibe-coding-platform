@@ -22,6 +22,7 @@ import { ExpandableText } from '@/components/ui/ExpandableText'
 import { photoPublicUrl } from '@/services/recipes'
 import { COPY } from '@/lib/copy'
 import { MOTION, pickDaily, stableTilt } from '@/lib/motion'
+import { greeting } from '@/lib/format'
 import { CordeALinge } from '@/components/motifs/CordeALinge'
 import { PluieFarine } from '@/components/motifs/PluieFarine'
 import { Sparkle } from '@/components/motifs/Sparkle'
@@ -119,7 +120,7 @@ export function HomePage() {
         <PluieFarine />
         <p className="kicker relative">Le carnet de {family?.name ?? 'ta famille'}</p>
         <h1 id="home-title" className="relative font-serif text-4xl font-semibold mt-1">
-          Bonjour, {profile?.display_name}
+          {greeting()}, {profile?.display_name}
         </h1>
         <p className="relative font-serif italic text-encre-doux text-2xl mt-1">
           Qu’est-ce qu’on cuisine aujourd’hui ?
