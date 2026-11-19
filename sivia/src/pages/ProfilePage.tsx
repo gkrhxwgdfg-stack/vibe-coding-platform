@@ -198,7 +198,7 @@ export function ProfilePage() {
           <label
             htmlFor="avatar-input"
             title="Changer ma photo"
-            className="absolute -bottom-1 -right-1 inline-flex items-center justify-center w-9 h-9 rounded-full bg-carte border-2 border-encre-doux/35 text-encre hover:text-tomate hover:border-tomate/50 cursor-pointer transition-colors shadow-soft"
+            className="hit-44 absolute -bottom-1 -right-1 inline-flex items-center justify-center w-9 h-9 rounded-full bg-carte border-2 border-encre-doux/35 text-encre hover:text-tomate hover:border-tomate/50 cursor-pointer transition-colors shadow-soft"
           >
             <Camera size={16} aria-hidden="true" />
             <span className="sr-only">Changer ma photo de profil</span>

@@ -238,7 +238,7 @@ export function HomePage() {
                                       type="button"
                                       onClick={() => setEditingMoment(comment)}
                                       aria-label="Modifier le mot de ce moment"
-                                      className="min-h-8 min-w-8 rounded-full bg-carte/85 shadow-sm inline-flex items-center justify-center text-encre-doux hover:text-vert"
+                                      className="hit-44 min-h-9 min-w-9 rounded-full bg-carte/85 shadow-sm inline-flex items-center justify-center text-encre-doux hover:text-vert"
                                     >
                                       <Pencil size={14} aria-hidden="true" />
                                     </button>
@@ -246,7 +246,7 @@ export function HomePage() {
                                       type="button"
                                       onClick={() => setConfirmRemoveMomentId(comment.id)}
                                       aria-label="Retirer ce moment de la planche"
-                                      className="min-h-8 min-w-8 rounded-full bg-carte/85 shadow-sm inline-flex items-center justify-center text-encre-doux hover:text-tomate"
+                                      className="hit-44 min-h-9 min-w-9 rounded-full bg-carte/85 shadow-sm inline-flex items-center justify-center text-encre-doux hover:text-tomate"
                                     >
                                       <Trash2 size={14} aria-hidden="true" />
                                     </button>

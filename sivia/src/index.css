@@ -189,6 +189,22 @@ h3 {
   min-width: 44px;
 }
 
+/* Zone tactile étendue (cf. Material 3 / Apple HIG) : un contrôle visuellement
+   compact (32–40 px) reçoit une zone de tap de 48 px via un pseudo-élément
+   transparent, sans changer sa taille ni la densité visuelle. Utilisée par
+   les pastilles de confirmation, les icônes des polaroïds et le bouton
+   « Signaler ». */
+@utility hit-44 {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border-radius: inherit;
+  }
+}
+
 /* ============================================================
    Grande lecture (chantier 8) — r\u00e9glage \u00ab Taille du texte \u00bb.
    Classe pos\u00e9e sur <html> : .reading-lg (19 px) / .reading-xl (21 px).
