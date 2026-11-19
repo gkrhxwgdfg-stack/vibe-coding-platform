@@ -47,3 +47,11 @@ export function initials(name: string): string {
     .map((part) => part.charAt(0).toUpperCase())
     .join('')
 }
+
+/** Salutation selon l'heure : « Bonjour » le jour, « Bonsoir » après 18 h. */
+export function greeting(date = new Date()): string {
+  const h = date.getHours()
+  if (h < 5) return 'Bonne nuit'
+  if (h < 18) return 'Bonjour'
+  return 'Bonsoir'
+}
