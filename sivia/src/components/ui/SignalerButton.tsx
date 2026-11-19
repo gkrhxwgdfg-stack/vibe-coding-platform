@@ -50,7 +50,7 @@ export function SignalerButton({ label, variant = 'icon', className }: SignalerB
       }}
       className={
         className ??
-        'min-h-8 min-w-8 rounded-full bg-carte/85 shadow-sm inline-flex items-center justify-center text-encre-doux hover:text-tomate'
+        'hit-44 min-h-9 min-w-9 rounded-full bg-carte/85 shadow-sm inline-flex items-center justify-center text-encre-doux hover:text-tomate'
       }
     >
       <Flag size={14} aria-hidden="true" />
