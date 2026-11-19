@@ -52,7 +52,7 @@ export function MentionsLegalesPage() {
       <p>
         Le site Sivia (ci-après « le Service ») est édité par <strong>GTB&CO</strong>
         {' '}(Gaspar Truchon-Bartès), 8 rue de la Cité, 51200 Épernay — entrepreneur individuel (micro-entreprise GTB&CO), immatriculé au registre national des entreprises sous le numéro
-        {' '}[SIRET en cours d'attribution, formalité de création déposée le 12 novembre 2026].<br />
+        {' '}SIRET 132 928 409 00011.<br />
         Contact : [adresse e-mail de contact à compléter].<br />
         Téléphone : [numéro de téléphone à compléter] (obligation LCEN pour un éditeur
         personne physique).
@@ -204,7 +204,10 @@ export function ConditionsPage() {
       <p>
         Le service de base est gratuit. Sivia Plus (impression du livre, PDF sans filigrane)
         est proposé aux prix affichés TTC sur la page de paiement, en mensuel ou annuel, avec
-        un mois d'essai gratuit, sans carte bancaire. Tu peux arrêter ton abonnement à tout
+        un mois d'essai gratuit, sans carte bancaire. L'éditeur étant placé sous le régime de
+        la franchise en base de TVA, la TVA n'est pas applicable aux prix affichés
+        (art. 293 B du code général des impôts) : le prix affiché est donc le prix payé,
+        TTC comme HT. Tu peux arrêter ton abonnement à tout
         moment ; il reste actif jusqu'à la fin de la période payée.
       </p>
       <H2>Droit de rétractation</H2>

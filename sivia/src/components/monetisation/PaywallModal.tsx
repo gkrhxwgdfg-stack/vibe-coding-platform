@@ -346,6 +346,12 @@ export function PaywallModal({ open, onClose, contexte, onEssaiActif, dejaEssai,
                 </p>
               )}
 
+              {/* Prix TTC : franchise en base de TVA — le prix affiché est le
+                  prix payé, identique HT et TTC (art. 293 B du CGI). */}
+              <p className="text-center text-encre-doux/70 text-xs">
+                Prix TTC · TVA non applicable (art. 293 B du CGI, franchise en base)
+              </p>
+
               {/* Signaux de confiance */}
               <ul className="space-y-2 text-sm text-encre-doux">
                 <li className="flex items-start gap-2">

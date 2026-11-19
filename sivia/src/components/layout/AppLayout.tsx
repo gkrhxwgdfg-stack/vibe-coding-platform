@@ -30,7 +30,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
 
   return (
     <div className="min-h-dvh flex flex-col pb-24">
-      <header className="sticky top-0 z-40 bg-papier/95 safe-area-pt backdrop-blur border-b border-encre-doux/20">
+      <header className="sticky top-0 z-40 glass-papier safe-area-pt border-b border-encre-doux/20">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <Logo />
           <div className="text-right min-w-0">
@@ -60,7 +60,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
         <span aria-hidden="true"> · </span>
         <SignalerButton variant="link" label="un contenu" className="text-encre-doux hover:text-tomate hover:underline" />
         <span aria-hidden="true"> · </span>
-        © 2026 Sivia
+        © 2026 Sivia — un projet GTB & CO
       </footer>
 
       {/* Bouton flottant « + » contextuel (accueil : photo planche, recettes : nouvelle
@@ -69,7 +69,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
 
       <nav
         aria-label="Navigation principale"
-        className="fixed bottom-0 inset-x-0 z-40 bg-carte/95 backdrop-blur border-t border-encre-doux/20 safe-area-pb"
+        className="fixed bottom-0 inset-x-0 z-40 glass-carte border-t border-encre-doux/20 safe-area-pb"
       >
         <ul className="max-w-3xl mx-auto flex items-stretch justify-around px-2">
           {navItems.map(({ to, label, icon: Icon, end }) => (
@@ -86,6 +86,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
               >
                 <Icon size={22} aria-hidden="true" />
                 <span>{label}</span>
+                <span className="nav-dot" aria-hidden="true" />
               </NavLink>
             </li>
           ))}
